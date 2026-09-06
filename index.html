@@ -15,7 +15,11 @@
         .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
         .header-top h1 { font-size: 1.15rem; font-weight: bold; letter-spacing: 0.5px; }
         
-        /* 極簡同排下拉選單 */
+        /* 一鍵分享按鈕 */
+        .btn-share { background: rgba(255, 255, 255, 0.2); color: white; border: 1px solid rgba(255, 255, 255, 0.4); padding: 4px 10px; border-radius: 6px; font-size: 0.8rem; font-weight: bold; cursor: pointer; outline: none; }
+        .btn-share:active { background: rgba(255, 255, 255, 0.35); }
+
+        /* 同排極簡下拉選單 */
         .controls-row { display: flex; gap: 8px; align-items: center; }
         .app-select { flex: 1; background: rgba(255, 255, 255, 0.18); color: white; border: 1px solid rgba(255, 255, 255, 0.4); padding: 6px 10px; border-radius: 6px; font-size: 0.82rem; outline: none; cursor: pointer; text-overflow: ellipsis; }
         .app-select option { color: #333; background: white; }
@@ -54,6 +58,7 @@
     <header>
         <div class="header-top">
             <h1 id="app-title">📍 大V的美食地圖</h1>
+            <button class="btn-share" id="share-btn" onclick="shareApp()">📤 分享</button>
         </div>
         <!-- 同一排極簡下拉選單 -->
         <div class="controls-row">
@@ -91,6 +96,10 @@
         const i18n = {
             'zh-TW': {
                 title: '📍 大V的美食地圖',
+                shareBtn: '📤 分享',
+                shareTitle: '大V的美食地圖',
+                shareText: '推薦給你這個菲律賓美食指南！',
+                shareSuccess: '已複製美食地圖連結！可以貼上傳給朋友囉。',
                 loading: '載入最新美食清單中...',
                 noData: '目前沒有找到對應的餐廳資料',
                 call: '撥打電話',
@@ -110,6 +119,10 @@
             },
             'en': {
                 title: "📍 Big V's Food Map",
+                shareBtn: '📤 Share',
+                shareTitle: "Big V's Food Map",
+                shareText: 'Check out this awesome Philippines food guide!',
+                shareSuccess: 'App link copied to clipboard!',
                 loading: 'Loading latest restaurants...',
                 noData: 'No restaurants found',
                 call: 'Call',
@@ -129,6 +142,10 @@
             },
             'tl': {
                 title: '📍 Mapa ng Pagkain ni Big V',
+                shareBtn: '📤 Ibahagi',
+                shareTitle: 'Mapa ng Pagkain ni Big V',
+                shareText: 'Subukan ang gabay sa pagkain sa Pilipinas!',
+                shareSuccess: 'Na-kopyang link para maibahagi!',
                 loading: 'Kina-karga ang mga kainan...',
                 noData: 'Walang nahanap na kainan',
                 call: 'Tawagan',
@@ -181,10 +198,30 @@
             renderList();
         }
 
+        function shareApp() {
+            const langData = i18n[currentLang];
+            const shareUrl = window.location.href;
+
+            if (navigator.share) {
+                navigator.share({
+                    title: langData.shareTitle,
+                    text: langData.shareText,
+                    url: shareUrl
+                }).catch(() => {});
+            } else {
+                navigator.clipboard.writeText(shareUrl).then(() => {
+                    alert(langData.shareSuccess);
+                }).catch(() => {
+                    alert("連結：" + shareUrl);
+                });
+            }
+        }
+
         function renderUI() {
             document.getElementById('lang-select').value = currentLang;
             document.getElementById('city-select').value = currentCity;
             document.getElementById('app-title').innerText = i18n[currentLang].title;
+            document.getElementById('share-btn').innerText = i18n[currentLang].shareBtn;
             renderCategoryBar();
             renderList();
         }
