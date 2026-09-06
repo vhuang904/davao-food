@@ -1,19 +1,13 @@
-name: Weekly Multi-City Food Sync (Google Places Direct)
+name: Sync Restaurants to Firestore
 
 on:
+  push:
+    branches: [ main ] # 當你手動修改推送到 main 時觸發
   schedule:
-    - cron: '0 0 * * 0'
-  workflow_dispatch:
-
-permissions:
-  contents: write
-
-env:
-  ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true
-  ACTIONS_RUNNER_FORCE_NODE24: true
+    - cron: '0 0 * * 1' # 每週一自動執行一次 (UTC 時間)
 
 jobs:
-  scrape:
+  sync:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -22,120 +16,12 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
+          node-version: '18'
 
-      - name: Direct Google Places Text Search Sync
+      - name: Install dependencies
+        run: npm install firebase-admin
+
+      - name: Run sync script
         env:
-          GOOGLE_PLACES_KEY: ${{ secrets.GOOGLE_PLACES_KEY }}
-        run: |
-          node -e "
-            const fs = require('fs');
-            const https = require('https');
-
-            const API_KEY = process.env.GOOGLE_PLACES_KEY;
-
-            if (!API_KEY) {
-              console.error('Error: GOOGLE_PLACES_KEY is missing in GitHub Secrets!');
-              process.exit(1);
-            }
-
-            // 多城市 + 精準區域/主題搜尋目標矩陣
-            const searchTargets = [
-              { city: 'davao', query: 'best popular restaurants in Davao City Philippines' },
-              { city: 'davao', query: 'Yaki Together Matina Davao' },
-              { city: 'davao', query: 'best Japanese Korean BBQ restaurants in Davao City' },
-              { city: 'davao', query: 'famous cafe chinese seafood in Davao City' },
-              { city: 'manila', query: 'best popular restaurants in Manila Metro Philippines' },
-              { city: 'manila', query: 'famous cafe food spots in Makati BGC Manila' },
-              { city: 'manila', query: 'japanese korean chinese restaurant in Manila' },
-              { city: 'cebu', query: 'best popular restaurants in Cebu City Philippines' },
-              { city: 'cebu', query: 'seafood bbq cafe in Cebu City' }
-            ];
-
-            function httpGet(url) {
-              return new Promise((resolve) => {
-                https.get(url, (res) => {
-                  let data = '';
-                  res.on('data', chunk => data += chunk);
-                  res.on('end', () => {
-                    try { resolve(JSON.parse(data)); } catch(e) { resolve(null); }
-                  });
-                }).on('error', () => resolve(null));
-              });
-            }
-
-            // 深度精準分類邏輯
-            function preciseCategory(name, types, text) {
-              const str = (name + ' ' + (types || []).join(' ') + ' ' + text).toLowerCase();
-
-              if (/japan|japanese|yaki|yakiniku|wagyu|ramen|sushi|bento|yakitori|korean|samgyup|samgyupsal|kimchi/i.test(str)) {
-                return 'japanese_korean';
-              }
-              if (/chinese|dim sum|dumpling|noodle|taiwan|cantonese|hotpot|xiao long bao/i.test(str)) {
-                return 'chinese';
-              }
-              if (/bbq|barbecue|grill|inasal|ihaw|lechon|seafood|tuna|crab|shrimp|kinilaw/i.test(str)) {
-                return 'bbq_seafood';
-              }
-              if (/cafe|coffee|bakery|cake|dessert|tea|milk tea|brunch|matcha/i.test(str)) {
-                return 'cafe_dessert';
-              }
-              if (/american|burger|steak|ribs|pizza|pasta|italian/i.test(str)) {
-                return 'american_western';
-              }
-              return 'filipino';
-            }
-
-            async function startSync() {
-              const restaurantMap = new Map();
-
-              for (const target of searchTargets) {
-                console.log('Searching Google Places for: ' + target.query);
-                const searchUrl = 'https://maps.googleapis.com/maps/api/place/textsearch/json?query=' + encodeURIComponent(target.query) + '&key=' + API_KEY;
-                
-                const searchRes = await httpGet(searchUrl);
-                const results = searchRes?.results || [];
-
-                for (const place of results) {
-                  const name = place.name;
-                  if (!name) continue;
-
-                  const placeId = place.place_id;
-                  const key = target.city + '_' + placeId;
-
-                  if (!restaurantMap.has(key)) {
-                    const rating = place.rating ? ('⭐ ' + place.rating + ' (' + (place.user_ratings_total || 0) + ')') : '熱門餐廳';
-                    const categoryKey = preciseCategory(name, place.types, place.formatted_address || '');
-
-                    restaurantMap.set(key, {
-                      city: target.city,
-                      name: name,
-                      phone: '查看 Google 地圖專線',
-                      address: place.formatted_address || (target.city.toUpperCase() + ' City'),
-                      descriptions: {
-                        'zh-TW': 'Google 地圖評分 ' + rating + '。位於 ' + target.city.toUpperCase() + ' 的熱門美食店家。',
-                        'en': 'Google Maps rating ' + rating + '. Highly rated spot in ' + target.city.toUpperCase() + '.',
-                        'tl': 'Google Maps rating ' + rating + '. Sikat na kainan sa ' + target.city.toUpperCase() + '.'
-                      },
-                      imageUrl: '',
-                      categoryKey: categoryKey
-                    });
-                  }
-                }
-              }
-
-              const merged = Array.from(restaurantMap.values());
-              fs.writeFileSync('restaurants.json', JSON.stringify(merged, null, 2));
-              console.log('Successfully synced ' + merged.length + ' authentic Google Places restaurants!');
-            }
-
-            startSync();
-          "
-
-      - name: Commit and Push
-        run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add restaurants.json
-          git commit -m "Suppress Node 20 deprecation warning" || exit 0
-          git push
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+        run: node sync-to-firestore.js
