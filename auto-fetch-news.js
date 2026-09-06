@@ -12,12 +12,11 @@ async function generateAutomatedNewsWithAI() {
 
   try {
     const { GoogleGenAI } = await import('@google/genai');
-    // 明確帶入 API Key，避免抓不到環境變數
     const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
-    // 1. 透過 Gemini 聯網搜尋菲律賓當週最新餐飲促銷與新店資訊
+    // 1. 透過 Gemini 聯網搜尋菲律賓當週最新餐飲促銷與新店資訊（更新為 gemini-3.6-flash）
     const response = await ai.models.generateContent({
-      model: 'gemini-2.5-flash',
+      model: 'gemini-3.6-flash',
       contents: `請搜尋並整理目前（2026年）菲律賓（包含 Manila、Cebu、Davao）各大連鎖餐飲或美食平台的最新真實優惠、促銷活動或新開餐廳。
 請嚴格以 JSON 陣列格式回傳 3 筆資料，不要包在 Markdown code block 裡面，結構如下：
 [
