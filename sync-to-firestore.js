@@ -9,6 +9,7 @@ admin.initializeApp({
 
 const db = admin.firestore();
 
+// 使用你原本已發布整份文件的 CSV 網址
 const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vR7RqEOBMOhNBT_Mo2kee4w4WNugbZFLRRWhmc3c9FWCjams-n9oyaug1bI4lXyd0G9MfU8ftW8utuJ/pub?output=csv';
 
 function parseCSV(text) {
@@ -48,7 +49,6 @@ function parseCSV(text) {
 
   if (rows.length < 2) return [];
 
-  // 過濾掉空白的標頭，防止產生空字串欄位
   const headers = rows[0].map(h => h.replace(/^"|"$/g, '').trim()).filter(h => h !== '');
   const result = [];
 
@@ -62,9 +62,7 @@ function parseCSV(text) {
       obj[header] = val.replace(/^"|"$/g, '').trim();
     });
     
-    if (obj.name && 
-        !obj.name.toLowerCase().startsWith('city:') && 
-        !/^\d+$/.test(obj.name)) {
+    if (obj.name || obj.title || obj.videoUrl) {
       result.push(obj);
     }
   }
@@ -85,48 +83,45 @@ function fetchCSVData(url) {
 }
 
 async function syncData() {
-  console.log("【最新版 v5 - 過濾空欄位】正在從 Google 試算表抓取最新 CSV 資料...");
+  console.log("【單一網址同步】正在從 Google 試算表抓取整份文件資料...");
   try {
     const csvText = await fetchCSVData(SHEET_CSV_URL);
-    const restaurantsData = parseCSV(csvText);
+    const allData = parseCSV(csvText);
 
-    if (restaurantsData.length === 0) {
-      console.log("警告：解析後沒有找到任何餐廳資料。");
+    if (allData.length === 0) {
+      console.log("警告：沒有解析到任何有效資料。");
       return;
     }
 
-    console.log(`成功解析 ${restaurantsData.length} 筆餐廳資料，準備寫入 Firebase...`);
     const batch = db.batch();
-    
-    let successCount = 0;
-    for (let i = 0; i < restaurantsData.length; i++) {
-      const item = restaurantsData[i];
-      
-      const city = (item.city && typeof item.city === 'string' && item.city.trim() !== '') 
-        ? item.city.trim().toLowerCase() 
-        : 'davao';
-        
-      let safeName = (item.name && typeof item.name === 'string') 
-        ? item.name.replace(/[^a-zA-Z0-9]/g, '') 
-        : '';
-        
-      if (!safeName || safeName.trim() === '') {
-        safeName = 'restaurant_' + i;
-      }
-      
-      const docId = `${city}_${safeName}`;
-      
-      if (!docId || docId.trim() === '' || docId === '_') {
-        continue;
-      }
+    let restaurantCount = 0;
+    let videoCount = 0;
 
-      const docRef = db.collection('restaurants').doc(docId);
-      batch.set(docRef, item, { merge: true });
-      successCount++;
+    for (let i = 0; i < allData.length; i++) {
+      const item = allData[i];
+
+      // 判斷是否為短影片資料 (依據 title 與 videoUrl)
+      if (item.title && item.videoUrl) {
+        const safeTitle = item.title.replace(/[^a-zA-Z0-9]/g, '') || ('video_' + i);
+        const docRef = db.collection('videos').doc(safeTitle);
+        batch.set(docRef, item, { merge: true });
+        videoCount++;
+      } 
+      // 判斷是否為餐廳資料
+      else if (item.name && !item.name.toLowerCase().startsWith('city:') && !/^\d+$/.test(item.name)) {
+        const city = item.city ? item.city.trim().toLowerCase() : 'davao';
+        let safeName = item.name.replace(/[^a-zA-Z0-9]/g, '');
+        if (!safeName || safeName.trim() === '') {
+          safeName = 'restaurant_' + i;
+        }
+        const docRef = db.collection('restaurants').doc(`${city}_${safeName}`);
+        batch.set(docRef, item, { merge: true });
+        restaurantCount++;
+      }
     }
 
     await batch.commit();
-    console.log(`所有 ${successCount} 筆餐廳資料已成功同步到 Firebase Firestore！`);
+    console.log(`同步完成！成功寫入 ${restaurantCount} 筆餐廳、${videoCount} 筆短影片到 Firebase！`);
   } catch (error) {
     console.error("同步失敗詳細原因：", error);
     process.exit(1);
