@@ -31,7 +31,7 @@ jobs:
                   "url": "https://www.tripadvisor.com/Restaurants-g298459-Davao_City_Davao_del_Sur_Mindanao.html",
                   "formats": ["extract"],
                   "extract": {
-                    "prompt": "Extract ALL Davao City restaurant listings. For each restaurant, provide name, phone, address, description, imageUrl, and cuisine category (e.g. Chinese, American, Filipino, BBQ, Seafood, Cafe).",
+                    "prompt": "Extract ALL Davao City restaurant listings including name, phone, address, description, imageUrl, and classify cuisine into (chinese, american, filipino, bbq, seafood, or cafe).",
                     "schema": {
                       "type": "object",
                       "properties": {
@@ -62,7 +62,7 @@ jobs:
                   "url": "https://www.google.com/search?q=best+restaurants+and+cafes+in+davao+city",
                   "formats": ["extract"],
                   "extract": {
-                    "prompt": "Extract popular Davao City restaurants including name, address, phone, description, imageUrl, and cuisine category.",
+                    "prompt": "Extract popular Davao City restaurants including name, address, phone, description, imageUrl, and classify cuisine.",
                     "schema": {
                       "type": "object",
                       "properties": {
@@ -100,18 +100,14 @@ jobs:
             const fetchedGoogle = getList('response_google.json');
             const allFetched = [...fetchedTA, ...fetchedGoogle];
 
-            // 智能分類映射邏輯
-            function mapCategory(item) {
+            function mapCategoryKey(item) {
               const text = ((item.category || '') + ' ' + (item.name || '') + ' ' + (item.description || '')).toLowerCase();
-              
-              if (/chinese|dim sum|noodle|asian|taiwanese|hong kong/i.test(text)) return '中式餐廳';
-              if (/american|burger|steak|pizza|fast food/i.test(text)) return '美式餐廳';
-              if (/bbq|barbecue|grill|lechon|ihaw/i.test(text)) return '燒烤類';
-              if (/seafood|tuna|fish|crab|shrimp|kinilaw/i.test(text)) return '海鮮類';
-              if (/cafe|coffee|bakery|dessert|tea/i.test(text)) return '咖啡輕食';
-              if (/filipino|pinoy|local|mindanao|bistro/i.test(text)) return '菲律賓餐';
-              
-              return '菲律賓餐'; // 預設類別
+              if (/chinese|dim sum|noodle|asian|taiwanese|hong kong/i.test(text)) return 'chinese';
+              if (/american|burger|steak|pizza|fast food/i.test(text)) return 'american';
+              if (/bbq|barbecue|grill|lechon|ihaw/i.test(text)) return 'bbq';
+              if (/seafood|tuna|fish|crab|shrimp|kinilaw/i.test(text)) return 'seafood';
+              if (/cafe|coffee|bakery|dessert|tea/i.test(text)) return 'cafe';
+              return 'filipino';
             }
 
             const map = new Map();
@@ -120,18 +116,18 @@ jobs:
                 const key = r.name.trim().toLowerCase();
                 map.set(key, {
                   name: r.name,
-                  phone: r.phone || '無電話資訊',
+                  phone: r.phone || '',
                   address: r.address || 'Davao City',
-                  description: r.description || '暫無介紹',
+                  description: r.description || '',
                   imageUrl: r.imageUrl || '',
-                  category: mapCategory(r)
+                  categoryKey: mapCategoryKey(r)
                 });
               }
             });
 
             const merged = Array.from(map.values());
             fs.writeFileSync('restaurants.json', JSON.stringify(merged, null, 2));
-            console.log('Successfully saved ' + merged.length + ' categorized restaurants.');
+            console.log('Saved ' + merged.length + ' restaurants with i18n categoryKeys.');
           "
 
       - name: Commit and Push updated JSON
@@ -139,5 +135,5 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add restaurants.json
-          git commit -m "Force refresh and re-classify Davao restaurants" || exit 0
+          git commit -m "Auto-update Davao restaurants with multilingual category keys" || exit 0
           git push
