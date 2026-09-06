@@ -8,7 +8,7 @@ admin.initializeApp({
 });
 const db = admin.firestore();
 
-// 初始化 Gemini API (會自動讀取 GitHub Secrets 裡的 GEMINI_API_KEY)
+// 初始化 Gemini API
 const ai = new GoogleGenAI();
 
 async function generateAutomatedNewsWithAI() {
@@ -40,12 +40,11 @@ async function generateAutomatedNewsWithAI() {
   }
 ]`,
       config: {
-        tools: [{ googleSearch: {} }] // 啟用聯網搜尋
+        tools: [{ googleSearch: {} }]
       }
     });
 
     let rawText = response.text.trim();
-    // 移除可能帶有的 markdown 標記
     rawText = rawText.replace(/^```json\s*/, '').replace(/^```\s*/, '').replace(/\s*```$/, '');
     
     const newsItems = JSON.parse(rawText);
@@ -59,10 +58,10 @@ async function generateAutomatedNewsWithAI() {
     await batch.commit();
     console.log("🧹 已清除舊的動態資料。");
 
-    // 3. 寫入 AI 自動生成的真實動態
+    // 3. 寫入 AI 自動生成的真實動態（修正亂數產生語法）
     const newBatch = db.batch();
     newsItems.forEach(item => {
-      if (!item.id) item.id = "ai-news-" + Math.random().toString(36.substring(7));
+      if (!item.id) item.id = "ai-news-" + Math.random().toString(36).substring(7);
       const docRef = db.collection('news').doc(item.id);
       item.timestamp = admin.firestore.FieldValue.serverTimestamp();
       newBatch.set(docRef, item);
