@@ -1,0 +1,16 @@
+[
+  {
+    "name": "Jack's Ridge Resort and Restaurant",
+    "description": "位於 Shrine Hills 山頂的經典景觀餐廳，可以俯瞰整個 Davao 市區與海岸夜景，提供道地的菲律賓美食。",
+    "address": "Shrine Hills Rd, Matina, Davao City",
+    "phone": "(082) 297 8888",
+    "imageUrl": "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=500"
+  },
+  {
+    "name": "The Yellow Fin Seafood Restaurant",
+    "description": "Davao 最受歡迎的海鮮餐廳之一，以新鮮的黃鰭鮪魚料理（Tuna Kinilaw / Grilled Tuna Belly）聞名。",
+    "address": "Quimpo Blvd, Bucana, Davao City",
+    "phone": "(082) 298 0136",
+    "imageUrl": "https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?w=500"
+  }
+]

@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Davao 美食指南</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#4CAF50">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #f4f6f9; color: #333; padding-bottom: 20px; }
+        header { background: #4CAF50; color: white; padding: 20px 16px; text-align: center; box-shadow: 0 2px 6px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 100; }
+        header h1 { font-size: 1.4rem; }
+        header p { font-size: 0.85rem; opacity: 0.9; margin-top: 4dp; }
+        .container { max-width: 600px; margin: 0 auto; padding: 16px; }
+        .card { background: white; border-radius: 12px; overflow: hidden; margin-bottom: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+        .card img { width: 100%; height: 200px; object-fit: cover; background: #eee; }
+        .card-body { padding: 16px; }
+        .card-title { font-size: 1.25rem; font-weight: bold; margin-bottom: 8px; color: #1a1a1a; }
+        .card-desc { font-size: 0.9rem; color: #666; line-height: 1.5; margin-bottom: 12px; }
+        .info-item { font-size: 0.85rem; color: #444; margin-bottom: 6px; display: flex; align-items: center; gap: 6px; }
+        .btn-group { display: flex; gap: 10px; margin-top: 14px; }
+        .btn { flex: 1; padding: 10px; border-radius: 8px; font-size: 0.9rem; font-weight: bold; text-align: center; text-decoration: none; border: none; cursor: pointer; }
+        .btn-primary { background: #4CAF50; color: white; }
+        .btn-secondary { background: #e8f5e9; color: #2e7d32; }
+        #loading { text-align: center; padding: 40px; color: #888; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>📍 Davao 美食地圖</h1>
+        <p>每週自動更新 · 最新餐廳推薦</p>
+    </header>
+
+    <div class="container">
+        <div id="loading">載入最新美食清單中...</div>
+        <div id="restaurant-list"></div>
+    </div>
+
+    <script>
+        // 註冊 Service Worker 讓 PWA 支援離線與安裝
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js');
+        }
+
+        async function fetchRestaurants() {
+            const listEl = document.getElementById('restaurant-list');
+            const loadingEl = document.getElementById('loading');
+
+            try {
+                // 嘗試抓取 JSON 檔案
+                const response = await fetch('restaurants.json');
+                const data = await response.json();
+
+                // 快取資料至本地 (LocalStorage)
+                localStorage.setItem('davao_food_cache', JSON.stringify(data));
+                renderList(data);
+            } catch (error) {
+                // 沒網路時讀取本地快取
+                const cached = localStorage.getItem('davao_food_cache');
+                if (cached) {
+                    renderList(JSON.parse(cached));
+                } else {
+                    loadingEl.innerText = '目前無法載入餐廳資料，請檢查網路連線。';
+                }
+            }
+        }
+
+        function renderList(list) {
+            const listEl = document.getElementById('restaurant-list');
+            const loadingEl = document.getElementById('loading');
+            loadingEl.style.display = 'none';
+
+            if (!list || list.length === 0) {
+                listEl.innerHTML = '<p style="text-align:center; color:#888;">本週暫無新餐廳資料</p>';
+                return;
+            }
+
+            listEl.innerHTML = list.map(item => `
+                <div class="card">
+                    ${item.imageUrl ? `<img src="${item.imageUrl}" alt="${item.name}">` : ''}
+                    <div class="card-body">
+                        <div class="card-title">${item.name || '未命名餐廳'}</div>
+                        <div class="card-desc">${item.description || '暫無餐廳介紹資訊。'}</div>
+                        <div class="info-item">📍 ${item.address || 'Davao City'}</div>
+                        <div class="info-item">📞 ${item.phone || '無電話資訊'}</div>
+                        <div class="btn-group">
+                            <a class="btn btn-primary" href="tel:${item.phone}">撥打電話</a>
+                            <a class="btn btn-secondary" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent((item.name || '') + ' ' + (item.address || '') + ' Davao')}" target="_blank">導航地圖</a>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        fetchRestaurants();
+    </script>
+</body>
+</html>
