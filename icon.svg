@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FB923C" />
+      <stop offset="100%" stop-color="#C2410C" />
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#000" flood-opacity="0.25"/>
+    </filter>
+  </defs>
+  
+  <!-- 背景圓角矩形 -->
+  <rect width="512" height="512" rx="116" fill="url(#bgGrad)" />
+  
+  <!-- 外發光定位針 -->
+  <path d="M256 64c-70.7 0-128 57.3-128 128 0 96 128 256 128 256s128-160 128-256c0-70.7-57.3-128-128-128z" fill="#EA580C" filter="url(#shadow)" opacity="0.3" transform="translate(0, 12)" />
+
+  <!-- 主體定位針 -->
+  <path d="M256 48C175.3 48 110 113.3 110 194c0 102 146 270 146 270s146-168 146-270c0-80.7-65.3-146-146-146z" fill="#FFFFFF" filter="url(#shadow)" />
+  
+  <!-- 內部經典紅橘色美食標誌圈 -->
+  <circle cx="256" cy="190" r="76" fill="#EA580C" />
+  
+  <!-- 大 V 字母標誌 (V for Big V) -->
+  <path d="M210 155l46 80 46-80h32l-62 104h-32l-62-104z" fill="#FFFFFF" />
+</svg>
