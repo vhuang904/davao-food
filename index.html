@@ -10,33 +10,27 @@
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #fdfbf7; color: #333; padding-bottom: 20px; }
         
-        /* 暖色系 Header (赤陶暖橘) */
         header { background: #EA580C; color: white; padding: 12px 16px; box-shadow: 0 2px 8px rgba(234, 88, 12, 0.15); position: sticky; top: 0; z-index: 100; }
         .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
         .header-top h1 { font-size: 1.15rem; font-weight: bold; letter-spacing: 0.5px; }
         
-        /* 一鍵分享按鈕 */
         .btn-share { background: rgba(255, 255, 255, 0.2); color: white; border: 1px solid rgba(255, 255, 255, 0.4); padding: 4px 10px; border-radius: 6px; font-size: 0.8rem; font-weight: bold; cursor: pointer; outline: none; }
         .btn-share:active { background: rgba(255, 255, 255, 0.35); }
 
-        /* 同排極簡下拉選單 */
         .controls-row { display: flex; gap: 8px; align-items: center; }
         .app-select { flex: 1; background: rgba(255, 255, 255, 0.18); color: white; border: 1px solid rgba(255, 255, 255, 0.4); padding: 6px 10px; border-radius: 6px; font-size: 0.82rem; outline: none; cursor: pointer; text-overflow: ellipsis; }
         .app-select option { color: #333; background: white; }
 
-        /* 分類橫向選擇列 */
         .category-bar { display: flex; gap: 8px; overflow-x: auto; padding: 12px 16px; background: #ffffff; border-bottom: 1px solid #f1ece1; }
         .category-bar::-webkit-scrollbar { display: none; }
         .cat-chip { padding: 6px 14px; border-radius: 18px; font-size: 0.85rem; background: #f5f2eb; color: #666; white-space: nowrap; border: none; cursor: pointer; transition: all 0.2s; }
         .cat-chip.active { background: #EA580C; color: white; font-weight: bold; }
 
-        /* 卡片設計 */
         .container { max-width: 600px; margin: 0 auto; padding: 16px; }
         .card { background: white; border-radius: 12px; overflow: hidden; margin-bottom: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.04); border: 1px solid #f3eee3; }
         .card img { width: 100%; height: 200px; object-fit: cover; background: #f7f5f0; display: block; }
         .card-body { padding: 16px; }
         
-        /* 極簡風格 Badge */
         .badge-group { display: flex; gap: 6px; margin-bottom: 8px; }
         .badge { display: inline-block; background: #fff7ed; color: #c2410c; font-size: 0.75rem; padding: 3px 8px; border-radius: 4px; font-weight: 600; border: 1px solid #ffedd5; }
         .badge-city { background: #f0f9ff; color: #0369a1; border-color: #e0f2fe; }
@@ -45,7 +39,6 @@
         .card-desc { font-size: 0.88rem; color: #57534e; line-height: 1.5; margin-bottom: 12px; }
         .info-item { font-size: 0.85rem; color: #78716c; margin-bottom: 4px; display: flex; align-items: center; gap: 6px; }
         
-        /* 極簡暖色按鈕 */
         .btn-group { display: flex; gap: 8px; margin-top: 14px; }
         .btn { flex: 1; padding: 10px; border-radius: 8px; font-size: 0.85rem; font-weight: bold; text-align: center; text-decoration: none; border: none; }
         .btn-primary { background: #EA580C; color: white; }
@@ -60,7 +53,6 @@
             <h1 id="app-title">📍 大V的美食地圖</h1>
             <button class="btn-share" id="share-btn" onclick="shareApp()">📤 分享</button>
         </div>
-        <!-- 同一排極簡下拉選單 -->
         <div class="controls-row">
             <select class="app-select" id="city-select" onchange="changeCity(this.value)">
                 <option value="all">全部城市 (All Cities)</option>
@@ -86,10 +78,10 @@
     <script>
         const fallbackImages = {
             chinese: "https://images.unsplash.com/photo-1563245372-f21724e3856d?w=600&auto=format&fit=crop",
-            american: "https://images.unsplash.com/photo-1550547660-d9450f859349?w=600&auto=format&fit=crop",
-            bbq: "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=600&auto=format&fit=crop",
-            seafood: "https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?w=600&auto=format&fit=crop",
-            cafe: "https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=600&auto=format&fit=crop",
+            japanese_korean: "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=600&auto=format&fit=crop",
+            american_western: "https://images.unsplash.com/photo-1550547660-d9450f859349?w=600&auto=format&fit=crop",
+            bbq_seafood: "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=600&auto=format&fit=crop",
+            cafe_dessert: "https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=600&auto=format&fit=crop",
             filipino: "https://images.unsplash.com/photo-1541544741938-0af808871cc0?w=600&auto=format&fit=crop"
         };
 
@@ -110,11 +102,11 @@
                 cats: {
                     all: '全部',
                     filipino: '菲律賓餐',
-                    chinese: '中式餐廳',
-                    american: '美式餐廳',
-                    bbq: '燒烤類',
-                    seafood: '海鮮類',
-                    cafe: '咖啡輕食'
+                    chinese: '中式/港點',
+                    japanese_korean: '日韓料理',
+                    american_western: '美式/西餐',
+                    bbq_seafood: '燒烤/海鮮',
+                    cafe_dessert: '咖啡/甜點'
                 }
             },
             'en': {
@@ -134,10 +126,10 @@
                     all: 'All',
                     filipino: 'Filipino',
                     chinese: 'Chinese',
-                    american: 'American',
-                    bbq: 'BBQ / Grill',
-                    seafood: 'Seafood',
-                    cafe: 'Cafe / Bakery'
+                    japanese_korean: 'Japanese / Korean',
+                    american_western: 'Western / Grill',
+                    bbq_seafood: 'BBQ & Seafood',
+                    cafe_dessert: 'Cafe & Bakery'
                 }
             },
             'tl': {
@@ -157,10 +149,10 @@
                     all: 'Lahat',
                     filipino: 'Filipino',
                     chinese: 'Chinese',
-                    american: 'American',
-                    bbq: 'BBQ / Inihaw',
-                    seafood: 'Seafood',
-                    cafe: 'Kapehan / Bakery'
+                    japanese_korean: 'Hapon / Koreano',
+                    american_western: 'Western / Steak',
+                    bbq_seafood: 'Inihaw at Seafood',
+                    cafe_dessert: 'Kapehan at Matamis'
                 }
             }
         };
@@ -229,7 +221,7 @@
         function renderCategoryBar() {
             const bar = document.getElementById('category-bar');
             const cats = i18n[currentLang].cats;
-            const keys = ['all', 'filipino', 'chinese', 'american', 'bbq', 'seafood', 'cafe'];
+            const keys = ['all', 'filipino', 'chinese', 'japanese_korean', 'american_western', 'bbq_seafood', 'cafe_dessert'];
 
             bar.innerHTML = keys.map(key => `
                 <button class="cat-chip ${key === currentCategoryKey ? 'active' : ''}" onclick="filterCategory('${key}')">
