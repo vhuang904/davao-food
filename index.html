@@ -33,9 +33,9 @@
         .cat-chip { padding: 6px 14px; border-radius: 18px; font-size: 0.85rem; background: #f5f2eb; color: #666; white-space: nowrap; border: none; cursor: pointer; transition: all 0.2s; }
         .cat-chip.active { background: #EA580C; color: white; font-weight: bold; }
 
-        /* 新聞頁面專屬二級篩選 Bar */
+        /* 🎯 新聞頁面專屬二級篩選 Bar：等寬且文字長度平衡 */
         .news-filter-bar { display: flex; gap: 8px; margin-bottom: 16px; }
-        .news-sub-btn { flex: 1; padding: 8px; border-radius: 8px; font-size: 0.85rem; font-weight: bold; border: 1px solid #e7e2d7; background: #ffffff; color: #666; cursor: pointer; text-align: center; }
+        .news-sub-btn { flex: 1; padding: 10px 4px; border-radius: 8px; font-size: 0.83rem; font-weight: bold; border: 1px solid #e7e2d7; background: #ffffff; color: #666; cursor: pointer; text-align: center; white-space: nowrap; }
         .news-sub-btn.active { background: #ea580c; color: white; border-color: #ea580c; }
 
         /* 卡片與容器 */
@@ -131,10 +131,10 @@
     <!-- 2. 獨立新聞與特惠 Tab 內容 -->
     <div id="main-tab-news" class="tab-content">
         <div class="container">
-            <!-- 促銷 vs 新開幕 二級切換 -->
+            <!-- 精簡字體、均等寬度的平衡按鈕列 -->
             <div class="news-filter-bar">
                 <button class="news-sub-btn active" id="news-sub-all" onclick="filterNewsType('all')">全部動態</button>
-                <button class="news-sub-btn" id="news-sub-promo" onclick="filterNewsType('promo')">🔥 限時優惠 (在效期內)</button>
+                <button class="news-sub-btn" id="news-sub-promo" onclick="filterNewsType('promo')">🔥 限時優惠</button>
                 <button class="news-sub-btn" id="news-sub-new" onclick="filterNewsType('new')">✨ 新開餐廳</button>
             </div>
             <div id="news-list"></div>
@@ -276,7 +276,6 @@
             }
         };
 
-        // 2026年9月當月生效中的連鎖速食限時促銷與新開幕資料庫
         const newsData = [
             {
                 id: "news-pizza-1",
