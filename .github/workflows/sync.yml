@@ -25,6 +25,7 @@ jobs:
     - name: Run sync script
       env:
         FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+        GOOGLE_MAPS_API_KEY: ${{ secrets.GOOGLE_MAPS_API_KEY }}
       run: node sync-to-firestore.js
 
     - name: Run Auto News Script
