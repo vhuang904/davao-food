@@ -1,0 +1,132 @@
+name: Weekly Davao Food Sync
+
+on:
+  schedule:
+    - cron: '0 0 * * 0'
+  workflow_dispatch:
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Fetch All Davao Restaurants via Firecrawl API
+        env:
+          FIRECRAWL_KEY: ${{ secrets.FIRECRAWL_API_KEY }}
+        run: |
+          echo "[]" > new_data.json
+
+          curl -X POST https://api.firecrawl.dev/v1/scrape \
+            -H "Content-Type: application/json" \
+            -H "Authorization: Bearer $FIRECRAWL_KEY" \
+            -d '{
+                  "url": "https://www.tripadvisor.com/Restaurants-g298459-Davao_City_Davao_del_Sur_Mindanao.html",
+                  "formats": ["extract"],
+                  "extract": {
+                    "prompt": "Extract ALL Davao City restaurant listings from the page including name, phone number, physical address, description, and image URL.",
+                    "schema": {
+                      "type": "object",
+                      "properties": {
+                        "restaurants": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "name": {"type": "string"},
+                              "phone": {"type": "string"},
+                              "address": {"type": "string"},
+                              "description": {"type": "string"},
+                              "imageUrl": {"type": "string"}
+                            },
+                            "required": ["name"]
+                          }
+                        }
+                      }
+                    }
+                  }
+                }' > response_ta.json
+
+          curl -X POST https://api.firecrawl.dev/v1/scrape \
+            -H "Content-Type: application/json" \
+            -H "Authorization: Bearer $FIRECRAWL_KEY" \
+            -d '{
+                  "url": "https://www.google.com/search?q=new+restaurants+in+davao+city",
+                  "formats": ["extract"],
+                  "extract": {
+                    "prompt": "Extract newly opened or popular restaurants in Davao City including name, address, phone, and brief description.",
+                    "schema": {
+                      "type": "object",
+                      "properties": {
+                        "restaurants": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "name": {"type": "string"},
+                              "phone": {"type": "string"},
+                              "address": {"type": "string"},
+                              "description": {"type": "string"},
+                              "imageUrl": {"type": "string"}
+                            },
+                            "required": ["name"]
+                          }
+                        }
+                      }
+                    }
+                  }
+                }' > response_google.json
+
+          node -e "
+            const fs = require('fs');
+
+            function getList(file) {
+              try {
+                const raw = JSON.parse(fs.readFileSync(file));
+                return raw.data?.extract?.restaurants || [];
+              } catch(e) { return []; }
+            }
+
+            let existing = [];
+            try {
+              existing = JSON.parse(fs.readFileSync('restaurants.json'));
+            } catch(e) { existing = []; }
+
+            const fetchedTA = getList('response_ta.json');
+            const fetchedGoogle = getList('response_google.json');
+            const allFetched = [...fetchedTA, ...fetchedGoogle];
+
+            const map = new Map();
+            existing.forEach(r => { if(r.name) map.set(r.name.trim().toLowerCase(), r); });
+            allFetched.forEach(r => {
+              if(r.name) {
+                const key = r.name.trim().toLowerCase();
+                const oldData = map.get(key) || {};
+                map.set(key, {
+                  name: r.name,
+                  phone: r.phone || oldData.phone || '無電話資訊',
+                  address: r.address || oldData.address || 'Davao City',
+                  description: r.description || oldData.description || '暫無介紹',
+                  imageUrl: r.imageUrl || oldData.imageUrl || ''
+                });
+              }
+            });
+
+            const merged = Array.from(map.values());
+            fs.writeFileSync('restaurants.json', JSON.stringify(merged, null, 2));
+            console.log('Database updated. Total restaurants count: ' + merged.length);
+          "
+
+      - name: Commit and Push updated JSON
+        run: |
+          git config --global user.name "Github Action Bot"
+          git config --global user.email "action@github.com"
+          git add restaurants.json
+          git commit -m "Auto-update & merge Davao restaurants list" || exit 0
+          git push
