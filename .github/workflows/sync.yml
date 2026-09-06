@@ -1,4 +1,4 @@
-name: Weekly Multi-City Food Sync
+name: Weekly Multi-City Food Sync (Google Places Direct)
 
 on:
   schedule:
@@ -20,122 +20,106 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Multi-Source Deep Scraping
+      - name: Direct Google Places Text Search Sync
         env:
-          FIRECRAWL_KEY: ${{ secrets.FIRECRAWL_API_KEY }}
           GOOGLE_PLACES_KEY: ${{ secrets.GOOGLE_PLACES_KEY }}
         run: |
-          fetch_city() {
-            CITY=$1
-            PROMPT_RULE="Extract ALL available restaurant listings in ${CITY} Philippines. For each restaurant, extract: name, phone, address, imageUrl (direct high quality food photo URL), and cuisine type. Write descriptions in Traditional Chinese (desc_zh), English (desc_en), and Tagalog (desc_tl)."
-
-            # 1. 深度抓取：Booky / Zomato 在地美食網
-            curl -X POST https://api.firecrawl.dev/v1/scrape \
-              -H "Content-Type: application/json" \
-              -H "Authorization: Bearer $FIRECRAWL_KEY" \
-              -d "{\"url\": \"https://www.google.com/search?q=best+restaurants+and+cafes+in+${CITY}+site:ph.phonebooky.com+OR+site:tripadvisor.com\", \"formats\": [\"extract\"], \"extract\": {\"prompt\": \"${PROMPT_RULE}\", \"schema\": {\"type\": \"object\", \"properties\": {\"restaurants\": {\"type\": \"array\", \"items\": {\"type\": \"object\", \"properties\": {\"name\": {\"type\": \"string\"}, \"phone\": {\"type\": \"string\"}, \"address\": {\"type\": \"string\"}, \"desc_zh\": {\"type\": \"string\"}, \"desc_en\": {\"type\": \"string\"}, \"desc_tl\": {\"type\": \"string\"}, \"imageUrl\": {\"type\": \"string\"}, \"category\": {\"type\": \"string\"}}}}}}}}" > "res_${CITY}_booky.json"
-
-            # 2. 深度抓取：FB 粉專、Sugbo.ph 及當地熱門部落格
-            curl -X POST https://api.firecrawl.dev/v1/scrape \
-              -H "Content-Type: application/json" \
-              -H "Authorization: Bearer $FIRECRAWL_KEY" \
-              -d "{\"url\": \"https://www.google.com/search?q=must+eat+restaurants+food+blogs+in+${CITY}+site:facebook.com+OR+site:sugbo.ph+OR+site:wheninmanila.com\", \"formats\": [\"extract\"], \"extract\": {\"prompt\": \"${PROMPT_RULE}\", \"schema\": {\"type\": \"object\", \"properties\": {\"restaurants\": {\"type\": \"array\", \"items\": {\"type\": \"object\", \"properties\": {\"name\": {\"type\": \"string\"}, \"phone\": {\"type\": \"string\"}, \"address\": {\"type\": \"string\"}, \"desc_zh\": {\"type\": \"string\"}, \"desc_en\": {\"type\": \"string\"}, \"desc_tl\": {\"type\": \"string\"}, \"imageUrl\": {\"type\": \"string\"}, \"category\": {\"type\": \"string\"}}}}}}}}" > "res_${CITY}_blogs.json"
-          }
-
-          fetch_city "davao"
-          fetch_city "manila"
-          fetch_city "cebu"
-
           node -e "
             const fs = require('fs');
             const https = require('https');
 
-            function getList(file) {
-              try {
-                const raw = JSON.parse(fs.readFileSync(file));
-                return raw.data?.extract?.restaurants || [];
-              } catch(e) { return []; }
+            const API_KEY = process.env.GOOGLE_PLACES_KEY;
+
+            if (!API_KEY) {
+              console.error('Error: GOOGLE_PLACES_KEY is missing in GitHub Secrets!');
+              process.exit(1);
             }
 
-            function preciseCategory(r) {
-              const text = ((r.category || '') + ' ' + (r.name || '') + ' ' + (r.desc_en || '') + ' ' + (r.desc_zh || '')).toLowerCase();
-              if (/japan|japanese|ramen|sushi|bento|yakitori|korean|samgyupsal|kimchi/i.test(text)) return 'japanese_korean';
-              if (/chinese|dim sum|dumpling|noodle|taiwan|hong kong|cantonese|hotpot/i.test(text)) return 'chinese';
-              if (/bbq|barbecue|grill|inasal|ihaw|lechon|seafood|tuna|crab|shrimp|kinilaw/i.test(text)) return 'bbq_seafood';
-              if (/cafe|coffee|matcha|bakery|cake|dessert|tea|boba|milk tea|brunch/i.test(text)) return 'cafe_dessert';
-              if (/american|burger|steak|ribs|pizza|pasta|italian/i.test(text)) return 'american_western';
-              if (/filipino|pinoy|sinigang|adobo|sisig|kare-kare|bistro|mindanao/i.test(text)) return 'filipino';
-              return 'filipino';
-            }
+            // 搜尋關鍵字矩陣 (涵蓋 3 個城市 + 各類美食)
+            const searchTargets = [
+              { city: 'davao', query: 'best popular restaurants in Davao City Philippines' },
+              { city: 'davao', query: 'chinese japanese korean cafe bbq in Davao City' },
+              { city: 'manila', query: 'best popular restaurants in Manila Metro Philippines' },
+              { city: 'manila', query: 'famous cafe food spots in Makati BGC Manila' },
+              { city: 'cebu', query: 'best popular restaurants in Cebu City Philippines' },
+              { city: 'cebu', query: 'seafood bbq cafe in Cebu City' }
+            ];
 
-            function fetchGooglePhoto(query, apiKey) {
+            function httpGet(url) {
               return new Promise((resolve) => {
-                if (!apiKey) return resolve('');
-                const url = 'https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input=' + encodeURIComponent(query) + '&inputtype=textquery&fields=photos&key=' + apiKey;
-                
                 https.get(url, (res) => {
                   let data = '';
                   res.on('data', chunk => data += chunk);
                   res.on('end', () => {
-                    try {
-                      const json = JSON.parse(data);
-                      const photoRef = json.candidates?.[0]?.photos?.[0]?.photo_reference;
-                      if (photoRef) {
-                        resolve('https://maps.googleapis.com/maps/api/place/photo?maxwidth=800&photo_reference=' + photoRef + '&key=' + apiKey);
-                      } else { resolve(''); }
-                    } catch(e) { resolve(''); }
+                    try { resolve(JSON.parse(data)); } catch(e) { resolve(null); }
                   });
-                }).on('error', () => resolve(''));
+                }).on('error', () => resolve(null));
               });
             }
 
-            async function processAll() {
-              const apiKey = process.env.GOOGLE_PLACES_KEY;
-              const cities = ['davao', 'manila', 'cebu'];
-              const map = new Map();
+            // 精準自動分類邏輯
+            function preciseCategory(name, types, text) {
+              const str = (name + ' ' + (types || []).join(' ') + ' ' + text).toLowerCase();
+              if (/japan|ramen|sushi|bento|korean|samgyupsal|kimchi/i.test(str)) return 'japanese_korean';
+              if (/chinese|dim sum|dumpling|noodle|taiwan|cantonese|hotpot/i.test(str)) return 'chinese';
+              if (/bbq|barbecue|grill|inasal|ihaw|lechon|seafood|tuna|crab|shrimp|kinilaw/i.test(str)) return 'bbq_seafood';
+              if (/cafe|coffee|bakery|cake|dessert|tea|milk tea|brunch/i.test(str)) return 'cafe_dessert';
+              if (/american|burger|steak|ribs|pizza|pasta|italian/i.test(str)) return 'american_western';
+              return 'filipino';
+            }
 
-              for (const city of cities) {
-                const listBooky = getList('res_' + city + '_booky.json');
-                const listBlogs = getList('res_' + city + '_blogs.json');
-                const combined = [...listBooky, ...listBlogs];
+            async function startSync() {
+              const restaurantMap = new Map();
 
-                for (const r of combined) {
-                  if (r.name && r.name.trim().length > 0) {
-                    let cleanName = r.name.replace(/\s*-\s*Home\s*|\s*-\s*Facebook\s*|\s*\|\s*Booky\s*/gi, '').trim();
-                    const key = city + '_' + cleanName.toLowerCase();
+              for (const target of searchTargets) {
+                console.log('Searching Google Places for: ' + target.query);
+                const searchUrl = 'https://maps.googleapis.com/maps/api/place/textsearch/json?query=' + encodeURIComponent(target.query) + '&key=' + API_KEY;
+                
+                const searchRes = await httpGet(searchUrl);
+                const results = searchRes?.results || [];
 
-                    if (!map.has(key)) {
-                      let photoUrl = r.imageUrl && r.imageUrl.startsWith('http') ? r.imageUrl : '';
-                      
-                      // 如果原本沒有圖，或是有 API Key，就自動去 Google 地圖抓 100% 正確的真實官方照
-                      if (!photoUrl && apiKey) {
-                        photoUrl = await fetchGooglePhoto(cleanName + ' ' + city + ' Philippines', apiKey);
-                      }
+                for (const place of results) {
+                  const name = place.name;
+                  if (!name) continue;
 
-                      map.set(key, {
-                        city: city,
-                        name: cleanName,
-                        phone: r.phone || '',
-                        address: r.address || (city.toUpperCase() + ' City'),
-                        descriptions: {
-                          'zh-TW': r.desc_zh || r.desc_en || '暫無介紹。',
-                          'en': r.desc_en || r.desc_zh || 'No description available.',
-                          'tl': r.desc_tl || r.desc_en || 'Walang magagamit na paglalarawan.'
-                        },
-                        imageUrl: photoUrl,
-                        categoryKey: preciseCategory(r)
-                      });
+                  const placeId = place.place_id;
+                  const key = target.city + '_' + placeId;
+
+                  if (!restaurantMap.has(key)) {
+                    // 取得高解析度 Google 官方照片網址
+                    let photoUrl = '';
+                    if (place.photos && place.photos.length > 0) {
+                      const photoRef = place.photos[0].photo_reference;
+                      photoUrl = 'https://maps.googleapis.com/maps/api/place/photo?maxwidth=800&photo_reference=' + photoRef + '&key=' + API_KEY;
                     }
+
+                    const rating = place.rating ? ('⭐ ' + place.rating + ' (' + (place.user_ratings_total || 0) + ')') : '熱門餐廳';
+                    const categoryKey = preciseCategory(name, place.types, place.formatted_address || '');
+
+                    // 自動生成 3 語系簡短對應介紹
+                    restaurantMap.set(key, {
+                      city: target.city,
+                      name: name,
+                      phone: '查看 Google 地圖專線',
+                      address: place.formatted_address || (target.city.toUpperCase() + ' City'),
+                      descriptions: {
+                        'zh-TW': 'Google 地圖評分 ' + rating + '。位於 ' + target.city.toUpperCase() + ' 的熱門美食店家。',
+                        'en': 'Google Maps rating ' + rating + '. Highly rated spot in ' + target.city.toUpperCase() + '.',
+                        'tl': 'Google Maps rating ' + rating + '. Sikat na kainan sa ' + target.city.toUpperCase() + '.'
+                      },
+                      imageUrl: photoUrl,
+                      categoryKey: categoryKey
+                    });
                   }
                 }
               }
 
-              const merged = Array.from(map.values());
+              const merged = Array.from(restaurantMap.values());
               fs.writeFileSync('restaurants.json', JSON.stringify(merged, null, 2));
-              console.log('Saved total ' + merged.length + ' restaurants across 3 cities.');
+              console.log('Successfully synced ' + merged.length + ' authentic Google Places restaurants!');
             }
 
-            processAll();
+            startSync();
           "
 
       - name: Commit and Push
@@ -143,5 +127,5 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add restaurants.json
-          git commit -m "Expand scraping sources to Booky and Local Blogs" || exit 0
+          git commit -m "Directly sync restaurants from Google Places Text Search" || exit 0
           git push
