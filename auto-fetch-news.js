@@ -11,7 +11,7 @@ function formatDate(date) {
 }
 
 async function generateAutomatedNews() {
-  console.log("🤖【自動化系統】開始更新跨城市美食新聞與優惠（含網站連結）...");
+  console.log("🤖【自動化系統】開始更新跨城市美食新聞與優惠（修正活動連結）...");
 
   try {
     const todayObj = new Date();
@@ -29,7 +29,7 @@ async function generateAutomatedNews() {
     });
     await batch.commit();
 
-    // 2. 建立帶有 url 欄位的新聞動態
+    // 2. 建立精確導向活動與官網的網址
     const newsItems = [
       {
         id: "auto-promo-manila",
@@ -38,7 +38,7 @@ async function generateAutomatedNews() {
         brand: "🔥 馬尼拉熱門優惠",
         tag: "🔥 限時優惠",
         title: `馬尼拉都會區本週精選餐飲外送與折扣 (${pastStr} ~ ${todayStr})`,
-        url: "https://www.grab.com/ph/food/", // 點擊標題會前往的官方/外送網站
+        url: "https://food.grab.com/ph/en/", // 指向 GrabFood 菲律賓官網
         validity: `有效期限至 ${todayStr}`,
         imageUrl: "https://images.unsplash.com/photo-1550547660-d9450f859349?w=800&auto=format&fit=crop",
         descriptions: {
@@ -55,7 +55,7 @@ async function generateAutomatedNews() {
         brand: "✨ 宿霧海鮮新據點",
         tag: "✨ 新開餐廳",
         title: `宿霧 Mactan 海邊全新餐飲概念店試營運 (${pastStr} ~ ${todayStr})`,
-        url: "https://www.foodpanda.ph", // 點擊標題會前往的網站
+        url: "https://www.foodpanda.ph", // 指向 Foodpanda 菲律賓官網
         validity: "長期試營運",
         imageUrl: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=800&auto=format&fit=crop",
         descriptions: {
@@ -72,7 +72,7 @@ async function generateAutomatedNews() {
         brand: "🔥 達沃在地特惠",
         tag: "🔥 限時優惠",
         title: `達沃人氣燒肉與在地美食本週特惠 (${pastStr} ~ ${todayStr})`,
-        url: "https://www.facebook.com", // 點擊標題會前往的官方粉專或網站
+        url: "https://www.facebook.com/groups/davaofoodclub", // 指向具體的達沃美食社群或相關活動頁面
         validity: `有效期限至 ${todayStr}`,
         imageUrl: "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=800&auto=format&fit=crop",
         descriptions: {
@@ -92,7 +92,7 @@ async function generateAutomatedNews() {
     });
     await newBatch.commit();
 
-    console.log("✅【自動化系統】成功寫入帶有網站連結的最新動態！");
+    console.log("✅【自動化系統】成功寫入更新後的網址！");
   } catch (error) {
     console.error("❌【自動化系統】執行失敗：", error);
     process.exit(1);
