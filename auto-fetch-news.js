@@ -1,5 +1,4 @@
 const admin = require('firebase-admin');
-const { GoogleGenAI } = require('@google/genai');
 
 // 初始化 Firebase
 const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
@@ -9,9 +8,6 @@ if (!admin.apps.length) {
   });
 }
 const db = admin.firestore();
-
-// 初始化 Gemini
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
 // 城市特定搜尋設定（分城深挖，確保達沃與宿霧數量充足）
 const CITY_CONFIGS = [
@@ -42,7 +38,7 @@ const BACKUP_IMAGES = [
   "https://images.unsplash.com/photo-1517256064527-09c73fc73e38?w=800&auto=format&fit=crop"
 ];
 
-async function fetchCityNews(cityConfig) {
+async function fetchCityNews(ai, cityConfig) {
   console.log(`🔍 正在深挖 [${cityConfig.cityName}] 的即時美食新聞與優惠...`);
 
   const prompt = `你是一個專業的菲律賓美食特派員與社群情報專家。
@@ -114,10 +110,14 @@ async function fetchCityNews(cityConfig) {
 async function runAutoNews() {
   console.log("🚀 開始分城抓取菲律賓三大城市的美食情報...");
 
+  // 使用動態 import 載入純 ESM 的 @google/genai 套件
+  const { GoogleGenAI } = await import('@google/genai');
+  const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+
   let allCollectedNews = [];
 
   for (const config of CITY_CONFIGS) {
-    const cityNews = await fetchCityNews(config);
+    const cityNews = await fetchCityNews(ai, config);
     console.log(`   ✅ [${config.cityName}] 成功抓取到 ${cityNews.length} 則動態！`);
     allCollectedNews = allCollectedNews.concat(cityNews);
   }
