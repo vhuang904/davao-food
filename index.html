@@ -10,7 +10,7 @@
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #fdfbf7; color: #333; padding-bottom: 30px; }
         
-        /* 頂部 Header：完整包裹選單與分類列，確保滑動時完全固定 */
+        /* 頂部 Header：完整包裹所有篩選列，滾動時 100% 固定不移位 */
         header { background: #EA580C; color: white; padding: 12px 16px 0 16px; box-shadow: 0 4px 10px rgba(0,0,0,0.08); position: sticky; top: 0; z-index: 100; }
         .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
         .header-top h1 { font-size: 1.15rem; font-weight: bold; letter-spacing: 0.5px; }
@@ -27,15 +27,15 @@
         .main-tab-btn { flex: 1; text-align: center; padding: 10px; font-weight: bold; font-size: 0.92rem; color: rgba(255,255,255,0.75); border: none; background: none; cursor: pointer; border-bottom: 3px solid transparent; }
         .main-tab-btn.active { color: white; border-bottom: 3px solid white; }
 
-        /* 包裹在 Header 內的分類橫條 */
+        /* 🎯 1. 包裹在 Header 內的美食地圖分類橫條 */
         .category-bar { display: flex; gap: 8px; overflow-x: auto; padding: 10px 16px; background: #ffffff; margin: 0 -16px; border-bottom: 1px solid #f1ece1; }
         .category-bar::-webkit-scrollbar { display: none; }
         .cat-chip { padding: 6px 14px; border-radius: 18px; font-size: 0.85rem; background: #f5f2eb; color: #666; white-space: nowrap; border: none; cursor: pointer; transition: all 0.2s; }
         .cat-chip.active { background: #EA580C; color: white; font-weight: bold; }
 
-        /* 🎯 新聞頁面專屬二級篩選 Bar：等寬且文字長度平衡 */
-        .news-filter-bar { display: flex; gap: 8px; margin-bottom: 16px; }
-        .news-sub-btn { flex: 1; padding: 10px 4px; border-radius: 8px; font-size: 0.83rem; font-weight: bold; border: 1px solid #e7e2d7; background: #ffffff; color: #666; cursor: pointer; text-align: center; white-space: nowrap; }
+        /* 🎯 2. 包裹在 Header 內的新聞二級篩選 Bar（置頂固定且完全等寬平衡） */
+        .news-filter-bar { display: none; gap: 8px; padding: 10px 16px; background: #ffffff; margin: 0 -16px; border-bottom: 1px solid #f1ece1; }
+        .news-sub-btn { flex: 1; padding: 8px 4px; border-radius: 8px; font-size: 0.83rem; font-weight: bold; border: 1px solid #e7e2d7; background: #ffffff; color: #666; cursor: pointer; text-align: center; white-space: nowrap; }
         .news-sub-btn.active { background: #ea580c; color: white; border-color: #ea580c; }
 
         /* 卡片與容器 */
@@ -111,13 +111,21 @@
                 <option value="tl">Tagalog</option>
             </select>
         </div>
-        <!-- 頂部頁籤：美食地圖 vs 美食新聞 -->
+        <!-- 頂部頁籤：美食地圖 vs 美食新聞與促銷 -->
         <div class="main-tabs">
             <button class="main-tab-btn active" id="tab-btn-map" onclick="switchMainTab('map')">🗺️ 美食地圖</button>
             <button class="main-tab-btn" id="tab-btn-news" onclick="switchMainTab('news')">📰 美食新聞與促銷</button>
         </div>
-        <!-- 包裹在 Header 內的分類橫條 -->
+        
+        <!-- 🎯 包裹在 Header 內：美食地圖專用分類列 -->
         <div class="category-bar" id="category-bar"></div>
+
+        <!-- 🎯 包裹在 Header 內：美食新聞專用篩選列 (完全跟隨頂部固定) -->
+        <div class="news-filter-bar" id="news-filter-bar">
+            <button class="news-sub-btn active" id="news-sub-all" onclick="filterNewsType('all')">全部動態</button>
+            <button class="news-sub-btn" id="news-sub-promo" onclick="filterNewsType('promo')">🔥 限時優惠</button>
+            <button class="news-sub-btn" id="news-sub-new" onclick="filterNewsType('new')">✨ 新開餐廳</button>
+        </div>
     </header>
 
     <!-- 1. 美食地圖 Tab 內容 -->
@@ -131,12 +139,6 @@
     <!-- 2. 獨立新聞與特惠 Tab 內容 -->
     <div id="main-tab-news" class="tab-content">
         <div class="container">
-            <!-- 精簡字體、均等寬度的平衡按鈕列 -->
-            <div class="news-filter-bar">
-                <button class="news-sub-btn active" id="news-sub-all" onclick="filterNewsType('all')">全部動態</button>
-                <button class="news-sub-btn" id="news-sub-promo" onclick="filterNewsType('promo')">🔥 限時優惠</button>
-                <button class="news-sub-btn" id="news-sub-new" onclick="filterNewsType('new')">✨ 新開餐廳</button>
-            </div>
             <div id="news-list"></div>
         </div>
     </div>
@@ -398,13 +400,18 @@
             renderUI();
         }
 
+        /* 🎯 切換主 Tab：連同 Header 內的子篩選列一起切換顯示，保證固定不移位 */
         function switchMainTab(tab) {
             currentMainTab = tab;
             document.getElementById('tab-btn-map').classList.toggle('active', tab === 'map');
             document.getElementById('tab-btn-news').classList.toggle('active', tab === 'news');
             document.getElementById('main-tab-map').classList.toggle('active', tab === 'map');
             document.getElementById('main-tab-news').classList.toggle('active', tab === 'news');
+            
+            // 地圖專用標籤 vs 新聞專用標籤 切換
             document.getElementById('category-bar').style.display = (tab === 'map') ? 'flex' : 'none';
+            document.getElementById('news-filter-bar').style.display = (tab === 'news') ? 'flex' : 'none';
+
             if (tab === 'news') renderNewsList();
         }
 
