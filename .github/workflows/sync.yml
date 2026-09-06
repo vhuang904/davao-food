@@ -20,30 +20,25 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Multi-Source Scraping (Tripadvisor + Google/Blogs + Facebook)
+      - name: Multi-Source Scraping for Davao, Manila & Cebu
         env:
           FIRECRAWL_KEY: ${{ secrets.FIRECRAWL_API_KEY }}
         run: |
           fetch_city() {
             CITY=$1
             
-            # 1. Tripadvisor 來源
-            curl -X POST https://api.firecrawl.dev/v1/scrape \
-              -H "Content-Type: application/json" \
-              -H "Authorization: Bearer $FIRECRAWL_KEY" \
-              -d "{\"url\": \"https://www.tripadvisor.com/Search?q=${CITY}+restaurants\", \"formats\": [\"extract\"], \"extract\": {\"prompt\": \"Extract restaurant listings in ${CITY}. For each, provide name, phone, address, imageUrl, cuisine category, and write a short description in Traditional Chinese (desc_zh), English (desc_en), and Tagalog (desc_tl).\", \"schema\": {\"type\": \"object\", \"properties\": {\"restaurants\": {\"type\": \"array\", \"items\": {\"type\": \"object\", \"properties\": {\"name\": {\"type\": \"string\"}, \"phone\": {\"type\": \"string\"}, \"address\": {\"type\": \"string\"}, \"desc_zh\": {\"type\": \"string\"}, \"desc_en\": {\"type\": \"string\"}, \"desc_tl\": {\"type\": \"string\"}, \"imageUrl\": {\"type\": \"string\"}, \"category\": {\"type\": \"string\"}}}}}}}}" > "res_${CITY}_ta.json"
+            # 給予更嚴格且明確的分類指引
+            PROMPT_RULE="Extract restaurants in ${CITY}. Classify category strictly as one of: [chinese, japanese_korean, filipino, american_western, bbq_seafood, cafe_dessert]. Include name, phone, address, imageUrl, desc_zh, desc_en, desc_tl."
 
-            # 2. OpenTable / Yelp / 食記部落格來源
             curl -X POST https://api.firecrawl.dev/v1/scrape \
               -H "Content-Type: application/json" \
               -H "Authorization: Bearer $FIRECRAWL_KEY" \
-              -d "{\"url\": \"https://www.google.com/search?q=top+restaurants+in+${CITY}+site:opentable.com+OR+site:yelp.com\", \"formats\": [\"extract\"], \"extract\": {\"prompt\": \"Extract popular restaurants in ${CITY} including name, address, phone, imageUrl, cuisine category, and write short descriptions in Traditional Chinese (desc_zh), English (desc_en), and Tagalog (desc_tl).\", \"schema\": {\"type\": \"object\", \"properties\": {\"restaurants\": {\"type\": \"array\", \"items\": {\"type\": \"object\", \"properties\": {\"name\": {\"type\": \"string\"}, \"phone\": {\"type\": \"string\"}, \"address\": {\"type\": \"string\"}, \"desc_zh\": {\"type\": \"string\"}, \"desc_en\": {\"type\": \"string\"}, \"desc_tl\": {\"type\": \"string\"}, \"imageUrl\": {\"type\": \"string\"}, \"category\": {\"type\": \"string\"}}}}}}}}" > "res_${CITY}_blogs.json"
+              -d "{\"url\": \"https://www.tripadvisor.com/Search?q=${CITY}+restaurants\", \"formats\": [\"extract\"], \"extract\": {\"prompt\": \"${PROMPT_RULE}\", \"schema\": {\"type\": \"object\", \"properties\": {\"restaurants\": {\"type\": \"array\", \"items\": {\"type\": \"object\", \"properties\": {\"name\": {\"type\": \"string\"}, \"phone\": {\"type\": \"string\"}, \"address\": {\"type\": \"string\"}, \"desc_zh\": {\"type\": \"string\"}, \"desc_en\": {\"type\": \"string\"}, \"desc_tl\": {\"type\": \"string\"}, \"imageUrl\": {\"type\": \"string\"}, \"category\": {\"type\": \"string\"}}}}}}}}" > "res_${CITY}_ta.json"
 
-            # 3. Facebook 餐廳粉專定向檢索來源 (site:facebook.com)
             curl -X POST https://api.firecrawl.dev/v1/scrape \
               -H "Content-Type: application/json" \
               -H "Authorization: Bearer $FIRECRAWL_KEY" \
-              -d "{\"url\": \"https://www.google.com/search?q=popular+restaurant+in+${CITY}+site:facebook.com\", \"formats\": [\"extract\"], \"extract\": {\"prompt\": \"Extract popular Facebook restaurant pages in ${CITY} with name, address, phone, imageUrl, cuisine category, and write short descriptions in Traditional Chinese (desc_zh), English (desc_en), and Tagalog (desc_tl).\", \"schema\": {\"type\": \"object\", \"properties\": {\"restaurants\": {\"type\": \"array\", \"items\": {\"type\": \"object\", \"properties\": {\"name\": {\"type\": \"string\"}, \"phone\": {\"type\": \"string\"}, \"address\": {\"type\": \"string\"}, \"desc_zh\": {\"type\": \"string\"}, \"desc_en\": {\"type\": \"string\"}, \"desc_tl\": {\"type\": \"string\"}, \"imageUrl\": {\"type\": \"string\"}, \"category\": {\"type\": \"string\"}}}}}}}}" > "res_${CITY}_fb.json"
+              -d "{\"url\": \"https://www.google.com/search?q=top+restaurants+in+${CITY}+site:facebook.com+OR+site:opentable.com\", \"formats\": [\"extract\"], \"extract\": {\"prompt\": \"${PROMPT_RULE}\", \"schema\": {\"type\": \"object\", \"properties\": {\"restaurants\": {\"type\": \"array\", \"items\": {\"type\": \"object\", \"properties\": {\"name\": {\"type\": \"string\"}, \"phone\": {\"type\": \"string\"}, \"address\": {\"type\": \"string\"}, \"desc_zh\": {\"type\": \"string\"}, \"desc_en\": {\"type\": \"string\"}, \"desc_tl\": {\"type\": \"string\"}, \"imageUrl\": {\"type\": \"string\"}, \"category\": {\"type\": \"string\"}}}}}}}}" > "res_${CITY}_fb.json"
           }
 
           fetch_city "davao"
@@ -60,14 +55,24 @@ jobs:
               } catch(e) { return []; }
             }
 
-            function mapCategoryKey(item) {
-              const text = ((item.category || '') + ' ' + (item.name || '') + ' ' + (item.desc_en || '')).toLowerCase();
-              if (/chinese|dim sum|noodle|asian|taiwanese|hong kong/i.test(text)) return 'chinese';
-              if (/american|burger|steak|pizza|fast food/i.test(text)) return 'american';
-              if (/bbq|barbecue|grill|lechon|ihaw/i.test(text)) return 'bbq';
-              if (/seafood|tuna|fish|crab|shrimp|kinilaw/i.test(text)) return 'seafood';
-              if (/cafe|coffee|bakery|dessert|tea/i.test(text)) return 'cafe';
-              return 'filipino';
+            // 深度關鍵詞矩陣校正
+            function preciseCategory(r) {
+              const text = ((r.category || '') + ' ' + (r.name || '') + ' ' + (r.desc_en || '') + ' ' + (r.desc_zh || '')).toLowerCase();
+              
+              // 日韓料理
+              if (/japan|japanese|ramen|sushi|bento|yakitori|korean|samgyupsal|kimchi|bbq korean/i.test(text)) return 'japanese_korean';
+              // 中式/港式/台灣味
+              if (/chinese|dim sum|dumpling|noodle|taiwan|hong kong|cantonese|hotpot|xiao long bao/i.test(text)) return 'chinese';
+              // 燒烤與海鮮 (菲律賓在地燒烤/鮪魚/海鮮)
+              if (/bbq|barbecue|grill|inasal|ihaw|lechon|seafood|tuna|crab|shrimp|kinilaw/i.test(text)) return 'bbq_seafood';
+              // 咖啡輕食/甜點烘焙
+              if (/cafe|coffee|matcha|bakery|cake|dessert|tea|boba|milk tea|breakfast|brunch/i.test(text)) return 'cafe_dessert';
+              // 美式與牛排/披薩/義式
+              if (/american|burger|steak|ribs|pizza|pasta|italian|burger joint/i.test(text)) return 'american_western';
+              // 菲律賓在地傳統餐
+              if (/filipino|pinoy|sinigang|adobo|sisig|kare-kare|bistro|mindanao/i.test(text)) return 'filipino';
+
+              return 'filipino'; // 預設歸類
             }
 
             const cities = ['davao', 'manila', 'cebu'];
@@ -75,13 +80,11 @@ jobs:
 
             cities.forEach(city => {
               const listTA = getList('res_' + city + '_ta.json');
-              const listBlogs = getList('res_' + city + '_blogs.json');
               const listFB = getList('res_' + city + '_fb.json');
-              const combined = [...listTA, ...listBlogs, ...listFB];
+              const combined = [...listTA, ...listFB];
 
               combined.forEach(r => {
                 if(r.name && r.name.trim().length > 0) {
-                  // 清理粉專名稱常出現的後綴字眼
                   let cleanName = r.name.replace(/\s*-\s*Home\s*|\s*-\s*Facebook\s*/gi, '').trim();
                   const key = city + '_' + cleanName.toLowerCase();
 
@@ -96,7 +99,7 @@ jobs:
                       'tl': r.desc_tl || r.desc_en || 'Walang magagamit na paglalarawan.'
                     },
                     imageUrl: r.imageUrl || '',
-                    categoryKey: mapCategoryKey(r)
+                    categoryKey: preciseCategory(r)
                   });
                 }
               });
@@ -104,13 +107,13 @@ jobs:
 
             const merged = Array.from(map.values());
             fs.writeFileSync('restaurants.json', JSON.stringify(merged, null, 2));
-            console.log('Saved ' + merged.length + ' multi-source (including Facebook) restaurants.');
+            console.log('Successfully re-classified ' + merged.length + ' restaurants.');
           "
 
-      - name: Commit and Push updated JSON
+      - name: Commit and Push
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add restaurants.json
-          git commit -m "Include Facebook search source in multi-city sync" || exit 0
+          git commit -m "Optimize restaurant classification logic with precise keyword matrix" || exit 0
           git push
