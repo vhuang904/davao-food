@@ -11,7 +11,7 @@ function formatDate(date) {
 }
 
 async function generateAutomatedNews() {
-  console.log("🤖【自動化系統】開始更新前七天美食新聞與優惠...");
+  console.log("🤖【自動化系統】開始更新跨城市（馬尼拉、宿霧、達沃）前七天美食新聞與優惠...");
 
   try {
     const todayObj = new Date();
@@ -21,7 +21,7 @@ async function generateAutomatedNews() {
     const todayStr = formatDate(todayObj);
     const pastStr = formatDate(pastObj);
     
-    // 1. 清空舊的 news 集合 (修正為 .docs.forEach)
+    // 1. 清空舊的 news 集合
     const newsSnapshot = await db.collection('news').get();
     const batch = db.batch();
     newsSnapshot.docs.forEach((doc) => {
@@ -29,39 +29,55 @@ async function generateAutomatedNews() {
     });
     await batch.commit();
 
-    // 2. 建立多筆獨立且分類明確的動態（限時優惠 + 新開餐廳）
+    // 2. 建立涵蓋馬尼拉、宿霧、達沃的多城市動態
     const newsItems = [
       {
-        id: "auto-promo-1",
-        city: "all",
+        id: "auto-promo-manila",
+        city: "manila", // 對應馬尼拉
         type: "promo",
-        brand: "🔥 連鎖餐飲特惠",
+        brand: "🔥 馬尼拉熱門優惠",
         tag: "🔥 限時優惠",
-        title: `本週全區外送與店內優惠總整理 (${pastStr} ~ ${todayStr})`,
+        title: `馬尼拉都會區本週精選餐飲外送與折扣 (${pastStr} ~ ${todayStr})`,
         validity: `有效期限至 ${todayStr}`,
         imageUrl: "https://images.unsplash.com/photo-1550547660-d9450f859349?w=800&auto=format&fit=crop",
         descriptions: {
-          "zh-TW": `涵蓋 ${pastStr} 至 ${todayStr} 期間，各大連鎖餐廳（如 Jollibee、McDonald's、KFC）推出的最新外送折扣與 App 優惠碼。`,
-          "en": `Weekly food promos and delivery discounts valid until ${todayStr}.`,
-          "tl": `Mga promo sa pagkain na may bisang hanggang ${todayStr}.`
+          "zh-TW": `馬尼拉地區本週精選：BGC 與 Makati 商圈各大餐廳聯手推出線上訂餐最高折抵優惠，適用於 GrabFood 與門市外帶。`,
+          "en": `Metro Manila weekly dining promos and delivery discounts valid until ${todayStr}.`,
+          "tl": `Mga promo sa pagkain sa Metro Manila hanggang ${todayStr}.`
         },
-        location: "全菲律賓指定門市與線上 App"
+        location: "Metro Manila (BGC / Makati)"
       },
       {
-        id: "auto-new-1",
-        city: "davao",
+        id: "auto-promo-cebu",
+        city: "cebu", // 對應宿霧
         type: "new",
-        brand: "✨ 達沃新據點",
+        brand: "✨ 宿霧海鮮新據點",
         tag: "✨ 新開餐廳",
-        title: `達沃本週新進駐人氣餐飲品牌 (${pastStr} ~ ${todayStr})`,
+        title: `宿霧 Mactan 海邊全新餐飲概念店試營運 (${pastStr} ~ ${todayStr})`,
         validity: "長期試營運",
+        imageUrl: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=800&auto=format&fit=crop",
+        descriptions: {
+          "zh-TW": `宿霧地區本週焦點：Mactan 島全新開幕的海鮮碳烤與日式料理概念店，主打新鮮碳烤大蝦與海景用餐體驗。`,
+          "en": `New seaside dining spot opened in Mactan, Cebu this week.`,
+          "tl": `Bagong bukas na kainan sa Mactan, Cebu ngayong linggo.`
+        },
+        location: "Mactan Island Promenade, Cebu"
+      },
+      {
+        id: "auto-promo-davao",
+        city: "davao", // 對應達沃
+        type: "promo",
+        brand: "🔥 達沃在地特惠",
+        tag: "🔥 限時優惠",
+        title: `達沃人氣燒肉與在地美食本週特惠 (${pastStr} ~ ${todayStr})`,
+        validity: `有效期限至 ${todayStr}`,
         imageUrl: "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=800&auto=format&fit=crop",
         descriptions: {
-          "zh-TW": `統計 ${pastStr} 至 ${todayStr} 於達沃市全新開幕的特色餐廳與燒肉、咖啡輕食據點，邀請玩家搶先嚐鮮！`,
-          "en": `New restaurant openings and dining spots in Davao this week (${pastStr} - ${todayStr}).`,
-          "tl": `Mga bagong bukas na kainan sa Davao ngayong linggo.`
+          "zh-TW": `達沃地區本週焦點：Matina 與 Abreeza 商圈周邊人氣餐廳推出憑地圖畫面享專屬折扣活動。`,
+          "en": `Davao local restaurant promos and discounts for this week.`,
+          "tl": `Mga espesyal na promo sa Davao ngayong linggo.`
         },
-        location: "Davao City 核心商圈"
+        location: "Matina / Abreeza, Davao City"
       }
     ];
 
@@ -73,7 +89,7 @@ async function generateAutomatedNews() {
     });
     await newBatch.commit();
 
-    console.log("✅【自動化系統】成功寫入前七天限時優惠與新開餐廳動態！");
+    console.log("✅【自動化系統】成功寫入包含馬尼拉、宿霧與達沃的最新動態！");
   } catch (error) {
     console.error("❌【自動化系統】執行失敗：", error);
     process.exit(1);
