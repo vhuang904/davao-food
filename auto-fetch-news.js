@@ -1,5 +1,4 @@
 const admin = require('firebase-admin');
-const { GoogleGenAI } = require('@google/genai');
 
 // 初始化 Firebase
 const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
@@ -8,13 +7,14 @@ admin.initializeApp({
 });
 const db = admin.firestore();
 
-// 初始化 Gemini API
-const ai = new GoogleGenAI();
-
 async function generateAutomatedNewsWithAI() {
   console.log("🤖【AI 自動化系統】正在透過聯網搜尋菲律賓最新美食新聞與優惠...");
 
   try {
+    // 動態引入 ES Module 的 @google/genai
+    const { GoogleGenAI } = await import('@google/genai');
+    const ai = new GoogleGenAI();
+
     // 1. 透過 Gemini 聯網搜尋菲律賓當週最新餐飲促銷與新店資訊
     const response = await ai.models.generateContent({
       model: 'gemini-2.5-flash',
@@ -58,7 +58,7 @@ async function generateAutomatedNewsWithAI() {
     await batch.commit();
     console.log("🧹 已清除舊的動態資料。");
 
-    // 3. 寫入 AI 自動生成的真實動態（修正亂數產生語法）
+    // 3. 寫入 AI 自動生成的真實動態
     const newBatch = db.batch();
     newsItems.forEach(item => {
       if (!item.id) item.id = "ai-news-" + Math.random().toString(36).substring(7);
