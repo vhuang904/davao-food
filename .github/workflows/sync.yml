@@ -8,6 +8,10 @@ on:
 permissions:
   contents: write
 
+env:
+  ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true
+  ACTIONS_RUNNER_FORCE_NODE24: true
+
 jobs:
   scrape:
     runs-on: ubuntu-latest
@@ -60,36 +64,25 @@ jobs:
               });
             }
 
-            // 深度精準分類邏輯 (優先過濾日韓、中式、燒烤，避免誤入菲律賓餐)
+            // 深度精準分類邏輯
             function preciseCategory(name, types, text) {
               const str = (name + ' ' + (types || []).join(' ') + ' ' + text).toLowerCase();
 
-              // 1. 日韓料理與日式燒肉 (包含 Yaki, Yakiniku, Wagyu, Ramen, Sushi, Samgyupsal)
               if (/japan|japanese|yaki|yakiniku|wagyu|ramen|sushi|bento|yakitori|korean|samgyup|samgyupsal|kimchi/i.test(str)) {
                 return 'japanese_korean';
               }
-
-              // 2. 中式 / 港點 / 台灣味 / 火鍋
               if (/chinese|dim sum|dumpling|noodle|taiwan|cantonese|hotpot|xiao long bao/i.test(str)) {
                 return 'chinese';
               }
-
-              // 3. 燒烤與海鮮 (Inasal, Lechon, Seafood, Grill, Ihaw)
               if (/bbq|barbecue|grill|inasal|ihaw|lechon|seafood|tuna|crab|shrimp|kinilaw/i.test(str)) {
                 return 'bbq_seafood';
               }
-
-              // 4. 咖啡 / 甜點 / 輕食 / 抹茶
               if (/cafe|coffee|bakery|cake|dessert|tea|milk tea|brunch|matcha/i.test(str)) {
                 return 'cafe_dessert';
               }
-
-              // 5. 美式 / 排餐 / 披薩 / 義式
               if (/american|burger|steak|ribs|pizza|pasta|italian/i.test(str)) {
                 return 'american_western';
               }
-
-              // 6. 菲律賓在地料理 (Pinoy, Sinigang, Adobo, Sisig, Kare-kare)
               return 'filipino';
             }
 
@@ -111,7 +104,6 @@ jobs:
                   const key = target.city + '_' + placeId;
 
                   if (!restaurantMap.has(key)) {
-                    // 僅紀錄地圖資料，防護 API 金鑰在儲存時洩漏
                     const rating = place.rating ? ('⭐ ' + place.rating + ' (' + (place.user_ratings_total || 0) + ')') : '熱門餐廳';
                     const categoryKey = preciseCategory(name, place.types, place.formatted_address || '');
 
@@ -145,5 +137,5 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add restaurants.json
-          git commit -m "Upgrade Node.js environment to v22 and sync restaurants" || exit 0
+          git commit -m "Suppress Node 20 deprecation warning" || exit 0
           git push
