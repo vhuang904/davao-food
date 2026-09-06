@@ -35,12 +35,15 @@ jobs:
               process.exit(1);
             }
 
-            // 搜尋關鍵字矩陣 (涵蓋 3 個城市 + 各類美食)
+            // 多城市 + 精準區域/主題搜尋目標矩陣
             const searchTargets = [
               { city: 'davao', query: 'best popular restaurants in Davao City Philippines' },
-              { city: 'davao', query: 'chinese japanese korean cafe bbq in Davao City' },
+              { city: 'davao', query: 'Yaki Together Matina Davao' },
+              { city: 'davao', query: 'best Japanese Korean BBQ restaurants in Davao City' },
+              { city: 'davao', query: 'famous cafe chinese seafood in Davao City' },
               { city: 'manila', query: 'best popular restaurants in Manila Metro Philippines' },
               { city: 'manila', query: 'famous cafe food spots in Makati BGC Manila' },
+              { city: 'manila', query: 'japanese korean chinese restaurant in Manila' },
               { city: 'cebu', query: 'best popular restaurants in Cebu City Philippines' },
               { city: 'cebu', query: 'seafood bbq cafe in Cebu City' }
             ];
@@ -57,14 +60,36 @@ jobs:
               });
             }
 
-            // 精準自動分類邏輯
+            // 深度精準分類邏輯 (優先過濾日韓、中式、燒烤，避免誤入菲律賓餐)
             function preciseCategory(name, types, text) {
               const str = (name + ' ' + (types || []).join(' ') + ' ' + text).toLowerCase();
-              if (/japan|ramen|sushi|bento|korean|samgyupsal|kimchi/i.test(str)) return 'japanese_korean';
-              if (/chinese|dim sum|dumpling|noodle|taiwan|cantonese|hotpot/i.test(str)) return 'chinese';
-              if (/bbq|barbecue|grill|inasal|ihaw|lechon|seafood|tuna|crab|shrimp|kinilaw/i.test(str)) return 'bbq_seafood';
-              if (/cafe|coffee|bakery|cake|dessert|tea|milk tea|brunch/i.test(str)) return 'cafe_dessert';
-              if (/american|burger|steak|ribs|pizza|pasta|italian/i.test(str)) return 'american_western';
+
+              // 1. 日韓料理與日式燒肉 (包含 Yaki, Yakiniku, Wagyu, Ramen, Sushi, Samgyupsal)
+              if (/japan|japanese|yaki|yakiniku|wagyu|ramen|sushi|bento|yakitori|korean|samgyup|samgyupsal|kimchi/i.test(str)) {
+                return 'japanese_korean';
+              }
+
+              // 2. 中式 / 港點 / 台灣味 / 火鍋
+              if (/chinese|dim sum|dumpling|noodle|taiwan|cantonese|hotpot|xiao long bao/i.test(str)) {
+                return 'chinese';
+              }
+
+              // 3. 燒烤與海鮮 (Inasal, Lechon, Seafood, Grill, Ihaw)
+              if (/bbq|barbecue|grill|inasal|ihaw|lechon|seafood|tuna|crab|shrimp|kinilaw/i.test(str)) {
+                return 'bbq_seafood';
+              }
+
+              // 4. 咖啡 / 甜點 / 輕食 / 抹茶
+              if (/cafe|coffee|bakery|cake|dessert|tea|milk tea|brunch|matcha/i.test(str)) {
+                return 'cafe_dessert';
+              }
+
+              // 5. 美式 / 排餐 / 披薩 / 義式
+              if (/american|burger|steak|ribs|pizza|pasta|italian/i.test(str)) {
+                return 'american_western';
+              }
+
+              // 6. 菲律賓在地料理 (Pinoy, Sinigang, Adobo, Sisig, Kare-kare)
               return 'filipino';
             }
 
@@ -86,7 +111,7 @@ jobs:
                   const key = target.city + '_' + placeId;
 
                   if (!restaurantMap.has(key)) {
-                    // 取得高解析度 Google 官方照片網址
+                    // 取得 Google 官方高清照片網址
                     let photoUrl = '';
                     if (place.photos && place.photos.length > 0) {
                       const photoRef = place.photos[0].photo_reference;
@@ -96,7 +121,6 @@ jobs:
                     const rating = place.rating ? ('⭐ ' + place.rating + ' (' + (place.user_ratings_total || 0) + ')') : '熱門餐廳';
                     const categoryKey = preciseCategory(name, place.types, place.formatted_address || '');
 
-                    // 自動生成 3 語系簡短對應介紹
                     restaurantMap.set(key, {
                       city: target.city,
                       name: name,
@@ -127,5 +151,5 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add restaurants.json
-          git commit -m "Directly sync restaurants from Google Places Text Search" || exit 0
+          git commit -m "Directly sync restaurants from Google Places with refined Japanese/Korean Yaki classification" || exit 0
           git push
