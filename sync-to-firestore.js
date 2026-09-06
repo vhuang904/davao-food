@@ -106,8 +106,6 @@ async function syncData() {
       }
       
       const docId = `${city}_${safeName}`;
-      
-      // 確保 docId 絕對不為空字串
       if (!docId || docId.trim() === '') continue;
 
       const docRef = db.collection('restaurants').doc(docId);
