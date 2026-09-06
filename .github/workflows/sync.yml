@@ -26,8 +26,6 @@ jobs:
         run: |
           fetch_city() {
             CITY=$1
-            
-            # 給予更嚴格且明確的分類指引
             PROMPT_RULE="Extract restaurants in ${CITY}. Classify category strictly as one of: [chinese, japanese_korean, filipino, american_western, bbq_seafood, cafe_dessert]. Include name, phone, address, imageUrl, desc_zh, desc_en, desc_tl."
 
             curl -X POST https://api.firecrawl.dev/v1/scrape \
@@ -55,24 +53,15 @@ jobs:
               } catch(e) { return []; }
             }
 
-            // 深度關鍵詞矩陣校正
             function preciseCategory(r) {
               const text = ((r.category || '') + ' ' + (r.name || '') + ' ' + (r.desc_en || '') + ' ' + (r.desc_zh || '')).toLowerCase();
-              
-              // 日韓料理
               if (/japan|japanese|ramen|sushi|bento|yakitori|korean|samgyupsal|kimchi|bbq korean/i.test(text)) return 'japanese_korean';
-              // 中式/港式/台灣味
               if (/chinese|dim sum|dumpling|noodle|taiwan|hong kong|cantonese|hotpot|xiao long bao/i.test(text)) return 'chinese';
-              // 燒烤與海鮮 (菲律賓在地燒烤/鮪魚/海鮮)
               if (/bbq|barbecue|grill|inasal|ihaw|lechon|seafood|tuna|crab|shrimp|kinilaw/i.test(text)) return 'bbq_seafood';
-              // 咖啡輕食/甜點烘焙
               if (/cafe|coffee|matcha|bakery|cake|dessert|tea|boba|milk tea|breakfast|brunch/i.test(text)) return 'cafe_dessert';
-              // 美式與牛排/披薩/義式
               if (/american|burger|steak|ribs|pizza|pasta|italian|burger joint/i.test(text)) return 'american_western';
-              // 菲律賓在地傳統餐
               if (/filipino|pinoy|sinigang|adobo|sisig|kare-kare|bistro|mindanao/i.test(text)) return 'filipino';
-
-              return 'filipino'; // 預設歸類
+              return 'filipino';
             }
 
             const cities = ['davao', 'manila', 'cebu'];
