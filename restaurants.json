@@ -12,5 +12,166 @@
     "address": "Quimpo Blvd, Bucana, Davao City",
     "phone": "(082) 298 0136",
     "imageUrl": "https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?w=500"
+  },
+  {
+    "name": "Mixed Temptation Matina",
+    "phone": "無電話資訊",
+    "address": "0.1 mi Mindanao",
+    "description": "... egg, pork spareribs with salt and pepper, and their signature Peking duck. Immaculate cleanliness and welcoming atmosphere",
+    "imageUrl": "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/2f/f4/09/5b/if-you-re-craving-authentic.jpg?w=400&h=400&s=1"
+  },
+  {
+    "name": "Benjarong Bar and Restaurant Davao",
+    "phone": "無電話資訊",
+    "address": "3.7 mi Mindanao",
+    "description": "Exceptional flavors, especially the Massaman curry. The staff and crew assisted us very well...",
+    "imageUrl": "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/1b/03/18/13/benjarong-bar-and-restaurant.jpg?w=400&h=400&s=1"
+  },
+  {
+    "name": "Madayaw Cafe",
+    "phone": "無電話資訊",
+    "address": "3.7 mi Mindanao",
+    "description": "Perfect Place for Bonding with the Fam and the adobo rice bowl—both absolu...",
+    "imageUrl": "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/17/28/7e/60/siam-lounge-bar.jpg?w=400&h=400&s=1"
+  },
+  {
+    "name": "Luk Foo Palace At Acacia Hotel Davao",
+    "phone": "無電話資訊",
+    "address": "2.2 mi Mindanao",
+    "description": "Peking duck was an absolute delight... to the fried rice and Peking duck.",
+    "imageUrl": "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/17/5e/04/d1/breakfast-set-up.jpg?w=400&h=400&s=1"
+  },
+  {
+    "name": "Siam Lounge",
+    "phone": "無電話資訊",
+    "address": "3.7 mi Mindanao",
+    "description": "I really love the Afternoon High Tea at Siam Lounge I can recommend it to my...",
+    "imageUrl": "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/30/9e/d3/46/buffet-restaurant.jpg?w=400&h=400&s=1"
+  },
+  {
+    "name": "Waling Waling Cafe At Acacia Hotel Davao",
+    "phone": "無電話資訊",
+    "address": "2.2 mi Mindanao",
+    "description": "Mom’s Memorable Birthday at Acacia Hotel Davao – Waling Waling Cafe!",
+    "imageUrl": "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/04/9a/5a/ac/vikings-luxury-buffet.jpg?w=400&h=300&s=1"
+  },
+  {
+    "name": "Vikings Luxury Buffet",
+    "phone": "無電話資訊",
+    "address": "2.3 mi Mindanao",
+    "description": "Vikings has a lot of food to choose from --appetizers to desserts. It has...",
+    "imageUrl": "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/30/05/e6/fe/2.jpg?w=400&h=300&s=1"
+  },
+  {
+    "name": "Mixed Temptation Restaurant Airport",
+    "phone": "無電話資訊",
+    "address": "4.3 mi Mindanao",
+    "description": "Right now, I am craving dumplings again! Recommended!",
+    "imageUrl": "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/18/19/b5/e0/photo4jpg.jpg?w=400&h=400&s=1"
+  },
+  {
+    "name": "Jack's Ridge",
+    "phone": "無電話資訊",
+    "address": "2.1 mi Mindanao",
+    "description": "In my first visit Davao, I loved made an early Valentine's day night here.",
+    "imageUrl": "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/06/e9/40/24/lachi.jpg?w=400&h=-1&s=1"
+  },
+  {
+    "name": "Lachi's",
+    "phone": "無電話資訊",
+    "address": "1 mi Mindanao",
+    "description": "We were brought here on the recommendation of our driver during the last day of...",
+    "imageUrl": "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/12/2c/9b/a9/20180222-132706-largejpg.jpg?w=400&h=300&s=1"
+  },
+  {
+    "name": "Penong's Barbeque Seafoods and Grill",
+    "phone": "無電話資訊",
+    "address": "0.6 mi Mindanao",
+    "description": "Their durian shake is to die for especially at noon in the summer. Definitely a...",
+    "imageUrl": "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/0d/a4/68/71/img20161116135738-largejpg.jpg?w=400&h=400&s=1"
+  },
+  {
+    "name": "Marina Tuna",
+    "phone": "無電話資訊",
+    "address": "4 mi Mindanao",
+    "description": "Everything was cooked perfectly and the tuna and the other fish was incredibly...",
+    "imageUrl": "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/18/19/b5/e0/photo4jpg.jpg?w=400&h=300&s=1"
+  },
+  {
+    "name": "Yellow Fin Seafood Restaurant",
+    "phone": "無電話資訊",
+    "address": "1.8 mi Mindanao",
+    "description": "It was my first time to try some tuna laing and fried and later pinaksiw...",
+    "imageUrl": "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/2f/f3/a3/96/this-spacious-and-uncrowded.jpg?w=400&h=400&s=1"
+  },
+  {
+    "name": "Cafe Tavera",
+    "phone": "無電話資訊",
+    "address": "0.6 mi Mindanao",
+    "description": "my personal favorites are steamed pompano, dragon balls, crab fooyong and...",
+    "imageUrl": "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/32/28/21/86/the-dining-hall.jpg?w=400&h=400&s=1"
+  },
+  {
+    "name": "De Bonte Koe European Bar and Restaurant",
+    "phone": "無電話資訊",
+    "address": "0.4 mi Mindanao",
+    "description": "Also serves food - authentic Dutch. Just another one of my favorites in Davao.",
+    "imageUrl": "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/10/e2/63/f2/sio-mai.jpg?w=400&h=400&s=1"
+  },
+  {
+    "name": "The Vegan Dinosaur",
+    "phone": "無電話資訊",
+    "address": "1 mi Mindanao",
+    "description": "Well worth visiting here, the food is great, its a lovely restaurant and the...",
+    "imageUrl": "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/1a/ee/91/df/photo2jpg.jpg?w=400&h=-1&s=1"
+  },
+  {
+    "name": "Caitlyn's Dumpling Bar",
+    "phone": "無電話資訊",
+    "address": "0.8 mi Mindanao",
+    "description": "Enjoyed the spare ribs, chicken wings, Japanese siomai and of course the...",
+    "imageUrl": "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/31/93/f5/7f/yaki2gether-is-davao.jpg?w=400&h=300&s=1"
+  },
+  {
+    "name": "Robata Davao Tulip Drive",
+    "phone": "N/A",
+    "address": "Tulip Dr",
+    "description": "A popular new dining destination specializing in Japanese cuisine with a modern twist.",
+    "imageUrl": "<image_url_placeholder>"
+  },
+  {
+    "name": "Shibuya Prime Grill and Hotpot",
+    "phone": "N/A",
+    "address": "Barangay, M. Roxas Ave cor M. L, cor Quezon Blvd",
+    "description": "Halal restaurant offering grilled and hotpot dishes, with a cozy ambiance.",
+    "imageUrl": "<image_url_placeholder>"
+  },
+  {
+    "name": "Mori & Mill",
+    "phone": "N/A",
+    "address": "Lapanday Road, Near, Above Blue posts Boiling Crabs and Shrimps, 8000 Ladislawa Ave",
+    "description": "A recently opened restaurant known for its seafood offerings and vibrant atmosphere.",
+    "imageUrl": "<image_url_placeholder>"
+  },
+  {
+    "name": "Siempre Tamu Davao",
+    "phone": "N/A",
+    "address": "Location: TBA",
+    "description": "Filipino-Mexican restaurant combining traditional flavors in a vibrant setting.",
+    "imageUrl": "<image_url_placeholder>"
+  },
+  {
+    "name": "Cafe 221",
+    "phone": "N/A",
+    "address": "221, Yellow House, Cabantian Road, Buhangin, Davao City",
+    "description": "A late-night cafe offering a variety of affordable meals with an inviting atmosphere.",
+    "imageUrl": "<image_url_placeholder>"
+  },
+  {
+    "name": "Kezo Avenue",
+    "phone": "N/A",
+    "address": "CT Drive, Tulip Drive, Matina, Davao City",
+    "description": "An elevated diner serving American comfort food with a nostalgic touch.",
+    "imageUrl": "<image_url_placeholder>"
   }
 ]
