@@ -1,7 +1,6 @@
 const admin = require('firebase-admin');
 const https = require('https');
 
-// 從 GitHub Secret 讀取 Firebase 金鑰
 const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
 
 admin.initializeApp({
@@ -13,46 +12,67 @@ const db = admin.firestore();
 // 你的 Google 試算表 CSV 匯出網址
 const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vR7RqEOBMOhNBT_Mo2kee4w4WNugbZFLRRWhmc3c9FWCjams-n9oyaug1bI4lXyd0G9MfU8ftW8utuJ/pub?output=csv';
 
-// 解析 CSV 的工具函數
+// 支援引號與換行的強效 CSV 解析器
 function parseCSV(text) {
-  const lines = text.split('\n');
-  const result = [];
-  if (lines.length === 0) return result;
-  
-  const headers = lines[0].split(',').map(h => h.trim().replace(/^"|"$/g, ''));
+  const rows = [];
+  let row = [];
+  let inQuotes = false;
+  let field = '';
 
-  for (let i = 1; i < lines.length; i++) {
-    if (!lines[i].trim()) continue;
-    const row = [];
-    let inQuote = false;
-    let currentVal = '';
-    
-    for (let char of lines[i]) {
-      if (char === '"') {
-        inQuote = !inQuote;
-      } else if (char === ',' && !inQuote) {
-        row.push(currentVal.trim());
-        currentVal = '';
+  for (let i = 0; i < text.length; i++) {
+    const c = text[i];
+    const nextC = text[i + 1];
+
+    if (c === '"') {
+      if (inQuotes && nextC === '"') {
+        field += '"';
+        i++; // 跳過下一個引號
       } else {
-        currentVal += char;
+        inQuotes = !inQuotes;
       }
+    } else if (c === ',' && !inQuotes) {
+      row.push(field.trim());
+      field = '';
+    } else if ((c === '\r' || c === '\n') && !inQuotes) {
+      if (c === '\r' && nextC === '\n') i++; // 處理 \r\n
+      row.push(field.trim());
+      rows.push(row);
+      row = [];
+      field = '';
+    } else {
+      field += c;
     }
-    row.push(currentVal.trim());
+  }
+  if (field !== '' || row.length > 0) {
+    row.push(field.trim());
+    rows.push(row);
+  }
 
+  if (rows.length < 2) return [];
+
+  const headers = rows[0].map(h => h.replace(/^"|"$/g, '').trim());
+  const result = [];
+
+  for (let i = 1; i < rows.length; i++) {
+    const r = rows[i];
+    if (r.length === 0 || (r.length === 1 && r[0] === '')) continue;
+    
     const obj = {};
     headers.forEach((header, index) => {
-      obj[header] = row[index] ? row[index].replace(/^"|"$/g, '') : '';
+      let val = r[index] !== undefined ? r[index] : '';
+      obj[header] = val.replace(/^"|"$/g, '').trim();
     });
-    result.push(obj);
+    
+    if (obj.name) { // 確保有店名才收錄
+      result.push(obj);
+    }
   }
   return result;
 }
 
-// 透過 HTTPS 下載 CSV 內容
 function fetchCSVData(url) {
   return new Promise((resolve, reject) => {
     https.get(url, (res) => {
-      // 處理重新導向 (Google Publish 網址常會重新導向)
       if (res.statusCode === 301 || res.statusCode === 302) {
         return fetchCSVData(res.headers.location).then(resolve).catch(reject);
       }
@@ -64,21 +84,20 @@ function fetchCSVData(url) {
 }
 
 async function syncData() {
-  console.log("正在從 Google 試算表抓取最新資料...");
+  console.log("正在從 Google 試算表抓取最新 CSV 資料...");
   try {
     const csvText = await fetchCSVData(SHEET_CSV_URL);
     const restaurantsData = parseCSV(csvText);
 
     if (restaurantsData.length === 0) {
-      console.log("警告：沒有抓到任何資料，請檢查 Google 試算表格式是否正確。");
+      console.log("警告：解析後沒有找到任何餐廳資料，請確認試算表第一分頁是否有內容。");
       return;
     }
 
-    console.log(`成功解析 ${restaurantsData.length} 筆資料，準備寫入 Firebase...`);
+    console.log(`成功解析 ${restaurantsData.length} 筆餐廳資料，準備寫入 Firebase...`);
     const batch = db.batch();
     
     for (const item of restaurantsData) {
-      if (!item.name) continue; // 若沒有店名則跳過
       const city = item.city || 'davao';
       const docId = `${city}_${item.name.replace(/[^a-zA-Z0-9]/g, '')}`;
       const docRef = db.collection('restaurants').doc(docId);
@@ -86,7 +105,7 @@ async function syncData() {
     }
 
     await batch.commit();
-    console.log("所有資料已成功同步到 Firebase Firestore！");
+    console.log("所有餐廳資料已成功同步到 Firebase Firestore！");
   } catch (error) {
     console.error("同步失敗：", error);
     process.exit(1);
