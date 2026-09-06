@@ -564,11 +564,18 @@
                 return;
             }
 
+            // 方案 A：不論當前切換哪種語言，餐廳清單一律以英文原名 A 到 Z 排序
+            filtered.sort((a, b) => {
+                const nameA = (a.name_en || a.name || '').trim().toLowerCase();
+                const nameB = (b.name_en || b.name || '').trim().toLowerCase();
+                return nameA.localeCompare(nameB, 'en', { numeric: true, sensitivity: 'base' });
+            });
+
             listEl.innerHTML = filtered.map((item, idx) => {
                 const catKey = item.categoryKey || 'filipino';
                 const resKey = (item.city || 'davao') + '_' + (item.name || idx).replace(/[^a-zA-Z0-9]/g, '');
 
-                // 核心重點（步驟三）：優先讀取 Google Places API 抓取的真實照片，沒有時才用分類圖庫備援
+                // 優先使用 Google Maps 真實打卡照片，若無才退回分類圖庫
                 const imageList = (item.images && Array.isArray(item.images) && item.images.length > 0)
                     ? item.images
                     : getUniqueRestaurantImageArray(item ? item.name : '', catKey);
