@@ -33,11 +33,6 @@
         .cat-chip { padding: 6px 14px; border-radius: 18px; font-size: 0.85rem; background: #f5f2eb; color: #666; white-space: nowrap; border: none; cursor: pointer; transition: all 0.2s; }
         .cat-chip.active { background: #EA580C; color: white; font-weight: bold; }
 
-        /* 新聞二級篩選 Bar (保留原設計，不影響地圖) */
-        .news-filter-bar { display: none; gap: 8px; padding: 10px 16px; background: #ffffff; margin: 0 -16px; border-bottom: 1px solid #f1ece1; }
-        .news-sub-btn { flex: 1; padding: 8px 4px; border-radius: 8px; font-size: 0.83rem; font-weight: bold; border: 1px solid #e7e2d7; background: #ffffff; color: #666; cursor: pointer; text-align: center; white-space: nowrap; }
-        .news-sub-btn.active { background: #ea580c; color: white; border-color: #ea580c; }
-
         /* 卡片與容器 */
         .container { max-width: 600px; margin: 0 auto; padding: 16px; }
         .tab-content { display: none; }
@@ -62,8 +57,6 @@
         .badge-group { display: flex; gap: 6px; margin-bottom: 8px; flex-wrap: wrap; }
         .badge { display: inline-block; background: #fff7ed; color: #c2410c; font-size: 0.75rem; padding: 3px 8px; border-radius: 4px; font-weight: 600; border: 1px solid #ffedd5; }
         .badge-city { background: #f0f9ff; color: #0369a1; border-color: #e0f2fe; }
-        .badge-promo { background: #fef2f2; color: #dc2626; border-color: #fecaca; }
-        .badge-brand { background: #fefce8; color: #a16207; border-color: #fef08a; }
 
         .card-title { font-size: 1.2rem; font-weight: bold; margin-bottom: 6px; color: #1c1917; }
         .card-desc { font-size: 0.88rem; color: #57534e; line-height: 1.5; margin-bottom: 12px; }
@@ -104,7 +97,7 @@
         .review-time { font-size: 0.72rem; color: #a8a29e; float: right; }
         .review-text { margin-top: 4px; color: #44403c; line-height: 1.35; }
 
-        /* 短影片牆專屬樣式 */
+        /* 美食影片牆專屬樣式 */
         .video-feed-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
         .video-card { background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.04); border: 1px solid #f3eee3; }
         .video-wrapper { position: relative; width: 100%; padding-top: 177.78%; background: #000; } /* 9:16 直式短影片比例 */
@@ -136,14 +129,10 @@
         </div>
         <div class="main-tabs">
             <button class="main-tab-btn active" id="tab-btn-map" onclick="switchMainTab('map')">🗺️ 美食地圖</button>
-            <button class="main-tab-btn" id="tab-btn-news" onclick="switchMainTab('news')">📰 美食新聞與促銷</button>
+            <button class="main-tab-btn" id="tab-btn-news" onclick="switchMainTab('news')">🎬 美食影片</button>
         </div>
         
         <div class="category-bar" id="category-bar"></div>
-
-        <div class="news-filter-bar" id="news-filter-bar" style="display: none;">
-            <!-- 保留介面結構 -->
-        </div>
     </header>
 
     <div id="main-tab-map" class="tab-content active">
@@ -228,10 +217,10 @@
             'zh-TW': {
                 title: '📍 大V的美食地圖',
                 tabMap: '🗺️ 美食地圖',
-                tabNews: '📰 美食新聞與促銷',
+                tabNews: '🎬 美食影片',
                 shareBtn: '📤 分享',
                 shareTitle: '大V的美食地圖',
-                shareText: '推薦給你這個菲律賓美食指南與最新促銷！',
+                shareText: '推薦給你這個菲律賓美食指南與最新影片！',
                 shareSuccess: '已複製美食地圖連結！可以貼上傳給朋友囉。',
                 loading: '載入最新美食清單中...',
                 noData: '目前沒有找到對應的餐廳資料',
@@ -261,10 +250,10 @@
             'en': {
                 title: "📍 Big V's Food Map",
                 tabMap: '🗺️ Food Map',
-                tabNews: '📰 Food News & Deals',
+                tabNews: '🎬 Food Videos',
                 shareBtn: '📤 Share',
                 shareTitle: "Big V's Food Map",
-                shareText: 'Check out this awesome Philippines food guide & promos!',
+                shareText: 'Check out this awesome Philippines food guide & videos!',
                 shareSuccess: 'App link copied to clipboard!',
                 loading: 'Loading latest restaurants...',
                 noData: 'No restaurants found',
@@ -275,7 +264,7 @@
                 foodpanda: '🌸 Foodpanda',
                 noPhone: 'No Phone Info',
                 noDesc: 'No description available.',
-                rateSuccess: 'Thank you! Your rating has be recorded.',
+                rateSuccess: 'Thank you! Your rating has been recorded.',
                 commentSuccess: 'Review posted successfully!',
                 emptyCommentAlert: 'Please enter both nickname and comment!',
                 toggleForumText: '💬 Reviews & Discussion',
@@ -294,14 +283,14 @@
             'tl': {
                 title: '📍 Mapa ng Pagkain ni Big V',
                 tabMap: '🗺️ Mapa ng Pagkain',
-                tabNews: '📰 Balita at Promo',
+                tabNews: '🎬 Mga Video',
                 shareBtn: '📤 Ibahagi',
                 shareTitle: 'Mapa ng Pagkain ni Big V',
-                shareText: 'Subukan ang gabay sa pagkain at mga promo sa Pilipinas!',
+                shareText: 'Subukan ang gabay sa pagkain at mga video sa Pilipinas!',
                 shareSuccess: 'Na-kopyang link para maibahagi!',
                 loading: 'Kina-karga ang mga kainan...',
                 noData: 'Walang nahanap na kainan',
-                noNewsData: 'Wala pang maikling video. Magdagdag sa Google Sheet!',
+                noNewsData: 'Wala pang maikling video. Magdagdag sa Google Sheet video tab!',
                 call: 'Tawagan',
                 map: 'Pumunta sa Map',
                 grab: '🟢 GrabFood',
@@ -655,7 +644,7 @@
             }).join('');
         }
 
-        // 動態渲染美食短影片牆 (來自 videos 集合)
+        // 動態渲染美食影片牆 (來自 videos 集合)
         function renderVideoFeed() {
             const newsEl = document.getElementById('news-list');
             const langData = i18n[currentLang];
