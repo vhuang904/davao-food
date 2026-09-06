@@ -21,10 +21,10 @@ async function generateAutomatedNews() {
     const todayStr = formatDate(todayObj);
     const pastStr = formatDate(pastObj);
     
-    // 1. 清空舊的 news 集合
-    const newsSnapshot = `await db.collection('news').get();` // 確保乾淨重抓
+    // 1. 清空舊的 news 集合 (修正為 .docs.forEach)
+    const newsSnapshot = await db.collection('news').get();
     const batch = db.batch();
-    newsSnapshot.forEach((doc) => {
+    newsSnapshot.docs.forEach((doc) => {
       batch.delete(doc.ref);
     });
     await batch.commit();
@@ -34,7 +34,7 @@ async function generateAutomatedNews() {
       {
         id: "auto-promo-1",
         city: "all",
-        type: "promo", // 歸類在限時優惠
+        type: "promo",
         brand: "🔥 連鎖餐飲特惠",
         tag: "🔥 限時優惠",
         title: `本週全區外送與店內優惠總整理 (${pastStr} ~ ${todayStr})`,
@@ -50,7 +50,7 @@ async function generateAutomatedNews() {
       {
         id: "auto-new-1",
         city: "davao",
-        type: "new", // 歸類在新開餐廳
+        type: "new",
         brand: "✨ 達沃新據點",
         tag: "✨ 新開餐廳",
         title: `達沃本週新進駐人氣餐飲品牌 (${pastStr} ~ ${todayStr})`,
