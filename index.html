@@ -45,7 +45,6 @@
 
         .card { background: white; border-radius: 12px; overflow: hidden; margin-bottom: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.04); border: 1px solid #f3eee3; }
 
-        /* 🎯 修正卡片圖片尺寸，防止新聞圖放大暴開 */
         .card > img { width: 100%; height: 200px; object-fit: cover; background: #f7f5f0; display: block; }
 
         /* 多圖輪播容器 */
@@ -55,7 +54,6 @@
         .carousel-slide { flex: 0 0 100%; width: 100%; height: 100%; scroll-snap-align: start; position: relative; }
         .carousel-slide img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
-        /* 指示點與標籤 */
         .carousel-dots { position: absolute; bottom: 8px; left: 0; right: 0; display: flex; justify-content: center; gap: 5px; z-index: 10; pointer-events: none; }
         .dot { width: 6px; height: 6px; border-radius: 50%; background: rgba(255, 255, 255, 0.5); }
         .dot.active { background: #ffffff; width: 14px; border-radius: 4px; }
@@ -170,10 +168,10 @@
                 "https://images.unsplash.com/photo-1611143669185-af224c5e3252?w=800&auto=format&fit=crop",
                 "https://images.unsplash.com/photo-1580822184713-fc5400e7fe10?w=800&auto=format&fit=crop"
             ],
-            american_western: [
+            fast_food: [
                 "https://images.unsplash.com/photo-1550547660-d9450f859349?w=800&auto=format&fit=crop",
                 "https://images.unsplash.com/photo-1586190848861-99aa4a171e90?w=800&auto=format&fit=crop",
-                "https://images.unsplash.com/photo-1544025162-d76694265947?w=800&auto=format&fit=crop",
+                "https://images.unsplash.com/photo-1626777552726-4a6b54c97e46?w=800&auto=format&fit=crop",
                 "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=800&auto=format&fit=crop",
                 "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=800&auto=format&fit=crop"
             ],
@@ -184,12 +182,13 @@
                 "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=800&auto=format&fit=crop",
                 "https://images.unsplash.com/photo-1544025162-d76694265947?w=800&auto=format&fit=crop"
             ],
-            cafe_dessert: [
+            coffee_drinks: [
                 "https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=800&auto=format&fit=crop",
                 "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=800&auto=format&fit=crop",
                 "https://images.unsplash.com/photo-1517256064527-09c73fc73e38?w=800&auto=format&fit=crop",
                 "https://images.unsplash.com/photo-1559925393-8be0ec4767c8?w=800&auto=format&fit=crop",
-                "https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=800&auto=format&fit=crop"
+                "https://images.unsplash.com/photo-1541167760496-1628856ab772?w=800&auto=format&fit=crop",
+                "https://images.unsplash.com/photo-1572442388796-11668a67e53d?w=800&auto=format&fit=crop"
             ],
             filipino: [
                 "https://images.unsplash.com/photo-1541544741938-0af808871cc0?w=800&auto=format&fit=crop",
@@ -225,10 +224,10 @@
                     all: '全部',
                     chinese: '中餐',
                     japanese_korean: '日韓',
+                    fast_food: '速食',
                     bbq_seafood: '海鮮燒烤',
-                    american_western: '美式',
-                    filipino: '菲律賓餐',
-                    cafe_dessert: '咖啡甜點'
+                    coffee_drinks: '咖啡與手搖飲',
+                    filipino: '菲律賓餐'
                 }
             },
             'en': {
@@ -256,10 +255,10 @@
                     all: 'All',
                     chinese: 'Chinese',
                     japanese_korean: 'Japanese / Korean',
+                    fast_food: 'Fast Food',
                     bbq_seafood: 'BBQ & Seafood',
-                    american_western: 'American',
-                    filipino: 'Filipino',
-                    cafe_dessert: 'Cafe & Dessert'
+                    coffee_drinks: 'Coffee & Drinks',
+                    filipino: 'Filipino'
                 }
             },
             'tl': {
@@ -287,10 +286,10 @@
                     all: 'Lahat',
                     chinese: 'Chinese',
                     japanese_korean: 'Hapon / Koreano',
+                    fast_food: 'Fast Food',
                     bbq_seafood: 'Inihaw at Seafood',
-                    american_western: 'American',
-                    filipino: 'Filipino',
-                    cafe_dessert: 'Kapehan at Matamis'
+                    coffee_drinks: 'Kape at Inumin',
+                    filipino: 'Filipino'
                 }
             }
         };
@@ -392,7 +391,18 @@
             }
         ];
 
-        let currentLang = localStorage.getItem('ph_app_lang') || 'zh-TW';
+        // 🧠 自動偵測手機語系邏輯（無對應則 default 英文 'en'）
+        function getInitialLanguage() {
+            const savedLang = localStorage.getItem('ph_app_lang');
+            if (savedLang && i18n[savedLang]) return savedLang;
+
+            const browserLang = (navigator.language || navigator.userLanguage || 'en').toLowerCase();
+            if (browserLang.startsWith('zh')) return 'zh-TW';
+            if (browserLang.startsWith('tl') || browserLang.startsWith('fil')) return 'tl';
+            return 'en'; // Default 英文
+        }
+
+        let currentLang = getInitialLanguage();
         let currentCity = localStorage.getItem('ph_app_city') || 'all';
         let currentCategoryKey = localStorage.getItem('ph_app_cat') || 'all';
         let currentMainTab = localStorage.getItem('ph_app_tab') || 'map';
@@ -500,7 +510,7 @@
         function renderCategoryBar() {
             const bar = document.getElementById('category-bar');
             const cats = i18n[currentLang].cats;
-            const keys = ['all', 'chinese', 'japanese_korean', 'bbq_seafood', 'american_western', 'filipino', 'cafe_dessert'];
+            const keys = ['all', 'chinese', 'japanese_korean', 'fast_food', 'bbq_seafood', 'coffee_drinks', 'filipino'];
 
             bar.innerHTML = keys.map(key => `
                 <button class="cat-chip ${key === currentCategoryKey ? 'active' : ''}" onclick="filterCategory('${key}')">
