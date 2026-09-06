@@ -60,7 +60,7 @@
         /* 展開 / 收合討論按鈕 */
         .btn-toggle-forum { background: none; border: none; color: #ea580c; font-size: 0.82rem; font-weight: bold; cursor: pointer; padding: 6px 0; width: 100%; text-align: left; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #f0eae1; margin-top: 8px; }
 
-        /* 討論區塊內容 (發送表單 + 評論列表) */
+        /* 討論區塊內容 */
         .forum-content { display: none; margin-top: 10px; padding-top: 10px; border-top: 1px solid #f0eae1; }
         .forum-content.show { display: block; }
 
@@ -108,6 +108,7 @@
     </div>
 
     <script>
+        // 無須 API Key 的高畫質高清備用圖庫 (Unsplash CDN)
         const fallbackImages = {
             chinese: "https://images.unsplash.com/photo-1563245372-f21724e3856d?w=600&auto=format&fit=crop",
             japanese_korean: "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=600&auto=format&fit=crop",
@@ -209,9 +210,7 @@
         let currentCategoryKey = 'all';
         let allRestaurants = [];
 
-        // 餐廳評分資料 (localStorage)
         let itemRatings = JSON.parse(localStorage.getItem('ph_item_ratings')) || {};
-        // 餐廳專屬留言資料 (localStorage)
         let resComments = JSON.parse(localStorage.getItem('ph_res_comments')) || {};
 
         async function fetchRestaurants() {
@@ -284,7 +283,6 @@
             `).join('');
         }
 
-        // 星級評分點選機制 (1~5顆星)
         function rateRestaurant(resKey, score) {
             if (!itemRatings[resKey]) {
                 itemRatings[resKey] = { scores: [], userRated: null };
@@ -297,13 +295,11 @@
             renderList();
         }
 
-        // 展開 / 收合特定餐廳的討論區塊
         function toggleRestaurantForum(resKey) {
             const el = document.getElementById('forum-' + resKey);
             if (el) el.classList.toggle('show');
         }
 
-        // 發表針對特定餐廳的留言
         function postResComment(resKey) {
             const user = document.getElementById('input-user-' + resKey).value.trim();
             const rating = parseInt(document.getElementById('select-rating-' + resKey).value);
@@ -327,7 +323,6 @@
                 time: timeStr
             });
 
-            // 同步將該評分納入平均分數計算
             rateRestaurant(resKey, rating);
 
             localStorage.setItem('ph_res_comments', JSON.stringify(resComments));
@@ -335,9 +330,22 @@
             
             document.getElementById('input-text-' + resKey).value = '';
             renderList();
-            // 自動展現討論區塊
             const el = document.getElementById('forum-' + resKey);
             if (el) el.classList.add('show');
+        }
+
+        // 安全解析圖片網址（優先安全公開圖源與直接連結，完全不露出 API Key）
+        function getSafeImageUrl(item, catKey) {
+            const defaultImg = fallbackImages[catKey] || fallbackImages.filipino;
+            
+            if (item.imageUrl && typeof item.imageUrl === 'string' && item.imageUrl.startsWith('http')) {
+                // 如果是帶有舊 API Key 的敏感網址，淨化為不包含 Key 的開放連結
+                if (item.imageUrl.includes('key=')) {
+                    return item.imageUrl.split('&key=')[0];
+                }
+                return item.imageUrl;
+            }
+            return defaultImg;
         }
 
         function renderList() {
@@ -359,19 +367,16 @@
             listEl.innerHTML = filtered.map((item, idx) => {
                 const catKey = item.categoryKey || 'filipino';
                 const defaultImg = fallbackImages[catKey] || fallbackImages.filipino;
-                const imgSrc = (item.imageUrl && item.imageUrl.startsWith('http')) ? item.imageUrl : defaultImg;
+                const imgSrc = getSafeImageUrl(item, catKey);
                 
-                // 唯一的餐廳 Key
                 const resKey = (item.city || 'davao') + '_' + (item.name || idx).replace(/[^a-zA-Z0-9]/g, '');
 
-                // 評分資料計算
                 const ratingData = itemRatings[resKey] || { scores: [5], userRated: null };
                 const totalScores = ratingData.scores;
                 const avgRating = (totalScores.reduce((a, b) => a + b, 0) / totalScores.length).toFixed(1);
                 const count = totalScores.length;
                 const userScore = ratingData.userRated || 0;
 
-                // 該餐廳專屬留言清單
                 const commentsList = resComments[resKey] || [];
 
                 let displayDesc = langData.noDesc;
@@ -397,7 +402,6 @@
                             <div class="info-item">📍 ${item.address || ''}</div>
                             <div class="info-item">📞 ${item.phone || langData.noPhone}</div>
 
-                            <!-- 餐廳下方嵌入式討論與評分區塊 -->
                             <div class="card-forum-box">
                                 <div class="rating-header">
                                     <span class="rating-score">⭐ ${avgRating} / 5.0 (${count}則評分)</span>
@@ -414,7 +418,6 @@
                                 </button>
 
                                 <div class="forum-content" id="forum-${resKey}">
-                                    <!-- 內嵌快速發表評論表單 -->
                                     <div class="mini-comment-form">
                                         <div class="mini-form-row">
                                             <input type="text" id="input-user-${resKey}" class="mini-input" placeholder="暱稱" maxlength="15">
@@ -430,7 +433,6 @@
                                         <button class="btn-mini-post" onclick="postResComment('${resKey}')">${langData.postBtnText}</button>
                                     </div>
 
-                                    <!-- 評論列表 -->
                                     <div class="reviews-list">
                                         ${commentsList.length > 0 ? commentsList.map(c => `
                                             <div class="review-item">
