@@ -20,24 +20,30 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Multi-Source Scraping for Davao, Manila & Cebu
+      - name: Multi-Source Scraping (Tripadvisor + Google/Blogs + Facebook)
         env:
           FIRECRAWL_KEY: ${{ secrets.FIRECRAWL_API_KEY }}
         run: |
           fetch_city() {
             CITY=$1
             
-            # 1. Tripadvisor
+            # 1. Tripadvisor 來源
             curl -X POST https://api.firecrawl.dev/v1/scrape \
               -H "Content-Type: application/json" \
               -H "Authorization: Bearer $FIRECRAWL_KEY" \
               -d "{\"url\": \"https://www.tripadvisor.com/Search?q=${CITY}+restaurants\", \"formats\": [\"extract\"], \"extract\": {\"prompt\": \"Extract restaurant listings in ${CITY}. For each, provide name, phone, address, imageUrl, cuisine category, and write a short description in Traditional Chinese (desc_zh), English (desc_en), and Tagalog (desc_tl).\", \"schema\": {\"type\": \"object\", \"properties\": {\"restaurants\": {\"type\": \"array\", \"items\": {\"type\": \"object\", \"properties\": {\"name\": {\"type\": \"string\"}, \"phone\": {\"type\": \"string\"}, \"address\": {\"type\": \"string\"}, \"desc_zh\": {\"type\": \"string\"}, \"desc_en\": {\"type\": \"string\"}, \"desc_tl\": {\"type\": \"string\"}, \"imageUrl\": {\"type\": \"string\"}, \"category\": {\"type\": \"string\"}}}}}}}}" > "res_${CITY}_ta.json"
 
-            # 2. OpenTable / Yelp / 食記部落格綜合搜尋
+            # 2. OpenTable / Yelp / 食記部落格來源
             curl -X POST https://api.firecrawl.dev/v1/scrape \
               -H "Content-Type: application/json" \
               -H "Authorization: Bearer $FIRECRAWL_KEY" \
               -d "{\"url\": \"https://www.google.com/search?q=top+restaurants+in+${CITY}+site:opentable.com+OR+site:yelp.com\", \"formats\": [\"extract\"], \"extract\": {\"prompt\": \"Extract popular restaurants in ${CITY} including name, address, phone, imageUrl, cuisine category, and write short descriptions in Traditional Chinese (desc_zh), English (desc_en), and Tagalog (desc_tl).\", \"schema\": {\"type\": \"object\", \"properties\": {\"restaurants\": {\"type\": \"array\", \"items\": {\"type\": \"object\", \"properties\": {\"name\": {\"type\": \"string\"}, \"phone\": {\"type\": \"string\"}, \"address\": {\"type\": \"string\"}, \"desc_zh\": {\"type\": \"string\"}, \"desc_en\": {\"type\": \"string\"}, \"desc_tl\": {\"type\": \"string\"}, \"imageUrl\": {\"type\": \"string\"}, \"category\": {\"type\": \"string\"}}}}}}}}" > "res_${CITY}_blogs.json"
+
+            # 3. Facebook 餐廳粉專定向檢索來源 (site:facebook.com)
+            curl -X POST https://api.firecrawl.dev/v1/scrape \
+              -H "Content-Type: application/json" \
+              -H "Authorization: Bearer $FIRECRAWL_KEY" \
+              -d "{\"url\": \"https://www.google.com/search?q=popular+restaurant+in+${CITY}+site:facebook.com\", \"formats\": [\"extract\"], \"extract\": {\"prompt\": \"Extract popular Facebook restaurant pages in ${CITY} with name, address, phone, imageUrl, cuisine category, and write short descriptions in Traditional Chinese (desc_zh), English (desc_en), and Tagalog (desc_tl).\", \"schema\": {\"type\": \"object\", \"properties\": {\"restaurants\": {\"type\": \"array\", \"items\": {\"type\": \"object\", \"properties\": {\"name\": {\"type\": \"string\"}, \"phone\": {\"type\": \"string\"}, \"address\": {\"type\": \"string\"}, \"desc_zh\": {\"type\": \"string\"}, \"desc_en\": {\"type\": \"string\"}, \"desc_tl\": {\"type\": \"string\"}, \"imageUrl\": {\"type\": \"string\"}, \"category\": {\"type\": \"string\"}}}}}}}}" > "res_${CITY}_fb.json"
           }
 
           fetch_city "davao"
@@ -70,14 +76,18 @@ jobs:
             cities.forEach(city => {
               const listTA = getList('res_' + city + '_ta.json');
               const listBlogs = getList('res_' + city + '_blogs.json');
-              const combined = [...listTA, ...listBlogs];
+              const listFB = getList('res_' + city + '_fb.json');
+              const combined = [...listTA, ...listBlogs, ...listFB];
 
               combined.forEach(r => {
                 if(r.name && r.name.trim().length > 0) {
-                  const key = city + '_' + r.name.trim().toLowerCase();
+                  // 清理粉專名稱常出現的後綴字眼
+                  let cleanName = r.name.replace(/\s*-\s*Home\s*|\s*-\s*Facebook\s*/gi, '').trim();
+                  const key = city + '_' + cleanName.toLowerCase();
+
                   map.set(key, {
                     city: city,
-                    name: r.name,
+                    name: cleanName,
                     phone: r.phone || '',
                     address: r.address || (city.toUpperCase() + ' City'),
                     descriptions: {
@@ -94,7 +104,7 @@ jobs:
 
             const merged = Array.from(map.values());
             fs.writeFileSync('restaurants.json', JSON.stringify(merged, null, 2));
-            console.log('Saved ' + merged.length + ' multi-lingual description restaurants.');
+            console.log('Saved ' + merged.length + ' multi-source (including Facebook) restaurants.');
           "
 
       - name: Commit and Push updated JSON
@@ -102,5 +112,5 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add restaurants.json
-          git commit -m "Add multi-language restaurant descriptions (ZH, EN, TL)" || exit 0
+          git commit -m "Include Facebook search source in multi-city sync" || exit 0
           git push
