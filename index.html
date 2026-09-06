@@ -11,16 +11,21 @@
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #fdfbf7; color: #333; padding-bottom: 30px; }
         
         /* 頂部 Header */
-        header { background: #EA580C; color: white; padding: 12px 16px; box-shadow: 0 2px 8px rgba(234, 88, 12, 0.15); position: sticky; top: 0; z-index: 100; }
+        header { background: #EA580C; color: white; padding: 12px 16px 0 16px; box-shadow: 0 2px 8px rgba(234, 88, 12, 0.15); position: sticky; top: 0; z-index: 100; }
         .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
         .header-top h1 { font-size: 1.15rem; font-weight: bold; letter-spacing: 0.5px; }
         
         .btn-share { background: rgba(255, 255, 255, 0.2); color: white; border: 1px solid rgba(255, 255, 255, 0.4); padding: 4px 10px; border-radius: 6px; font-size: 0.8rem; font-weight: bold; cursor: pointer; outline: none; }
         .btn-share:active { background: rgba(255, 255, 255, 0.35); }
 
-        .controls-row { display: flex; gap: 8px; align-items: center; }
+        .controls-row { display: flex; gap: 8px; align-items: center; margin-bottom: 10px; }
         .app-select { flex: 1; background: rgba(255, 255, 255, 0.18); color: white; border: 1px solid rgba(255, 255, 255, 0.4); padding: 6px 10px; border-radius: 6px; font-size: 0.82rem; outline: none; cursor: pointer; text-overflow: ellipsis; }
         .app-select option { color: #333; background: white; }
+
+        /* 主導覽 Tab 切換 (美食地圖 vs 美食新聞) */
+        .main-tabs { display: flex; border-top: 1px solid rgba(255,255,255,0.2); }
+        .main-tab-btn { flex: 1; text-align: center; padding: 10px; font-weight: bold; font-size: 0.92rem; color: rgba(255,255,255,0.75); border: none; background: none; cursor: pointer; border-bottom: 3px solid transparent; }
+        .main-tab-btn.active { color: white; border-bottom: 3px solid white; }
 
         /* 分類橫向選擇列 */
         .category-bar { display: flex; gap: 8px; overflow-x: auto; padding: 12px 16px; background: #ffffff; border-bottom: 1px solid #f1ece1; }
@@ -30,6 +35,8 @@
 
         /* 卡片與容器 */
         .container { max-width: 600px; margin: 0 auto; padding: 16px; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
 
         .card { background: white; border-radius: 12px; overflow: hidden; margin-bottom: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.04); border: 1px solid #f3eee3; }
         .card img { width: 100%; height: 200px; object-fit: cover; background: #f7f5f0; display: block; }
@@ -38,7 +45,8 @@
         .badge-group { display: flex; gap: 6px; margin-bottom: 8px; }
         .badge { display: inline-block; background: #fff7ed; color: #c2410c; font-size: 0.75rem; padding: 3px 8px; border-radius: 4px; font-weight: 600; border: 1px solid #ffedd5; }
         .badge-city { background: #f0f9ff; color: #0369a1; border-color: #e0f2fe; }
-        
+        .badge-promo { background: #fef2f2; color: #dc2626; border-color: #fecaca; }
+
         .card-title { font-size: 1.2rem; font-weight: bold; margin-bottom: 6px; color: #1c1917; }
         .card-desc { font-size: 0.88rem; color: #57534e; line-height: 1.5; margin-bottom: 12px; }
         .info-item { font-size: 0.85rem; color: #78716c; margin-bottom: 4px; display: flex; align-items: center; gap: 6px; }
@@ -49,7 +57,7 @@
         .btn-secondary { background: #f5f2eb; color: #44403c; }
         #loading { text-align: center; padding: 40px; color: #a8a29e; }
 
-        /* 餐廳卡片下方嵌入式討論與評分區塊 */
+        /* 餐廳卡片內建：嵌入式討論與評分區塊 */
         .card-forum-box { background: #faf8f5; border-radius: 10px; padding: 12px; margin-top: 14px; border: 1px dashed #e7e2d7; }
         .rating-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
         .rating-score { font-size: 0.88rem; font-weight: bold; color: #d97706; }
@@ -57,10 +65,8 @@
         .star-picker span { font-size: 1.1rem; color: #d1d5db; transition: color 0.15s; }
         .star-picker span.active { color: #f59e0b; }
         
-        /* 展開 / 收合討論按鈕 */
         .btn-toggle-forum { background: none; border: none; color: #ea580c; font-size: 0.82rem; font-weight: bold; cursor: pointer; padding: 6px 0; width: 100%; text-align: left; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #f0eae1; margin-top: 8px; }
 
-        /* 討論區塊內容 */
         .forum-content { display: none; margin-top: 10px; padding-top: 10px; border-top: 1px solid #f0eae1; }
         .forum-content.show { display: block; }
 
@@ -98,17 +104,30 @@
                 <option value="tl">Tagalog</option>
             </select>
         </div>
+        <!-- 頂部雙頁籤切換：美食地圖 vs 美食新聞 -->
+        <div class="main-tabs">
+            <button class="main-tab-btn active" id="tab-btn-map" onclick="switchMainTab('map')">🗺️ 美食地圖</button>
+            <button class="main-tab-btn" id="tab-btn-news" onclick="switchMainTab('news')">📰 美食新聞</button>
+        </div>
     </header>
 
-    <div class="category-bar" id="category-bar"></div>
+    <!-- 1. 美食地圖 Tab 內容 -->
+    <div id="main-tab-map" class="tab-content active">
+        <div class="category-bar" id="category-bar"></div>
+        <div class="container">
+            <div id="loading">Loading...</div>
+            <div id="restaurant-list"></div>
+        </div>
+    </div>
 
-    <div class="container">
-        <div id="loading">Loading...</div>
-        <div id="restaurant-list"></div>
+    <!-- 2. 獨立新聞與特惠 Tab 內容 -->
+    <div id="main-tab-news" class="tab-content">
+        <div class="container">
+            <div id="news-list"></div>
+        </div>
     </div>
 
     <script>
-        // 無須 API Key 的高畫質高清備用圖庫 (Unsplash CDN)
         const fallbackImages = {
             chinese: "https://images.unsplash.com/photo-1563245372-f21724e3856d?w=600&auto=format&fit=crop",
             japanese_korean: "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=600&auto=format&fit=crop",
@@ -121,12 +140,15 @@
         const i18n = {
             'zh-TW': {
                 title: '📍 大V的美食地圖',
+                tabMap: '🗺️ 美食地圖',
+                tabNews: '📰 美食新聞',
                 shareBtn: '📤 分享',
                 shareTitle: '大V的美食地圖',
                 shareText: '推薦給你這個菲律賓美食指南！',
                 shareSuccess: '已複製美食地圖連結！可以貼上傳給朋友囉。',
                 loading: '載入最新美食清單中...',
                 noData: '目前沒有找到對應的餐廳資料',
+                noNewsData: '目前該城市暫無最新新聞或特惠活動',
                 call: '撥打電話',
                 map: '導航地圖',
                 noPhone: '無電話資訊',
@@ -149,12 +171,15 @@
             },
             'en': {
                 title: "📍 Big V's Food Map",
+                tabMap: '🗺️ Food Map',
+                tabNews: '📰 Food News',
                 shareBtn: '📤 Share',
                 shareTitle: "Big V's Food Map",
                 shareText: 'Check out this awesome Philippines food guide!',
                 shareSuccess: 'App link copied to clipboard!',
                 loading: 'Loading latest restaurants...',
                 noData: 'No restaurants found',
+                noNewsData: 'No news or promotions available for this city right now.',
                 call: 'Call',
                 map: 'Map',
                 noPhone: 'No Phone Info',
@@ -177,12 +202,15 @@
             },
             'tl': {
                 title: '📍 Mapa ng Pagkain ni Big V',
+                tabMap: '🗺️ Mapa ng Pagkain',
+                tabNews: '📰 Balita sa Pagkain',
                 shareBtn: '📤 Ibahagi',
                 shareTitle: 'Mapa ng Pagkain ni Big V',
                 shareText: 'Subukan ang gabay sa pagkain sa Pilipinas!',
                 shareSuccess: 'Na-kopyang link para maibahagi!',
                 loading: 'Kina-karga ang mga kainan...',
                 noData: 'Walang nahanap na kainan',
+                noNewsData: 'Walang balita o promo para sa lungsod na ito sa ngayon.',
                 call: 'Tawagan',
                 map: 'Pumunta sa Map',
                 noPhone: 'Walang Telepono',
@@ -205,9 +233,56 @@
             }
         };
 
+        // 三大城市最新餐廳新聞與折扣特惠數據
+        const newsData = [
+            {
+                id: "news-1",
+                city: "davao",
+                tag: "🔥 限時優惠",
+                title: "達沃 Yaki Together - Matina 歡慶開幕：日式燒肉全時段 85 折優惠！",
+                date: "2026-03-05",
+                imageUrl: "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=800&auto=format&fit=crop",
+                descriptions: {
+                    "zh-TW": "凡於本月中前至 Matina 門市出示『大V的美食地圖』畫面，即享全桌無煙燒肉 85 折優惠！包含特選和牛與無限量日式小菜，趕快約朋友一起來嚐鮮！",
+                    "en": "Enjoy 15% OFF for all-you-can-eat Japanese Yakiniku at Yaki Together Matina! Show this app at checkout.",
+                    "tl": "Kumuha ng 15% OFF sa Yaki Together Matina! Ipakita ang app na ito kapag magbabayad na."
+                },
+                location: "Matina Enclave, Quimpo Blvd, Davao City"
+            },
+            {
+                id: "news-2",
+                city: "manila",
+                tag: "✨ 新店開幕",
+                title: "馬尼拉 BGC 概念新店推出：港式飲茶極致吃到飽 Promos",
+                date: "2026-03-03",
+                imageUrl: "https://images.unsplash.com/photo-1563245372-f21724e3856d?w=800&auto=format&fit=crop",
+                descriptions: {
+                    "zh-TW": "位於 BGC 核心區的新港式餐廳全新開幕！即日起至本月底，三人同行一人免費，包含現蒸蝦餃、小籠包與經典楊枝甘露，千萬別錯過。",
+                    "en": "New Dim Sum Unlimited promo in BGC Manila! Buy 2 Get 1 Free for all dim sum lovers this month.",
+                    "tl": "Bagong bukas na Dim Sum Unlimited promo sa BGC Manila! Bumili ng 2 Kumuha ng 1 Libre ngayong buwan."
+                },
+                location: "High Street, Bonifacio Global City, Manila"
+            },
+            {
+                id: "news-3",
+                city: "cebu",
+                tag: "🔥 節慶優惠",
+                title: "宿霧海鮮狂歡節：現蒸螃蟹與鮮鮪魚刺身特惠買一送一",
+                date: "2026-03-01",
+                imageUrl: "https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?w=800&auto=format&fit=crop",
+                descriptions: {
+                    "zh-TW": "宿霧海邊餐廳推出限定海鮮季特惠，每晚 6 點後點選碳烤大蝦或野生螃蟹套餐，加贈特調冷飲與第二份刺身 5 折！",
+                    "en": "Cebu Seafood Festival! Buy 1 Get 1 free on selected fresh crab and tuna sashimi sets every evening.",
+                    "tl": "Pista ng Seafood sa Cebu! Bumili ng 1 Kumuha ng 1 Libre sa napiling fresh crab at tuna sashimi."
+                },
+                location: "Mactan Island Promenade, Cebu"
+            }
+        ];
+
         let currentLang = localStorage.getItem('ph_app_lang') || 'zh-TW';
         let currentCity = localStorage.getItem('ph_app_city') || 'all';
         let currentCategoryKey = 'all';
+        let currentMainTab = 'map';
         let allRestaurants = [];
 
         let itemRatings = JSON.parse(localStorage.getItem('ph_item_ratings')) || {};
@@ -223,6 +298,15 @@
             }
         }
 
+        function switchMainTab(tab) {
+            currentMainTab = tab;
+            document.getElementById('tab-btn-map').classList.toggle('active', tab === 'map');
+            document.getElementById('tab-btn-news').classList.toggle('active', tab === 'news');
+            document.getElementById('main-tab-map').classList.toggle('active', tab === 'map');
+            document.getElementById('main-tab-news').classList.toggle('active', tab === 'news');
+            if (tab === 'news') renderNewsList();
+        }
+
         function changeLanguage(lang) {
             currentLang = lang;
             localStorage.setItem('ph_app_lang', lang);
@@ -233,6 +317,7 @@
             currentCity = city;
             localStorage.setItem('ph_app_city', city);
             renderList();
+            renderNewsList();
         }
 
         function filterCategory(catKey) {
@@ -265,10 +350,13 @@
             document.getElementById('lang-select').value = currentLang;
             document.getElementById('city-select').value = currentCity;
             document.getElementById('app-title').innerText = langData.title;
+            document.getElementById('tab-btn-map').innerText = langData.tabMap;
+            document.getElementById('tab-btn-news').innerText = langData.tabNews;
             document.getElementById('share-btn').innerText = langData.shareBtn;
 
             renderCategoryBar();
             renderList();
+            renderNewsList();
         }
 
         function renderCategoryBar() {
@@ -334,12 +422,9 @@
             if (el) el.classList.add('show');
         }
 
-        // 安全解析圖片網址（優先安全公開圖源與直接連結，完全不露出 API Key）
         function getSafeImageUrl(item, catKey) {
             const defaultImg = fallbackImages[catKey] || fallbackImages.filipino;
-            
             if (item.imageUrl && typeof item.imageUrl === 'string' && item.imageUrl.startsWith('http')) {
-                // 如果是帶有舊 API Key 的敏感網址，淨化為不包含 Key 的開放連結
                 if (item.imageUrl.includes('key=')) {
                     return item.imageUrl.split('&key=')[0];
                 }
@@ -456,6 +541,35 @@
                     </div>
                 `;
             }).join('');
+        }
+
+        // 渲染獨立「美食新聞與特惠」分頁
+        function renderNewsList() {
+            const newsEl = document.getElementById('news-list');
+            const langData = i18n[currentLang];
+
+            const filteredNews = newsData.filter(item => (currentCity === 'all') || (item.city === currentCity));
+
+            if (filteredNews.length === 0) {
+                newsEl.innerHTML = `<p style="text-align:center; color:#a8a29e; padding: 40px;">${langData.noNewsData}</p>`;
+                return;
+            }
+
+            newsEl.innerHTML = filteredNews.map(item => `
+                <div class="card">
+                    <img src="${item.imageUrl}" alt="${item.title}" loading="lazy">
+                    <div class="card-body">
+                        <div class="badge-group">
+                            <span class="badge badge-city">${langData.cities[item.city]}</span>
+                            <span class="badge badge-promo">${item.tag}</span>
+                            <span style="font-size:0.75rem; color:#a8a29e; margin-left:auto; display:flex; align-items:center;">📅 ${item.date}</span>
+                        </div>
+                        <div class="card-title" style="font-size:1.1rem; margin-top:4px;">${item.title}</div>
+                        <div class="card-desc" style="color:#44403c; margin-top:8px;">${item.descriptions[currentLang] || item.descriptions['en']}</div>
+                        <div class="info-item" style="margin-top:10px;">📍 ${item.location}</div>
+                    </div>
+                </div>
+            `).join('');
         }
 
         fetchRestaurants();
