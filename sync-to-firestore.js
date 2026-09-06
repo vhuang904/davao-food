@@ -48,7 +48,8 @@ function parseCSV(text) {
 
   if (rows.length < 2) return [];
 
-  const headers = rows[0].map(h => h.replace(/^"|"$/g, '').trim());
+  // 過濾掉空白的標頭，防止產生空字串欄位
+  const headers = rows[0].map(h => h.replace(/^"|"$/g, '').trim()).filter(h => h !== '');
   const result = [];
 
   for (let i = 1; i < rows.length; i++) {
@@ -61,11 +62,9 @@ function parseCSV(text) {
       obj[header] = val.replace(/^"|"$/g, '').trim();
     });
     
-    // 過濾掉 Google 試算表分組產生的無效行（例如群組標題、數字計數行）
     if (obj.name && 
         !obj.name.toLowerCase().startsWith('city:') && 
-        !/^\d+$/.test(obj.name) &&
-        obj.categoryKey) {
+        !/^\d+$/.test(obj.name)) {
       result.push(obj);
     }
   }
@@ -86,13 +85,13 @@ function fetchCSVData(url) {
 }
 
 async function syncData() {
-  console.log("【最新版 v4 - 支援分組表格】正在從 Google 試算表抓取最新 CSV 資料...");
+  console.log("【最新版 v5 - 過濾空欄位】正在從 Google 試算表抓取最新 CSV 資料...");
   try {
     const csvText = await fetchCSVData(SHEET_CSV_URL);
     const restaurantsData = parseCSV(csvText);
 
     if (restaurantsData.length === 0) {
-      console.log("警告：解析後沒有找到任何餐廳資料。請檢查試算表格式。");
+      console.log("警告：解析後沒有找到任何餐廳資料。");
       return;
     }
 
