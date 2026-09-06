@@ -72,10 +72,13 @@
         .card-desc { font-size: 0.88rem; color: #57534e; line-height: 1.5; margin-bottom: 12px; }
         .info-item { font-size: 0.85rem; color: #78716c; margin-bottom: 4px; display: flex; align-items: center; gap: 6px; }
         
-        .btn-group { display: flex; gap: 8px; margin-top: 14px; }
-        .btn { flex: 1; padding: 10px; border-radius: 8px; font-size: 0.85rem; font-weight: bold; text-align: center; text-decoration: none; border: none; cursor: pointer; }
+        .btn-group { display: flex; gap: 6px; margin-top: 14px; flex-wrap: wrap; }
+        .btn { flex: 1; min-width: calc(50% - 3px); padding: 9px 6px; border-radius: 8px; font-size: 0.82rem; font-weight: bold; text-align: center; text-decoration: none; border: none; cursor: pointer; }
         .btn-primary { background: #EA580C; color: white; }
         .btn-secondary { background: #f5f2eb; color: #44403c; }
+        .btn-grab { background: #00B14F; color: white; }
+        .btn-foodpanda { background: #D70F64; color: white; }
+        
         #loading { text-align: center; padding: 40px; color: #a8a29e; }
 
         /* 討論區塊 */
@@ -212,6 +215,8 @@
                 noNewsData: '目前沒有此類別的最新活動或促銷資訊',
                 call: '撥打電話',
                 map: '導航地圖',
+                grab: '🟢 Grab 外送',
+                foodpanda: '🌸 Foodpanda',
                 noPhone: '無電話資訊',
                 noDesc: '暫無餐廳介紹資訊。',
                 rateSuccess: '感謝評分！您的評分已成功記錄。',
@@ -243,6 +248,8 @@
                 noNewsData: 'No active promotions or news found for this category.',
                 call: 'Call',
                 map: 'Map',
+                grab: '🟢 GrabFood',
+                foodpanda: '🌸 Foodpanda',
                 noPhone: 'No Phone Info',
                 noDesc: 'No description available.',
                 rateSuccess: 'Thank you! Your rating has been recorded.',
@@ -274,6 +281,8 @@
                 noNewsData: 'Walang nahanap na bagong balita o promo.',
                 call: 'Tawagan',
                 map: 'Pumunta sa Map',
+                grab: '🟢 GrabFood',
+                foodpanda: '🌸 Foodpanda',
                 noPhone: 'Walang Telepono',
                 noDesc: 'Walang paglalarawan.',
                 rateSuccess: 'Salamat! Na-itala na ang iyong rating.',
@@ -391,7 +400,6 @@
             }
         ];
 
-        // 🧠 自動偵測手機語系邏輯（無對應則 default 英文 'en'）
         function getInitialLanguage() {
             const savedLang = localStorage.getItem('ph_app_lang');
             if (savedLang && i18n[savedLang]) return savedLang;
@@ -399,7 +407,7 @@
             const browserLang = (navigator.language || navigator.userLanguage || 'en').toLowerCase();
             if (browserLang.startsWith('zh')) return 'zh-TW';
             if (browserLang.startsWith('tl') || browserLang.startsWith('fil')) return 'tl';
-            return 'en'; // Default 英文
+            return 'en';
         }
 
         let currentLang = getInitialLanguage();
@@ -643,6 +651,10 @@
                     return '<div class="dot ' + (imgIdx === 0 ? 'active' : '') + '"></div>';
                 }).join('');
 
+                // 產出外送按鈕 (GrabFood & Foodpanda)
+                var grabBtnHtml = item.grabUrl ? `<a class="btn btn-grab" href="${item.grabUrl}" target="_blank">${langData.grab}</a>` : '';
+                var foodpandaBtnHtml = item.foodpandaUrl ? `<a class="btn btn-foodpanda" href="${item.foodpandaUrl}" target="_blank">${langData.foodpanda}</a>` : '';
+
                 return `
                     <div class="card">
                         <div class="carousel-container">
@@ -714,6 +726,8 @@
                             <div class="btn-group">
                                 <a class="btn btn-primary" href="tel:${item.phone}">${langData.call}</a>
                                 <a class="btn btn-secondary" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent((item.name || '') + ' ' + (item.address || ''))}" target="_blank">${langData.map}</a>
+                                ${grabBtnHtml}
+                                ${foodpandaBtnHtml}
                             </div>
                         </div>
                     </div>
