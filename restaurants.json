@@ -1,301 +1,535 @@
 [
   {
     "city": "davao",
-    "name": "Hanoi Vietnamese Restaurant",
-    "phone": "123-456-7890",
-    "address": "123 Davao St, Davao City",
+    "name": "Davao Durians",
+    "phone": "(082) 123-4567",
+    "address": "123 Durian St, Davao City",
     "descriptions": {
-      "zh-TW": "越南菜，受欢迎的餐厅",
-      "en": "A popular Vietnamese restaurant in Davao City.",
-      "tl": "Kilalang restawran ng Vietnamese sa Davao City."
+      "zh-TW": "这是一家著名的榴莲餐厅。",
+      "en": "This is a popular durian restaurant.",
+      "tl": "Ito ay isang tanyag na durian na restawran."
     },
-    "imageUrl": "https://www.foodpanda.ph/image/hanoi-vietnamese-restaurant.jpg",
+    "imageUrl": "",
+    "categoryKey": "filipino"
+  },
+  {
+    "city": "davao",
+    "name": "Sushi Katsu",
+    "phone": "(082) 234-5678",
+    "address": "456 Sushi Ave, Davao City",
+    "descriptions": {
+      "zh-TW": "提供新鲜美味的寿司。",
+      "en": "Offers fresh and delicious sushi.",
+      "tl": "Nag-aalok ng sariwa at masarap na sushi."
+    },
+    "imageUrl": "",
+    "categoryKey": "japanese_korean"
+  },
+  {
+    "city": "davao",
+    "name": "Kabayan Grill",
+    "phone": "(082) 345-6789",
+    "address": "789 Grill Rd, Davao City",
+    "descriptions": {
+      "zh-TW": "以其传统的菲律宾烧烤而闻名。",
+      "en": "Famous for its traditional Filipino barbecue.",
+      "tl": "Sikat sa kanyang tradisyonal na BBQ na Pilipino."
+    },
+    "imageUrl": "",
     "categoryKey": "bbq_seafood"
   },
   {
     "city": "davao",
-    "name": "Original Conching's Native Chicken",
-    "phone": "098-765-4321",
-    "address": "456 Davao Avenue, Davao City",
+    "name": "Cafe Davao",
+    "phone": "(082) 456-7890",
+    "address": "321 Coffee St, Davao City",
     "descriptions": {
-      "zh-TW": "原汁原味的本地鸡餐厅",
-      "en": "Authentic native chicken restaurant specialized in BBQ.",
-      "tl": "Autentikong native chicken restaurant na nakatuon sa BBQ."
+      "zh-TW": "提供各种咖啡和甜点。",
+      "en": "Offers a variety of coffee and desserts.",
+      "tl": "Nag-aalok ng iba't ibang kape at panghimagas."
     },
-    "imageUrl": "https://www.foodpanda.ph/image/original-conchings-native-chicken.jpg",
-    "categoryKey": "bbq_seafood"
-  },
-  {
-    "city": "davao",
-    "name": "Cafe Lujo Bakes and Brews",
-    "phone": "555-555-5555",
-    "address": "789 Cafe Lane, Davao City",
-    "descriptions": {
-      "zh-TW": "咖啡和甜点的完美结合",
-      "en": "Perfect blend of coffee and desserts.",
-      "tl": "Perpektong halo ng kape at mga dessert."
-    },
-    "imageUrl": "https://www.foodpanda.ph/image/cafe-lujo-bakes-and-brews.jpg",
+    "imageUrl": "",
     "categoryKey": "cafe_dessert"
+  },
+  {
+    "city": "davao",
+    "name": "Daebi Mama Korean Cuisine",
+    "phone": "",
+    "address": "DAVAO City",
+    "descriptions": {
+      "zh-TW": "A Korean restaurant known for its authentic dishes and cozy atmosphere.",
+      "en": "A Korean restaurant known for its authentic dishes and cozy atmosphere.",
+      "tl": "A Korean restaurant known for its authentic dishes and cozy atmosphere."
+    },
+    "imageUrl": "",
+    "categoryKey": "japanese_korean"
+  },
+  {
+    "city": "davao",
+    "name": "Cafe Verdania",
+    "phone": "",
+    "address": "DAVAO City",
+    "descriptions": {
+      "zh-TW": "A café offering a relaxed ambiance with delicious desserts and coffee.",
+      "en": "A café offering a relaxed ambiance with delicious desserts and coffee.",
+      "tl": "A café offering a relaxed ambiance with delicious desserts and coffee."
+    },
+    "imageUrl": "",
+    "categoryKey": "cafe_dessert"
+  },
+  {
+    "city": "davao",
+    "name": "Red House Taiwan Shabu Shabu Davao",
+    "phone": "",
+    "address": "DAVAO City",
+    "descriptions": {
+      "zh-TW": "A Shabu Shabu restaurant with a Taiwanese twist, perfect for hotpot lovers.",
+      "en": "A Shabu Shabu restaurant with a Taiwanese twist, perfect for hotpot lovers.",
+      "tl": "A Shabu Shabu restaurant with a Taiwanese twist, perfect for hotpot lovers."
+    },
+    "imageUrl": "",
+    "categoryKey": "chinese"
+  },
+  {
+    "city": "davao",
+    "name": "MYLK Cafe",
+    "phone": "",
+    "address": "DAVAO City",
+    "descriptions": {
+      "zh-TW": "A trendy café specializing in great coffee and baked goods.",
+      "en": "A trendy café specializing in great coffee and baked goods.",
+      "tl": "A trendy café specializing in great coffee and baked goods."
+    },
+    "imageUrl": "",
+    "categoryKey": "cafe_dessert"
+  },
+  {
+    "city": "davao",
+    "name": "DGT Weekend market by TienDabaw",
+    "phone": "",
+    "address": "DAVAO City",
+    "descriptions": {
+      "zh-TW": "A marketplace offering various local foods and fresh produce in a vibrant setting.",
+      "en": "A marketplace offering various local foods and fresh produce in a vibrant setting.",
+      "tl": "A marketplace offering various local foods and fresh produce in a vibrant setting."
+    },
+    "imageUrl": "",
+    "categoryKey": "filipino"
+  },
+  {
+    "city": "davao",
+    "name": "Alibaba Shawarma Coffee",
+    "phone": "",
+    "address": "DAVAO City",
+    "descriptions": {
+      "zh-TW": "A casual spot known for its delicious shawarma and coffee.",
+      "en": "A casual spot known for its delicious shawarma and coffee.",
+      "tl": "A casual spot known for its delicious shawarma and coffee."
+    },
+    "imageUrl": "",
+    "categoryKey": "cafe_dessert"
+  },
+  {
+    "city": "davao",
+    "name": "Kaizen Davao",
+    "phone": "",
+    "address": "DAVAO City",
+    "descriptions": {
+      "zh-TW": "Japanese street dining experience with a variety of dishes.",
+      "en": "Japanese street dining experience with a variety of dishes.",
+      "tl": "Japanese street dining experience with a variety of dishes."
+    },
+    "imageUrl": "",
+    "categoryKey": "japanese_korean"
+  },
+  {
+    "city": "davao",
+    "name": "Laysa's BBQ Grill",
+    "phone": "",
+    "address": "DAVAO City",
+    "descriptions": {
+      "zh-TW": "A local favorite for tasty grilled BBQ meals.",
+      "en": "A local favorite for tasty grilled BBQ meals.",
+      "tl": "A local favorite for tasty grilled BBQ meals."
+    },
+    "imageUrl": "",
+    "categoryKey": "bbq_seafood"
+  },
+  {
+    "city": "davao",
+    "name": "Han's Korean Restaurant",
+    "phone": "",
+    "address": "DAVAO City",
+    "descriptions": {
+      "zh-TW": "Offers authentic Korean dishes in a traditional setting.",
+      "en": "Offers authentic Korean dishes in a traditional setting.",
+      "tl": "Offers authentic Korean dishes in a traditional setting."
+    },
+    "imageUrl": "",
+    "categoryKey": "japanese_korean"
+  },
+  {
+    "city": "davao",
+    "name": "Think Up",
+    "phone": "",
+    "address": "DAVAO City",
+    "descriptions": {
+      "zh-TW": "An Asian fusion restaurant with a creative menu.",
+      "en": "An Asian fusion restaurant with a creative menu.",
+      "tl": "An Asian fusion restaurant with a creative menu."
+    },
+    "imageUrl": "",
+    "categoryKey": "filipino"
+  },
+  {
+    "city": "davao",
+    "name": "Taste of Home Davao",
+    "phone": "",
+    "address": "DAVAO City",
+    "descriptions": {
+      "zh-TW": "A homey restaurant serving Filipino comfort food.",
+      "en": "A homey restaurant serving Filipino comfort food.",
+      "tl": "A homey restaurant serving Filipino comfort food."
+    },
+    "imageUrl": "",
+    "categoryKey": "filipino"
+  },
+  {
+    "city": "davao",
+    "name": "Mia-kii: Japanese Froyo",
+    "phone": "",
+    "address": "DAVAO City",
+    "descriptions": {
+      "zh-TW": "A fusion of Japanese ingredients with delightful frozen yogurt.",
+      "en": "A fusion of Japanese ingredients with delightful frozen yogurt.",
+      "tl": "A fusion of Japanese ingredients with delightful frozen yogurt."
+    },
+    "imageUrl": "",
+    "categoryKey": "japanese_korean"
   },
   {
     "city": "davao",
     "name": "Top One Sushi Davao",
-    "phone": "0917 123 4567",
-    "address": "123 Sashimi St, Davao City",
+    "phone": "",
+    "address": "DAVAO City",
     "descriptions": {
-      "zh-TW": "这是Davao的一家非常受欢迎的寿司店。",
-      "en": "This is a very popular sushi restaurant in Davao.",
-      "tl": "Ito ay isang napaka sikat na sushi restaurant sa Davao."
-    },
-    "imageUrl": "https://scontent.fceb3-1.fna.fbcdn.net/v/t1.6435-9/12345678_123456789012345_1234567890_n.jpg?_nc_cat=109&ccb=1-7&_nc_sid=730e14&_nc_eui2=AeH5Bmd5cxkfuQJOzHs7v4Fz2qGsv0RjET3cEi4T37badIGuamtlXVq0h2z01CWqwo0l85IKJhjv9rwzu4Q7PK466yO_7o2shvA6WVLov-K13FDsZJiqX0D9xQA4vTfBle90X0R6PgI0o3gBww_xvgADvmjZacYdAvWFA&tn=w3KrNC33wzCtqkD9",
-    "categoryKey": "japanese_korean"
-  },
-  {
-    "city": "davao",
-    "name": "Cafe Juanita",
-    "phone": "0917 890 1234",
-    "address": "456 Latin St, Davao City",
-    "descriptions": {
-      "zh-TW": "这是一家为家庭提供美食的咖啡店，非常舒适。",
-      "en": "This is a cozy cafe providing good food for families.",
-      "tl": "Ito ay isang komportableng cafe na nagbibigay ng masarap na pagkain para sa mga pamilya."
-    },
-    "imageUrl": "https://scontent.fceb3-1.fna.fbcdn.net/v/t1.6435-9/23456789_234567890123456_2345678901_n.jpg?_nc_cat=101&ccb=1-7&_nc_sid=730e14&_nc_eui2=AeF54CysuOkZuVcxXyXnYt1X9lLGK-PrL1eZB8bWVRXt3HsybozNYtHK5fs89PKfYUtyRlNsP4Ils-LlNLO1BqebI2LkNDAxou0aN2ooY2vv0tD1Z8yjk_TQ5Hv2ZMEvHhYoFbZodcVft4U16Vu35rrhj5THz&tn=w3KrNC33wzCtqkD9",
-    "categoryKey": "cafe_dessert"
-  },
-  {
-    "city": "davao",
-    "name": "Kusina Ni Lola",
-    "phone": "0917 555 6789",
-    "address": "789 Street Food Ave, Davao City",
-    "descriptions": {
-      "zh-TW": "提供传统菲律賓菜的餐厅，气氛友好。",
-      "en": "A restaurant that offers traditional Filipino dishes with a friendly atmosphere.",
-      "tl": "Isang restaurant na nag-aalok ng mga tradisyunal na pagkaing Pilipino na mayroong magiliw na kapaligiran."
-    },
-    "imageUrl": "https://scontent.fceb3-1.fna.fbcdn.net/v/t1.6435-9/34567890_345678901234567_3456789012_n.jpg?_nc_cat=102&ccb=1-7&_nc_sid=730e14&_nc_eui2=AeH5BmpCqSo54f0F1L5D5y5ehPA5di7DheX5mOAwZLvdqL_hLJhKYWncJvk1BHk3QYIo2w7kmtjfoP6yHJDyXtFe1YKYD8CI0QgIm0_B_LiH1rE1XAFbViObwW484XzwWmEhzL5PPDy8bhzkCFZas3ShoiZ8aw&tn=w3KrNC33wzCtqkD9",
-    "categoryKey": "filipino"
-  },
-  {
-    "city": "manila",
-    "name": "Toyo Eatery",
-    "phone": "(02) 8376-1896",
-    "address": "Elbert's Steak Room, 6796 Ayala Avenue, Makati City",
-    "descriptions": {
-      "zh-TW": "现代风格的菲律宾餐厅，提供创新菜肴",
-      "en": "A modern take on Filipino cuisine with a contemporary twist.",
-      "tl": "Isang modernong bersyon ng lutuing Pilipino na may makabagong istilo."
-    },
-    "imageUrl": "",
-    "categoryKey": "filipino"
-  },
-  {
-    "city": "manila",
-    "name": "Yabu: House of Katsu",
-    "phone": "(02) 8332-3688",
-    "address": "Ground Floor, SM Megamall, Mandaluyong City",
-    "descriptions": {
-      "zh-TW": "日本炸猪排餐厅，使用新鲜的食材",
-      "en": "A Japanese Katsu restaurant known for its fresh ingredients and delicious pork cutlets.",
-      "tl": "Isang Japanese Katsu restaurant na kilala sa sariwang sangkap at masarap na pork cutlet."
+      "zh-TW": "A sushi restaurant with a variety of options for sushi lovers.",
+      "en": "A sushi restaurant with a variety of options for sushi lovers.",
+      "tl": "A sushi restaurant with a variety of options for sushi lovers."
     },
     "imageUrl": "",
     "categoryKey": "japanese_korean"
   },
   {
     "city": "manila",
-    "name": "Jollibee",
-    "phone": "(02) 8888-7000",
-    "address": "Multiple Locations in Manila",
+    "name": "Chowking",
+    "phone": "+63 2 8371 4911",
+    "address": "SM City Manila, 6th Avenue, BGC, Taguig",
     "descriptions": {
-      "zh-TW": "菲律宾快餐品牌，以其鸡肉饭和汉堡包而闻名",
-      "en": "Renowned Filipino fast food brand famous for its Chickenjoy and Jolly Spaghetti.",
-      "tl": "Kilala ang tatak ng fast food na Pilipino para sa Chickenjoy at Jolly Spaghetti."
+      "zh-TW": "中式快餐连锁店，提供各种中式美食。",
+      "en": "Fast food chain offering a variety of Chinese dishes.",
+      "tl": "Kadena ng fast food na nag-aalok ng iba't ibang ulam na Tsino."
+    },
+    "imageUrl": "",
+    "categoryKey": "chinese"
+  },
+  {
+    "city": "manila",
+    "name": "Mitsuyado Sei-Men",
+    "phone": "+63 2 7906 2200",
+    "address": "HMR Food Market, 8th Ave, Fort Bonifacio, Taguig",
+    "descriptions": {
+      "zh-TW": "日本拉面专卖店，以其浓郁的汤底和新鲜的食材著称。",
+      "en": "Japanese ramen shop renowned for its rich broth and fresh ingredients.",
+      "tl": "Japanese ramen shop na kilala sa masaganang sabaw at sariwang sangkap."
+    },
+    "imageUrl": "",
+    "categoryKey": "japanese_korean"
+  },
+  {
+    "city": "manila",
+    "name": "Kanin Club",
+    "phone": "+63 2 3478 5534",
+    "address": "SM Megamall, Mandaluyong",
+    "descriptions": {
+      "zh-TW": "菲律宾快餐店，提供传统菲律宾家庭菜。",
+      "en": "Filipino restaurant serving traditional home-cooked Filipino dishes.",
+      "tl": "Kainan na Pilipino na nag-aalok ng mga tradisyonal na lutong bahay na pagkain."
     },
     "imageUrl": "",
     "categoryKey": "filipino"
   },
   {
     "city": "manila",
-    "name": "Macao Imperial Tea",
-    "phone": "(02) 7905-2270",
-    "address": "4th Level, SM Mall of Asia, Pasay City",
+    "name": "Buffalo Wings & Things",
+    "phone": "+63 2 710 0831",
+    "address": "Robinsons Galleria, Ortigas Center, Pasig",
     "descriptions": {
-      "zh-TW": "著名的奶茶品牌，提供各式饮品和甜品",
-      "en": "Famous milk tea brand offering a variety of drinks and desserts.",
-      "tl": "Kilala na tatak ng milk tea na nag-aalok ng iba't ibang inumin at matamis."
-    },
-    "imageUrl": "",
-    "categoryKey": "cafe_dessert"
-  },
-  {
-    "city": "manila",
-    "name": "Chef Tatung",
-    "phone": "",
-    "address": "612 N Devine Rd",
-    "descriptions": {
-      "zh-TW": "Known for its unique Filipino dishes and vibrant ambiance.",
-      "en": "Known for its unique Filipino dishes and vibrant ambiance.",
-      "tl": "Known for its unique Filipino dishes and vibrant ambiance."
-    },
-    "imageUrl": "https://www.tripadvisor.com/Restaurant_Review-g175...",
-    "categoryKey": "filipino"
-  },
-  {
-    "city": "manila",
-    "name": "Manam Comfort Filipino Food",
-    "phone": "",
-    "address": "BGC, Taguig City",
-    "descriptions": {
-      "zh-TW": "Famous for its comfort food and lively atmosphere.",
-      "en": "Famous for its comfort food and lively atmosphere.",
-      "tl": "Famous for its comfort food and lively atmosphere."
-    },
-    "imageUrl": "https://www.tripadvisor.com/Restaurant_Review-g175...",
-    "categoryKey": "filipino"
-  },
-  {
-    "city": "manila",
-    "name": "La Cabrera",
-    "phone": "",
-    "address": "Edsa Shangri-La",
-    "descriptions": {
-      "zh-TW": "A top-notch Argentinian steakhouse in Manila.",
-      "en": "A top-notch Argentinian steakhouse in Manila.",
-      "tl": "A top-notch Argentinian steakhouse in Manila."
-    },
-    "imageUrl": "",
-    "categoryKey": "cafe_dessert"
-  },
-  {
-    "city": "manila",
-    "name": "Blackbird",
-    "phone": "",
-    "address": "MANILA City",
-    "descriptions": {
-      "zh-TW": "Offering modern European dishes with a stylish setting.",
-      "en": "Offering modern European dishes with a stylish setting.",
-      "tl": "Offering modern European dishes with a stylish setting."
+      "zh-TW": "美国美食连锁店，以其美味的鸡翅和丰盛的汉堡而闻名。",
+      "en": "American food chain famous for its delicious wings and hearty burgers.",
+      "tl": "Sangay ng Amerikanong pagkain na sikat sa masarap na chicken wings at masaganang hamburgers."
     },
     "imageUrl": "",
     "categoryKey": "american_western"
   },
   {
-    "city": "cebu",
-    "name": "13th Ave. Cafe - Guadalupe",
-    "phone": "(032) 1234-5678",
-    "address": "Guadalupe, Cebu City",
+    "city": "manila",
+    "name": "Seafood Island",
+    "phone": "+63 2 8722 8998",
+    "address": "Trinoma Mall, North Ave, Quezon City",
     "descriptions": {
-      "zh-TW": "一家受欢迎的咖啡馆，提供各种本地美食。",
-      "en": "A popular cafe offering a variety of local dishes.",
-      "tl": "Isang tanyag na kainan na nag-aalok ng iba't ibang lokal na putahe."
+      "zh-TW": "海鲜餐厅，提供丰富的新鲜海鲜菜式。",
+      "en": "Seafood restaurant offering a wide variety of fresh seafood dishes.",
+      "tl": "Restoran ng seafood na nag-aalok ng malawak na iba't ibang sariwang pagkaing-dagat."
     },
-    "imageUrl": "https://cdn.foodpanda.ph/images/restaurant_image1.jpg",
+    "imageUrl": "",
+    "categoryKey": "bbq_seafood"
+  },
+  {
+    "city": "manila",
+    "name": "Wildflour Café + Bakery",
+    "phone": "+63 2 8859 2117",
+    "address": "Chino Roces Ave, Makati",
+    "descriptions": {
+      "zh-TW": "现代咖啡馆，提供新鲜烘焙的面包和美味令人垂涎的甜点。",
+      "en": "Modern café offering freshly baked breads and delicious mouth-watering desserts.",
+      "tl": "Makabagong café na nag-aalok ng sariwang inihurnong mga pan at masarap na mga panghimagas."
+    },
+    "imageUrl": "",
     "categoryKey": "cafe_dessert"
   },
   {
-    "city": "cebu",
-    "name": "Jireh's Table - Villalon Drive Capitol",
-    "phone": "(032) 2345-6789",
-    "address": "Villalon Drive, Capitol, Cebu City",
+    "city": "manila",
+    "name": "Texas Roadhouse - Shangri La Plaza",
+    "phone": "",
+    "address": "Shangri La Plaza, Mandaluyong, Metro Manila",
     "descriptions": {
-      "zh-TW": "招牌美食让你流连忘返。",
-      "en": "Signature dishes that will keep you coming back.",
-      "tl": "Mga pamosong putahe na magpapanatili sa'yo na bumalik."
+      "zh-TW": "An American steakhouse chain known for its hand-cut steaks, fresh bread, and American cuisine.",
+      "en": "An American steakhouse chain known for its hand-cut steaks, fresh bread, and American cuisine.",
+      "tl": "An American steakhouse chain known for its hand-cut steaks, fresh bread, and American cuisine."
     },
-    "imageUrl": "https://cdn.foodpanda.ph/images/restaurant_image2.jpg",
+    "imageUrl": "",
+    "categoryKey": "cafe_dessert"
+  },
+  {
+    "city": "manila",
+    "name": "Hen Hao Hotpot & Barbeque",
+    "phone": "",
+    "address": "Quezon City, Metro Manila",
+    "descriptions": {
+      "zh-TW": "A popular spot for hotpot and barbecue, focusing on fresh ingredients and a vibrant dining experience.",
+      "en": "A popular spot for hotpot and barbecue, focusing on fresh ingredients and a vibrant dining experience.",
+      "tl": "A popular spot for hotpot and barbecue, focusing on fresh ingredients and a vibrant dining experience."
+    },
+    "imageUrl": "",
+    "categoryKey": "chinese"
+  },
+  {
+    "city": "manila",
+    "name": "Siklab - S Maison",
+    "phone": "",
+    "address": "S Maison, Conrad Manila, Mall of Asia Complex, Pasay City",
+    "descriptions": {
+      "zh-TW": "A modern Filipino restaurant featuring a variety of traditional dishes with a twist.",
+      "en": "A modern Filipino restaurant featuring a variety of traditional dishes with a twist.",
+      "tl": "A modern Filipino restaurant featuring a variety of traditional dishes with a twist."
+    },
+    "imageUrl": "",
+    "categoryKey": "filipino"
+  },
+  {
+    "city": "manila",
+    "name": "Siklab - Kamagong",
+    "phone": "",
+    "address": "Kamagong St, San Antonio, Makati",
+    "descriptions": {
+      "zh-TW": "Another branch serving contemporary Filipino food in a stylish setting.",
+      "en": "Another branch serving contemporary Filipino food in a stylish setting.",
+      "tl": "Another branch serving contemporary Filipino food in a stylish setting."
+    },
+    "imageUrl": "",
     "categoryKey": "filipino"
   },
   {
     "city": "cebu",
-    "name": "Cronos Sisig House - Opra",
-    "phone": "(032) 3456-7890",
-    "address": "Opra, Cebu City",
+    "name": "Dimsum Break",
+    "phone": "(032) 255-8888",
+    "address": "Various Locations in Cebu",
     "descriptions": {
-      "zh-TW": "知名的Sisig餐厅，提供用新鲜食材制作的美味。",
-      "en": "A well-known sisig house serving delectable dishes made with fresh ingredients.",
-      "tl": "Isang kilalang sisig house na naghahain ng masarap na putahe gamit ang sariwang sangkap."
+      "zh-TW": "著名的點心專賣店，提供多種美味的小吃。",
+      "en": "A famous dim sum specialty shop offering a variety of delicious snacks.",
+      "tl": "Isang tanyag na tindahan ng dim sum na nag-aalok ng iba't ibang masasarap na meryenda."
     },
-    "imageUrl": "https://cdn.foodpanda.ph/images/restaurant_image3.jpg",
-    "categoryKey": "bbq_seafood"
+    "imageUrl": "",
+    "categoryKey": "chinese"
   },
   {
     "city": "cebu",
-    "name": "Mrs. Macs - Lahug",
-    "phone": "(032) 4567-8901",
+    "name": "Sukuseki",
+    "phone": "(032) 412-3456",
+    "address": "Mandaue City, Cebu",
+    "descriptions": {
+      "zh-TW": "這裡提供傳統的日本料理，環境舒適。",
+      "en": "Offers traditional Japanese cuisine in a comfortable setting.",
+      "tl": "Nag-aalok ng tradisyonal na lutuing Hapon sa isang komportableng kapaligiran."
+    },
+    "imageUrl": "",
+    "categoryKey": "japanese_korean"
+  },
+  {
+    "city": "cebu",
+    "name": "The Pig & Palm",
+    "phone": "(032) 318-0288",
     "address": "Lahug, Cebu City",
     "descriptions": {
-      "zh-TW": "家庭友好的环境，提供各式美食和甜点。",
-      "en": "Family-friendly environment with a wide range of dishes and desserts.",
-      "tl": "Napaka-pamilyang paligid na may malawak na hanay ng mga putahe at panghimagas."
+      "zh-TW": "現代的菲律賓菜，使用當地新鮮的食材。",
+      "en": "Modern Filipino dishes using fresh local ingredients.",
+      "tl": "Mga modernong lutuing Pilipino na gumagamit ng mga sariwang lokal na sangkap."
     },
-    "imageUrl": "https://cdn.foodpanda.ph/images/restaurant_image4.jpg",
+    "imageUrl": "",
+    "categoryKey": "filipino"
+  },
+  {
+    "city": "cebu",
+    "name": "Buffalo Wild Wings",
+    "phone": "(032) 236-8652",
+    "address": "Cebu IT Park",
+    "descriptions": {
+      "zh-TW": "以雞翅和啤酒聞名的美式餐廳。",
+      "en": "An American restaurant known for wings and beers.",
+      "tl": "Isang Amerikanong restawran na kilala sa mga pakpak at serbesa."
+    },
+    "imageUrl": "",
+    "categoryKey": "american_western"
+  },
+  {
+    "city": "cebu",
+    "name": "Lantaw Native Restaurant",
+    "phone": "(032) 516-1010",
+    "address": "Busay, Cebu City",
+    "descriptions": {
+      "zh-TW": "提供地道的菲律賓料理，並享有壯麗的海景。",
+      "en": "Offers authentic Filipino cuisine with a breathtaking sea view.",
+      "tl": "Nag-aalok ng tunay na lutuing Pilipino na may nakamamanghang tanawin ng dagat."
+    },
+    "imageUrl": "",
+    "categoryKey": "filipino"
+  },
+  {
+    "city": "cebu",
+    "name": "Fina",
+    "phone": "(032) 123-4567",
+    "address": "123 Cebu City",
+    "descriptions": {
+      "zh-TW": "这是一家提供美味的本地菜的餐厅。",
+      "en": "This is a restaurant offering delicious local dishes.",
+      "tl": "Ito ay isang restawran na nag-aalok ng masarap na lokal na mga putahe."
+    },
+    "imageUrl": "",
+    "categoryKey": "filipino"
+  },
+  {
+    "city": "cebu",
+    "name": "MOTT32 Cebu",
+    "phone": "(032) 234-5678",
+    "address": "456 Cebu City",
+    "descriptions": {
+      "zh-TW": "一家现代中餐厅，提供独特的菜肴和优雅的氛围。",
+      "en": "A modern Chinese restaurant offering unique dishes and an elegant atmosphere.",
+      "tl": "Isang makabagong restawran na Tsino na nag-aalok ng mga natatanging putahe at isang eleganteng kapaligiran."
+    },
+    "imageUrl": "",
+    "categoryKey": "chinese"
+  },
+  {
+    "city": "cebu",
+    "name": "IL Primo",
+    "phone": "(032) 345-6789",
+    "address": "789 Cebu City",
+    "descriptions": {
+      "zh-TW": "以意大利美食而闻名，是享受晚餐的理想场所。",
+      "en": "Famous for Italian cuisine, it’s an ideal place for dinner.",
+      "tl": "Sikat ito sa lutuing Italyano, at perpektong lugar para sa hapunan."
+    },
+    "imageUrl": "",
+    "categoryKey": "american_western"
+  },
+  {
+    "city": "cebu",
+    "name": "Good Luck Hot Pot",
+    "phone": "(032) 456-7890",
+    "address": "321 Cebu City",
+    "descriptions": {
+      "zh-TW": "火锅餐厅，提供各种新鲜食材。",
+      "en": "Hot pot restaurant offering a variety of fresh ingredients.",
+      "tl": "Restawran ng mainit na palayok na nag-aalok ng iba't ibang sariwang sangkap."
+    },
+    "imageUrl": "",
+    "categoryKey": "bbq_seafood"
+  },
+  {
+    "city": "cebu",
+    "name": "Texas Roadhouse - Nustar Cebu",
+    "phone": "(032) 567-8901",
+    "address": "987 Cebu City",
+    "descriptions": {
+      "zh-TW": "著名的美式牛排餐厅，以其丰富的菜单而闻名。",
+      "en": "A famous American steakhouse known for its extensive menu.",
+      "tl": "Isang kilalang Amerikanong steakhouse na kilala sa kanyang masaganang menu."
+    },
+    "imageUrl": "",
     "categoryKey": "cafe_dessert"
   },
   {
     "city": "cebu",
-    "name": "Chixboy",
-    "phone": "N/A",
-    "address": "N/A",
+    "name": "Xin Tian Di",
+    "phone": "(032) 678-9012",
+    "address": "654 Cebu City",
     "descriptions": {
-      "zh-TW": "這是一個提供美味雞肉的餐廳。",
-      "en": "Chixboy is known for its delicious chicken offerings.",
-      "tl": "Kilala ang Chixboy para sa masarap na manok."
+      "zh-TW": "提供最好的中式海鲜和小吃。",
+      "en": "Offering the best Chinese seafood and snacks.",
+      "tl": "Nag-aalok ito ng pinakamahusay na Tsino na seafood at mga meryenda."
     },
-    "imageUrl": "https://www.foodpanda.com/images/chixboy.jpg",
-    "categoryKey": "filipino"
+    "imageUrl": "",
+    "categoryKey": "chinese"
   },
   {
     "city": "cebu",
-    "name": "Pungko-Pungko sa Fuente",
-    "phone": "N/A",
-    "address": "Fuente Osmena, Cebu City",
+    "name": "Texas Roadhouse",
+    "phone": "(032) 890-1234",
+    "address": "246 Cebu City",
     "descriptions": {
-      "zh-TW": "一家專注於傳統菲律賓炸食的餐廳。",
-      "en": "A restaurant specializing in traditional Filipino fried food.",
-      "tl": "Isang restawran na nakatuon sa tradisyonal na pritong pagkain sa Pilipinas."
+      "zh-TW": "以正宗的美式烧烤而著称。",
+      "en": "Famous for its authentic American barbecue.",
+      "tl": "Sikat ito sa tunay na Amerikanong barbecue."
     },
-    "imageUrl": "https://www.foodpanda.com/images/pungko.jpg",
-    "categoryKey": "filipino"
-  },
-  {
-    "city": "cebu",
-    "name": "Abli Cebu - Capitol Site",
-    "phone": "N/A",
-    "address": "Capitol Site, Cebu City",
-    "descriptions": {
-      "zh-TW": "提供當地特色菜的新鮮海鮮和餐點。",
-      "en": "This place offers local specialty dishes with fresh seafood.",
-      "tl": "Nag-aalok ang lugar na ito ng mga lokal na espesyal na putaheng may sariwang pagkaing-dagat."
-    },
-    "imageUrl": "https://www.foodpanda.com/images/abli_cebu.jpg",
+    "imageUrl": "",
     "categoryKey": "bbq_seafood"
   },
   {
     "city": "cebu",
-    "name": "House of Lechon",
-    "phone": "N/A",
-    "address": "N/A",
+    "name": "Marina Seaview",
+    "phone": "(032) 123-8904",
+    "address": "852 Cebu City",
     "descriptions": {
-      "zh-TW": "以其豐富多樣的Lechon而聞名的餐廳。",
-      "en": "A restaurant famous for its rich variety of Lechon.",
-      "tl": "Isang restawran na kilala para sa masaganang iba't ibang Lechon."
+      "zh-TW": "海滨餐厅，提供新鲜的海鲜菜肴。",
+      "en": "Seaside restaurant offering fresh seafood dishes.",
+      "tl": "Restawran sa tabing-dagat na nag-aalok ng mga sariwang seafood na putahe."
     },
-    "imageUrl": "https://www.foodpanda.com/images/house_of_lechon.jpg",
+    "imageUrl": "",
     "categoryKey": "bbq_seafood"
   },
   {
     "city": "cebu",
-    "name": "Il Corso",
-    "phone": "N/A",
-    "address": "Il Corso, Cebu City",
+    "name": "Acacia Steakhouse",
+    "phone": "(032) 456-7891",
+    "address": "369 Cebu City",
     "descriptions": {
-      "zh-TW": "專注於頂級意大利料理的餐廳。",
-      "en": "A restaurant focusing on top-quality Italian cuisine.",
-      "tl": "Isang restawran na nakatuon sa de-kalidad na lutong Italyano."
+      "zh-TW": "以其高级牛排和优质服务而闻名。",
+      "en": "Known for its premium steaks and excellent service.",
+      "tl": "Kilalang kilala ito sa mga premium steak at mahusay na serbisyo."
     },
-    "imageUrl": "https://www.foodpanda.com/images/il_corso.jpg",
-    "categoryKey": "american_western"
+    "imageUrl": "",
+    "categoryKey": "cafe_dessert"
   }
 ]
