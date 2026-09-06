@@ -11,9 +11,9 @@ async function generateAutomatedNewsWithAI() {
   console.log("🤖【AI 自動化系統】正在透過聯網搜尋菲律賓最新美食新聞與優惠...");
 
   try {
-    // 動態引入 ES Module 的 @google/genai
     const { GoogleGenAI } = await import('@google/genai');
-    const ai = new GoogleGenAI();
+    // 明確帶入 API Key，避免抓不到環境變數
+    const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
     // 1. 透過 Gemini 聯網搜尋菲律賓當週最新餐飲促銷與新店資訊
     const response = await ai.models.generateContent({
