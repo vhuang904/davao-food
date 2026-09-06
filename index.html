@@ -427,13 +427,13 @@
             if (el) el.classList.add('show');
         }
 
-        // 🎯 圖片智慧過濾：過濾掉 Google 無效地圖網址，100% 顯示 Unsplash 高清實景美食照
+        // 🎯 圖片智慧過濾：徹底排除所有 Google 託管網址（google / maps / lh3），100% 回退至 Unsplash 高畫質圖庫
         function getInitialImage(item, catKey) {
             const defaultImg = fallbackImages[catKey] || fallbackImages.filipino;
             
             if (item && item.imageUrl && typeof item.imageUrl === 'string') {
                 const url = item.imageUrl.trim();
-                if (url.includes('maps.googleapis.com') || url.includes('key=') || !url.startsWith('http')) {
+                if (url.includes('google') || url.includes('maps') || url.includes('lh3') || !url.startsWith('http')) {
                     return defaultImg;
                 }
                 return url;
