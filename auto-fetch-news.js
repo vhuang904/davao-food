@@ -7,11 +7,21 @@ admin.initializeApp({
 const db = admin.firestore();
 
 async function generateAutomatedNews() {
-  console.log("🤖【自動化系統】開始執行美食新聞與優惠自動更新...");
+  console.log("🤖【自動化系統】開始更新美食新聞與優惠...");
 
   try {
     const today = new Date().toISOString().split('T')[0];
     
+    // 1. 先清空舊的 news 集合，避免重複顯示
+    const newsSnapshot = await db.collection('news').get();
+    const batch = db.batch();
+    newsSnapshot.forEach((doc) => {
+      batch.delete(doc.ref);
+    });
+    await batch.commit();
+    console.log("🧹 已清除舊的重複新聞資料。");
+
+    // 2. 建立全新的最新快報
     const automatedNewsItem = {
       id: "auto-news-" + Date.now(),
       city: "all",
@@ -33,7 +43,7 @@ async function generateAutomatedNews() {
     const docRef = db.collection('news').doc(automatedNewsItem.id);
     await docRef.set(automatedNewsItem);
 
-    console.log("✅【自動化系統】成功自動生成並寫入一筆最新美食動態到 Firebase！");
+    console.log("✅【自動化系統】成功寫入最新不重複的美食動態！");
   } catch (error) {
     console.error("❌【自動化系統】執行失敗：", error);
     process.exit(1);
