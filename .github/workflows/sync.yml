@@ -26,17 +26,20 @@ jobs:
         run: |
           fetch_city() {
             CITY=$1
-            PROMPT_RULE="Extract restaurants in ${CITY}. Classify category strictly as one of: [chinese, japanese_korean, filipino, american_western, bbq_seafood, cafe_dessert]. Include name, phone, address, imageUrl, desc_zh, desc_en, desc_tl."
+            # 提示詞強化：明確要求抓取 Foodpanda, GrabFood, Facebook CDN 的真實餐點照片
+            PROMPT_RULE="Extract restaurants in ${CITY}. Classify category strictly as one of: [chinese, japanese_korean, filipino, american_western, bbq_seafood, cafe_dessert]. For imageUrl, extract ONLY direct HD image URLs from food delivery platforms (Grab, Foodpanda), Facebook CDN (scontent), or blogs. Do not include logos, base64 strings, or static icons. Include name, phone, address, imageUrl, desc_zh, desc_en, desc_tl."
 
+            # 1. 搜尋 GrabFood / Foodpanda 在地資料（圖源最穩定）
             curl -X POST https://api.firecrawl.dev/v1/scrape \
               -H "Content-Type: application/json" \
               -H "Authorization: Bearer $FIRECRAWL_KEY" \
-              -d "{\"url\": \"https://www.tripadvisor.com/Search?q=${CITY}+restaurants\", \"formats\": [\"extract\"], \"extract\": {\"prompt\": \"${PROMPT_RULE}\", \"schema\": {\"type\": \"object\", \"properties\": {\"restaurants\": {\"type\": \"array\", \"items\": {\"type\": \"object\", \"properties\": {\"name\": {\"type\": \"string\"}, \"phone\": {\"type\": \"string\"}, \"address\": {\"type\": \"string\"}, \"desc_zh\": {\"type\": \"string\"}, \"desc_en\": {\"type\": \"string\"}, \"desc_tl\": {\"type\": \"string\"}, \"imageUrl\": {\"type\": \"string\"}, \"category\": {\"type\": \"string\"}}}}}}}}" > "res_${CITY}_ta.json"
+              -d "{\"url\": \"https://www.google.com/search?q=top+restaurants+in+${CITY}+site:grab.com+OR+site:foodpanda.ph\", \"formats\": [\"extract\"], \"extract\": {\"prompt\": \"${PROMPT_RULE}\", \"schema\": {\"type\": \"object\", \"properties\": {\"restaurants\": {\"type\": \"array\", \"items\": {\"type\": \"object\", \"properties\": {\"name\": {\"type\": \"string\"}, \"phone\": {\"type\": \"string\"}, \"address\": {\"type\": \"string\"}, \"desc_zh\": {\"type\": \"string\"}, \"desc_en\": {\"type\": \"string\"}, \"desc_tl\": {\"type\": \"string\"}, \"imageUrl\": {\"type\": \"string\"}, \"category\": {\"type\": \"string\"}}}}}}}}" > "res_${CITY}_delivery.json"
 
+            # 2. 搜尋 Facebook 粉專與部落格食記
             curl -X POST https://api.firecrawl.dev/v1/scrape \
               -H "Content-Type: application/json" \
               -H "Authorization: Bearer $FIRECRAWL_KEY" \
-              -d "{\"url\": \"https://www.google.com/search?q=top+restaurants+in+${CITY}+site:facebook.com+OR+site:opentable.com\", \"formats\": [\"extract\"], \"extract\": {\"prompt\": \"${PROMPT_RULE}\", \"schema\": {\"type\": \"object\", \"properties\": {\"restaurants\": {\"type\": \"array\", \"items\": {\"type\": \"object\", \"properties\": {\"name\": {\"type\": \"string\"}, \"phone\": {\"type\": \"string\"}, \"address\": {\"type\": \"string\"}, \"desc_zh\": {\"type\": \"string\"}, \"desc_en\": {\"type\": \"string\"}, \"desc_tl\": {\"type\": \"string\"}, \"imageUrl\": {\"type\": \"string\"}, \"category\": {\"type\": \"string\"}}}}}}}}" > "res_${CITY}_fb.json"
+              -d "{\"url\": \"https://www.google.com/search?q=best+restaurants+food+blogs+in+${CITY}+site:facebook.com+OR+site:tripadvisor.com\", \"formats\": [\"extract\"], \"extract\": {\"prompt\": \"${PROMPT_RULE}\", \"schema\": {\"type\": \"object\", \"properties\": {\"restaurants\": {\"type\": \"array\", \"items\": {\"type\": \"object\", \"properties\": {\"name\": {\"type\": \"string\"}, \"phone\": {\"type\": \"string\"}, \"address\": {\"type\": \"string\"}, \"desc_zh\": {\"type\": \"string\"}, \"desc_en\": {\"type\": \"string\"}, \"desc_tl\": {\"type\": \"string\"}, \"imageUrl\": {\"type\": \"string\"}, \"category\": {\"type\": \"string\"}}}}}}}}" > "res_${CITY}_social.json"
           }
 
           fetch_city "davao"
@@ -64,30 +67,40 @@ jobs:
               return 'filipino';
             }
 
+            // 過濾無效或帶有防盜鏈警告的圖片網址
+            function cleanImageUrl(url) {
+              if (!url || typeof url !== 'string') return '';
+              if (url.startsWith('data:image') || url.includes('static') || url.includes('avatar') || url.includes('placeholder')) return '';
+              return url;
+            }
+
             const cities = ['davao', 'manila', 'cebu'];
             const map = new Map();
 
             cities.forEach(city => {
-              const listTA = getList('res_' + city + '_ta.json');
-              const listFB = getList('res_' + city + '_fb.json');
-              const combined = [...listTA, ...listFB];
+              const listDelivery = getList('res_' + city + '_delivery.json');
+              const listSocial = getList('res_' + city + '_social.json');
+              const combined = [...listDelivery, ...listSocial];
 
               combined.forEach(r => {
                 if(r.name && r.name.trim().length > 0) {
-                  let cleanName = r.name.replace(/\s*-\s*Home\s*|\s*-\s*Facebook\s*/gi, '').trim();
+                  let cleanName = r.name.replace(/\s*-\s*Home\s*|\s*-\s*Facebook\s*|\s*\|\s*GrabFood\s*/gi, '').trim();
                   const key = city + '_' + cleanName.toLowerCase();
+
+                  const validImg = cleanImageUrl(r.imageUrl);
+                  const existingData = map.get(key);
 
                   map.set(key, {
                     city: city,
                     name: cleanName,
-                    phone: r.phone || '',
-                    address: r.address || (city.toUpperCase() + ' City'),
+                    phone: r.phone || existingData?.phone || '',
+                    address: r.address || existingData?.address || (city.toUpperCase() + ' City'),
                     descriptions: {
-                      'zh-TW': r.desc_zh || r.desc_en || '暫無介紹。',
-                      'en': r.desc_en || r.desc_zh || 'No description available.',
-                      'tl': r.desc_tl || r.desc_en || 'Walang magagamit na paglalarawan.'
+                      'zh-TW': r.desc_zh || r.desc_en || existingData?.descriptions?.['zh-TW'] || '暫無介紹。',
+                      'en': r.desc_en || r.desc_zh || existingData?.descriptions?.['en'] || 'No description available.',
+                      'tl': r.desc_tl || r.desc_en || existingData?.descriptions?.['tl'] || 'Walang magagamit na paglalarawan.'
                     },
-                    imageUrl: r.imageUrl || '',
+                    imageUrl: validImg || existingData?.imageUrl || '',
                     categoryKey: preciseCategory(r)
                   });
                 }
@@ -96,7 +109,7 @@ jobs:
 
             const merged = Array.from(map.values());
             fs.writeFileSync('restaurants.json', JSON.stringify(merged, null, 2));
-            console.log('Successfully re-classified ' + merged.length + ' restaurants.');
+            console.log('Successfully saved ' + merged.length + ' restaurants with optimized Grab/Foodpanda/FB image extraction.');
           "
 
       - name: Commit and Push
@@ -104,5 +117,5 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add restaurants.json
-          git commit -m "Optimize restaurant classification logic with precise keyword matrix" || exit 0
+          git commit -m "Optimize image extraction targeting GrabFood, Foodpanda, and FB CDN" || exit 0
           git push
