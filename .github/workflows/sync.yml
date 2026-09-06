@@ -5,7 +5,6 @@ on:
     - cron: '0 0 * * 0'
   workflow_dispatch:
 
-# 賦予 Actions 修改專案檔案的權限
 permissions:
   contents: write
 
@@ -27,6 +26,7 @@ jobs:
         run: |
           echo "[]" > new_data.json
 
+          # 提示詞中加入分類要求：Chinese, American, Filipino, BBQ/Grill, Seafood, Cafe, Other
           curl -X POST https://api.firecrawl.dev/v1/scrape \
             -H "Content-Type: application/json" \
             -H "Authorization: Bearer $FIRECRAWL_KEY" \
@@ -34,7 +34,7 @@ jobs:
                   "url": "https://www.tripadvisor.com/Restaurants-g298459-Davao_City_Davao_del_Sur_Mindanao.html",
                   "formats": ["extract"],
                   "extract": {
-                    "prompt": "Extract ALL Davao City restaurant listings from the page including name, phone number, physical address, description, and image URL.",
+                    "prompt": "Extract ALL Davao City restaurant listings including name, phone number, physical address, description, image URL, and classify each restaurant into one cuisine category (Chinese, American, Filipino, BBQ, Seafood, Cafe, or Other).",
                     "schema": {
                       "type": "object",
                       "properties": {
@@ -47,7 +47,8 @@ jobs:
                               "phone": {"type": "string"},
                               "address": {"type": "string"},
                               "description": {"type": "string"},
-                              "imageUrl": {"type": "string"}
+                              "imageUrl": {"type": "string"},
+                              "category": {"type": "string"}
                             },
                             "required": ["name"]
                           }
@@ -64,7 +65,7 @@ jobs:
                   "url": "https://www.google.com/search?q=new+restaurants+in+davao+city",
                   "formats": ["extract"],
                   "extract": {
-                    "prompt": "Extract newly opened or popular restaurants in Davao City including name, address, phone, and brief description.",
+                    "prompt": "Extract newly opened or popular restaurants in Davao City including name, address, phone, brief description, and classify cuisine into (Chinese, American, Filipino, BBQ, Seafood, Cafe, or Other).",
                     "schema": {
                       "type": "object",
                       "properties": {
@@ -77,7 +78,8 @@ jobs:
                               "phone": {"type": "string"},
                               "address": {"type": "string"},
                               "description": {"type": "string"},
-                              "imageUrl": {"type": "string"}
+                              "imageUrl": {"type": "string"},
+                              "category": {"type": "string"}
                             },
                             "required": ["name"]
                           }
@@ -112,19 +114,31 @@ jobs:
               if(r.name) {
                 const key = r.name.trim().toLowerCase();
                 const oldData = map.get(key) || {};
+                
+                // 處理分類標籤在地化對應
+                let cat = r.category || oldData.category || '菲律賓餐';
+                if (/chinese/i.test(cat)) cat = '中式餐廳';
+                else if (/american|burger/i.test(cat)) cat = '美式餐廳';
+                else if (/filipino/i.test(cat)) cat = '菲律賓餐';
+                else if (/bbq|barbecue|grill/i.test(cat)) cat = '燒烤類';
+                else if (/seafood/i.test(cat)) cat = '海鮮類';
+                else if (/cafe|coffee/i.test(cat)) cat = '咖啡輕食';
+                else if (cat === 'Other') cat = '菲律賓餐';
+
                 map.set(key, {
                   name: r.name,
                   phone: r.phone || oldData.phone || '無電話資訊',
                   address: r.address || oldData.address || 'Davao City',
                   description: r.description || oldData.description || '暫無介紹',
-                  imageUrl: r.imageUrl || oldData.imageUrl || ''
+                  imageUrl: r.imageUrl || oldData.imageUrl || '',
+                  category: cat
                 });
               }
             });
 
             const merged = Array.from(map.values());
             fs.writeFileSync('restaurants.json', JSON.stringify(merged, null, 2));
-            console.log('Database updated. Total restaurants count: ' + merged.length);
+            console.log('Database updated with categories. Total count: ' + merged.length);
           "
 
       - name: Commit and Push updated JSON
@@ -132,5 +146,5 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add restaurants.json
-          git commit -m "Auto-update & merge Davao restaurants list" || exit 0
+          git commit -m "Auto-update & merge Davao restaurants with categories" || exit 0
           git push
