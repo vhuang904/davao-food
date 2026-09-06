@@ -45,6 +45,9 @@
 
         .card { background: white; border-radius: 12px; overflow: hidden; margin-bottom: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.04); border: 1px solid #f3eee3; }
 
+        /* 🎯 修正卡片圖片尺寸，防止新聞圖放大暴開 */
+        .card > img { width: 100%; height: 200px; object-fit: cover; background: #f7f5f0; display: block; }
+
         /* 多圖輪播容器 */
         .carousel-container { position: relative; width: 100%; height: 210px; background: #f7f5f0; overflow: hidden; }
         .carousel-track { display: flex; width: 100%; height: 100%; overflow-x: auto; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; }
@@ -622,7 +625,6 @@
                     displayDesc = item.description;
                 }
 
-                // 修正純字串拼接，避免語法解析拋錯
                 var carouselSlides = imageList.map(function(imgUrl) {
                     return '<div class="carousel-slide"><img src="' + imgUrl + '" alt="Restaurant" loading="lazy"></div>';
                 }).join('');
