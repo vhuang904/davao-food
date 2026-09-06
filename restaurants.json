@@ -14,19 +14,6 @@
   },
   {
     "city": "davao",
-    "name": "Jack's Ridge",
-    "phone": "查看 Google 地圖專線",
-    "address": "117 Shrine Hills Rd, Talomo, Davao City, Davao del Sur, Philippines",
-    "descriptions": {
-      "zh-TW": "Google 地圖評分 ⭐ 4.4 (3693)。位於 DAVAO 的熱門美食店家。",
-      "en": "Google Maps rating ⭐ 4.4 (3693). Highly rated spot in DAVAO.",
-      "tl": "Google Maps rating ⭐ 4.4 (3693). Sikat na kainan sa DAVAO."
-    },
-    "imageUrl": "",
-    "categoryKey": "filipino"
-  },
-  {
-    "city": "davao",
     "name": "The Fat Cow",
     "phone": "查看 Google 地圖專線",
     "address": "V. Mapa St, Poblacion District, Davao City, Davao del Sur, Philippines",
@@ -40,6 +27,19 @@
   },
   {
     "city": "davao",
+    "name": "Jack's Ridge",
+    "phone": "查看 Google 地圖專線",
+    "address": "117 Shrine Hills Rd, Talomo, Davao City, Davao del Sur, Philippines",
+    "descriptions": {
+      "zh-TW": "Google 地圖評分 ⭐ 4.4 (3693)。位於 DAVAO 的熱門美食店家。",
+      "en": "Google Maps rating ⭐ 4.4 (3693). Highly rated spot in DAVAO.",
+      "tl": "Google Maps rating ⭐ 4.4 (3693). Sikat na kainan sa DAVAO."
+    },
+    "imageUrl": "",
+    "categoryKey": "filipino"
+  },
+  {
+    "city": "davao",
     "name": "Garden Bay Restaurant & Resort",
     "phone": "查看 Google 地圖專線",
     "address": "Maryknoll Dr, Lanang, Davao City, 8000 Davao del Sur, Philippines",
@@ -47,19 +47,6 @@
       "zh-TW": "Google 地圖評分 ⭐ 4.8 (3284)。位於 DAVAO 的熱門美食店家。",
       "en": "Google Maps rating ⭐ 4.8 (3284). Highly rated spot in DAVAO.",
       "tl": "Google Maps rating ⭐ 4.8 (3284). Sikat na kainan sa DAVAO."
-    },
-    "imageUrl": "",
-    "categoryKey": "filipino"
-  },
-  {
-    "city": "davao",
-    "name": "Sky View Restaurant",
-    "phone": "查看 Google 地圖專線",
-    "address": "3J42+Q4M, Quimpo Blvd, Ecoland, Davao City, Davao del Sur, Philippines",
-    "descriptions": {
-      "zh-TW": "Google 地圖評分 ⭐ 4.2 (76)。位於 DAVAO 的熱門美食店家。",
-      "en": "Google Maps rating ⭐ 4.2 (76). Highly rated spot in DAVAO.",
-      "tl": "Google Maps rating ⭐ 4.2 (76). Sikat na kainan sa DAVAO."
     },
     "imageUrl": "",
     "categoryKey": "filipino"
@@ -105,19 +92,6 @@
   },
   {
     "city": "davao",
-    "name": "Huckleberry Southern Kitchen & Bar",
-    "phone": "查看 Google 地圖專線",
-    "address": "Oboza Compound, Rizal St, Poblacion District, Davao City, 8000 Davao del Sur, Philippines",
-    "descriptions": {
-      "zh-TW": "Google 地圖評分 ⭐ 4.3 (638)。位於 DAVAO 的熱門美食店家。",
-      "en": "Google Maps rating ⭐ 4.3 (638). Highly rated spot in DAVAO.",
-      "tl": "Google Maps rating ⭐ 4.3 (638). Sikat na kainan sa DAVAO."
-    },
-    "imageUrl": "",
-    "categoryKey": "filipino"
-  },
-  {
-    "city": "davao",
     "name": "Bondi&Bourke Davao",
     "phone": "查看 Google 地圖專線",
     "address": "115 P Pelayo St, Poblacion District, Davao City, 8000 Davao del Sur, Philippines",
@@ -125,6 +99,19 @@
       "zh-TW": "Google 地圖評分 ⭐ 4.6 (483)。位於 DAVAO 的熱門美食店家。",
       "en": "Google Maps rating ⭐ 4.6 (483). Highly rated spot in DAVAO.",
       "tl": "Google Maps rating ⭐ 4.6 (483). Sikat na kainan sa DAVAO."
+    },
+    "imageUrl": "",
+    "categoryKey": "filipino"
+  },
+  {
+    "city": "davao",
+    "name": "Sky View Restaurant",
+    "phone": "查看 Google 地圖專線",
+    "address": "3J42+Q4M, Quimpo Blvd, Ecoland, Davao City, Davao del Sur, Philippines",
+    "descriptions": {
+      "zh-TW": "Google 地圖評分 ⭐ 4.2 (76)。位於 DAVAO 的熱門美食店家。",
+      "en": "Google Maps rating ⭐ 4.2 (76). Highly rated spot in DAVAO.",
+      "tl": "Google Maps rating ⭐ 4.2 (76). Sikat na kainan sa DAVAO."
     },
     "imageUrl": "",
     "categoryKey": "filipino"
@@ -144,19 +131,6 @@
   },
   {
     "city": "davao",
-    "name": "ROOFTOP Café Bar",
-    "phone": "查看 Google 地圖專線",
-    "address": "4th Floor, Obr Apartment Rooftop, Sandawa Road Beside BDO Network - Sandawa, Above SEBO Massage Bldg Matina, 3J52+HHR, Guillermo E. Torres St, Talomo, Davao City, 8000 Davao del Sur, Philippines",
-    "descriptions": {
-      "zh-TW": "Google 地圖評分 ⭐ 4.2 (186)。位於 DAVAO 的熱門美食店家。",
-      "en": "Google Maps rating ⭐ 4.2 (186). Highly rated spot in DAVAO.",
-      "tl": "Google Maps rating ⭐ 4.2 (186). Sikat na kainan sa DAVAO."
-    },
-    "imageUrl": "",
-    "categoryKey": "cafe_dessert"
-  },
-  {
-    "city": "davao",
     "name": "Vista View Resto",
     "phone": "查看 Google 地圖專線",
     "address": "3HV9+8FP, Langub Rd, Talomo, Davao City, Davao del Sur, Philippines",
@@ -167,45 +141,6 @@
     },
     "imageUrl": "",
     "categoryKey": "filipino"
-  },
-  {
-    "city": "davao",
-    "name": "The Crazy Bite Co. Sky Cafe",
-    "phone": "查看 Google 地圖專線",
-    "address": "Roofdeck 6th floor, LHL, Near GH office Depot, Monteverde Building, corner Sales St, Poblacion District, Davao City, 8000 Davao del Sur, Philippines",
-    "descriptions": {
-      "zh-TW": "Google 地圖評分 ⭐ 4.5 (553)。位於 DAVAO 的熱門美食店家。",
-      "en": "Google Maps rating ⭐ 4.5 (553). Highly rated spot in DAVAO.",
-      "tl": "Google Maps rating ⭐ 4.5 (553). Sikat na kainan sa DAVAO."
-    },
-    "imageUrl": "",
-    "categoryKey": "cafe_dessert"
-  },
-  {
-    "city": "davao",
-    "name": "Kusina Dabaw",
-    "phone": "查看 Google 地圖專線",
-    "address": "San Pedro St, Poblacion District, Davao City, 8000 Davao del Sur, Philippines",
-    "descriptions": {
-      "zh-TW": "Google 地圖評分 ⭐ 4 (824)。位於 DAVAO 的熱門美食店家。",
-      "en": "Google Maps rating ⭐ 4 (824). Highly rated spot in DAVAO.",
-      "tl": "Google Maps rating ⭐ 4 (824). Sikat na kainan sa DAVAO."
-    },
-    "imageUrl": "",
-    "categoryKey": "filipino"
-  },
-  {
-    "city": "davao",
-    "name": "Malagos Homegrown Cafe - Matina Aplaya",
-    "phone": "查看 Google 地圖專線",
-    "address": "Shanghai Street, Matina Aplaya, Talomo, Davao City, 8000 Davao del Sur, Philippines",
-    "descriptions": {
-      "zh-TW": "Google 地圖評分 ⭐ 4.3 (399)。位於 DAVAO 的熱門美食店家。",
-      "en": "Google Maps rating ⭐ 4.3 (399). Highly rated spot in DAVAO.",
-      "tl": "Google Maps rating ⭐ 4.3 (399). Sikat na kainan sa DAVAO."
-    },
-    "imageUrl": "",
-    "categoryKey": "cafe_dessert"
   },
   {
     "city": "davao",
@@ -222,39 +157,104 @@
   },
   {
     "city": "davao",
-    "name": "Wobbly Pan Spanish Bistro",
+    "name": "Gerry's Abreeza Mall",
     "phone": "查看 Google 地圖專線",
-    "address": "J. Camus, Brgy, corner General Luna St, Barangay 4-A, Poblacion District, Davao City, 8000 Davao del Sur, Philippines",
+    "address": "Second floor, Abreeza Mall, 2082 J.P. Laurel Ave, Bajada, Davao City, 8000 Davao del Sur, Philippines",
     "descriptions": {
-      "zh-TW": "Google 地圖評分 ⭐ 4.7 (136)。位於 DAVAO 的熱門美食店家。",
-      "en": "Google Maps rating ⭐ 4.7 (136). Highly rated spot in DAVAO.",
-      "tl": "Google Maps rating ⭐ 4.7 (136). Sikat na kainan sa DAVAO."
+      "zh-TW": "Google 地圖評分 ⭐ 4.9 (5130)。位於 DAVAO 的熱門美食店家。",
+      "en": "Google Maps rating ⭐ 4.9 (5130). Highly rated spot in DAVAO.",
+      "tl": "Google Maps rating ⭐ 4.9 (5130). Sikat na kainan sa DAVAO."
     },
     "imageUrl": "",
     "categoryKey": "filipino"
   },
   {
     "city": "davao",
-    "name": "Bramble",
+    "name": "Huckleberry Southern Kitchen & Bar",
     "phone": "查看 Google 地圖專線",
-    "address": "115 P Pelayo St, Poblacion District, Davao City, 8000 Davao del Sur, Philippines",
+    "address": "Oboza Compound, Rizal St, Poblacion District, Davao City, 8000 Davao del Sur, Philippines",
     "descriptions": {
-      "zh-TW": "Google 地圖評分 ⭐ 4.4 (304)。位於 DAVAO 的熱門美食店家。",
-      "en": "Google Maps rating ⭐ 4.4 (304). Highly rated spot in DAVAO.",
-      "tl": "Google Maps rating ⭐ 4.4 (304). Sikat na kainan sa DAVAO."
+      "zh-TW": "Google 地圖評分 ⭐ 4.3 (638)。位於 DAVAO 的熱門美食店家。",
+      "en": "Google Maps rating ⭐ 4.3 (638). Highly rated spot in DAVAO.",
+      "tl": "Google Maps rating ⭐ 4.3 (638). Sikat na kainan sa DAVAO."
+    },
+    "imageUrl": "",
+    "categoryKey": "filipino"
+  },
+  {
+    "city": "davao",
+    "name": "Hunter's Modern Filipino Chinese Kitchen + Bar - Davao City",
+    "phone": "查看 Google 地圖專線",
+    "address": "CT Drive, Tulip Dr, Talomo, Davao City, 8000 Davao del Sur, Philippines",
+    "descriptions": {
+      "zh-TW": "Google 地圖評分 ⭐ 4.8 (421)。位於 DAVAO 的熱門美食店家。",
+      "en": "Google Maps rating ⭐ 4.8 (421). Highly rated spot in DAVAO.",
+      "tl": "Google Maps rating ⭐ 4.8 (421). Sikat na kainan sa DAVAO."
+    },
+    "imageUrl": "",
+    "categoryKey": "chinese"
+  },
+  {
+    "city": "davao",
+    "name": "The Crazy Bite Co. Sky Cafe",
+    "phone": "查看 Google 地圖專線",
+    "address": "Roofdeck 6th floor, LHL, Near GH office Depot, Monteverde Building, corner Sales St, Poblacion District, Davao City, 8000 Davao del Sur, Philippines",
+    "descriptions": {
+      "zh-TW": "Google 地圖評分 ⭐ 4.5 (553)。位於 DAVAO 的熱門美食店家。",
+      "en": "Google Maps rating ⭐ 4.5 (553). Highly rated spot in DAVAO.",
+      "tl": "Google Maps rating ⭐ 4.5 (553). Sikat na kainan sa DAVAO."
     },
     "imageUrl": "",
     "categoryKey": "cafe_dessert"
   },
   {
     "city": "davao",
-    "name": "Sitio Babak",
+    "name": "ROOFTOP Café Bar",
     "phone": "查看 Google 地圖專線",
-    "address": "3JM5+HMG, Surveyor Street, Bajada, Davao City, Davao del Sur, Philippines",
+    "address": "4th Floor, Obr Apartment Rooftop, Sandawa Road Beside BDO Network - Sandawa, Above SEBO Massage Bldg Matina, 3J52+HHR, Guillermo E. Torres St, Talomo, Davao City, 8000 Davao del Sur, Philippines",
     "descriptions": {
-      "zh-TW": "Google 地圖評分 ⭐ 4.6 (361)。位於 DAVAO 的熱門美食店家。",
-      "en": "Google Maps rating ⭐ 4.6 (361). Highly rated spot in DAVAO.",
-      "tl": "Google Maps rating ⭐ 4.6 (361). Sikat na kainan sa DAVAO."
+      "zh-TW": "Google 地圖評分 ⭐ 4.2 (186)。位於 DAVAO 的熱門美食店家。",
+      "en": "Google Maps rating ⭐ 4.2 (186). Highly rated spot in DAVAO.",
+      "tl": "Google Maps rating ⭐ 4.2 (186). Sikat na kainan sa DAVAO."
+    },
+    "imageUrl": "",
+    "categoryKey": "cafe_dessert"
+  },
+  {
+    "city": "davao",
+    "name": "De Bonte Koe European Bar and Restaurant",
+    "phone": "查看 Google 地圖專線",
+    "address": "Habana Compound, 29 Rizal St, Poblacion, Lungsod ng Dabaw, 8000 Lalawigan ng Davao del Sur, Philippines",
+    "descriptions": {
+      "zh-TW": "Google 地圖評分 ⭐ 4.6 (245)。位於 DAVAO 的熱門美食店家。",
+      "en": "Google Maps rating ⭐ 4.6 (245). Highly rated spot in DAVAO.",
+      "tl": "Google Maps rating ⭐ 4.6 (245). Sikat na kainan sa DAVAO."
+    },
+    "imageUrl": "",
+    "categoryKey": "filipino"
+  },
+  {
+    "city": "davao",
+    "name": "Yellow Fin Seafood Restaurant",
+    "phone": "查看 Google 地圖專線",
+    "address": "Sandawa Plaza, Quimpo Blvd, Talomo, Davao City, 8000 Davao del Sur, Philippines",
+    "descriptions": {
+      "zh-TW": "Google 地圖評分 ⭐ 4.4 (844)。位於 DAVAO 的熱門美食店家。",
+      "en": "Google Maps rating ⭐ 4.4 (844). Highly rated spot in DAVAO.",
+      "tl": "Google Maps rating ⭐ 4.4 (844). Sikat na kainan sa DAVAO."
+    },
+    "imageUrl": "",
+    "categoryKey": "bbq_seafood"
+  },
+  {
+    "city": "davao",
+    "name": "Rekado Filipino Comfort Cuisine",
+    "phone": "查看 Google 地圖專線",
+    "address": "1050 Emilio Jacinto Ext, Poblacion District, Davao City, 8000 Davao del Sur, Philippines",
+    "descriptions": {
+      "zh-TW": "Google 地圖評分 ⭐ 4.4 (724)。位於 DAVAO 的熱門美食店家。",
+      "en": "Google Maps rating ⭐ 4.4 (724). Highly rated spot in DAVAO.",
+      "tl": "Google Maps rating ⭐ 4.4 (724). Sikat na kainan sa DAVAO."
     },
     "imageUrl": "",
     "categoryKey": "filipino"
@@ -274,6 +274,97 @@
   },
   {
     "city": "davao",
+    "name": "Yaki Yaki Ponciano",
+    "phone": "查看 Google 地圖專線",
+    "address": "3J95+GRG, C. Bangoy St, Poblacion District, Davao City, Davao del Sur, Philippines",
+    "descriptions": {
+      "zh-TW": "Google 地圖評分 ⭐ 4.4 (10)。位於 DAVAO 的熱門美食店家。",
+      "en": "Google Maps rating ⭐ 4.4 (10). Highly rated spot in DAVAO.",
+      "tl": "Google Maps rating ⭐ 4.4 (10). Sikat na kainan sa DAVAO."
+    },
+    "imageUrl": "",
+    "categoryKey": "japanese_korean"
+  },
+  {
+    "city": "davao",
+    "name": "Kaizen Davao Ph",
+    "phone": "查看 Google 地圖專線",
+    "address": "F. Torres St, Poblacion District, Davao City, 8000 Davao del Sur, Philippines",
+    "descriptions": {
+      "zh-TW": "Google 地圖評分 ⭐ 4.1 (617)。位於 DAVAO 的熱門美食店家。",
+      "en": "Google Maps rating ⭐ 4.1 (617). Highly rated spot in DAVAO.",
+      "tl": "Google Maps rating ⭐ 4.1 (617). Sikat na kainan sa DAVAO."
+    },
+    "imageUrl": "",
+    "categoryKey": "filipino"
+  },
+  {
+    "city": "davao",
+    "name": "Yoshimeatsu Davao",
+    "phone": "查看 Google 地圖專線",
+    "address": "Ascendido Building, Pryce Business Park, Poblacion District, Davao City, 8000 Davao del Sur, Philippines",
+    "descriptions": {
+      "zh-TW": "Google 地圖評分 ⭐ 3.9 (146)。位於 DAVAO 的熱門美食店家。",
+      "en": "Google Maps rating ⭐ 3.9 (146). Highly rated spot in DAVAO.",
+      "tl": "Google Maps rating ⭐ 3.9 (146). Sikat na kainan sa DAVAO."
+    },
+    "imageUrl": "",
+    "categoryKey": "filipino"
+  },
+  {
+    "city": "davao",
+    "name": "Yaki Yaki Gaisano Mall",
+    "phone": "查看 Google 地圖專線",
+    "address": "4th Floor, Gaisano Mall of Davao, 15 J.P. Laurel Ave, Bajada, Davao City, 8000 Davao del Sur, Philippines",
+    "descriptions": {
+      "zh-TW": "Google 地圖評分 ⭐ 1 (1)。位於 DAVAO 的熱門美食店家。",
+      "en": "Google Maps rating ⭐ 1 (1). Highly rated spot in DAVAO.",
+      "tl": "Google Maps rating ⭐ 1 (1). Sikat na kainan sa DAVAO."
+    },
+    "imageUrl": "",
+    "categoryKey": "japanese_korean"
+  },
+  {
+    "city": "davao",
+    "name": "呑ん気 Nonki Japanese Restaurant - Davao, F. Torres Street",
+    "phone": "查看 Google 地圖專線",
+    "address": "AutoVille Building, F. Torres St, Poblacion District, Davao City, 8000 Davao del Sur, Philippines",
+    "descriptions": {
+      "zh-TW": "Google 地圖評分 ⭐ 4.4 (470)。位於 DAVAO 的熱門美食店家。",
+      "en": "Google Maps rating ⭐ 4.4 (470). Highly rated spot in DAVAO.",
+      "tl": "Google Maps rating ⭐ 4.4 (470). Sikat na kainan sa DAVAO."
+    },
+    "imageUrl": "",
+    "categoryKey": "japanese_korean"
+  },
+  {
+    "city": "davao",
+    "name": "SM City Davao",
+    "phone": "查看 Google 地圖專線",
+    "address": "Quimpo Blvd cor. Tulip and Ecoland Drive, Ecoland Subdivision Basketball Court, Matina Pangi Road, Talomo, Davao City, 8000 Davao del Sur, Philippines",
+    "descriptions": {
+      "zh-TW": "Google 地圖評分 ⭐ 4.5 (11596)。位於 DAVAO 的熱門美食店家。",
+      "en": "Google Maps rating ⭐ 4.5 (11596). Highly rated spot in DAVAO.",
+      "tl": "Google Maps rating ⭐ 4.5 (11596). Sikat na kainan sa DAVAO."
+    },
+    "imageUrl": "",
+    "categoryKey": "filipino"
+  },
+  {
+    "city": "davao",
+    "name": "Ginkaku",
+    "phone": "查看 Google 地圖專線",
+    "address": "21 Virgo, Talomo, Davao City, 8000 Davao del Sur, Philippines",
+    "descriptions": {
+      "zh-TW": "Google 地圖評分 ⭐ 5 (1)。位於 DAVAO 的熱門美食店家。",
+      "en": "Google Maps rating ⭐ 5 (1). Highly rated spot in DAVAO.",
+      "tl": "Google Maps rating ⭐ 5 (1). Sikat na kainan sa DAVAO."
+    },
+    "imageUrl": "",
+    "categoryKey": "filipino"
+  },
+  {
+    "city": "davao",
     "name": "Samgyupsalamat Davao Quirino",
     "phone": "查看 Google 地圖專線",
     "address": "Rogen Inn Compound Mount Apo Street, corner Lopez Jaena St, Poblacion District, Davao City, 8000 Davao del Sur, Philippines",
@@ -281,19 +372,6 @@
       "zh-TW": "Google 地圖評分 ⭐ 4.7 (360)。位於 DAVAO 的熱門美食店家。",
       "en": "Google Maps rating ⭐ 4.7 (360). Highly rated spot in DAVAO.",
       "tl": "Google Maps rating ⭐ 4.7 (360). Sikat na kainan sa DAVAO."
-    },
-    "imageUrl": "",
-    "categoryKey": "japanese_korean"
-  },
-  {
-    "city": "davao",
-    "name": "Daebi Mama Korean Cuisine",
-    "phone": "查看 Google 地圖專線",
-    "address": "5 Bacaca Road, Riverview Village, Davao City, 8000 Davao del Sur, Philippines",
-    "descriptions": {
-      "zh-TW": "Google 地圖評分 ⭐ 4.5 (40)。位於 DAVAO 的熱門美食店家。",
-      "en": "Google Maps rating ⭐ 4.5 (40). Highly rated spot in DAVAO.",
-      "tl": "Google Maps rating ⭐ 4.5 (40). Sikat na kainan sa DAVAO."
     },
     "imageUrl": "",
     "categoryKey": "japanese_korean"
@@ -313,6 +391,32 @@
   },
   {
     "city": "davao",
+    "name": "Daebi Mama Korean Cuisine",
+    "phone": "查看 Google 地圖專線",
+    "address": "5 Bacaca Road, Riverview Village, Davao City, 8000 Davao del Sur, Philippines",
+    "descriptions": {
+      "zh-TW": "Google 地圖評分 ⭐ 4.5 (40)。位於 DAVAO 的熱門美食店家。",
+      "en": "Google Maps rating ⭐ 4.5 (40). Highly rated spot in DAVAO.",
+      "tl": "Google Maps rating ⭐ 4.5 (40). Sikat na kainan sa DAVAO."
+    },
+    "imageUrl": "",
+    "categoryKey": "japanese_korean"
+  },
+  {
+    "city": "davao",
+    "name": "SamgyupSalamat - Davao (JP Laurel)",
+    "phone": "查看 Google 地圖專線",
+    "address": "JP LAUREL AVENUE, CORNER V. Mapa St, Poblacion District, Davao City, 8000 Davao del Sur, Philippines",
+    "descriptions": {
+      "zh-TW": "Google 地圖評分 ⭐ 4.2 (247)。位於 DAVAO 的熱門美食店家。",
+      "en": "Google Maps rating ⭐ 4.2 (247). Highly rated spot in DAVAO.",
+      "tl": "Google Maps rating ⭐ 4.2 (247). Sikat na kainan sa DAVAO."
+    },
+    "imageUrl": "",
+    "categoryKey": "japanese_korean"
+  },
+  {
+    "city": "davao",
     "name": "HWAROWON",
     "phone": "查看 Google 地圖專線",
     "address": "unit 11 Ground Floor, DRC, damosa business center damosa lanang, Buhangin, Davao City, 8000 Davao del Sur, Philippines",
@@ -320,6 +424,19 @@
       "zh-TW": "Google 地圖評分 ⭐ 4.9 (46)。位於 DAVAO 的熱門美食店家。",
       "en": "Google Maps rating ⭐ 4.9 (46). Highly rated spot in DAVAO.",
       "tl": "Google Maps rating ⭐ 4.9 (46). Sikat na kainan sa DAVAO."
+    },
+    "imageUrl": "",
+    "categoryKey": "filipino"
+  },
+  {
+    "city": "davao",
+    "name": "Sitio Babak",
+    "phone": "查看 Google 地圖專線",
+    "address": "3JM5+HMG, Surveyor Street, Bajada, Davao City, Davao del Sur, Philippines",
+    "descriptions": {
+      "zh-TW": "Google 地圖評分 ⭐ 4.6 (361)。位於 DAVAO 的熱門美食店家。",
+      "en": "Google Maps rating ⭐ 4.6 (361). Highly rated spot in DAVAO.",
+      "tl": "Google Maps rating ⭐ 4.6 (361). Sikat na kainan sa DAVAO."
     },
     "imageUrl": "",
     "categoryKey": "filipino"
@@ -352,19 +469,6 @@
   },
   {
     "city": "davao",
-    "name": "Izakaya Don",
-    "phone": "查看 Google 地圖專線",
-    "address": "Door #4, Don Dionisio Complex, Cabaguio Ave, Davao City, 8000 Davao del Sur, Philippines",
-    "descriptions": {
-      "zh-TW": "Google 地圖評分 ⭐ 4.6 (32)。位於 DAVAO 的熱門美食店家。",
-      "en": "Google Maps rating ⭐ 4.6 (32). Highly rated spot in DAVAO.",
-      "tl": "Google Maps rating ⭐ 4.6 (32). Sikat na kainan sa DAVAO."
-    },
-    "imageUrl": "",
-    "categoryKey": "filipino"
-  },
-  {
-    "city": "davao",
     "name": "JJY Korean Restaurant",
     "phone": "查看 Google 地圖專線",
     "address": "Units 10, 11Phoenix Lanang Service Station, Barangay R. Castillo, Agdao, Davao City, 8000 Davao del Sur, Philippines",
@@ -378,13 +482,13 @@
   },
   {
     "city": "davao",
-    "name": "Kaizen Davao Ph",
+    "name": "Yori Jori Restaurant",
     "phone": "查看 Google 地圖專線",
-    "address": "F. Torres St, Poblacion District, Davao City, 8000 Davao del Sur, Philippines",
+    "address": "IT Building 2, Damosa IT Park, Mamay Rd, Lanang, Davao City, 8000 Davao del Sur, Philippines",
     "descriptions": {
-      "zh-TW": "Google 地圖評分 ⭐ 4.1 (617)。位於 DAVAO 的熱門美食店家。",
-      "en": "Google Maps rating ⭐ 4.1 (617). Highly rated spot in DAVAO.",
-      "tl": "Google Maps rating ⭐ 4.1 (617). Sikat na kainan sa DAVAO."
+      "zh-TW": "Google 地圖評分 ⭐ 4.6 (47)。位於 DAVAO 的熱門美食店家。",
+      "en": "Google Maps rating ⭐ 4.6 (47). Highly rated spot in DAVAO.",
+      "tl": "Google Maps rating ⭐ 4.6 (47). Sikat na kainan sa DAVAO."
     },
     "imageUrl": "",
     "categoryKey": "filipino"
@@ -404,45 +508,6 @@
   },
   {
     "city": "davao",
-    "name": "Yori Jori Restaurant",
-    "phone": "查看 Google 地圖專線",
-    "address": "IT Building 2, Damosa IT Park, Mamay Rd, Lanang, Davao City, 8000 Davao del Sur, Philippines",
-    "descriptions": {
-      "zh-TW": "Google 地圖評分 ⭐ 4.6 (47)。位於 DAVAO 的熱門美食店家。",
-      "en": "Google Maps rating ⭐ 4.6 (47). Highly rated spot in DAVAO.",
-      "tl": "Google Maps rating ⭐ 4.6 (47). Sikat na kainan sa DAVAO."
-    },
-    "imageUrl": "",
-    "categoryKey": "filipino"
-  },
-  {
-    "city": "davao",
-    "name": "Taichou Izakaya",
-    "phone": "查看 Google 地圖專線",
-    "address": "D. Ponce St, Poblacion District, Davao City, 8000 Davao del Sur, Philippines",
-    "descriptions": {
-      "zh-TW": "Google 地圖評分 ⭐ 4.5 (181)。位於 DAVAO 的熱門美食店家。",
-      "en": "Google Maps rating ⭐ 4.5 (181). Highly rated spot in DAVAO.",
-      "tl": "Google Maps rating ⭐ 4.5 (181). Sikat na kainan sa DAVAO."
-    },
-    "imageUrl": "",
-    "categoryKey": "filipino"
-  },
-  {
-    "city": "davao",
-    "name": "呑ん気 Nonki Japanese Restaurant - Davao, F. Torres Street",
-    "phone": "查看 Google 地圖專線",
-    "address": "AutoVille Building, F. Torres St, Poblacion District, Davao City, 8000 Davao del Sur, Philippines",
-    "descriptions": {
-      "zh-TW": "Google 地圖評分 ⭐ 4.4 (470)。位於 DAVAO 的熱門美食店家。",
-      "en": "Google Maps rating ⭐ 4.4 (470). Highly rated spot in DAVAO.",
-      "tl": "Google Maps rating ⭐ 4.4 (470). Sikat na kainan sa DAVAO."
-    },
-    "imageUrl": "",
-    "categoryKey": "japanese_korean"
-  },
-  {
-    "city": "davao",
     "name": "Hongdae Street Korean Restaurant",
     "phone": "查看 Google 地圖專線",
     "address": "1 Polo St, Obrero, Davao City, Davao del Sur, Philippines",
@@ -456,16 +521,29 @@
   },
   {
     "city": "davao",
-    "name": "SamgyupSalamat - Davao (JP Laurel)",
+    "name": "Izakaya Don",
     "phone": "查看 Google 地圖專線",
-    "address": "JP LAUREL AVENUE, CORNER V. Mapa St, Poblacion District, Davao City, 8000 Davao del Sur, Philippines",
+    "address": "Door #4, Don Dionisio Complex, Cabaguio Ave, Davao City, 8000 Davao del Sur, Philippines",
     "descriptions": {
-      "zh-TW": "Google 地圖評分 ⭐ 4.2 (247)。位於 DAVAO 的熱門美食店家。",
-      "en": "Google Maps rating ⭐ 4.2 (247). Highly rated spot in DAVAO.",
-      "tl": "Google Maps rating ⭐ 4.2 (247). Sikat na kainan sa DAVAO."
+      "zh-TW": "Google 地圖評分 ⭐ 4.6 (32)。位於 DAVAO 的熱門美食店家。",
+      "en": "Google Maps rating ⭐ 4.6 (32). Highly rated spot in DAVAO.",
+      "tl": "Google Maps rating ⭐ 4.6 (32). Sikat na kainan sa DAVAO."
     },
     "imageUrl": "",
-    "categoryKey": "japanese_korean"
+    "categoryKey": "filipino"
+  },
+  {
+    "city": "davao",
+    "name": "Buffet 52",
+    "phone": "查看 Google 地圖專線",
+    "address": "Plaza De Bole Compound, F. Torres St, Poblacion District, Davao City, 8000 Davao del Sur, Philippines",
+    "descriptions": {
+      "zh-TW": "Google 地圖評分 ⭐ 4.5 (459)。位於 DAVAO 的熱門美食店家。",
+      "en": "Google Maps rating ⭐ 4.5 (459). Highly rated spot in DAVAO.",
+      "tl": "Google Maps rating ⭐ 4.5 (459). Sikat na kainan sa DAVAO."
+    },
+    "imageUrl": "",
+    "categoryKey": "filipino"
   },
   {
     "city": "davao",
@@ -476,19 +554,6 @@
       "zh-TW": "Google 地圖評分 ⭐ 4.4 (180)。位於 DAVAO 的熱門美食店家。",
       "en": "Google Maps rating ⭐ 4.4 (180). Highly rated spot in DAVAO.",
       "tl": "Google Maps rating ⭐ 4.4 (180). Sikat na kainan sa DAVAO."
-    },
-    "imageUrl": "",
-    "categoryKey": "filipino"
-  },
-  {
-    "city": "davao",
-    "name": "Mixed Temptation Restaurant Lanang branch",
-    "phone": "查看 Google 地圖專線",
-    "address": "Door 18, 19 and 20, Phoenix Complex, Lanang, Davao City, 8000 Davao del Sur, Philippines",
-    "descriptions": {
-      "zh-TW": "Google 地圖評分 ⭐ 4.7 (179)。位於 DAVAO 的熱門美食店家。",
-      "en": "Google Maps rating ⭐ 4.7 (179). Highly rated spot in DAVAO.",
-      "tl": "Google Maps rating ⭐ 4.7 (179). Sikat na kainan sa DAVAO."
     },
     "imageUrl": "",
     "categoryKey": "filipino"
@@ -508,6 +573,19 @@
   },
   {
     "city": "davao",
+    "name": "Mixed Temptation Restaurant Lanang branch",
+    "phone": "查看 Google 地圖專線",
+    "address": "Door 18, 19 and 20, Phoenix Complex, Lanang, Davao City, 8000 Davao del Sur, Philippines",
+    "descriptions": {
+      "zh-TW": "Google 地圖評分 ⭐ 4.7 (179)。位於 DAVAO 的熱門美食店家。",
+      "en": "Google Maps rating ⭐ 4.7 (179). Highly rated spot in DAVAO.",
+      "tl": "Google Maps rating ⭐ 4.7 (179). Sikat na kainan sa DAVAO."
+    },
+    "imageUrl": "",
+    "categoryKey": "filipino"
+  },
+  {
+    "city": "davao",
     "name": "Huashan Chinese Seafood Restaurant",
     "phone": "查看 Google 地圖專線",
     "address": "Philippines, Davao del Sur, agdao3JPH+F8邮政编码: 8000",
@@ -518,19 +596,6 @@
     },
     "imageUrl": "",
     "categoryKey": "chinese"
-  },
-  {
-    "city": "davao",
-    "name": "Blue Posts Boiling Crabs & Shrimps – Bajada",
-    "phone": "查看 Google 地圖專線",
-    "address": "J.P. Laurel Avenue, Bajada, Brgy, Buhangin, Lungsod ng Dabaw, 8000 Lalawigan ng Davao del Sur, Philippines",
-    "descriptions": {
-      "zh-TW": "Google 地圖評分 ⭐ 4.3 (534)。位於 DAVAO 的熱門美食店家。",
-      "en": "Google Maps rating ⭐ 4.3 (534). Highly rated spot in DAVAO.",
-      "tl": "Google Maps rating ⭐ 4.3 (534). Sikat na kainan sa DAVAO."
-    },
-    "imageUrl": "",
-    "categoryKey": "bbq_seafood"
   },
   {
     "city": "davao",
@@ -547,13 +612,13 @@
   },
   {
     "city": "davao",
-    "name": "Crabs & Co. Seafood Buffet",
+    "name": "Blue Posts Boiling Crabs & Shrimps – Bajada",
     "phone": "查看 Google 地圖專線",
-    "address": "Juna Subdivision, 425 Tulip Dr, Matina, Davao City, 8000 Davao del Sur, Philippines",
+    "address": "J.P. Laurel Avenue, Bajada, Brgy, Buhangin, Lungsod ng Dabaw, 8000 Lalawigan ng Davao del Sur, Philippines",
     "descriptions": {
-      "zh-TW": "Google 地圖評分 ⭐ 4.3 (233)。位於 DAVAO 的熱門美食店家。",
-      "en": "Google Maps rating ⭐ 4.3 (233). Highly rated spot in DAVAO.",
-      "tl": "Google Maps rating ⭐ 4.3 (233). Sikat na kainan sa DAVAO."
+      "zh-TW": "Google 地圖評分 ⭐ 4.3 (534)。位於 DAVAO 的熱門美食店家。",
+      "en": "Google Maps rating ⭐ 4.3 (534). Highly rated spot in DAVAO.",
+      "tl": "Google Maps rating ⭐ 4.3 (534). Sikat na kainan sa DAVAO."
     },
     "imageUrl": "",
     "categoryKey": "bbq_seafood"
@@ -570,6 +635,32 @@
     },
     "imageUrl": "",
     "categoryKey": "chinese"
+  },
+  {
+    "city": "davao",
+    "name": "Mixed Temptation Chinese Restaurant",
+    "phone": "查看 Google 地圖專線",
+    "address": "C. Bangoy St, Poblacion District, Davao City, Davao del Sur, Philippines",
+    "descriptions": {
+      "zh-TW": "Google 地圖評分 ⭐ 4.7 (132)。位於 DAVAO 的熱門美食店家。",
+      "en": "Google Maps rating ⭐ 4.7 (132). Highly rated spot in DAVAO.",
+      "tl": "Google Maps rating ⭐ 4.7 (132). Sikat na kainan sa DAVAO."
+    },
+    "imageUrl": "",
+    "categoryKey": "chinese"
+  },
+  {
+    "city": "davao",
+    "name": "Vikings Luxury Buffet, SM Lanang Premier",
+    "phone": "查看 Google 地圖專線",
+    "address": "Upper Ground Level, The Fountain Court, SM Lanang Premiere, J.P. Laurel Ave, Agdao District, Davao City, Davao del Sur, Philippines",
+    "descriptions": {
+      "zh-TW": "Google 地圖評分 ⭐ 4.8 (24966)。位於 DAVAO 的熱門美食店家。",
+      "en": "Google Maps rating ⭐ 4.8 (24966). Highly rated spot in DAVAO.",
+      "tl": "Google Maps rating ⭐ 4.8 (24966). Sikat na kainan sa DAVAO."
+    },
+    "imageUrl": "",
+    "categoryKey": "filipino"
   },
   {
     "city": "davao",
@@ -599,55 +690,16 @@
   },
   {
     "city": "davao",
-    "name": "Vikings Luxury Buffet, SM Lanang Premier",
+    "name": "HK Chinese Food",
     "phone": "查看 Google 地圖專線",
-    "address": "Upper Ground Level, The Fountain Court, SM Lanang Premiere, J.P. Laurel Ave, Agdao District, Davao City, Davao del Sur, Philippines",
+    "address": "Ground floor, SK COMPOUND, J.P. Laurel Ave, Poblacion District, Davao City, 8000 Davao del Sur, Philippines",
     "descriptions": {
-      "zh-TW": "Google 地圖評分 ⭐ 4.8 (24966)。位於 DAVAO 的熱門美食店家。",
-      "en": "Google Maps rating ⭐ 4.8 (24966). Highly rated spot in DAVAO.",
-      "tl": "Google Maps rating ⭐ 4.8 (24966). Sikat na kainan sa DAVAO."
-    },
-    "imageUrl": "",
-    "categoryKey": "filipino"
-  },
-  {
-    "city": "davao",
-    "name": "Hunter's Modern Filipino Chinese Kitchen + Bar - Davao City",
-    "phone": "查看 Google 地圖專線",
-    "address": "CT Drive, Tulip Dr, Talomo, Davao City, 8000 Davao del Sur, Philippines",
-    "descriptions": {
-      "zh-TW": "Google 地圖評分 ⭐ 4.8 (421)。位於 DAVAO 的熱門美食店家。",
-      "en": "Google Maps rating ⭐ 4.8 (421). Highly rated spot in DAVAO.",
-      "tl": "Google Maps rating ⭐ 4.8 (421). Sikat na kainan sa DAVAO."
+      "zh-TW": "Google 地圖評分 ⭐ 4.4 (40)。位於 DAVAO 的熱門美食店家。",
+      "en": "Google Maps rating ⭐ 4.4 (40). Highly rated spot in DAVAO.",
+      "tl": "Google Maps rating ⭐ 4.4 (40). Sikat na kainan sa DAVAO."
     },
     "imageUrl": "",
     "categoryKey": "chinese"
-  },
-  {
-    "city": "davao",
-    "name": "Mixed Temptation Chinese Restaurant",
-    "phone": "查看 Google 地圖專線",
-    "address": "C. Bangoy St, Poblacion District, Davao City, Davao del Sur, Philippines",
-    "descriptions": {
-      "zh-TW": "Google 地圖評分 ⭐ 4.7 (132)。位於 DAVAO 的熱門美食店家。",
-      "en": "Google Maps rating ⭐ 4.7 (132). Highly rated spot in DAVAO.",
-      "tl": "Google Maps rating ⭐ 4.7 (132). Sikat na kainan sa DAVAO."
-    },
-    "imageUrl": "",
-    "categoryKey": "chinese"
-  },
-  {
-    "city": "manila",
-    "name": "Terraza Martinez",
-    "phone": "查看 Google 地圖專線",
-    "address": "G/F, Shangri-la at, The Arcade, 5th Ave, Makati City, 1634 Metro Manila, Philippines",
-    "descriptions": {
-      "zh-TW": "Google 地圖評分 ⭐ 4.8 (1602)。位於 MANILA 的熱門美食店家。",
-      "en": "Google Maps rating ⭐ 4.8 (1602). Highly rated spot in MANILA.",
-      "tl": "Google Maps rating ⭐ 4.8 (1602). Sikat na kainan sa MANILA."
-    },
-    "imageUrl": "",
-    "categoryKey": "filipino"
   },
   {
     "city": "manila",
@@ -664,26 +716,26 @@
   },
   {
     "city": "manila",
-    "name": "Sky Deck",
+    "name": "Terraza Martinez",
     "phone": "查看 Google 地圖專線",
-    "address": "The Bayleaf, Muralla St, Intramuros, Manila, 1002 Metro Manila, Philippines",
+    "address": "G/F, Shangri-la at, The Arcade, 5th Ave, Makati City, 1634 Metro Manila, Philippines",
     "descriptions": {
-      "zh-TW": "Google 地圖評分 ⭐ 4.4 (1528)。位於 MANILA 的熱門美食店家。",
-      "en": "Google Maps rating ⭐ 4.4 (1528). Highly rated spot in MANILA.",
-      "tl": "Google Maps rating ⭐ 4.4 (1528). Sikat na kainan sa MANILA."
+      "zh-TW": "Google 地圖評分 ⭐ 4.8 (1602)。位於 MANILA 的熱門美食店家。",
+      "en": "Google Maps rating ⭐ 4.8 (1602). Highly rated spot in MANILA.",
+      "tl": "Google Maps rating ⭐ 4.8 (1602). Sikat na kainan sa MANILA."
     },
     "imageUrl": "",
     "categoryKey": "filipino"
   },
   {
     "city": "manila",
-    "name": "seva",
+    "name": "Tartufo Ristorante - BGC",
     "phone": "查看 Google 地圖專線",
-    "address": "2F, LYH Building, 714 Jose Abad Santos, Little Baguio, San Juan City, 1500 Metro Manila, Philippines",
+    "address": "G/F, One Maridien 9th Avenue, corner 27th Street, Makati City, 1634 Metro Manila, Philippines",
     "descriptions": {
-      "zh-TW": "Google 地圖評分 ⭐ 4.7 (347)。位於 MANILA 的熱門美食店家。",
-      "en": "Google Maps rating ⭐ 4.7 (347). Highly rated spot in MANILA.",
-      "tl": "Google Maps rating ⭐ 4.7 (347). Sikat na kainan sa MANILA."
+      "zh-TW": "Google 地圖評分 ⭐ 4.8 (1922)。位於 MANILA 的熱門美食店家。",
+      "en": "Google Maps rating ⭐ 4.8 (1922). Highly rated spot in MANILA.",
+      "tl": "Google Maps rating ⭐ 4.8 (1922). Sikat na kainan sa MANILA."
     },
     "imageUrl": "",
     "categoryKey": "filipino"
@@ -703,26 +755,13 @@
   },
   {
     "city": "manila",
-    "name": "Manam at the Triangle",
+    "name": "Sky Deck",
     "phone": "查看 Google 地圖專線",
-    "address": "Restaurant Arcade, Ayala Triangle Walkways, Makati City, Metro Manila, Philippines",
+    "address": "The Bayleaf, Muralla St, Intramuros, Manila, 1002 Metro Manila, Philippines",
     "descriptions": {
-      "zh-TW": "Google 地圖評分 ⭐ 4.8 (1381)。位於 MANILA 的熱門美食店家。",
-      "en": "Google Maps rating ⭐ 4.8 (1381). Highly rated spot in MANILA.",
-      "tl": "Google Maps rating ⭐ 4.8 (1381). Sikat na kainan sa MANILA."
-    },
-    "imageUrl": "",
-    "categoryKey": "filipino"
-  },
-  {
-    "city": "manila",
-    "name": "Wildflour Restaurant - Quezon City",
-    "phone": "查看 Google 地圖專線",
-    "address": "24 Sct. Madriñan St, Diliman, Quezon City, 1103 Metro Manila, Philippines",
-    "descriptions": {
-      "zh-TW": "Google 地圖評分 ⭐ 4.7 (1786)。位於 MANILA 的熱門美食店家。",
-      "en": "Google Maps rating ⭐ 4.7 (1786). Highly rated spot in MANILA.",
-      "tl": "Google Maps rating ⭐ 4.7 (1786). Sikat na kainan sa MANILA."
+      "zh-TW": "Google 地圖評分 ⭐ 4.4 (1528)。位於 MANILA 的熱門美食店家。",
+      "en": "Google Maps rating ⭐ 4.4 (1528). Highly rated spot in MANILA.",
+      "tl": "Google Maps rating ⭐ 4.4 (1528). Sikat na kainan sa MANILA."
     },
     "imageUrl": "",
     "categoryKey": "filipino"
@@ -742,32 +781,6 @@
   },
   {
     "city": "manila",
-    "name": "Cowboy Grill Mabini",
-    "phone": "查看 Google 地圖專線",
-    "address": "11910 Mabini, cor Arquiza St, Ermita, Manila, 1000 Metro Manila, Philippines",
-    "descriptions": {
-      "zh-TW": "Google 地圖評分 ⭐ 4.3 (1499)。位於 MANILA 的熱門美食店家。",
-      "en": "Google Maps rating ⭐ 4.3 (1499). Highly rated spot in MANILA.",
-      "tl": "Google Maps rating ⭐ 4.3 (1499). Sikat na kainan sa MANILA."
-    },
-    "imageUrl": "",
-    "categoryKey": "bbq_seafood"
-  },
-  {
-    "city": "manila",
-    "name": "Old Manila at The Peninsula Manila",
-    "phone": "查看 Google 地圖專線",
-    "address": "The Peninsula Manila Corner of Ayala and Makati Avenues Ground Level Makati, Makati City, 1226 Metro Manila, Philippines",
-    "descriptions": {
-      "zh-TW": "Google 地圖評分 ⭐ 4.4 (988)。位於 MANILA 的熱門美食店家。",
-      "en": "Google Maps rating ⭐ 4.4 (988). Highly rated spot in MANILA.",
-      "tl": "Google Maps rating ⭐ 4.4 (988). Sikat na kainan sa MANILA."
-    },
-    "imageUrl": "",
-    "categoryKey": "filipino"
-  },
-  {
-    "city": "manila",
     "name": "Manam | Robinsons Place",
     "phone": "查看 Google 地圖專線",
     "address": "L1, Midtown Wing Robinsons Place, Pedro Gil St, Ermita, Manila, 1000 Metro Manila, Philippines",
@@ -781,78 +794,65 @@
   },
   {
     "city": "manila",
-    "name": "Lampara",
+    "name": "TGI Friday's",
     "phone": "查看 Google 地圖專線",
-    "address": "Unit 1 GF, Villa Caridad 1, 5883 Enriquez, Brgy. Poblacion, Makati City, 1210 Metro Manila, Philippines",
+    "address": "Pedro Gil St, Ermita, Manila, 1000 Metro Manila, Philippines",
     "descriptions": {
-      "zh-TW": "Google 地圖評分 ⭐ 4.7 (348)。位於 MANILA 的熱門美食店家。",
-      "en": "Google Maps rating ⭐ 4.7 (348). Highly rated spot in MANILA.",
-      "tl": "Google Maps rating ⭐ 4.7 (348). Sikat na kainan sa MANILA."
+      "zh-TW": "Google 地圖評分 ⭐ 4.8 (2548)。位於 MANILA 的熱門美食店家。",
+      "en": "Google Maps rating ⭐ 4.8 (2548). Highly rated spot in MANILA.",
+      "tl": "Google Maps rating ⭐ 4.8 (2548). Sikat na kainan sa MANILA."
     },
     "imageUrl": "",
     "categoryKey": "filipino"
   },
   {
     "city": "manila",
-    "name": "Tatatito",
+    "name": "Manam at the Triangle",
     "phone": "查看 Google 地圖專線",
-    "address": "Ground floor, 100 Don Carlos Palanca, Legazpi Village, Makati City, 1229 Metro Manila, Philippines",
+    "address": "Restaurant Arcade, Ayala Triangle Walkways, Makati City, Metro Manila, Philippines",
     "descriptions": {
-      "zh-TW": "Google 地圖評分 ⭐ 4.5 (996)。位於 MANILA 的熱門美食店家。",
-      "en": "Google Maps rating ⭐ 4.5 (996). Highly rated spot in MANILA.",
-      "tl": "Google Maps rating ⭐ 4.5 (996). Sikat na kainan sa MANILA."
+      "zh-TW": "Google 地圖評分 ⭐ 4.8 (1381)。位於 MANILA 的熱門美食店家。",
+      "en": "Google Maps rating ⭐ 4.8 (1381). Highly rated spot in MANILA.",
+      "tl": "Google Maps rating ⭐ 4.8 (1381). Sikat na kainan sa MANILA."
     },
     "imageUrl": "",
     "categoryKey": "filipino"
   },
   {
     "city": "manila",
-    "name": "LOLA Cafe - Broadway (New Manila)",
+    "name": "Barbara's Heritage Restaurant",
     "phone": "查看 Google 地圖專線",
-    "address": "65 Broadway Ave, Mariana, Quezon City, 1112 Metro Manila, Philippines",
+    "address": "Plaza San Luis Complex, General Luna St, Intramuros, Manila, 1002 Metro Manila, Philippines",
     "descriptions": {
-      "zh-TW": "Google 地圖評分 ⭐ 4.4 (588)。位於 MANILA 的熱門美食店家。",
-      "en": "Google Maps rating ⭐ 4.4 (588). Highly rated spot in MANILA.",
-      "tl": "Google Maps rating ⭐ 4.4 (588). Sikat na kainan sa MANILA."
+      "zh-TW": "Google 地圖評分 ⭐ 4.3 (1482)。位於 MANILA 的熱門美食店家。",
+      "en": "Google Maps rating ⭐ 4.3 (1482). Highly rated spot in MANILA.",
+      "tl": "Google Maps rating ⭐ 4.3 (1482). Sikat na kainan sa MANILA."
     },
     "imageUrl": "",
-    "categoryKey": "cafe_dessert"
+    "categoryKey": "filipino"
   },
   {
     "city": "manila",
-    "name": "Esmeralda Kitchen",
+    "name": "Wildflour Restaurant - Quezon City",
     "phone": "查看 Google 地圖專線",
-    "address": "43 Mayon St, Santa Mesa Heights, Quezon City, 1114 Metro Manila, Philippines",
+    "address": "24 Sct. Madriñan St, Diliman, Quezon City, 1103 Metro Manila, Philippines",
     "descriptions": {
-      "zh-TW": "Google 地圖評分 ⭐ 4.6 (571)。位於 MANILA 的熱門美食店家。",
-      "en": "Google Maps rating ⭐ 4.6 (571). Highly rated spot in MANILA.",
-      "tl": "Google Maps rating ⭐ 4.6 (571). Sikat na kainan sa MANILA."
+      "zh-TW": "Google 地圖評分 ⭐ 4.7 (1786)。位於 MANILA 的熱門美食店家。",
+      "en": "Google Maps rating ⭐ 4.7 (1786). Highly rated spot in MANILA.",
+      "tl": "Google Maps rating ⭐ 4.7 (1786). Sikat na kainan sa MANILA."
     },
     "imageUrl": "",
-    "categoryKey": "cafe_dessert"
+    "categoryKey": "filipino"
   },
   {
     "city": "manila",
-    "name": "Cafe Adriatico",
+    "name": "Old Manila at The Peninsula Manila",
     "phone": "查看 Google 地圖專線",
-    "address": "1790 Adriatico St, Malate, Manila, 1004 Metro Manila, Philippines",
+    "address": "The Peninsula Manila Corner of Ayala and Makati Avenues Ground Level Makati, Makati City, 1226 Metro Manila, Philippines",
     "descriptions": {
-      "zh-TW": "Google 地圖評分 ⭐ 4.3 (1113)。位於 MANILA 的熱門美食店家。",
-      "en": "Google Maps rating ⭐ 4.3 (1113). Highly rated spot in MANILA.",
-      "tl": "Google Maps rating ⭐ 4.3 (1113). Sikat na kainan sa MANILA."
-    },
-    "imageUrl": "",
-    "categoryKey": "cafe_dessert"
-  },
-  {
-    "city": "manila",
-    "name": "Oak & Smoke",
-    "phone": "查看 Google 地圖專線",
-    "address": "Salcedo Village, 324 H.V. Dela Costa, Makati City, 1227 Metro Manila, Philippines",
-    "descriptions": {
-      "zh-TW": "Google 地圖評分 ⭐ 4.6 (198)。位於 MANILA 的熱門美食店家。",
-      "en": "Google Maps rating ⭐ 4.6 (198). Highly rated spot in MANILA.",
-      "tl": "Google Maps rating ⭐ 4.6 (198). Sikat na kainan sa MANILA."
+      "zh-TW": "Google 地圖評分 ⭐ 4.4 (988)。位於 MANILA 的熱門美食店家。",
+      "en": "Google Maps rating ⭐ 4.4 (988). Highly rated spot in MANILA.",
+      "tl": "Google Maps rating ⭐ 4.4 (988). Sikat na kainan sa MANILA."
     },
     "imageUrl": "",
     "categoryKey": "filipino"
@@ -872,19 +872,6 @@
   },
   {
     "city": "manila",
-    "name": "Cabel",
-    "phone": "查看 Google 地圖專線",
-    "address": "1147 J.P. Laurel St, San Miguel, Manila, Metro Manila, Philippines",
-    "descriptions": {
-      "zh-TW": "Google 地圖評分 ⭐ 4.7 (114)。位於 MANILA 的熱門美食店家。",
-      "en": "Google Maps rating ⭐ 4.7 (114). Highly rated spot in MANILA.",
-      "tl": "Google Maps rating ⭐ 4.7 (114). Sikat na kainan sa MANILA."
-    },
-    "imageUrl": "",
-    "categoryKey": "filipino"
-  },
-  {
-    "city": "manila",
     "name": "Bistro Remedios",
     "phone": "查看 Google 地圖專線",
     "address": "1911 Adriatico St, Malate, Manila, 1004 Metro Manila, Philippines",
@@ -898,42 +885,81 @@
   },
   {
     "city": "manila",
-    "name": "Elephant Grounds Manila - BGC",
+    "name": "Texas Roadhouse | Robinsons Manila",
     "phone": "查看 Google 地圖專線",
-    "address": "Lower Ground, One Bonifacio, High Street, Makati City, 1630 Metro Manila, Philippines",
+    "address": "HXFM+XJG, Pedro Gil St, Ermita, Manila, 1000 Metro Manila, Philippines",
     "descriptions": {
-      "zh-TW": "Google 地圖評分 ⭐ 4.2 (952)。位於 MANILA 的熱門美食店家。",
-      "en": "Google Maps rating ⭐ 4.2 (952). Highly rated spot in MANILA.",
-      "tl": "Google Maps rating ⭐ 4.2 (952). Sikat na kainan sa MANILA."
-    },
-    "imageUrl": "",
-    "categoryKey": "cafe_dessert"
-  },
-  {
-    "city": "manila",
-    "name": "Tartufo Ristorante - BGC",
-    "phone": "查看 Google 地圖專線",
-    "address": "G/F, One Maridien 9th Avenue, corner 27th Street, Makati City, 1634 Metro Manila, Philippines",
-    "descriptions": {
-      "zh-TW": "Google 地圖評分 ⭐ 4.8 (1922)。位於 MANILA 的熱門美食店家。",
-      "en": "Google Maps rating ⭐ 4.8 (1922). Highly rated spot in MANILA.",
-      "tl": "Google Maps rating ⭐ 4.8 (1922). Sikat na kainan sa MANILA."
+      "zh-TW": "Google 地圖評分 ⭐ 4.9 (4902)。位於 MANILA 的熱門美食店家。",
+      "en": "Google Maps rating ⭐ 4.9 (4902). Highly rated spot in MANILA.",
+      "tl": "Google Maps rating ⭐ 4.9 (4902). Sikat na kainan sa MANILA."
     },
     "imageUrl": "",
     "categoryKey": "filipino"
   },
   {
     "city": "manila",
-    "name": "Filling Station Bar And Cafe",
+    "name": "Cowboy Grill Mabini",
     "phone": "查看 Google 地圖專線",
-    "address": "5012 P Burgos St, Brgy Poblacion, Makati City, 1210 Metro Manila, Philippines",
+    "address": "11910 Mabini, cor Arquiza St, Ermita, Manila, 1000 Metro Manila, Philippines",
     "descriptions": {
-      "zh-TW": "Google 地圖評分 ⭐ 4.5 (8073)。位於 MANILA 的熱門美食店家。",
-      "en": "Google Maps rating ⭐ 4.5 (8073). Highly rated spot in MANILA.",
-      "tl": "Google Maps rating ⭐ 4.5 (8073). Sikat na kainan sa MANILA."
+      "zh-TW": "Google 地圖評分 ⭐ 4.3 (1499)。位於 MANILA 的熱門美食店家。",
+      "en": "Google Maps rating ⭐ 4.3 (1499). Highly rated spot in MANILA.",
+      "tl": "Google Maps rating ⭐ 4.3 (1499). Sikat na kainan sa MANILA."
+    },
+    "imageUrl": "",
+    "categoryKey": "bbq_seafood"
+  },
+  {
+    "city": "manila",
+    "name": "EMILIA, House of Filipino Food",
+    "phone": "查看 Google 地圖專線",
+    "address": "934 Gen. Solano St, San Miguel, Manila, 1005 Metro Manila, Philippines",
+    "descriptions": {
+      "zh-TW": "Google 地圖評分 ⭐ 4.5 (764)。位於 MANILA 的熱門美食店家。",
+      "en": "Google Maps rating ⭐ 4.5 (764). Highly rated spot in MANILA.",
+      "tl": "Google Maps rating ⭐ 4.5 (764). Sikat na kainan sa MANILA."
+    },
+    "imageUrl": "",
+    "categoryKey": "filipino"
+  },
+  {
+    "city": "manila",
+    "name": "Cafe Ilang-Ilang",
+    "phone": "查看 Google 地圖專線",
+    "address": "Manila Hotel, 1 Rizal Park, Ermita, Manila, 0913 Metro Manila, Philippines",
+    "descriptions": {
+      "zh-TW": "Google 地圖評分 ⭐ 4.5 (1336)。位於 MANILA 的熱門美食店家。",
+      "en": "Google Maps rating ⭐ 4.5 (1336). Highly rated spot in MANILA.",
+      "tl": "Google Maps rating ⭐ 4.5 (1336). Sikat na kainan sa MANILA."
     },
     "imageUrl": "",
     "categoryKey": "cafe_dessert"
+  },
+  {
+    "city": "manila",
+    "name": "Samba",
+    "phone": "查看 Google 地圖專線",
+    "address": "8F, 30th Street, Shangri-La Corner, 5th Ave, Manila, Makati City, 1634 Metro Manila, Philippines",
+    "descriptions": {
+      "zh-TW": "Google 地圖評分 ⭐ 4.5 (686)。位於 MANILA 的熱門美食店家。",
+      "en": "Google Maps rating ⭐ 4.5 (686). Highly rated spot in MANILA.",
+      "tl": "Google Maps rating ⭐ 4.5 (686). Sikat na kainan sa MANILA."
+    },
+    "imageUrl": "",
+    "categoryKey": "filipino"
+  },
+  {
+    "city": "manila",
+    "name": "Italianni's Bonifacio High Street",
+    "phone": "查看 Google 地圖專線",
+    "address": "B5 D6, Lane, 0 11th Ave, Taguig, 1634 Metro Manila, Philippines",
+    "descriptions": {
+      "zh-TW": "Google 地圖評分 ⭐ 4.8 (6330)。位於 MANILA 的熱門美食店家。",
+      "en": "Google Maps rating ⭐ 4.8 (6330). Highly rated spot in MANILA.",
+      "tl": "Google Maps rating ⭐ 4.8 (6330). Sikat na kainan sa MANILA."
+    },
+    "imageUrl": "",
+    "categoryKey": "american_western"
   },
   {
     "city": "manila",
@@ -950,16 +976,42 @@
   },
   {
     "city": "manila",
-    "name": "Bolero | BGC Restaurant",
+    "name": "Elephant Grounds Manila - BGC",
     "phone": "查看 Google 地圖專線",
-    "address": "GF, Verve Tower 2, High street south, 26th 27th Street, Makati City, 1634 Metro Manila, Philippines",
+    "address": "Lower Ground, One Bonifacio, High Street, Makati City, 1630 Metro Manila, Philippines",
     "descriptions": {
-      "zh-TW": "Google 地圖評分 ⭐ 4.8 (2226)。位於 MANILA 的熱門美食店家。",
-      "en": "Google Maps rating ⭐ 4.8 (2226). Highly rated spot in MANILA.",
-      "tl": "Google Maps rating ⭐ 4.8 (2226). Sikat na kainan sa MANILA."
+      "zh-TW": "Google 地圖評分 ⭐ 4.2 (952)。位於 MANILA 的熱門美食店家。",
+      "en": "Google Maps rating ⭐ 4.2 (952). Highly rated spot in MANILA.",
+      "tl": "Google Maps rating ⭐ 4.2 (952). Sikat na kainan sa MANILA."
     },
     "imageUrl": "",
-    "categoryKey": "filipino"
+    "categoryKey": "cafe_dessert"
+  },
+  {
+    "city": "manila",
+    "name": "Filling Station Bar And Cafe",
+    "phone": "查看 Google 地圖專線",
+    "address": "5012 P Burgos St, Brgy Poblacion, Makati City, 1210 Metro Manila, Philippines",
+    "descriptions": {
+      "zh-TW": "Google 地圖評分 ⭐ 4.5 (8073)。位於 MANILA 的熱門美食店家。",
+      "en": "Google Maps rating ⭐ 4.5 (8073). Highly rated spot in MANILA.",
+      "tl": "Google Maps rating ⭐ 4.5 (8073). Sikat na kainan sa MANILA."
+    },
+    "imageUrl": "",
+    "categoryKey": "cafe_dessert"
+  },
+  {
+    "city": "manila",
+    "name": "Panco Cafe - Legazpi Makati",
+    "phone": "查看 Google 地圖專線",
+    "address": "110 Don Carlos Palanca, Legazpi Village, Makati, Kalakhang Maynila, Philippines",
+    "descriptions": {
+      "zh-TW": "Google 地圖評分 ⭐ 4.8 (2790)。位於 MANILA 的熱門美食店家。",
+      "en": "Google Maps rating ⭐ 4.8 (2790). Highly rated spot in MANILA.",
+      "tl": "Google Maps rating ⭐ 4.8 (2790). Sikat na kainan sa MANILA."
+    },
+    "imageUrl": "",
+    "categoryKey": "cafe_dessert"
   },
   {
     "city": "manila",
@@ -970,6 +1022,19 @@
       "zh-TW": "Google 地圖評分 ⭐ 4.6 (2164)。位於 MANILA 的熱門美食店家。",
       "en": "Google Maps rating ⭐ 4.6 (2164). Highly rated spot in MANILA.",
       "tl": "Google Maps rating ⭐ 4.6 (2164). Sikat na kainan sa MANILA."
+    },
+    "imageUrl": "",
+    "categoryKey": "filipino"
+  },
+  {
+    "city": "manila",
+    "name": "Bolero | BGC Restaurant",
+    "phone": "查看 Google 地圖專線",
+    "address": "GF, Verve Tower 2, High street south, 26th 27th Street, Makati City, 1634 Metro Manila, Philippines",
+    "descriptions": {
+      "zh-TW": "Google 地圖評分 ⭐ 4.8 (2226)。位於 MANILA 的熱門美食店家。",
+      "en": "Google Maps rating ⭐ 4.8 (2226). Highly rated spot in MANILA.",
+      "tl": "Google Maps rating ⭐ 4.8 (2226). Sikat na kainan sa MANILA."
     },
     "imageUrl": "",
     "categoryKey": "filipino"
@@ -1002,58 +1067,6 @@
   },
   {
     "city": "manila",
-    "name": "Maker and Made BGC",
-    "phone": "查看 Google 地圖專線",
-    "address": "Milestone at Fifth, Post Proper Northside, Makati City, 1634 Metro Manila, Philippines",
-    "descriptions": {
-      "zh-TW": "Google 地圖評分 ⭐ 4.5 (556)。位於 MANILA 的熱門美食店家。",
-      "en": "Google Maps rating ⭐ 4.5 (556). Highly rated spot in MANILA.",
-      "tl": "Google Maps rating ⭐ 4.5 (556). Sikat na kainan sa MANILA."
-    },
-    "imageUrl": "",
-    "categoryKey": "cafe_dessert"
-  },
-  {
-    "city": "manila",
-    "name": "Panco Cafe - Legazpi Makati",
-    "phone": "查看 Google 地圖專線",
-    "address": "110 Don Carlos Palanca, Legazpi Village, Makati, Kalakhang Maynila, Philippines",
-    "descriptions": {
-      "zh-TW": "Google 地圖評分 ⭐ 4.8 (2790)。位於 MANILA 的熱門美食店家。",
-      "en": "Google Maps rating ⭐ 4.8 (2790). Highly rated spot in MANILA.",
-      "tl": "Google Maps rating ⭐ 4.8 (2790). Sikat na kainan sa MANILA."
-    },
-    "imageUrl": "",
-    "categoryKey": "cafe_dessert"
-  },
-  {
-    "city": "manila",
-    "name": "Baristart Coffee Philippines",
-    "phone": "查看 Google 地圖專線",
-    "address": "Unit 5 ground floor Meridien Tower Two, 1201, 26th St, Post Proper Northside, Makati City, 1634 Metro Manila, Philippines",
-    "descriptions": {
-      "zh-TW": "Google 地圖評分 ⭐ 4.3 (419)。位於 MANILA 的熱門美食店家。",
-      "en": "Google Maps rating ⭐ 4.3 (419). Highly rated spot in MANILA.",
-      "tl": "Google Maps rating ⭐ 4.3 (419). Sikat na kainan sa MANILA."
-    },
-    "imageUrl": "",
-    "categoryKey": "cafe_dessert"
-  },
-  {
-    "city": "manila",
-    "name": "O2 Rooftop Bar",
-    "phone": "查看 Google 地圖專線",
-    "address": "27th floor Penthouse, D2 Residence, Bonifacio Civic Center Tower, 6 McKinley Pkwy, Makati City, 1634 Metro Manila, Philippines",
-    "descriptions": {
-      "zh-TW": "Google 地圖評分 ⭐ 4.8 (2445)。位於 MANILA 的熱門美食店家。",
-      "en": "Google Maps rating ⭐ 4.8 (2445). Highly rated spot in MANILA.",
-      "tl": "Google Maps rating ⭐ 4.8 (2445). Sikat na kainan sa MANILA."
-    },
-    "imageUrl": "",
-    "categoryKey": "filipino"
-  },
-  {
-    "city": "manila",
     "name": "Tsokolateria, SM Aura Premiere Taguig BGC",
     "phone": "查看 Google 地圖專線",
     "address": "5th Floor, Sm Aura Premier, McKinley Pkwy, Makati City, 1634 Metro Manila, Philippines",
@@ -1067,16 +1080,16 @@
   },
   {
     "city": "manila",
-    "name": "Good Neighbor",
+    "name": "Maker and Made BGC",
     "phone": "查看 Google 地圖專線",
-    "address": "Unit 9, Ground Floor, Verve One, 26th Street, corner 7th Ave, Post Proper Northside, Makati City, 1634 Metro Manila, Philippines",
+    "address": "Milestone at Fifth, Post Proper Northside, Makati City, 1634 Metro Manila, Philippines",
     "descriptions": {
-      "zh-TW": "Google 地圖評分 ⭐ 4 (160)。位於 MANILA 的熱門美食店家。",
-      "en": "Google Maps rating ⭐ 4 (160). Highly rated spot in MANILA.",
-      "tl": "Google Maps rating ⭐ 4 (160). Sikat na kainan sa MANILA."
+      "zh-TW": "Google 地圖評分 ⭐ 4.5 (556)。位於 MANILA 的熱門美食店家。",
+      "en": "Google Maps rating ⭐ 4.5 (556). Highly rated spot in MANILA.",
+      "tl": "Google Maps rating ⭐ 4.5 (556). Sikat na kainan sa MANILA."
     },
     "imageUrl": "",
-    "categoryKey": "filipino"
+    "categoryKey": "cafe_dessert"
   },
   {
     "city": "manila",
@@ -1087,19 +1100,6 @@
       "zh-TW": "Google 地圖評分 ⭐ 4.7 (11912)。位於 MANILA 的熱門美食店家。",
       "en": "Google Maps rating ⭐ 4.7 (11912). Highly rated spot in MANILA.",
       "tl": "Google Maps rating ⭐ 4.7 (11912). Sikat na kainan sa MANILA."
-    },
-    "imageUrl": "",
-    "categoryKey": "filipino"
-  },
-  {
-    "city": "manila",
-    "name": "Olive Garden - The Verve, BGC Taguig",
-    "phone": "查看 Google 地圖專線",
-    "address": "Retail 04-05, G2XX+FMQ Verve Residences, Tower 1, 26th St, Post Proper Northside, Makati City, 1630 Metro Manila, Philippines",
-    "descriptions": {
-      "zh-TW": "Google 地圖評分 ⭐ 4.4 (1197)。位於 MANILA 的熱門美食店家。",
-      "en": "Google Maps rating ⭐ 4.4 (1197). Highly rated spot in MANILA.",
-      "tl": "Google Maps rating ⭐ 4.4 (1197). Sikat na kainan sa MANILA."
     },
     "imageUrl": "",
     "categoryKey": "filipino"
@@ -1119,16 +1119,68 @@
   },
   {
     "city": "manila",
-    "name": "Texas Roadhouse",
+    "name": "O2 Rooftop Bar",
     "phone": "查看 Google 地圖專線",
-    "address": "Two Maridien Tower (U/C), 26th St, Makati City, Metro Manila, Philippines",
+    "address": "27th floor Penthouse, D2 Residence, Bonifacio Civic Center Tower, 6 McKinley Pkwy, Makati City, 1634 Metro Manila, Philippines",
     "descriptions": {
-      "zh-TW": "Google 地圖評分 ⭐ 4.6 (536)。位於 MANILA 的熱門美食店家。",
-      "en": "Google Maps rating ⭐ 4.6 (536). Highly rated spot in MANILA.",
-      "tl": "Google Maps rating ⭐ 4.6 (536). Sikat na kainan sa MANILA."
+      "zh-TW": "Google 地圖評分 ⭐ 4.8 (2445)。位於 MANILA 的熱門美食店家。",
+      "en": "Google Maps rating ⭐ 4.8 (2445). Highly rated spot in MANILA.",
+      "tl": "Google Maps rating ⭐ 4.8 (2445). Sikat na kainan sa MANILA."
     },
     "imageUrl": "",
     "categoryKey": "filipino"
+  },
+  {
+    "city": "manila",
+    "name": "George and Onnie's - Salcedo Village",
+    "phone": "查看 Google 地圖專線",
+    "address": "Salcedo Village, 136 Valero, Makati City, 1227 Metro Manila, Philippines",
+    "descriptions": {
+      "zh-TW": "Google 地圖評分 ⭐ 4.5 (1114)。位於 MANILA 的熱門美食店家。",
+      "en": "Google Maps rating ⭐ 4.5 (1114). Highly rated spot in MANILA.",
+      "tl": "Google Maps rating ⭐ 4.5 (1114). Sikat na kainan sa MANILA."
+    },
+    "imageUrl": "",
+    "categoryKey": "cafe_dessert"
+  },
+  {
+    "city": "manila",
+    "name": "Good Neighbor",
+    "phone": "查看 Google 地圖專線",
+    "address": "Unit 9, Ground Floor, Verve One, 26th Street, corner 7th Ave, Post Proper Northside, Makati City, 1634 Metro Manila, Philippines",
+    "descriptions": {
+      "zh-TW": "Google 地圖評分 ⭐ 4 (160)。位於 MANILA 的熱門美食店家。",
+      "en": "Google Maps rating ⭐ 4 (160). Highly rated spot in MANILA.",
+      "tl": "Google Maps rating ⭐ 4 (160). Sikat na kainan sa MANILA."
+    },
+    "imageUrl": "",
+    "categoryKey": "filipino"
+  },
+  {
+    "city": "manila",
+    "name": "Spice Cafe",
+    "phone": "查看 Google 地圖專線",
+    "address": "7/F City Garden Grand Hotel, Kalayaan Avenue, corner Makati Ave, Poblacion, Makati City, 1210 Metro Manila, Philippines",
+    "descriptions": {
+      "zh-TW": "Google 地圖評分 ⭐ 4.8 (646)。位於 MANILA 的熱門美食店家。",
+      "en": "Google Maps rating ⭐ 4.8 (646). Highly rated spot in MANILA.",
+      "tl": "Google Maps rating ⭐ 4.8 (646). Sikat na kainan sa MANILA."
+    },
+    "imageUrl": "",
+    "categoryKey": "cafe_dessert"
+  },
+  {
+    "city": "manila",
+    "name": "Green Bar",
+    "phone": "查看 Google 地圖專線",
+    "address": "106 Aguirre, Legazpi Village, Makati, 1229 Kalakhang Maynila, Philippines",
+    "descriptions": {
+      "zh-TW": "Google 地圖評分 ⭐ 4.6 (831)。位於 MANILA 的熱門美食店家。",
+      "en": "Google Maps rating ⭐ 4.6 (831). Highly rated spot in MANILA.",
+      "tl": "Google Maps rating ⭐ 4.6 (831). Sikat na kainan sa MANILA."
+    },
+    "imageUrl": "",
+    "categoryKey": "cafe_dessert"
   },
   {
     "city": "manila",
@@ -1145,29 +1197,29 @@
   },
   {
     "city": "manila",
-    "name": "Tíabuela Cocina Española",
+    "name": "Pao Cafe",
     "phone": "查看 Google 地圖專線",
-    "address": "G/F 1898 Hotel Colonia En Las Filipinas 5030 P. Burgos, Cor Kalayaan Ave, Poblacion, Makati City, 1210 Metro Manila, Philippines",
+    "address": "G/F, Ags Building, 174 Yakal, Makati City, 1203 Metro Manila, Philippines",
     "descriptions": {
-      "zh-TW": "Google 地圖評分 ⭐ 4.4 (373)。位於 MANILA 的熱門美食店家。",
-      "en": "Google Maps rating ⭐ 4.4 (373). Highly rated spot in MANILA.",
-      "tl": "Google Maps rating ⭐ 4.4 (373). Sikat na kainan sa MANILA."
+      "zh-TW": "Google 地圖評分 ⭐ 4.2 (703)。位於 MANILA 的熱門美食店家。",
+      "en": "Google Maps rating ⭐ 4.2 (703). Highly rated spot in MANILA.",
+      "tl": "Google Maps rating ⭐ 4.2 (703). Sikat na kainan sa MANILA."
     },
     "imageUrl": "",
-    "categoryKey": "filipino"
+    "categoryKey": "cafe_dessert"
   },
   {
     "city": "manila",
-    "name": "Takumi Japanese Restaurant, Makati",
+    "name": "마닐라 맛집 | 마닐라 중국집 취영살롱 | Chinese Restaurant | Manila restaurant Chuiyoungsalon",
     "phone": "查看 Google 地圖專線",
-    "address": "Lower Ground Floor, Windsor Square, 1030 Antonio Arnaiz Ave, San Lorenzo, Makati City, 1223 Metro Manila, Philippines",
+    "address": "near, Unit 105,K1 Center Block5 Lot 22 Bradco Avenue Cor. North Abueva Street, Diosdado Macapagal Blvd, Aseana City, Parañaque, 1700 Metro Manila, Philippines",
     "descriptions": {
-      "zh-TW": "Google 地圖評分 ⭐ 4.8 (319)。位於 MANILA 的熱門美食店家。",
-      "en": "Google Maps rating ⭐ 4.8 (319). Highly rated spot in MANILA.",
-      "tl": "Google Maps rating ⭐ 4.8 (319). Sikat na kainan sa MANILA."
+      "zh-TW": "Google 地圖評分 ⭐ 4.9 (70)。位於 MANILA 的熱門美食店家。",
+      "en": "Google Maps rating ⭐ 4.9 (70). Highly rated spot in MANILA.",
+      "tl": "Google Maps rating ⭐ 4.9 (70). Sikat na kainan sa MANILA."
     },
     "imageUrl": "",
-    "categoryKey": "japanese_korean"
+    "categoryKey": "chinese"
   },
   {
     "city": "manila",
@@ -1184,16 +1236,55 @@
   },
   {
     "city": "manila",
-    "name": "Zhubajie Premium - Makati (쭈빠찌에 프리미엄 마카티)",
+    "name": "Soban K-Town Grill 소반 - Robinsons Place Manila, Ermita",
     "phone": "查看 Google 地圖專線",
-    "address": "5385 Don Pedro, Poblacion, Makati City, 1210 Metro Manila, Philippines",
+    "address": "Unit 50-60, G/F, Robinsons Place Manila, Pedro Gil Wing, 1004 Adriatico St, Ermita, Manila City, 1000 Metro Manila, Philippines",
     "descriptions": {
-      "zh-TW": "Google 地圖評分 ⭐ 4.5 (252)。位於 MANILA 的熱門美食店家。",
-      "en": "Google Maps rating ⭐ 4.5 (252). Highly rated spot in MANILA.",
-      "tl": "Google Maps rating ⭐ 4.5 (252). Sikat na kainan sa MANILA."
+      "zh-TW": "Google 地圖評分 ⭐ 4.9 (4393)。位於 MANILA 的熱門美食店家。",
+      "en": "Google Maps rating ⭐ 4.9 (4393). Highly rated spot in MANILA.",
+      "tl": "Google Maps rating ⭐ 4.9 (4393). Sikat na kainan sa MANILA."
     },
     "imageUrl": "",
-    "categoryKey": "filipino"
+    "categoryKey": "bbq_seafood"
+  },
+  {
+    "city": "manila",
+    "name": "Takumi Japanese Restaurant, Makati",
+    "phone": "查看 Google 地圖專線",
+    "address": "Lower Ground Floor, Windsor Square, 1030 Antonio Arnaiz Ave, San Lorenzo, Makati City, 1223 Metro Manila, Philippines",
+    "descriptions": {
+      "zh-TW": "Google 地圖評分 ⭐ 4.8 (319)。位於 MANILA 的熱門美食店家。",
+      "en": "Google Maps rating ⭐ 4.8 (319). Highly rated spot in MANILA.",
+      "tl": "Google Maps rating ⭐ 4.8 (319). Sikat na kainan sa MANILA."
+    },
+    "imageUrl": "",
+    "categoryKey": "japanese_korean"
+  },
+  {
+    "city": "manila",
+    "name": "Ramen Ibuki, Uptown BGC",
+    "phone": "查看 Google 地圖專線",
+    "address": "Uptown Parade, 9th Ave, Bonifacio Global City, Makati City, 1630 Metro Manila, Philippines",
+    "descriptions": {
+      "zh-TW": "Google 地圖評分 ⭐ 4.8 (1113)。位於 MANILA 的熱門美食店家。",
+      "en": "Google Maps rating ⭐ 4.8 (1113). Highly rated spot in MANILA.",
+      "tl": "Google Maps rating ⭐ 4.8 (1113). Sikat na kainan sa MANILA."
+    },
+    "imageUrl": "",
+    "categoryKey": "japanese_korean"
+  },
+  {
+    "city": "manila",
+    "name": "Jiang Nan Hotpot (MOA)",
+    "phone": "查看 Google 地圖專線",
+    "address": "National University Bldg, mall of asia complex, Coral Way, Pasay City, Metro Manila, Philippines",
+    "descriptions": {
+      "zh-TW": "Google 地圖評分 ⭐ 4.7 (1733)。位於 MANILA 的熱門美食店家。",
+      "en": "Google Maps rating ⭐ 4.7 (1733). Highly rated spot in MANILA.",
+      "tl": "Google Maps rating ⭐ 4.7 (1733). Sikat na kainan sa MANILA."
+    },
+    "imageUrl": "",
+    "categoryKey": "chinese"
   },
   {
     "city": "manila",
@@ -1204,6 +1295,19 @@
       "zh-TW": "Google 地圖評分 ⭐ 4.6 (661)。位於 MANILA 的熱門美食店家。",
       "en": "Google Maps rating ⭐ 4.6 (661). Highly rated spot in MANILA.",
       "tl": "Google Maps rating ⭐ 4.6 (661). Sikat na kainan sa MANILA."
+    },
+    "imageUrl": "",
+    "categoryKey": "japanese_korean"
+  },
+  {
+    "city": "manila",
+    "name": "Buk Gyeong Korean-Chinese Restaurant",
+    "phone": "查看 Google 地圖專線",
+    "address": "Dakota Residences, 555 Adriatico St, Malate, Manila, 1004 Kalakhang Maynila, Philippines",
+    "descriptions": {
+      "zh-TW": "Google 地圖評分 ⭐ 4 (285)。位於 MANILA 的熱門美食店家。",
+      "en": "Google Maps rating ⭐ 4 (285). Highly rated spot in MANILA.",
+      "tl": "Google Maps rating ⭐ 4 (285). Sikat na kainan sa MANILA."
     },
     "imageUrl": "",
     "categoryKey": "japanese_korean"
@@ -1223,19 +1327,6 @@
   },
   {
     "city": "manila",
-    "name": "Soban K-Town Grill 소반 - Robinsons Place Manila, Ermita",
-    "phone": "查看 Google 地圖專線",
-    "address": "Unit 50-60, G/F, Robinsons Place Manila, Pedro Gil Wing, 1004 Adriatico St, Ermita, Manila City, 1000 Metro Manila, Philippines",
-    "descriptions": {
-      "zh-TW": "Google 地圖評分 ⭐ 4.9 (4393)。位於 MANILA 的熱門美食店家。",
-      "en": "Google Maps rating ⭐ 4.9 (4393). Highly rated spot in MANILA.",
-      "tl": "Google Maps rating ⭐ 4.9 (4393). Sikat na kainan sa MANILA."
-    },
-    "imageUrl": "",
-    "categoryKey": "bbq_seafood"
-  },
-  {
-    "city": "manila",
     "name": "Royal Sakura",
     "phone": "查看 Google 地圖專線",
     "address": "534 Remedios St, Malate, Manila, 1004 Metro Manila, Philippines",
@@ -1249,26 +1340,26 @@
   },
   {
     "city": "manila",
-    "name": "我流 －GARYU－",
+    "name": "SeokChon 석촌 - Korea Town Manila",
     "phone": "查看 Google 地圖專線",
-    "address": "609 Julio Nakpil, Malate, Manila, 1004 Metro Manila, Philippines",
+    "address": "1506 Del Pilar St, Ermita, Manila, 1000 Metro Manila, Philippines",
     "descriptions": {
-      "zh-TW": "Google 地圖評分 ⭐ 4.6 (97)。位於 MANILA 的熱門美食店家。",
-      "en": "Google Maps rating ⭐ 4.6 (97). Highly rated spot in MANILA.",
-      "tl": "Google Maps rating ⭐ 4.6 (97). Sikat na kainan sa MANILA."
+      "zh-TW": "Google 地圖評分 ⭐ 4.3 (314)。位於 MANILA 的熱門美食店家。",
+      "en": "Google Maps rating ⭐ 4.3 (314). Highly rated spot in MANILA.",
+      "tl": "Google Maps rating ⭐ 4.3 (314). Sikat na kainan sa MANILA."
     },
     "imageUrl": "",
     "categoryKey": "filipino"
   },
   {
     "city": "manila",
-    "name": "Shabunoki Pasay",
+    "name": "Uma Nota Manila",
     "phone": "查看 Google 地圖專線",
-    "address": "Hobbies Of Asia, Diosdado Macapagal Blvd, Pasay City, Metro Manila, Philippines",
+    "address": "Shangri-La The Fort 30th Street, corner 5th Ave, Taguig, 1634 Metro Manila, Philippines",
     "descriptions": {
-      "zh-TW": "Google 地圖評分 ⭐ 4.4 (348)。位於 MANILA 的熱門美食店家。",
-      "en": "Google Maps rating ⭐ 4.4 (348). Highly rated spot in MANILA.",
-      "tl": "Google Maps rating ⭐ 4.4 (348). Sikat na kainan sa MANILA."
+      "zh-TW": "Google 地圖評分 ⭐ 4.8 (1351)。位於 MANILA 的熱門美食店家。",
+      "en": "Google Maps rating ⭐ 4.8 (1351). Highly rated spot in MANILA.",
+      "tl": "Google Maps rating ⭐ 4.8 (1351). Sikat na kainan sa MANILA."
     },
     "imageUrl": "",
     "categoryKey": "filipino"
@@ -1288,6 +1379,19 @@
   },
   {
     "city": "manila",
+    "name": "我流 －GARYU－",
+    "phone": "查看 Google 地圖專線",
+    "address": "609 Julio Nakpil, Malate, Manila, 1004 Metro Manila, Philippines",
+    "descriptions": {
+      "zh-TW": "Google 地圖評分 ⭐ 4.6 (97)。位於 MANILA 的熱門美食店家。",
+      "en": "Google Maps rating ⭐ 4.6 (97). Highly rated spot in MANILA.",
+      "tl": "Google Maps rating ⭐ 4.6 (97). Sikat na kainan sa MANILA."
+    },
+    "imageUrl": "",
+    "categoryKey": "filipino"
+  },
+  {
+    "city": "manila",
     "name": "Japonesa",
     "phone": "查看 Google 地圖專線",
     "address": "5658 Don Pedro St, Corner Jacobo, Makati City, Metro Manila, Philippines",
@@ -1301,19 +1405,6 @@
   },
   {
     "city": "manila",
-    "name": "Jiang Nan Hotpot (MOA)",
-    "phone": "查看 Google 地圖專線",
-    "address": "National University Bldg, mall of asia complex, Coral Way, Pasay City, Metro Manila, Philippines",
-    "descriptions": {
-      "zh-TW": "Google 地圖評分 ⭐ 4.7 (1733)。位於 MANILA 的熱門美食店家。",
-      "en": "Google Maps rating ⭐ 4.7 (1733). Highly rated spot in MANILA.",
-      "tl": "Google Maps rating ⭐ 4.7 (1733). Sikat na kainan sa MANILA."
-    },
-    "imageUrl": "",
-    "categoryKey": "chinese"
-  },
-  {
-    "city": "manila",
     "name": "Yurakuen Japanese Restaurant",
     "phone": "查看 Google 地圖專線",
     "address": "HXFJ+3PF Diamond Hotel, Malate, Manila, 1004 Metro Manila, Philippines",
@@ -1321,45 +1412,6 @@
       "zh-TW": "Google 地圖評分 ⭐ 4.3 (137)。位於 MANILA 的熱門美食店家。",
       "en": "Google Maps rating ⭐ 4.3 (137). Highly rated spot in MANILA.",
       "tl": "Google Maps rating ⭐ 4.3 (137). Sikat na kainan sa MANILA."
-    },
-    "imageUrl": "",
-    "categoryKey": "japanese_korean"
-  },
-  {
-    "city": "manila",
-    "name": "Jiang Nan Hotpot (Paseo Center)",
-    "phone": "查看 Google 地圖專線",
-    "address": "Paseo de roxas, cor Sedeño, Makati City, Metro Manila, Philippines",
-    "descriptions": {
-      "zh-TW": "Google 地圖評分 ⭐ 4.7 (1032)。位於 MANILA 的熱門美食店家。",
-      "en": "Google Maps rating ⭐ 4.7 (1032). Highly rated spot in MANILA.",
-      "tl": "Google Maps rating ⭐ 4.7 (1032). Sikat na kainan sa MANILA."
-    },
-    "imageUrl": "",
-    "categoryKey": "chinese"
-  },
-  {
-    "city": "manila",
-    "name": "Century Tsukiji Japanese Restaurant",
-    "phone": "查看 Google 地圖專線",
-    "address": "Malate, Manila, 1004 Metro Manila, Philippines",
-    "descriptions": {
-      "zh-TW": "Google 地圖評分 ⭐ 4.1 (124)。位於 MANILA 的熱門美食店家。",
-      "en": "Google Maps rating ⭐ 4.1 (124). Highly rated spot in MANILA.",
-      "tl": "Google Maps rating ⭐ 4.1 (124). Sikat na kainan sa MANILA."
-    },
-    "imageUrl": "",
-    "categoryKey": "japanese_korean"
-  },
-  {
-    "city": "manila",
-    "name": "Ikoka Yakitori, BGC",
-    "phone": "查看 Google 地圖專線",
-    "address": "Ground Level, Two Maridien Building, High Street South, 26th Avenue Bonifacio Global City, Makati City, Metro Manila, Philippines",
-    "descriptions": {
-      "zh-TW": "Google 地圖評分 ⭐ 4.7 (959)。位於 MANILA 的熱門美食店家。",
-      "en": "Google Maps rating ⭐ 4.7 (959). Highly rated spot in MANILA.",
-      "tl": "Google Maps rating ⭐ 4.7 (959). Sikat na kainan sa MANILA."
     },
     "imageUrl": "",
     "categoryKey": "japanese_korean"
@@ -1379,16 +1431,16 @@
   },
   {
     "city": "manila",
-    "name": "Jung’s Kitchen - quezon city",
+    "name": "Jiang Nan Hotpot (Paseo Center)",
     "phone": "查看 Google 地圖專線",
-    "address": "91 Sto. Domingo Ave, Quezon City, 1114 Metro Manila, Philippines",
+    "address": "Paseo de roxas, cor Sedeño, Makati City, Metro Manila, Philippines",
     "descriptions": {
-      "zh-TW": "Google 地圖評分 ⭐ 4.4 (106)。位於 MANILA 的熱門美食店家。",
-      "en": "Google Maps rating ⭐ 4.4 (106). Highly rated spot in MANILA.",
-      "tl": "Google Maps rating ⭐ 4.4 (106). Sikat na kainan sa MANILA."
+      "zh-TW": "Google 地圖評分 ⭐ 4.7 (1032)。位於 MANILA 的熱門美食店家。",
+      "en": "Google Maps rating ⭐ 4.7 (1032). Highly rated spot in MANILA.",
+      "tl": "Google Maps rating ⭐ 4.7 (1032). Sikat na kainan sa MANILA."
     },
     "imageUrl": "",
-    "categoryKey": "filipino"
+    "categoryKey": "chinese"
   },
   {
     "city": "manila",
@@ -1405,29 +1457,16 @@
   },
   {
     "city": "manila",
-    "name": "Wagyu Manila Makati",
+    "name": "Ikoka Yakitori, BGC",
     "phone": "查看 Google 地圖專線",
-    "address": "Marvin Plaza, Bldg., 2153 Chino Roces Ave, Makati City, 1230 Metro Manila, Philippines",
+    "address": "Ground Level, Two Maridien Building, High Street South, 26th Avenue Bonifacio Global City, Makati City, Metro Manila, Philippines",
     "descriptions": {
-      "zh-TW": "Google 地圖評分 ⭐ 4.8 (402)。位於 MANILA 的熱門美食店家。",
-      "en": "Google Maps rating ⭐ 4.8 (402). Highly rated spot in MANILA.",
-      "tl": "Google Maps rating ⭐ 4.8 (402). Sikat na kainan sa MANILA."
+      "zh-TW": "Google 地圖評分 ⭐ 4.7 (959)。位於 MANILA 的熱門美食店家。",
+      "en": "Google Maps rating ⭐ 4.7 (959). Highly rated spot in MANILA.",
+      "tl": "Google Maps rating ⭐ 4.7 (959). Sikat na kainan sa MANILA."
     },
     "imageUrl": "",
     "categoryKey": "japanese_korean"
-  },
-  {
-    "city": "cebu",
-    "name": "Bell+Amadeus",
-    "phone": "查看 Google 地圖專線",
-    "address": "88th Avenue Gov. M. Cuenco Ave, Road, Kasambagan, 6000 Cebu, Philippines",
-    "descriptions": {
-      "zh-TW": "Google 地圖評分 ⭐ 4.8 (1450)。位於 CEBU 的熱門美食店家。",
-      "en": "Google Maps rating ⭐ 4.8 (1450). Highly rated spot in CEBU.",
-      "tl": "Google Maps rating ⭐ 4.8 (1450). Sikat na kainan sa CEBU."
-    },
-    "imageUrl": "",
-    "categoryKey": "filipino"
   },
   {
     "city": "cebu",
@@ -1444,26 +1483,13 @@
   },
   {
     "city": "cebu",
-    "name": "La Parisienne Cebu",
+    "name": "Bell+Amadeus",
     "phone": "查看 Google 地圖專線",
-    "address": "371 Gorordo Ave, Cebu City, 6000 Cebu, Philippines",
+    "address": "88th Avenue Gov. M. Cuenco Ave, Road, Kasambagan, 6000 Cebu, Philippines",
     "descriptions": {
-      "zh-TW": "Google 地圖評分 ⭐ 4.3 (5275)。位於 CEBU 的熱門美食店家。",
-      "en": "Google Maps rating ⭐ 4.3 (5275). Highly rated spot in CEBU.",
-      "tl": "Google Maps rating ⭐ 4.3 (5275). Sikat na kainan sa CEBU."
-    },
-    "imageUrl": "",
-    "categoryKey": "cafe_dessert"
-  },
-  {
-    "city": "cebu",
-    "name": "The Pig and Palm",
-    "phone": "查看 Google 地圖專線",
-    "address": "G/F, MSY Tower, Negros Rd, Cebu City, 6000 Cebu, Philippines",
-    "descriptions": {
-      "zh-TW": "Google 地圖評分 ⭐ 4.5 (1036)。位於 CEBU 的熱門美食店家。",
-      "en": "Google Maps rating ⭐ 4.5 (1036). Highly rated spot in CEBU.",
-      "tl": "Google Maps rating ⭐ 4.5 (1036). Sikat na kainan sa CEBU."
+      "zh-TW": "Google 地圖評分 ⭐ 4.8 (1450)。位於 CEBU 的熱門美食店家。",
+      "en": "Google Maps rating ⭐ 4.8 (1450). Highly rated spot in CEBU.",
+      "tl": "Google Maps rating ⭐ 4.8 (1450). Sikat na kainan sa CEBU."
     },
     "imageUrl": "",
     "categoryKey": "filipino"
@@ -1483,6 +1509,32 @@
   },
   {
     "city": "cebu",
+    "name": "The Pig and Palm",
+    "phone": "查看 Google 地圖專線",
+    "address": "G/F, MSY Tower, Negros Rd, Cebu City, 6000 Cebu, Philippines",
+    "descriptions": {
+      "zh-TW": "Google 地圖評分 ⭐ 4.5 (1036)。位於 CEBU 的熱門美食店家。",
+      "en": "Google Maps rating ⭐ 4.5 (1036). Highly rated spot in CEBU.",
+      "tl": "Google Maps rating ⭐ 4.5 (1036). Sikat na kainan sa CEBU."
+    },
+    "imageUrl": "",
+    "categoryKey": "filipino"
+  },
+  {
+    "city": "cebu",
+    "name": "La Parisienne Cebu",
+    "phone": "查看 Google 地圖專線",
+    "address": "371 Gorordo Ave, Cebu City, 6000 Cebu, Philippines",
+    "descriptions": {
+      "zh-TW": "Google 地圖評分 ⭐ 4.3 (5275)。位於 CEBU 的熱門美食店家。",
+      "en": "Google Maps rating ⭐ 4.3 (5275). Highly rated spot in CEBU.",
+      "tl": "Google Maps rating ⭐ 4.3 (5275). Sikat na kainan sa CEBU."
+    },
+    "imageUrl": "",
+    "categoryKey": "cafe_dessert"
+  },
+  {
+    "city": "cebu",
     "name": "La Parisienne Sky",
     "phone": "查看 Google 地圖專線",
     "address": "Tops Road, Cebu City, 6000 Cebu, Philippines",
@@ -1496,13 +1548,13 @@
   },
   {
     "city": "cebu",
-    "name": "Mott 32 Cebu - NUSTAR",
+    "name": "Vikings Luxury Buffet, SM City Cebu",
     "phone": "查看 Google 地圖專線",
-    "address": "Nustar Resort and Casino, Cebu South Road Properties, Cebu City, 6000 Cebu, Philippines",
+    "address": "2nd Floor North Wing, SM City Cebu, Juan Luna Ave Ext, Cebu City, 6000 Cebu, Philippines",
     "descriptions": {
-      "zh-TW": "Google 地圖評分 ⭐ 4.5 (284)。位於 CEBU 的熱門美食店家。",
-      "en": "Google Maps rating ⭐ 4.5 (284). Highly rated spot in CEBU.",
-      "tl": "Google Maps rating ⭐ 4.5 (284). Sikat na kainan sa CEBU."
+      "zh-TW": "Google 地圖評分 ⭐ 4.8 (16933)。位於 CEBU 的熱門美食店家。",
+      "en": "Google Maps rating ⭐ 4.8 (16933). Highly rated spot in CEBU.",
+      "tl": "Google Maps rating ⭐ 4.8 (16933). Sikat na kainan sa CEBU."
     },
     "imageUrl": "",
     "categoryKey": "filipino"
@@ -1535,39 +1587,13 @@
   },
   {
     "city": "cebu",
-    "name": "Vikings Luxury Buffet, SM City Cebu",
+    "name": "Mott 32 Cebu - NUSTAR",
     "phone": "查看 Google 地圖專線",
-    "address": "2nd Floor North Wing, SM City Cebu, Juan Luna Ave Ext, Cebu City, 6000 Cebu, Philippines",
+    "address": "Nustar Resort and Casino, Cebu South Road Properties, Cebu City, 6000 Cebu, Philippines",
     "descriptions": {
-      "zh-TW": "Google 地圖評分 ⭐ 4.8 (16933)。位於 CEBU 的熱門美食店家。",
-      "en": "Google Maps rating ⭐ 4.8 (16933). Highly rated spot in CEBU.",
-      "tl": "Google Maps rating ⭐ 4.8 (16933). Sikat na kainan sa CEBU."
-    },
-    "imageUrl": "",
-    "categoryKey": "filipino"
-  },
-  {
-    "city": "cebu",
-    "name": "Mr. A Bar & Restaurant",
-    "phone": "查看 Google 地圖專線",
-    "address": "Nivel Hills, Lower Busay Heights Cebu, Budlaan - Busay Rd, Cebu City, 6000 Cebu, Philippines",
-    "descriptions": {
-      "zh-TW": "Google 地圖評分 ⭐ 4.3 (1415)。位於 CEBU 的熱門美食店家。",
-      "en": "Google Maps rating ⭐ 4.3 (1415). Highly rated spot in CEBU.",
-      "tl": "Google Maps rating ⭐ 4.3 (1415). Sikat na kainan sa CEBU."
-    },
-    "imageUrl": "",
-    "categoryKey": "cafe_dessert"
-  },
-  {
-    "city": "cebu",
-    "name": "Kaayoo The Filipino Kitchen",
-    "phone": "查看 Google 地圖專線",
-    "address": "Pres. Quirino St, Kasambagan, Cebu City, 6000 Cebu, Philippines",
-    "descriptions": {
-      "zh-TW": "Google 地圖評分 ⭐ 4.4 (398)。位於 CEBU 的熱門美食店家。",
-      "en": "Google Maps rating ⭐ 4.4 (398). Highly rated spot in CEBU.",
-      "tl": "Google Maps rating ⭐ 4.4 (398). Sikat na kainan sa CEBU."
+      "zh-TW": "Google 地圖評分 ⭐ 4.5 (284)。位於 CEBU 的熱門美食店家。",
+      "en": "Google Maps rating ⭐ 4.5 (284). Highly rated spot in CEBU.",
+      "tl": "Google Maps rating ⭐ 4.5 (284). Sikat na kainan sa CEBU."
     },
     "imageUrl": "",
     "categoryKey": "filipino"
@@ -1600,19 +1626,6 @@
   },
   {
     "city": "cebu",
-    "name": "Abli Cebu",
-    "phone": "查看 Google 地圖專線",
-    "address": "A. Climaco St, Cebu City, 6000 Cebu, Philippines",
-    "descriptions": {
-      "zh-TW": "Google 地圖評分 ⭐ 4.2 (205)。位於 CEBU 的熱門美食店家。",
-      "en": "Google Maps rating ⭐ 4.2 (205). Highly rated spot in CEBU.",
-      "tl": "Google Maps rating ⭐ 4.2 (205). Sikat na kainan sa CEBU."
-    },
-    "imageUrl": "",
-    "categoryKey": "filipino"
-  },
-  {
-    "city": "cebu",
     "name": "Casa Verde",
     "phone": "查看 Google 地圖專線",
     "address": "69 Lim Tian Teng, Cebu City, 6000 Cebu, Philippines",
@@ -1626,26 +1639,26 @@
   },
   {
     "city": "cebu",
-    "name": "Anzani New Mediterranean Restaurant",
+    "name": "Mr. A Bar & Restaurant",
     "phone": "查看 Google 地圖專線",
-    "address": "Panorama Heights Nivel Hills, Lahug, Cebu City, 6000 Cebu, Philippines",
+    "address": "Nivel Hills, Lower Busay Heights Cebu, Budlaan - Busay Rd, Cebu City, 6000 Cebu, Philippines",
     "descriptions": {
-      "zh-TW": "Google 地圖評分 ⭐ 4.5 (794)。位於 CEBU 的熱門美食店家。",
-      "en": "Google Maps rating ⭐ 4.5 (794). Highly rated spot in CEBU.",
-      "tl": "Google Maps rating ⭐ 4.5 (794). Sikat na kainan sa CEBU."
+      "zh-TW": "Google 地圖評分 ⭐ 4.3 (1415)。位於 CEBU 的熱門美食店家。",
+      "en": "Google Maps rating ⭐ 4.3 (1415). Highly rated spot in CEBU.",
+      "tl": "Google Maps rating ⭐ 4.3 (1415). Sikat na kainan sa CEBU."
     },
     "imageUrl": "",
-    "categoryKey": "filipino"
+    "categoryKey": "cafe_dessert"
   },
   {
     "city": "cebu",
-    "name": "Feria | Radisson Blu Cebu",
+    "name": "Gerry's SM Cebu",
     "phone": "查看 Google 地圖專線",
-    "address": "Radisson Blu Hotels and Resorts, Sergio Osmena Boulevard, Corner Juan Luna Avenue, 8W69+3WF, Cebu City, 6000 Cebu, Philippines",
+    "address": "2nd Floor, SM City Cebu, Mabolo, Cebu City, 6000 Cebu, Philippines",
     "descriptions": {
-      "zh-TW": "Google 地圖評分 ⭐ 4.5 (511)。位於 CEBU 的熱門美食店家。",
-      "en": "Google Maps rating ⭐ 4.5 (511). Highly rated spot in CEBU.",
-      "tl": "Google Maps rating ⭐ 4.5 (511). Sikat na kainan sa CEBU."
+      "zh-TW": "Google 地圖評分 ⭐ 4.8 (5974)。位於 CEBU 的熱門美食店家。",
+      "en": "Google Maps rating ⭐ 4.8 (5974). Highly rated spot in CEBU.",
+      "tl": "Google Maps rating ⭐ 4.8 (5974). Sikat na kainan sa CEBU."
     },
     "imageUrl": "",
     "categoryKey": "filipino"
@@ -1665,6 +1678,19 @@
   },
   {
     "city": "cebu",
+    "name": "Kaayoo The Filipino Kitchen",
+    "phone": "查看 Google 地圖專線",
+    "address": "Pres. Quirino St, Kasambagan, Cebu City, 6000 Cebu, Philippines",
+    "descriptions": {
+      "zh-TW": "Google 地圖評分 ⭐ 4.4 (398)。位於 CEBU 的熱門美食店家。",
+      "en": "Google Maps rating ⭐ 4.4 (398). Highly rated spot in CEBU.",
+      "tl": "Google Maps rating ⭐ 4.4 (398). Sikat na kainan sa CEBU."
+    },
+    "imageUrl": "",
+    "categoryKey": "filipino"
+  },
+  {
+    "city": "cebu",
     "name": "Acacia Steakhouse",
     "phone": "查看 Google 地圖專線",
     "address": "Green Valley Subdivision, Acacia St, Capitol, Cebu City, 6000 Cebu, Philippines",
@@ -1678,6 +1704,32 @@
   },
   {
     "city": "cebu",
+    "name": "Feria | Radisson Blu Cebu",
+    "phone": "查看 Google 地圖專線",
+    "address": "Radisson Blu Hotels and Resorts, Sergio Osmena Boulevard, Corner Juan Luna Avenue, 8W69+3WF, Cebu City, 6000 Cebu, Philippines",
+    "descriptions": {
+      "zh-TW": "Google 地圖評分 ⭐ 4.5 (511)。位於 CEBU 的熱門美食店家。",
+      "en": "Google Maps rating ⭐ 4.5 (511). Highly rated spot in CEBU.",
+      "tl": "Google Maps rating ⭐ 4.5 (511). Sikat na kainan sa CEBU."
+    },
+    "imageUrl": "",
+    "categoryKey": "filipino"
+  },
+  {
+    "city": "cebu",
+    "name": "Anzani New Mediterranean Restaurant",
+    "phone": "查看 Google 地圖專線",
+    "address": "Panorama Heights Nivel Hills, Lahug, Cebu City, 6000 Cebu, Philippines",
+    "descriptions": {
+      "zh-TW": "Google 地圖評分 ⭐ 4.5 (794)。位於 CEBU 的熱門美食店家。",
+      "en": "Google Maps rating ⭐ 4.5 (794). Highly rated spot in CEBU.",
+      "tl": "Google Maps rating ⭐ 4.5 (794). Sikat na kainan sa CEBU."
+    },
+    "imageUrl": "",
+    "categoryKey": "filipino"
+  },
+  {
+    "city": "cebu",
     "name": "Sugbai Seafood Grill & Restaurant",
     "phone": "查看 Google 地圖專線",
     "address": "E Zone, F. Cabahug St, Cebu City, 6000 Cebu, Philippines",
@@ -1685,6 +1737,19 @@
       "zh-TW": "Google 地圖評分 ⭐ 5 (1)。位於 CEBU 的熱門美食店家。",
       "en": "Google Maps rating ⭐ 5 (1). Highly rated spot in CEBU.",
       "tl": "Google Maps rating ⭐ 5 (1). Sikat na kainan sa CEBU."
+    },
+    "imageUrl": "",
+    "categoryKey": "bbq_seafood"
+  },
+  {
+    "city": "cebu",
+    "name": "Parr’t Ebelle Seafood Restaurant",
+    "phone": "查看 Google 地圖專線",
+    "address": "8W68+GHR, J. De Veyra St, Cebu City, 6000 Cebu, Philippines",
+    "descriptions": {
+      "zh-TW": "Google 地圖評分 ⭐ 4.3 (1601)。位於 CEBU 的熱門美食店家。",
+      "en": "Google Maps rating ⭐ 4.3 (1601). Highly rated spot in CEBU.",
+      "tl": "Google Maps rating ⭐ 4.3 (1601). Sikat na kainan sa CEBU."
     },
     "imageUrl": "",
     "categoryKey": "bbq_seafood"
@@ -1717,13 +1782,52 @@
   },
   {
     "city": "cebu",
-    "name": "Parr’t Ebelle Seafood Restaurant",
+    "name": "AA BBQ",
     "phone": "查看 Google 地圖專線",
-    "address": "8W68+GHR, J. De Veyra St, Cebu City, 6000 Cebu, Philippines",
+    "address": "Salinas Dr, Cebu City, 6000 Cebu, Philippines",
     "descriptions": {
-      "zh-TW": "Google 地圖評分 ⭐ 4.3 (1601)。位於 CEBU 的熱門美食店家。",
-      "en": "Google Maps rating ⭐ 4.3 (1601). Highly rated spot in CEBU.",
-      "tl": "Google Maps rating ⭐ 4.3 (1601). Sikat na kainan sa CEBU."
+      "zh-TW": "Google 地圖評分 ⭐ 4.2 (963)。位於 CEBU 的熱門美食店家。",
+      "en": "Google Maps rating ⭐ 4.2 (963). Highly rated spot in CEBU.",
+      "tl": "Google Maps rating ⭐ 4.2 (963). Sikat na kainan sa CEBU."
+    },
+    "imageUrl": "",
+    "categoryKey": "bbq_seafood"
+  },
+  {
+    "city": "cebu",
+    "name": "Blackbeard's Seafood Island",
+    "phone": "查看 Google 地圖專線",
+    "address": "SM Seaside City Cebu, Cebu South Coastal Rd, Cebu City, 6000 Lalawigan ng Cebu, Philippines",
+    "descriptions": {
+      "zh-TW": "Google 地圖評分 ⭐ 4.6 (307)。位於 CEBU 的熱門美食店家。",
+      "en": "Google Maps rating ⭐ 4.6 (307). Highly rated spot in CEBU.",
+      "tl": "Google Maps rating ⭐ 4.6 (307). Sikat na kainan sa CEBU."
+    },
+    "imageUrl": "",
+    "categoryKey": "bbq_seafood"
+  },
+  {
+    "city": "cebu",
+    "name": "Messy Bite Seafood & Grill",
+    "phone": "查看 Google 地圖專線",
+    "address": "8WGV+FGG, 332 P.J.Burgos, Centro, Mandaue, 6014 Cebu, Philippines",
+    "descriptions": {
+      "zh-TW": "Google 地圖評分 ⭐ 4.5 (79)。位於 CEBU 的熱門美食店家。",
+      "en": "Google Maps rating ⭐ 4.5 (79). Highly rated spot in CEBU.",
+      "tl": "Google Maps rating ⭐ 4.5 (79). Sikat na kainan sa CEBU."
+    },
+    "imageUrl": "",
+    "categoryKey": "bbq_seafood"
+  },
+  {
+    "city": "cebu",
+    "name": "I Love Bucket Shrimps - Capitol",
+    "phone": "查看 Google 地圖專線",
+    "address": "11 A. Climaco St, Cebu City, 6000 Cebu, Philippines",
+    "descriptions": {
+      "zh-TW": "Google 地圖評分 ⭐ 4.4 (711)。位於 CEBU 的熱門美食店家。",
+      "en": "Google Maps rating ⭐ 4.4 (711). Highly rated spot in CEBU.",
+      "tl": "Google Maps rating ⭐ 4.4 (711). Sikat na kainan sa CEBU."
     },
     "imageUrl": "",
     "categoryKey": "bbq_seafood"
@@ -1740,6 +1844,19 @@
     },
     "imageUrl": "",
     "categoryKey": "cafe_dessert"
+  },
+  {
+    "city": "cebu",
+    "name": "Seafood Boil Grill & Restaurant",
+    "phone": "查看 Google 地圖專線",
+    "address": "8XHG+9F8, F. Martir Street, Lapu-Lapu, 6015 Cebu, Philippines",
+    "descriptions": {
+      "zh-TW": "Google 地圖評分 ⭐ 4.1 (206)。位於 CEBU 的熱門美食店家。",
+      "en": "Google Maps rating ⭐ 4.1 (206). Highly rated spot in CEBU.",
+      "tl": "Google Maps rating ⭐ 4.1 (206). Sikat na kainan sa CEBU."
+    },
+    "imageUrl": "",
+    "categoryKey": "bbq_seafood"
   },
   {
     "city": "cebu",
@@ -1769,42 +1886,42 @@
   },
   {
     "city": "cebu",
-    "name": "Messy Bite Seafood & Grill",
+    "name": "Cowrie Cove at Shangri-La Mactan, Cebu",
     "phone": "查看 Google 地圖專線",
-    "address": "8WGV+FGG, 332 P.J.Burgos, Centro, Mandaue, 6014 Cebu, Philippines",
+    "address": "Punta Engaño Rd, Cebu, 6015 Cebu, Philippines",
     "descriptions": {
-      "zh-TW": "Google 地圖評分 ⭐ 4.5 (79)。位於 CEBU 的熱門美食店家。",
-      "en": "Google Maps rating ⭐ 4.5 (79). Highly rated spot in CEBU.",
-      "tl": "Google Maps rating ⭐ 4.5 (79). Sikat na kainan sa CEBU."
-    },
-    "imageUrl": "",
-    "categoryKey": "bbq_seafood"
-  },
-  {
-    "city": "cebu",
-    "name": "Blackbeard's Seafood Island",
-    "phone": "查看 Google 地圖專線",
-    "address": "SM Seaside City Cebu, Cebu South Coastal Rd, Cebu City, 6000 Lalawigan ng Cebu, Philippines",
-    "descriptions": {
-      "zh-TW": "Google 地圖評分 ⭐ 4.6 (307)。位於 CEBU 的熱門美食店家。",
-      "en": "Google Maps rating ⭐ 4.6 (307). Highly rated spot in CEBU.",
-      "tl": "Google Maps rating ⭐ 4.6 (307). Sikat na kainan sa CEBU."
-    },
-    "imageUrl": "",
-    "categoryKey": "bbq_seafood"
-  },
-  {
-    "city": "cebu",
-    "name": "Larsian",
-    "phone": "查看 Google 地圖專線",
-    "address": "1197 Dionisio Jakosalem St, Cebu City, 6000 Cebu, Philippines",
-    "descriptions": {
-      "zh-TW": "Google 地圖評分 ⭐ 3.8 (2119)。位於 CEBU 的熱門美食店家。",
-      "en": "Google Maps rating ⭐ 3.8 (2119). Highly rated spot in CEBU.",
-      "tl": "Google Maps rating ⭐ 3.8 (2119). Sikat na kainan sa CEBU."
+      "zh-TW": "Google 地圖評分 ⭐ 4.5 (686)。位於 CEBU 的熱門美食店家。",
+      "en": "Google Maps rating ⭐ 4.5 (686). Highly rated spot in CEBU.",
+      "tl": "Google Maps rating ⭐ 4.5 (686). Sikat na kainan sa CEBU."
     },
     "imageUrl": "",
     "categoryKey": "filipino"
+  },
+  {
+    "city": "cebu",
+    "name": "STK ta Bay!",
+    "phone": "查看 Google 地圖專線",
+    "address": "6 A. Climaco St, Cebu City, 6000 Cebu, Philippines",
+    "descriptions": {
+      "zh-TW": "Google 地圖評分 ⭐ 4.2 (1457)。位於 CEBU 的熱門美食店家。",
+      "en": "Google Maps rating ⭐ 4.2 (1457). Highly rated spot in CEBU.",
+      "tl": "Google Maps rating ⭐ 4.2 (1457). Sikat na kainan sa CEBU."
+    },
+    "imageUrl": "",
+    "categoryKey": "filipino"
+  },
+  {
+    "city": "cebu",
+    "name": "Mr. Crab - Cebu Yacht Club",
+    "phone": "查看 Google 地圖專線",
+    "address": "8XHG+HWW, F. Martir St, Lapu-Lapu, 6015 Cebu, Philippines",
+    "descriptions": {
+      "zh-TW": "Google 地圖評分 ⭐ 4.2 (223)。位於 CEBU 的熱門美食店家。",
+      "en": "Google Maps rating ⭐ 4.2 (223). Highly rated spot in CEBU.",
+      "tl": "Google Maps rating ⭐ 4.2 (223). Sikat na kainan sa CEBU."
+    },
+    "imageUrl": "",
+    "categoryKey": "bbq_seafood"
   },
   {
     "city": "cebu",
@@ -1821,91 +1938,13 @@
   },
   {
     "city": "cebu",
-    "name": "Maximus Buffet Cebu",
+    "name": "Seafood and Ribs Warehouse SM City Cebu",
     "phone": "查看 Google 地圖專線",
-    "address": "Salinas Dr, Cebu City, 6000 Cebu, Philippines",
+    "address": "2nd, SM City Cebu, Juan Luna Ave Ext, Cebu City, 6000 Cebu, Philippines",
     "descriptions": {
-      "zh-TW": "Google 地圖評分 ⭐ 2.6 (79)。位於 CEBU 的熱門美食店家。",
-      "en": "Google Maps rating ⭐ 2.6 (79). Highly rated spot in CEBU.",
-      "tl": "Google Maps rating ⭐ 2.6 (79). Sikat na kainan sa CEBU."
-    },
-    "imageUrl": "",
-    "categoryKey": "filipino"
-  },
-  {
-    "city": "cebu",
-    "name": "Smiley by The Sea at Il Corso",
-    "phone": "查看 Google 地圖專線",
-    "address": "Cebu City, 6000 Cebu, Philippines",
-    "descriptions": {
-      "zh-TW": "Google 地圖評分 ⭐ 3.2 (46)。位於 CEBU 的熱門美食店家。",
-      "en": "Google Maps rating ⭐ 3.2 (46). Highly rated spot in CEBU.",
-      "tl": "Google Maps rating ⭐ 3.2 (46). Sikat na kainan sa CEBU."
-    },
-    "imageUrl": "",
-    "categoryKey": "filipino"
-  },
-  {
-    "city": "cebu",
-    "name": "Aqua Dining adventure",
-    "phone": "查看 Google 地圖專線",
-    "address": "Cebu Ocean Park, SM Seaside Complex, 7VJH+97X, F. Vestil St, Cebu City, 6000 Cebu, Philippines",
-    "descriptions": {
-      "zh-TW": "Google 地圖評分 ⭐ 3.8 (160)。位於 CEBU 的熱門美食店家。",
-      "en": "Google Maps rating ⭐ 3.8 (160). Highly rated spot in CEBU.",
-      "tl": "Google Maps rating ⭐ 3.8 (160). Sikat na kainan sa CEBU."
-    },
-    "imageUrl": "",
-    "categoryKey": "filipino"
-  },
-  {
-    "city": "cebu",
-    "name": "AA BBQ",
-    "phone": "查看 Google 地圖專線",
-    "address": "Salinas Dr, Cebu City, 6000 Cebu, Philippines",
-    "descriptions": {
-      "zh-TW": "Google 地圖評分 ⭐ 4.2 (963)。位於 CEBU 的熱門美食店家。",
-      "en": "Google Maps rating ⭐ 4.2 (963). Highly rated spot in CEBU.",
-      "tl": "Google Maps rating ⭐ 4.2 (963). Sikat na kainan sa CEBU."
-    },
-    "imageUrl": "",
-    "categoryKey": "bbq_seafood"
-  },
-  {
-    "city": "cebu",
-    "name": "Raul's Restaurant",
-    "phone": "查看 Google 地圖專線",
-    "address": "A. Climaco St, Cebu City, 6000 Cebu, Philippines",
-    "descriptions": {
-      "zh-TW": "Google 地圖評分 ⭐ 4.3 (126)。位於 CEBU 的熱門美食店家。",
-      "en": "Google Maps rating ⭐ 4.3 (126). Highly rated spot in CEBU.",
-      "tl": "Google Maps rating ⭐ 4.3 (126). Sikat na kainan sa CEBU."
-    },
-    "imageUrl": "",
-    "categoryKey": "filipino"
-  },
-  {
-    "city": "cebu",
-    "name": "Slate District",
-    "phone": "查看 Google 地圖專線",
-    "address": "6000 Cebu South Coastal Rd, Cebu City, 6000 Cebu, Philippines",
-    "descriptions": {
-      "zh-TW": "Google 地圖評分 ⭐ 4.8 (745)。位於 CEBU 的熱門美食店家。",
-      "en": "Google Maps rating ⭐ 4.8 (745). Highly rated spot in CEBU.",
-      "tl": "Google Maps rating ⭐ 4.8 (745). Sikat na kainan sa CEBU."
-    },
-    "imageUrl": "",
-    "categoryKey": "filipino"
-  },
-  {
-    "city": "cebu",
-    "name": "V-PUB BBQ UNLIMITED CELEBRATION",
-    "phone": "查看 Google 地圖專線",
-    "address": "Level 2, The Terraces, Cebu Business Park, Ayala Center, Cebu City, 6000 Cebu, Philippines",
-    "descriptions": {
-      "zh-TW": "Google 地圖評分 ⭐ 4.6 (41)。位於 CEBU 的熱門美食店家。",
-      "en": "Google Maps rating ⭐ 4.6 (41). Highly rated spot in CEBU.",
-      "tl": "Google Maps rating ⭐ 4.6 (41). Sikat na kainan sa CEBU."
+      "zh-TW": "Google 地圖評分 ⭐ 3.9 (79)。位於 CEBU 的熱門美食店家。",
+      "en": "Google Maps rating ⭐ 3.9 (79). Highly rated spot in CEBU.",
+      "tl": "Google Maps rating ⭐ 3.9 (79). Sikat na kainan sa CEBU."
     },
     "imageUrl": "",
     "categoryKey": "bbq_seafood"
@@ -1919,6 +1958,19 @@
       "zh-TW": "Google 地圖評分 ⭐ 4.2 (1160)。位於 CEBU 的熱門美食店家。",
       "en": "Google Maps rating ⭐ 4.2 (1160). Highly rated spot in CEBU.",
       "tl": "Google Maps rating ⭐ 4.2 (1160). Sikat na kainan sa CEBU."
+    },
+    "imageUrl": "",
+    "categoryKey": "bbq_seafood"
+  },
+  {
+    "city": "cebu",
+    "name": "Tiger Crab Cebu",
+    "phone": "查看 Google 地圖專線",
+    "address": "Philippines, Cebu, Mandaue, 1A",
+    "descriptions": {
+      "zh-TW": "Google 地圖評分 ⭐ 4.8 (561)。位於 CEBU 的熱門美食店家。",
+      "en": "Google Maps rating ⭐ 4.8 (561). Highly rated spot in CEBU.",
+      "tl": "Google Maps rating ⭐ 4.8 (561). Sikat na kainan sa CEBU."
     },
     "imageUrl": "",
     "categoryKey": "bbq_seafood"
