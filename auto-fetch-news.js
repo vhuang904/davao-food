@@ -11,7 +11,7 @@ function formatDate(date) {
 }
 
 async function generateAutomatedNews() {
-  console.log("🤖【自動化系統】開始更新跨城市（馬尼拉、宿霧、達沃）前七天美食新聞與優惠...");
+  console.log("🤖【自動化系統】開始更新跨城市美食新聞與優惠（含網站連結）...");
 
   try {
     const todayObj = new Date();
@@ -29,15 +29,16 @@ async function generateAutomatedNews() {
     });
     await batch.commit();
 
-    // 2. 建立涵蓋馬尼拉、宿霧、達沃的多城市動態
+    // 2. 建立帶有 url 欄位的新聞動態
     const newsItems = [
       {
         id: "auto-promo-manila",
-        city: "manila", // 對應馬尼拉
+        city: "manila",
         type: "promo",
         brand: "🔥 馬尼拉熱門優惠",
         tag: "🔥 限時優惠",
         title: `馬尼拉都會區本週精選餐飲外送與折扣 (${pastStr} ~ ${todayStr})`,
+        url: "https://www.grab.com/ph/food/", // 點擊標題會前往的官方/外送網站
         validity: `有效期限至 ${todayStr}`,
         imageUrl: "https://images.unsplash.com/photo-1550547660-d9450f859349?w=800&auto=format&fit=crop",
         descriptions: {
@@ -49,11 +50,12 @@ async function generateAutomatedNews() {
       },
       {
         id: "auto-promo-cebu",
-        city: "cebu", // 對應宿霧
+        city: "cebu",
         type: "new",
         brand: "✨ 宿霧海鮮新據點",
         tag: "✨ 新開餐廳",
         title: `宿霧 Mactan 海邊全新餐飲概念店試營運 (${pastStr} ~ ${todayStr})`,
+        url: "https://www.foodpanda.ph", // 點擊標題會前往的網站
         validity: "長期試營運",
         imageUrl: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=800&auto=format&fit=crop",
         descriptions: {
@@ -65,11 +67,12 @@ async function generateAutomatedNews() {
       },
       {
         id: "auto-promo-davao",
-        city: "davao", // 對應達沃
+        city: "davao",
         type: "promo",
         brand: "🔥 達沃在地特惠",
         tag: "🔥 限時優惠",
         title: `達沃人氣燒肉與在地美食本週特惠 (${pastStr} ~ ${todayStr})`,
+        url: "https://www.facebook.com", // 點擊標題會前往的官方粉專或網站
         validity: `有效期限至 ${todayStr}`,
         imageUrl: "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=800&auto=format&fit=crop",
         descriptions: {
@@ -89,7 +92,7 @@ async function generateAutomatedNews() {
     });
     await newBatch.commit();
 
-    console.log("✅【自動化系統】成功寫入包含馬尼拉、宿霧與達沃的最新動態！");
+    console.log("✅【自動化系統】成功寫入帶有網站連結的最新動態！");
   } catch (error) {
     console.error("❌【自動化系統】執行失敗：", error);
     process.exit(1);
