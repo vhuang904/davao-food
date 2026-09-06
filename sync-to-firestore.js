@@ -9,14 +9,71 @@ admin.initializeApp({
 
 const db = admin.firestore();
 
-// 使用標準匯出 CSV 格式
 const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vR7RqEOBMOhNBT_Mo2kee4w4WNugbZFLRRWhmc3c9FWCjams-n9oyaug1bI4lXyd0G9MfU8ftW8utuJ/pub?output=csv';
+
+// 支援引號與換行的強效 CSV 解析器
+function parseCSV(text) {
+  const rows = [];
+  let row = [];
+  let inQuotes = false;
+  let field = '';
+
+  for (let i = 0; i < text.length; i++) {
+    const c = text[i];
+    const nextC = text[i + 1];
+
+    if (c === '"') {
+      if (inQuotes && nextC === '"') {
+        field += '"';
+        i++;
+      } else {
+        inQuotes = !inQuotes;
+      }
+    } else if (c === ',' && !inQuotes) {
+      row.push(field.trim());
+      field = '';
+    } else if ((c === '\r' || c === '\n') && !inQuotes) {
+      if (c === '\r' && nextC === '\n') i++;
+      row.push(field.trim());
+      rows.push(row);
+      row = [];
+      field = '';
+    } else {
+      field += c;
+    }
+  }
+  if (field !== '' || row.length > 0) {
+    row.push(field.trim());
+    rows.push(row);
+  }
+
+  if (rows.length < 2) return [];
+
+  const headers = rows[0].map(h => h.replace(/^"|"$/g, '').trim());
+  const result = [];
+
+  for (let i = 1; i < rows.length; i++) {
+    const r = rows[i];
+    if (r.length === 0 || (r.length === 1 && r[0] === '')) continue;
+    
+    const obj = {};
+    headers.forEach((header, index) => {
+      let val = r[index] !== undefined ? r[index] : '';
+      obj[header] = val.replace(/^"|"$/g, '').trim();
+    });
+    
+    if (obj.name) {
+      result.push(obj);
+    }
+  }
+  return result;
+}
 
 function fetchCSVData(url) {
   return new Promise((resolve, reject) => {
     https.get(url, (res) => {
-      console.log(`HTTP 狀態碼: ${res.statusCode}`);
-      if (res.statusCode === 301 || res.statusCode === 302) {
+      // 同時支援 301, 302 以及 Google 常見的 307 重新導向
+      if (res.statusCode === 301 || res.statusCode === 302 || res.statusCode === 307) {
         return fetchCSVData(res.headers.location).then(resolve).catch(reject);
       }
       let data = '';
@@ -27,19 +84,30 @@ function fetchCSVData(url) {
 }
 
 async function syncData() {
-  console.log("正在從 Google 試算表抓取資料...");
+  console.log("正在從 Google 試算表抓取最新 CSV 資料...");
   try {
     const csvText = await fetchCSVData(SHEET_CSV_URL);
-    console.log("抓取到的原始內容前 200 字元：", csvText.substring(0, 200));
+    const restaurantsData = parseCSV(csvText);
 
-    if (!csvText || csvText.includes("<!DOCTYPE html>")) {
-      console.error("錯誤：Google 回傳了 HTML 頁面而非 CSV，可能是權限不足或網址格式有誤。");
-      process.exit(1);
+    if (restaurantsData.length === 0) {
+      console.log("警告：解析後沒有找到任何餐廳資料。");
+      return;
     }
 
-    console.log("資料格式正常，準備進行解析...");
+    console.log(`成功解析 ${restaurantsData.length} 筆餐廳資料，準備寫入 Firebase...`);
+    const batch = db.batch();
+    
+    for (const item of restaurantsData) {
+      const city = item.city || 'davao';
+      const docId = `${city}_${item.name.replace(/[^a-zA-Z0-9]/g, '')}`;
+      const docRef = db.collection('restaurants').doc(docId);
+      batch.set(docRef, item, { merge: true });
+    }
+
+    await batch.commit();
+    console.log("所有餐廳資料已成功同步到 Firebase Firestore！");
   } catch (error) {
-    console.error("連線失敗：", error);
+    console.error("同步失敗：", error);
     process.exit(1);
   }
 }
