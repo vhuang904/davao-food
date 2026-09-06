@@ -8,25 +8,36 @@
     <meta name="theme-color" content="#EA580C">
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #fdfbf7; color: #333; padding-bottom: 20px; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #fdfbf7; color: #333; padding-bottom: 30px; }
         
-        header { background: #EA580C; color: white; padding: 12px 16px; box-shadow: 0 2px 8px rgba(234, 88, 12, 0.15); position: sticky; top: 0; z-index: 100; }
+        /* 頂部 Header */
+        header { background: #EA580C; color: white; padding: 12px 16px 0 16px; box-shadow: 0 2px 8px rgba(234, 88, 12, 0.15); position: sticky; top: 0; z-index: 100; }
         .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
         .header-top h1 { font-size: 1.15rem; font-weight: bold; letter-spacing: 0.5px; }
         
         .btn-share { background: rgba(255, 255, 255, 0.2); color: white; border: 1px solid rgba(255, 255, 255, 0.4); padding: 4px 10px; border-radius: 6px; font-size: 0.8rem; font-weight: bold; cursor: pointer; outline: none; }
         .btn-share:active { background: rgba(255, 255, 255, 0.35); }
 
-        .controls-row { display: flex; gap: 8px; align-items: center; }
+        .controls-row { display: flex; gap: 8px; align-items: center; margin-bottom: 10px; }
         .app-select { flex: 1; background: rgba(255, 255, 255, 0.18); color: white; border: 1px solid rgba(255, 255, 255, 0.4); padding: 6px 10px; border-radius: 6px; font-size: 0.82rem; outline: none; cursor: pointer; text-overflow: ellipsis; }
         .app-select option { color: #333; background: white; }
 
+        /* 主導覽 Tab 切換 (美食地圖 vs 討論區) */
+        .main-tabs { display: flex; border-top: 1px solid rgba(255,255,255,0.2); }
+        .main-tab-btn { flex: 1; text-align: center; padding: 10px; font-weight: bold; font-size: 0.92rem; color: rgba(255,255,255,0.75); border: none; background: none; cursor: pointer; border-bottom: 3px solid transparent; }
+        .main-tab-btn.active { color: white; border-bottom: 3px solid white; }
+
+        /* 分類橫向選擇列 */
         .category-bar { display: flex; gap: 8px; overflow-x: auto; padding: 12px 16px; background: #ffffff; border-bottom: 1px solid #f1ece1; }
         .category-bar::-webkit-scrollbar { display: none; }
         .cat-chip { padding: 6px 14px; border-radius: 18px; font-size: 0.85rem; background: #f5f2eb; color: #666; white-space: nowrap; border: none; cursor: pointer; transition: all 0.2s; }
         .cat-chip.active { background: #EA580C; color: white; font-weight: bold; }
 
+        /* 卡片與容器 */
         .container { max-width: 600px; margin: 0 auto; padding: 16px; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
         .card { background: white; border-radius: 12px; overflow: hidden; margin-bottom: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.04); border: 1px solid #f3eee3; }
         .card img { width: 100%; height: 200px; object-fit: cover; background: #f7f5f0; display: block; }
         .card-body { padding: 16px; }
@@ -44,6 +55,22 @@
         .btn-primary { background: #EA580C; color: white; }
         .btn-secondary { background: #f5f2eb; color: #44403c; }
         #loading { text-align: center; padding: 40px; color: #a8a29e; }
+
+        /* 討論區表單與列表 */
+        .comment-form { background: white; border-radius: 12px; padding: 16px; margin-bottom: 20px; border: 1px solid #f3eee3; box-shadow: 0 4px 12px rgba(0,0,0,0.04); }
+        .form-group { margin-bottom: 12px; }
+        .form-group label { display: block; font-size: 0.82rem; font-weight: bold; color: #57534e; margin-bottom: 4px; }
+        .form-control { width: 100%; padding: 8px 12px; border-radius: 6px; border: 1px solid #e7e5e4; font-size: 0.88rem; outline: none; }
+        .form-control:focus { border-color: #EA580C; }
+        textarea.form-control { resize: vertical; min-height: 80px; }
+        .btn-submit { width: 100%; background: #EA580C; color: white; padding: 10px; border-radius: 8px; font-weight: bold; border: none; cursor: pointer; font-size: 0.9rem; }
+
+        .comment-card { background: white; border-radius: 10px; padding: 14px; margin-bottom: 12px; border: 1px solid #f3eee3; }
+        .comment-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+        .comment-user { font-weight: bold; font-size: 0.9rem; color: #1c1917; }
+        .comment-time { font-size: 0.75rem; color: #a8a29e; }
+        .comment-rating { color: #f59e0b; font-size: 0.85rem; margin-bottom: 6px; }
+        .comment-text { font-size: 0.88rem; color: #44403c; line-height: 1.4; }
     </style>
 </head>
 <body>
@@ -66,13 +93,52 @@
                 <option value="tl">Tagalog</option>
             </select>
         </div>
+        <!-- 頂部雙標籤 Tab 頁籤切換 -->
+        <div class="main-tabs">
+            <button class="main-tab-btn active" id="tab-btn-map" onclick="switchMainTab('map')">🗺️ 美食地圖</button>
+            <button class="main-tab-btn" id="tab-btn-forum" onclick="switchMainTab('forum')">💬 討論區</button>
+        </div>
     </header>
 
-    <div class="category-bar" id="category-bar"></div>
+    <!-- 1. 美食地圖 Tab 內容 -->
+    <div id="main-tab-map" class="tab-content active">
+        <div class="category-bar" id="category-bar"></div>
+        <div class="container">
+            <div id="loading">Loading...</div>
+            <div id="restaurant-list"></div>
+        </div>
+    </div>
 
-    <div class="container">
-        <div id="loading">Loading...</div>
-        <div id="restaurant-list"></div>
+    <!-- 2. 獨立討論區 Tab 內容 -->
+    <div id="main-tab-forum" class="tab-content">
+        <div class="container">
+            <!-- 發布留言表單 -->
+            <div class="comment-form">
+                <h3 style="font-size: 1rem; font-weight: bold; margin-bottom: 12px; color: #1c1917;" id="forum-form-title">✍️ 發表食記 / 留言討論</h3>
+                <div class="form-group">
+                    <label id="lbl-nickname">暱稱：</label>
+                    <input type="text" id="comment-user" class="form-control" placeholder="請輸入您的暱稱" maxlength="20">
+                </div>
+                <div class="form-group">
+                    <label id="lbl-rating">評分：</label>
+                    <select id="comment-rating" class="form-control">
+                        <option value="5">⭐⭐⭐⭐⭐ (5/5 必吃推薦)</option>
+                        <option value="4">⭐⭐⭐⭐ (4/5 相當美味)</option>
+                        <option value="3">⭐⭐⭐ (3/5 普通可接受)</option>
+                        <option value="2">⭐⭐ (2/5 待改善)</option>
+                        <option value="1">⭐ (1/5 不推薦)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label id="lbl-content">留言內容：</label>
+                    <textarea id="comment-text" class="form-control" placeholder="分享您在這座城市的餐廳推薦、避雷心得或私房吃法..."></textarea>
+                </div>
+                <button class="btn-submit" id="btn-post" onclick="submitComment()">發送留言</button>
+            </div>
+
+            <!-- 留言列表區塊 -->
+            <div id="forum-comment-list"></div>
+        </div>
     </div>
 
     <script>
@@ -88,6 +154,8 @@
         const i18n = {
             'zh-TW': {
                 title: '📍 大V的美食地圖',
+                tabMap: '🗺️ 美食地圖',
+                tabForum: '💬 討論區',
                 shareBtn: '📤 分享',
                 shareTitle: '大V的美食地圖',
                 shareText: '推薦給你這個菲律賓美食指南！',
@@ -98,19 +166,27 @@
                 map: '導航地圖',
                 noPhone: '無電話資訊',
                 noDesc: '暫無餐廳介紹資訊。',
+                formTitle: '✍️ 發表食記 / 留言討論',
+                lblNickname: '暱稱：',
+                lblRating: '評分：',
+                lblContent: '留言內容：',
+                btnPost: '發送留言',
+                emptyCommentAlert: '請填寫暱稱與留言內容！',
                 cities: { all: '全部城市', davao: '達沃', manila: '馬尼拉', cebu: '宿霧' },
                 cats: {
                     all: '全部',
-                    filipino: '菲律賓餐',
-                    chinese: '中式/港點',
-                    japanese_korean: '日韓料理',
-                    american_western: '美式/西餐',
-                    bbq_seafood: '燒烤/海鮮',
-                    cafe_dessert: '咖啡/甜點'
+                    chinese: '中餐',
+                    japanese_korean: '日韓',
+                    bbq_seafood: '海鮮燒烤',
+                    american_western: '美式',
+                    filipino: '非餐',
+                    cafe_dessert: '咖啡甜點'
                 }
             },
             'en': {
                 title: "📍 Big V's Food Map",
+                tabMap: '🗺️ Food Map',
+                tabForum: '💬 Community',
                 shareBtn: '📤 Share',
                 shareTitle: "Big V's Food Map",
                 shareText: 'Check out this awesome Philippines food guide!',
@@ -121,19 +197,27 @@
                 map: 'Map',
                 noPhone: 'No Phone Info',
                 noDesc: 'No description available.',
+                formTitle: '✍️ Post a Review or Comment',
+                lblNickname: 'Nickname:',
+                lblRating: 'Rating:',
+                lblContent: 'Comment:',
+                btnPost: 'Submit Comment',
+                emptyCommentAlert: 'Please enter both your nickname and comment!',
                 cities: { all: 'All Cities', davao: 'Davao', manila: 'Manila', cebu: 'Cebu' },
                 cats: {
                     all: 'All',
-                    filipino: 'Filipino',
                     chinese: 'Chinese',
                     japanese_korean: 'Japanese / Korean',
-                    american_western: 'Western / Grill',
                     bbq_seafood: 'BBQ & Seafood',
-                    cafe_dessert: 'Cafe & Bakery'
+                    american_western: 'American',
+                    filipino: 'Filipino',
+                    cafe_dessert: 'Cafe & Dessert'
                 }
             },
             'tl': {
                 title: '📍 Mapa ng Pagkain ni Big V',
+                tabMap: '🗺️ Mapa ng Pagkain',
+                tabForum: '💬 Diskusyon',
                 shareBtn: '📤 Ibahagi',
                 shareTitle: 'Mapa ng Pagkain ni Big V',
                 shareText: 'Subukan ang gabay sa pagkain sa Pilipinas!',
@@ -144,14 +228,20 @@
                 map: 'Pumunta sa Map',
                 noPhone: 'Walang Telepono',
                 noDesc: 'Walang paglalarawan.',
+                formTitle: '✍️ Mag-iwan ng Komento',
+                lblNickname: 'Pangalan:',
+                lblRating: 'Rating:',
+                lblContent: 'Komento:',
+                btnPost: 'I-post ang Komento',
+                emptyCommentAlert: 'Mangyaring ilagay ang iyong pangalan at komento!',
                 cities: { all: 'Lahat ng Lungsod', davao: 'Davao', manila: 'Manila', cebu: 'Cebu' },
                 cats: {
                     all: 'Lahat',
-                    filipino: 'Filipino',
                     chinese: 'Chinese',
                     japanese_korean: 'Hapon / Koreano',
-                    american_western: 'Western / Steak',
                     bbq_seafood: 'Inihaw at Seafood',
+                    american_western: 'American',
+                    filipino: 'Filipino',
                     cafe_dessert: 'Kapehan at Matamis'
                 }
             }
@@ -160,7 +250,14 @@
         let currentLang = localStorage.getItem('ph_app_lang') || 'zh-TW';
         let currentCity = localStorage.getItem('ph_app_city') || 'all';
         let currentCategoryKey = 'all';
+        let currentMainTab = 'map';
         let allRestaurants = [];
+
+        // 預設討論區範例留言
+        let comments = JSON.parse(localStorage.getItem('ph_app_comments')) || [
+            { id: 1, user: "大V", city: "davao", rating: 5, text: "歡迎大家來到達沃美食討論區！推薦大家一定要嘗試馬蒂納 (Matina) 的 Yaki Together 日式燒肉！", time: "2026-03-01 18:30" },
+            { id: 2, user: "DavaoLocal", city: "davao", rating: 5, text: "Jack's Ridge 夜景非常讚，食物也是道地的菲律賓風味！", time: "2026-03-02 12:15" }
+        ];
 
         async function fetchRestaurants() {
             try {
@@ -170,6 +267,15 @@
             } catch (error) {
                 document.getElementById('loading').innerText = i18n[currentLang].noData;
             }
+        }
+
+        function switchMainTab(tab) {
+            currentMainTab = tab;
+            document.getElementById('tab-btn-map').classList.toggle('active', tab === 'map');
+            document.getElementById('tab-btn-forum').classList.toggle('active', tab === 'forum');
+            document.getElementById('main-tab-map').classList.toggle('active', tab === 'map');
+            document.getElementById('main-tab-forum').classList.toggle('active', tab === 'forum');
+            if (tab === 'forum') renderComments();
         }
 
         function changeLanguage(lang) {
@@ -182,6 +288,7 @@
             currentCity = city;
             localStorage.setItem('ph_app_city', city);
             renderList();
+            renderComments();
         }
 
         function filterCategory(catKey) {
@@ -210,18 +317,29 @@
         }
 
         function renderUI() {
+            const langData = i18n[currentLang];
             document.getElementById('lang-select').value = currentLang;
             document.getElementById('city-select').value = currentCity;
-            document.getElementById('app-title').innerText = i18n[currentLang].title;
-            document.getElementById('share-btn').innerText = i18n[currentLang].shareBtn;
+            document.getElementById('app-title').innerText = langData.title;
+            document.getElementById('tab-btn-map').innerText = langData.tabMap;
+            document.getElementById('tab-btn-forum').innerText = langData.tabForum;
+            document.getElementById('share-btn').innerText = langData.shareBtn;
+
+            document.getElementById('forum-form-title').innerText = langData.formTitle;
+            document.getElementById('lbl-nickname').innerText = langData.lblNickname;
+            document.getElementById('lbl-rating').innerText = langData.lblRating;
+            document.getElementById('lbl-content').innerText = langData.lblContent;
+            document.getElementById('btn-post').innerText = langData.btnPost;
+
             renderCategoryBar();
             renderList();
+            renderComments();
         }
 
         function renderCategoryBar() {
             const bar = document.getElementById('category-bar');
             const cats = i18n[currentLang].cats;
-            const keys = ['all', 'filipino', 'chinese', 'japanese_korean', 'american_western', 'bbq_seafood', 'cafe_dessert'];
+            const keys = ['all', 'chinese', 'japanese_korean', 'bbq_seafood', 'american_western', 'filipino', 'cafe_dessert'];
 
             bar.innerHTML = keys.map(key => `
                 <button class="cat-chip ${key === currentCategoryKey ? 'active' : ''}" onclick="filterCategory('${key}')">
@@ -267,7 +385,7 @@
                         <div class="card-body">
                             <div class="badge-group">
                                 <span class="badge badge-city">${langData.cities[item.city || 'davao']}</span>
-                                <span class="badge">${langData.cats[catKey]}</span>
+                                <span class="badge">${langData.cats[catKey] || catKey}</span>
                             </div>
                             <div class="card-title">${item.name || 'Unknown'}</div>
                             <div class="card-desc">${displayDesc}</div>
@@ -281,6 +399,60 @@
                     </div>
                 `;
             }).join('');
+        }
+
+        // 討論區留言渲染機制
+        function renderComments() {
+            const listEl = document.getElementById('forum-comment-list');
+            const langData = i18n[currentLang];
+
+            const filteredComments = comments.filter(c => (currentCity === 'all') || (c.city === currentCity));
+
+            if (filteredComments.length === 0) {
+                listEl.innerHTML = `<p style="text-align:center; color:#a8a29e; padding: 30px;">尚無對應城市的討論留言，成為第一個留言的人吧！</p>`;
+                return;
+            }
+
+            listEl.innerHTML = filteredComments.map(c => `
+                <div class="comment-card">
+                    <div class="comment-header">
+                        <span class="comment-user">👤 ${c.user} <span style="font-size:0.75rem; color:#0369a1; font-weight:normal;">[${langData.cities[c.city] || c.city}]</span></span>
+                        <span class="comment-time">${c.time}</span>
+                    </div>
+                    <div class="comment-rating">${'⭐'.repeat(c.rating)}</div>
+                    <div class="comment-text">${c.text}</div>
+                </div>
+            `).join('');
+        }
+
+        function submitComment() {
+            const user = document.getElementById('comment-user').value.trim();
+            const rating = parseInt(document.getElementById('comment-rating').value);
+            const text = document.getElementById('comment-text').value.trim();
+            const langData = i18n[currentLang];
+
+            if (!user || !text) {
+                alert(langData.emptyCommentAlert);
+                return;
+            }
+
+            const now = new Date();
+            const timeStr = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0') + '-' + String(now.getDate()).padStart(2,'0') + ' ' + String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
+
+            const newComment = {
+                id: Date.now(),
+                user: user,
+                city: currentCity === 'all' ? 'davao' : currentCity,
+                rating: rating,
+                text: text,
+                time: timeStr
+            };
+
+            comments.unshift(newComment);
+            localStorage.setItem('ph_app_comments', JSON.stringify(comments));
+
+            document.getElementById('comment-text').value = '';
+            renderComments();
         }
 
         fetchRestaurants();
