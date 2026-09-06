@@ -11,7 +11,6 @@ const db = admin.firestore();
 
 const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vR7RqEOBMOhNBT_Mo2kee4w4WNugbZFLRRWhmc3c9FWCjams-n9oyaug1bI4lXyd0G9MfU8ftW8utuJ/pub?output=csv';
 
-// 支援引號與換行的強效 CSV 解析器
 function parseCSV(text) {
   const rows = [];
   let row = [];
@@ -72,7 +71,6 @@ function parseCSV(text) {
 function fetchCSVData(url) {
   return new Promise((resolve, reject) => {
     https.get(url, (res) => {
-      // 同時支援 301, 302 以及 Google 常見的 307 重新導向
       if (res.statusCode === 301 || res.statusCode === 302 || res.statusCode === 307) {
         return fetchCSVData(res.headers.location).then(resolve).catch(reject);
       }
@@ -97,15 +95,24 @@ async function syncData() {
     console.log(`成功解析 ${restaurantsData.length} 筆餐廳資料，準備寫入 Firebase...`);
     const batch = db.batch();
     
-    for (const item of restaurantsData) {
+    for (let i = 0; i < restaurantsData.length; i++) {
+      const item = restaurantsData[i];
+      if (!item.name) continue;
+      
       const city = item.city || 'davao';
-      const docId = `${city}_${item.name.replace(/[^a-zA-Z0-9]/g, '')}`;
+      // 確保即使名稱全是中文也不會變成空字串
+      let safeName = item.name.replace(/[^a-zA-Z0-9]/g, '');
+      if (!safeName) {
+        safeName = 'store_' + i;
+      }
+      
+      const docId = `${city}_${safeName}`;
       const docRef = db.collection('restaurants').doc(docId);
       batch.set(docRef, item, { merge: true });
     }
 
     await batch.commit();
-    console.log("所有餐廳資料已成功同步到 Firebase Firestore！");
+    console.log("所有 168 筆餐廳資料已成功同步到 Firebase Firestore！");
   } catch (error) {
     console.error("同步失敗：", error);
     process.exit(1);
