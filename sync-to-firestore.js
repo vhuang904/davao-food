@@ -12,7 +12,7 @@ const db = admin.firestore();
 // 你的 Google 試算表 CSV 匯出網址
 const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vR7RqEOBMOhNBT_Mo2kee4w4WNugbZFLRRWhmc3c9FWCjams-n9oyaug1bI4lXyd0G9MfU8ftW8utuJ/pub?output=csv';
 
-// 支援引號與換行的強效 CSV 解析器
+// 強效 CSV 解析器（完美處理引號與換行）
 function parseCSV(text) {
   const rows = [];
   let row = [];
@@ -26,7 +26,7 @@ function parseCSV(text) {
     if (c === '"') {
       if (inQuotes && nextC === '"') {
         field += '"';
-        i++; // 跳過下一個引號
+        i++;
       } else {
         inQuotes = !inQuotes;
       }
@@ -34,7 +34,7 @@ function parseCSV(text) {
       row.push(field.trim());
       field = '';
     } else if ((c === '\r' || c === '\n') && !inQuotes) {
-      if (c === '\r' && nextC === '\n') i++; // 處理 \r\n
+      if (c === '\r' && nextC === '\n') i++;
       row.push(field.trim());
       rows.push(row);
       row = [];
@@ -63,7 +63,7 @@ function parseCSV(text) {
       obj[header] = val.replace(/^"|"$/g, '').trim();
     });
     
-    if (obj.name) { // 確保有店名才收錄
+    if (obj.name) {
       result.push(obj);
     }
   }
@@ -90,7 +90,7 @@ async function syncData() {
     const restaurantsData = parseCSV(csvText);
 
     if (restaurantsData.length === 0) {
-      console.log("警告：解析後沒有找到任何餐廳資料，請確認試算表第一分頁是否有內容。");
+      console.log("警告：解析後沒有找到任何餐廳資料，請確認試算表公開發布設定是否正確。");
       return;
     }
 
