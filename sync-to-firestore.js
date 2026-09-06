@@ -9,6 +9,7 @@ admin.initializeApp({
 
 const db = admin.firestore();
 
+// 確保強制重新載入的版本標籤 v2026.09
 const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vR7RqEOBMOhNBT_Mo2kee4w4WNugbZFLRRWhmc3c9FWCjams-n9oyaug1bI4lXyd0G9MfU8ftW8utuJ/pub?output=csv';
 
 function parseCSV(text) {
@@ -82,7 +83,7 @@ function fetchCSVData(url) {
 }
 
 async function syncData() {
-  console.log("正在從 Google 試算表抓取最新 CSV 資料...");
+  console.log("【最新版 v2】正在從 Google 試算表抓取最新 CSV 資料...");
   try {
     const csvText = await fetchCSVData(SHEET_CSV_URL);
     const restaurantsData = parseCSV(csvText);
@@ -95,6 +96,7 @@ async function syncData() {
     console.log(`成功解析 ${restaurantsData.length} 筆餐廳資料，準備寫入 Firebase...`);
     const batch = db.batch();
     
+    let successCount = 0;
     for (let i = 0; i < restaurantsData.length; i++) {
       const item = restaurantsData[i];
       if (!item || !item.name) continue;
@@ -106,14 +108,18 @@ async function syncData() {
       }
       
       const docId = `${city}_${safeName}`;
-      if (!docId || docId.trim() === '' || docId === '_') continue;
+      
+      if (!docId || typeof docId !== 'string' || docId.trim() === '' || docId === '_') {
+        continue;
+      }
 
       const docRef = db.collection('restaurants').doc(docId);
       batch.set(docRef, item, { merge: true });
+      successCount++;
     }
 
     await batch.commit();
-    console.log("所有 168 筆餐廳資料已成功同步到 Firebase Firestore！");
+    console.log(`所有 ${successCount} 筆餐廳資料已成功同步到 Firebase Firestore！`);
   } catch (error) {
     console.error("同步失敗：", error);
     process.exit(1);
