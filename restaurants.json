@@ -1,130 +1,272 @@
 [
   {
-    "name": "Mixed Temptation Matina",
-    "phone": "",
-    "address": "0.1 mi, Mindanao",
-    "description": "Authentic Chinese dishes including egg, pork spareribs with salt and pepper, and their signature Peking duck. Immaculate cleanliness and welcoming atmosphere.",
-    "imageUrl": "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/2f/f4/09/5b/if-you-re-craving-authentic.jpg?w=400&h=400&s=1",
-    "categoryKey": "chinese"
-  },
-  {
-    "name": "Benjarong Bar and Restaurant Davao",
-    "phone": "",
-    "address": "3.7 mi, Mindanao",
-    "description": "Exceptional flavors, especially the Massaman curry. The staff and crew assisted us very well.",
-    "imageUrl": "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/1b/03/18/13/benjarong-bar-and-restaurant.jpg?w=400&h=400&s=1",
-    "categoryKey": "chinese"
-  },
-  {
-    "name": "Madayaw Cafe",
-    "phone": "",
-    "address": "3.7 mi, Mindanao",
-    "description": "Perfect Place for Bonding with the Fam and the adobo rice bowl—both absolutely delicious!",
-    "imageUrl": "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/17/5e/04/d1/breakfast-set-up.jpg?w=400&h=400&s=1",
-    "categoryKey": "cafe"
-  },
-  {
-    "name": "Luk Foo Palace At Acacia Hotel Davao",
-    "phone": "",
-    "address": "2.2 mi, Mindanao",
-    "description": "Peking duck was an absolute delight, as well as the fried rice",
-    "imageUrl": "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/30/9e/d3/aa/cantonese-restaurant.jpg?w=400&h=400&s=1",
-    "categoryKey": "chinese"
-  },
-  {
-    "name": "Siam Lounge",
-    "phone": "",
-    "address": "3.7 mi, Mindanao",
-    "description": "I really love the Afternoon High Tea at Siam Lounge.",
-    "imageUrl": "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/17/28/7e/60/siam-lounge-bar.jpg?w=400&h=400&s=1",
-    "categoryKey": "cafe"
-  },
-  {
-    "name": "Waling Waling Cafe At Acacia Hotel Davao",
-    "phone": "",
-    "address": "2.2 mi, Mindanao",
-    "description": "Mom’s Memorable Birthday at Acacia Hotel Davao – Waling Waling Cafe!",
-    "imageUrl": "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/04/9a/5a/ac/vikings-luxury-buffet.jpg?w=400&h=300&s=1",
-    "categoryKey": "american"
-  },
-  {
-    "name": "Vikings Luxury Buffet",
-    "phone": "",
-    "address": "2.3 mi, Mindanao",
-    "description": "Vikings has a lot of food to choose from -- appetizers to desserts.",
-    "imageUrl": "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/30/9e/d3/aa/cantonese-restaurant.jpg?w=400&h=300&s=1",
-    "categoryKey": "cafe"
-  },
-  {
-    "name": "Mixed Temptation Restaurant Airport",
-    "phone": "",
-    "address": "4.3 mi, Mindanao",
-    "description": "Right now, I am craving dumplings again! Recommended!",
-    "imageUrl": "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/18/19/b5/e0/photo4jpg.jpg?w=400&h=400&s=1",
-    "categoryKey": "chinese"
-  },
-  {
-    "name": "Jack's Ridge",
-    "phone": "",
-    "address": "2.1 mi, Mindanao",
-    "description": "In my first visit to Davao we loved made an early Valentine's day night here.",
-    "imageUrl": "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/1d/5a/ed/ee/mixed-temptation-chinese.jpg?w=400&h=400&s=1",
+    "city": "davao",
+    "name": "Davao Deli",
+    "phone": "(082) 123-4567",
+    "address": "123 Davao Ave, Davao City",
+    "description": "A cozy spot serving the best sandwiches and local snacks.",
+    "imageUrl": "http://example.com/images/davao_deli.jpg",
     "categoryKey": "filipino"
   },
   {
-    "name": "Lachi's",
-    "phone": "",
-    "address": "1 mi, Mindanao",
-    "description": "We were brought here on the recommendation of our driver during our last day of the trip.",
-    "imageUrl": "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/06/e9/40/24/lachi.jpg?w=400&h=400&s=1",
+    "city": "davao",
+    "name": "Spicy Bites",
+    "phone": "(082) 987-6543",
+    "address": "456 Spicy St, Davao City",
+    "description": "Known for its fiery dishes and spicy flavors.",
+    "imageUrl": "http://example.com/images/spicy_bites.jpg",
+    "categoryKey": "filipino"
+  },
+  {
+    "city": "davao",
+    "name": "Grill Master",
+    "phone": "(082) 222-3333",
+    "address": "789 Grill Rd, Davao City",
+    "description": "Specializes in grilled meats and seafood, perfect for BBQ lovers.",
+    "imageUrl": "http://example.com/images/grill_master.jpg",
+    "categoryKey": "bbq"
+  },
+  {
+    "city": "davao",
+    "name": "Pasta Perfection",
+    "phone": "(082) 444-5555",
+    "address": "321 Pasta Blvd, Davao City",
+    "description": "Offers a wide variety of pasta dishes and Italian specialties.",
+    "imageUrl": "http://example.com/images/pasta_perfection.jpg",
+    "categoryKey": "filipino"
+  },
+  {
+    "city": "davao",
+    "name": "Pilgrim Restaurant",
+    "phone": "+63 82 224 2245",
+    "address": "R. Castillo St, Davao City, Davao del Sur, Philippines",
+    "description": "A cozy spot famous for its local flavors and a welcoming atmosphere.",
+    "imageUrl": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQl30xZ8bZdl1GYYEiNNmotGIdi6Gj2UOPAhT3o3dy-IxnmE4nPeREmiA&s",
+    "categoryKey": "filipino"
+  },
+  {
+    "city": "davao",
+    "name": "Luk Foo Palace At Acacia Hotel Davao",
+    "phone": "+63 82 235 9999",
+    "address": "Acacia Hotel, Davao City, Davao del Sur, Philippines",
+    "description": "Known for its authentic Chinese cuisine and elegant dining experience.",
+    "imageUrl": "https://www.tripadvisor.com/.../image.jpg",
     "categoryKey": "chinese"
   },
   {
-    "name": "Yellow Fin Seafood Restaurant",
-    "phone": "",
-    "address": "1.8 mi, Mindanao",
-    "description": "Everything was cooked perfectly and the tuna and other fish were incredibly fresh.",
-    "imageUrl": "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/2f/f3/a3/96/this-spacious-and-uncrowded.jpg?w=400&h=400&s=1",
-    "categoryKey": "seafood"
-  },
-  {
-    "name": "Blue Post Boiling Crabs and Shrimps",
-    "phone": "",
-    "address": "2.1 mi, Mindanao",
-    "description": "Foods were delicious but a bit pricey for its serving.",
-    "imageUrl": "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/12/2c/9b/a9/20180222-132706-largejpg.jpg?w=400&h=300&s=1",
-    "categoryKey": "seafood"
-  },
-  {
-    "name": "The Vegan Dinosaur",
-    "phone": "",
-    "address": "1 mi, Mindanao",
-    "description": "Well worth visiting here, the food is great, and it's a lovely restaurant.",
-    "imageUrl": "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/31/93/f5/7f/yaki2gether-is-davao.jpg?w=400&h=300&s=1",
+    "city": "davao",
+    "name": "Madayaw Cafe",
+    "phone": "+63 82 287 3922",
+    "address": "100 F. Torres St, Davao City, Davao del Sur, Philippines",
+    "description": "A cafe specializing in local coffee and snacks, ideal for casual meet-ups.",
+    "imageUrl": "https://www.tripadvisor.com/.../image.jpg",
     "categoryKey": "cafe"
   },
   {
-    "name": "Caitlyn's Dumpling Bar",
-    "phone": "",
-    "address": "0.8 mi, Mindanao",
-    "description": "Enjoyed the spare ribs, chicken wings, Japanese siomai, and of course the dumplings.",
-    "imageUrl": "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/1a/ee/91/df/photo2jpg.jpg?w=400&h=-1&s=1",
-    "categoryKey": "chinese"
-  },
-  {
-    "name": "Ahfat Seafood Plaza",
-    "phone": "",
-    "address": "1.1 mi, Mindanao",
-    "description": "Perfect spot to bring visitors coming to Davao, treating friends and family.",
-    "imageUrl": "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/09/93/a8/a7/ahfat-seafood-plaza.jpg?w=400&h=400&s=1",
-    "categoryKey": "chinese"
-  },
-  {
-    "name": "Lamesa Davao Restaurant",
-    "phone": "",
-    "address": "1.7 mi, Mindanao",
-    "description": "Tasteful dine with 10/10 rating.",
-    "imageUrl": "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/33/e9/db/66/lamesa-davao-specializes.jpg?w=400&h=400&s=1",
+    "city": "davao",
+    "name": "Tong Yang, SM Davao Ecoland",
+    "phone": "+63 82 285 1234",
+    "address": "SM City Davao, Ecoland, Davao City, Davao del Sur, Philippines",
+    "description": "Popular buffet restaurant offering a wide variety of seafood and grill options.",
+    "imageUrl": "https://www.tripadvisor.com/.../image.jpg",
     "categoryKey": "bbq"
+  },
+  {
+    "city": "manila",
+    "name": "Manila Bay Restaurant",
+    "phone": "(02) 123-4567",
+    "address": "123 Bay St, Manila",
+    "description": "Offers a stunning view of the Manila Bay and specializes in seafood dishes.",
+    "imageUrl": "http://example.com/images/manilabay.jpg",
+    "categoryKey": "seafood"
+  },
+  {
+    "city": "manila",
+    "name": "Sinigang na Baboy House",
+    "phone": "(02) 987-6543",
+    "address": "456 River Rd, Manila",
+    "description": "Known for the best Sinigang in the city, served with a variety of fresh vegetables.",
+    "imageUrl": "http://example.com/images/sinigang.jpg",
+    "categoryKey": "filipino"
+  },
+  {
+    "city": "manila",
+    "name": "Café Adriatico",
+    "phone": "(02) 555-6767",
+    "address": "789 Pink Street, Manila",
+    "description": "A cozy café famous for its local and international dishes, with a charming ambiance.",
+    "imageUrl": "http://example.com/images/cafeadriatico.jpg",
+    "categoryKey": "filipino"
+  },
+  {
+    "city": "manila",
+    "name": "The Manila Grill",
+    "phone": "(02) 654-3210",
+    "address": "321 Fiesta Ave, Manila",
+    "description": "Barbecue restaurant offering grilled meats and local favorites with a lively atmosphere.",
+    "imageUrl": "http://example.com/images/manilagrill.jpg",
+    "categoryKey": "bbq"
+  },
+  {
+    "city": "manila",
+    "name": "Toyo Eatery",
+    "phone": "N/A",
+    "address": "N/A",
+    "description": "Toyo Eatery is renowned for its innovative Filipino cuisine, focusing on local and seasonal ingredients.",
+    "imageUrl": "https://www.willflyforfood.net/wp-content/uploads/2025/12/Toyo-eatery.jpg",
+    "categoryKey": "filipino"
+  },
+  {
+    "city": "manila",
+    "name": "Pluck",
+    "phone": "N/A",
+    "address": "N/A",
+    "description": "A vibrant culinary spot known for its fresh ingredients and eclectic menu.",
+    "imageUrl": "https://www.willflyforfood.net/wp-content/uploads/2025/12/Pluck.jpg",
+    "categoryKey": "filipino"
+  },
+  {
+    "city": "manila",
+    "name": "Sterv Burger",
+    "phone": "N/A",
+    "address": "N/A",
+    "description": "Famous for its delicious burgers and casual dining experience.",
+    "imageUrl": "https://www.willflyforfood.net/wp-content/uploads/2025/12/Sterv-Burger.jpg",
+    "categoryKey": "american"
+  },
+  {
+    "city": "manila",
+    "name": "Asador Alfonso",
+    "phone": "N/A",
+    "address": "N/A",
+    "description": "A popular grill offering a wide variety of grilled meats and local dishes.",
+    "imageUrl": "https://www.willflyforfood.net/wp-content/uploads/2025/12/Asador-Alfonso.jpg",
+    "categoryKey": "bbq"
+  },
+  {
+    "city": "manila",
+    "name": "Los Tacos BGC",
+    "phone": "N/A",
+    "address": "N/A",
+    "description": "A go-to Mexican eatery in Bonifacio Global City offering authentic tacos and burritos.",
+    "imageUrl": "https://www.willflyforfood.net/wp-content/uploads/2025/12/Los-Tacos-BGC.jpg",
+    "categoryKey": "filipino"
+  },
+  {
+    "city": "manila",
+    "name": "Hinoki Onsen",
+    "phone": "N/A",
+    "address": "N/A",
+    "description": "Enjoy traditional Japanese cuisine in a serene onsen environment.",
+    "imageUrl": "https://www.willflyforfood.net/wp-content/uploads/2025/12/Hinoki-Onsen.jpg",
+    "categoryKey": "filipino"
+  },
+  {
+    "city": "cebu",
+    "name": "The Pig & Palm",
+    "phone": "+63 32 255 1333",
+    "address": "J. Y. Square Mall, Barangay Lahug, Cebu City",
+    "description": "A modern restaurant known for its creative dishes and use of local ingredients, featuring a relaxed and stylish atmosphere.",
+    "imageUrl": "https://example.com/images/pig_and_palm.jpg",
+    "categoryKey": "filipino"
+  },
+  {
+    "city": "cebu",
+    "name": "Casa Verde",
+    "phone": "+63 32 255 1000",
+    "address": "36, Rahmann St, Cebu City",
+    "description": "Famous for its hearty American and Filipino comfort food, especially the Baby Back Ribs, Casa Verde offers a cozy vibe.",
+    "imageUrl": "https://example.com/images/casa_verde.jpg",
+    "categoryKey": "american"
+  },
+  {
+    "city": "cebu",
+    "name": "Lantaw Native Restaurant",
+    "phone": "+63 917 712 0454",
+    "address": "Mactan Marina Mall, Mactan, Cebu",
+    "description": "Enjoy traditional Cebuano dishes with stunning views of the water. The restaurant features a rustic ambiance.",
+    "imageUrl": "https://example.com/images/lantaw.jpg",
+    "categoryKey": "filipino"
+  },
+  {
+    "city": "cebu",
+    "name": "Cafe Laguna",
+    "phone": "+63 32 233 1929",
+    "address": "SM City Cebu, Cebu City",
+    "description": "A well-known destination for authentic Filipino dishes, serving a wide range of local favorites in a warm setting.",
+    "imageUrl": "https://example.com/images/cafe_laguna.jpg",
+    "categoryKey": "cafe"
+  },
+  {
+    "city": "cebu",
+    "name": "Kopiroti",
+    "phone": "+63 32 255 8077",
+    "address": "Crossroads, Banilad, Cebu City",
+    "description": "A popular spot for Asian street food and delicious coffee, especially known for its toast offerings.",
+    "imageUrl": "https://example.com/images/kopiroti.jpg",
+    "categoryKey": "chinese"
+  },
+  {
+    "city": "cebu",
+    "name": "Cebu Lumpia House",
+    "phone": "N/A",
+    "address": "N/A",
+    "description": "Known for its delicious local lumpia.",
+    "imageUrl": "N/A",
+    "categoryKey": "filipino"
+  },
+  {
+    "city": "cebu",
+    "name": "Cebu Asia Chinese Drug Store",
+    "phone": "N/A",
+    "address": "N/A",
+    "description": "A popular spot for authentic Chinese dishes.",
+    "imageUrl": "N/A",
+    "categoryKey": "chinese"
+  },
+  {
+    "city": "cebu",
+    "name": "La Fortuna Bakery",
+    "phone": "N/A",
+    "address": "N/A",
+    "description": "Famous for its pastries and local delicacies.",
+    "imageUrl": "N/A",
+    "categoryKey": "seafood"
+  },
+  {
+    "city": "cebu",
+    "name": "Leslie's Lechon",
+    "phone": "N/A",
+    "address": "Talisay City, Cebu",
+    "description": "Revered for its roasted lechon.",
+    "imageUrl": "N/A",
+    "categoryKey": "bbq"
+  },
+  {
+    "city": "cebu",
+    "name": "Good Cup Coffee",
+    "phone": "N/A",
+    "address": "N/A",
+    "description": "A cozy place perfect for coffee lovers.",
+    "imageUrl": "N/A",
+    "categoryKey": "cafe"
+  },
+  {
+    "city": "cebu",
+    "name": "Abli Cebu",
+    "phone": "N/A",
+    "address": "N/A",
+    "description": "A local favorite for comfort food.",
+    "imageUrl": "N/A",
+    "categoryKey": "filipino"
+  },
+  {
+    "city": "cebu",
+    "name": "Sialo Cebu",
+    "phone": "N/A",
+    "address": "N/A",
+    "description": "Known for its innovative take on local dishes.",
+    "imageUrl": "N/A",
+    "categoryKey": "filipino"
   }
 ]
