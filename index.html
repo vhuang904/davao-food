@@ -105,6 +105,25 @@
         .review-user { font-weight: bold; color: #1c1917; }
         .review-time { font-size: 0.72rem; color: #a8a29e; float: right; }
         .review-text { margin-top: 4px; color: #44403c; line-height: 1.35; }
+
+        /* 懸浮 AI 客服按鈕與對話視窗 */
+        .chat-fab { position: fixed; bottom: 22px; right: 20px; width: 56px; height: 56px; border-radius: 50%; background: #EA580C; color: white; border: none; box-shadow: 0 4px 16px rgba(234, 88, 12, 0.45); font-size: 1.6rem; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 1000; transition: transform 0.2s, box-shadow 0.2s; }
+        .chat-fab:active { transform: scale(0.92); }
+
+        .chat-modal { display: none; position: fixed; bottom: 90px; right: 20px; width: 340px; max-width: calc(100vw - 36px); height: 480px; max-height: calc(100vh - 120px); background: #ffffff; border-radius: 18px; box-shadow: 0 12px 36px rgba(0,0,0,0.18); border: 1px solid #eee5d8; flex-direction: column; z-index: 1000; overflow: hidden; }
+        .chat-modal.show { display: flex; }
+
+        .chat-header { background: #EA580C; color: white; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; font-weight: bold; font-size: 0.95rem; }
+        .btn-close-chat { background: none; border: none; color: white; font-size: 1.2rem; cursor: pointer; padding: 4px; line-height: 1; }
+
+        .chat-messages { flex: 1; padding: 12px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; background: #fdfbf7; font-size: 0.85rem; }
+        .chat-bubble { max-width: 82%; padding: 9px 13px; border-radius: 14px; line-height: 1.45; word-break: break-word; }
+        .chat-bubble.bot { background: #ffffff; border: 1px solid #e7e2d7; align-self: flex-start; color: #292524; }
+        .chat-bubble.user { background: #EA580C; color: white; align-self: flex-end; }
+
+        .chat-input-area { display: flex; border-top: 1px solid #efe8dc; padding: 8px 10px; background: #ffffff; gap: 6px; }
+        .chat-input { flex: 1; border: 1px solid #e7e5e4; border-radius: 20px; padding: 8px 14px; font-size: 0.85rem; outline: none; }
+        .btn-send-chat { background: #EA580C; color: white; border: none; border-radius: 20px; padding: 8px 14px; font-weight: bold; font-size: 0.82rem; cursor: pointer; }
     </style>
 </head>
 <body>
@@ -154,6 +173,26 @@
         </div>
     </div>
 
+    <!-- 懸浮客服機器人按鈕 -->
+    <button class="chat-fab" id="chat-fab" onclick="toggleChat()" title="AI 客服助理">🤖</button>
+
+    <!-- 聊天視窗彈窗 -->
+    <div class="chat-modal" id="chat-modal">
+        <div class="chat-header">
+            <span id="chat-header-title">🤖 大V美食管家 (AI 客服)</span>
+            <button class="btn-close-chat" onclick="toggleChat()">✕</button>
+        </div>
+        <div class="chat-messages" id="chat-messages">
+            <div class="chat-bubble bot" id="chat-welcome-msg">
+                嗨！我是大V美食管家 👋 有任何菲律賓美食推薦、外送疑問或 App 使用問題，都可以隨時問我喔！
+            </div>
+        </div>
+        <div class="chat-input-area">
+            <input type="text" id="chat-input" class="chat-input" placeholder="問點什麼吧..." onkeypress="handleChatKeyPress(event)">
+            <button class="btn-send-chat" id="chat-send-btn" onclick="sendChatMessage()">發送</button>
+        </div>
+    </div>
+
     <!-- 引入 Firebase SDK 與主程式 -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
@@ -171,6 +210,9 @@
 
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
+
+        // 綁定你的 Cloudflare Worker API 網址
+        const AI_WORKER_URL = "https://food-ai-assistant.vhuang904.workers.dev";
 
         const categoryImagePools = {
             chinese: [
@@ -254,7 +296,13 @@
                     bbq_seafood: '海鮮燒烤',
                     coffee_drinks: '咖啡與手搖飲',
                     filipino: '菲律賓餐'
-                }
+                },
+                chatHeader: '🤖 大V美食管家 (AI 客服)',
+                chatWelcome: '嗨！我是大V美食管家 👋 有任何菲律賓美食推薦、外送疑問或 App 使用問題，都可以隨時問我喔！',
+                chatPlaceholder: '問點什麼吧...',
+                chatSend: '發送',
+                chatThinking: '思考中... ⏳',
+                chatError: '連線異常，請稍候再試。'
             },
             'en': {
                 title: "📍 Big V's Food Map",
@@ -292,7 +340,13 @@
                     bbq_seafood: 'BBQ & Seafood',
                     coffee_drinks: 'Coffee & Drinks',
                     filipino: 'Filipino'
-                }
+                },
+                chatHeader: "🤖 Big V's AI Concierge",
+                chatWelcome: 'Hi! I am your Philippines Food Concierge 👋 Ask me anything about local restaurants, food delivery, or how to use this app!',
+                chatPlaceholder: 'Ask a question...',
+                chatSend: 'Send',
+                chatThinking: 'Thinking... ⏳',
+                chatError: 'Connection error, please try again later.'
             },
             'tl': {
                 title: '📍 Mapa ng Pagkain ni Big V',
@@ -330,7 +384,13 @@
                     bbq_seafood: 'Inihaw at Seafood',
                     coffee_drinks: 'Kape at Inumin',
                     filipino: 'Filipino'
-                }
+                },
+                chatHeader: '🤖 AI Katulong ni Big V',
+                chatWelcome: 'Kamusta! Ako ang iyong AI Food Concierge 👋 Magtanong ng anuman tungkol sa mga kainan, delivery, o paano gamitin ang app na ito!',
+                chatPlaceholder: 'Magtanong dito...',
+                chatSend: 'Ipadala',
+                chatThinking: 'Nag-iisip... ⏳',
+                chatError: 'Nagkaroon ng problema sa koneksyon.'
             }
         };
 
@@ -452,6 +512,12 @@
             document.getElementById('news-sub-promo').innerText = langData.newsSubPromo;
             document.getElementById('news-sub-new').innerText = langData.newsSubNew;
 
+            // AI 客服介面多語言即時切換
+            document.getElementById('chat-header-title').innerText = langData.chatHeader;
+            document.getElementById('chat-welcome-msg').innerText = langData.chatWelcome;
+            document.getElementById('chat-input').placeholder = langData.chatPlaceholder;
+            document.getElementById('chat-send-btn').innerText = langData.chatSend;
+
             renderCategoryBar();
             renderList();
             renderNewsList();
@@ -564,7 +630,7 @@
                 return;
             }
 
-            // 方案 A：不論當前切換哪種語言，餐廳清單一律以英文原名 A 到 Z 排序
+            // 方案 A：一律以英文原名 A 到 Z 排序
             filtered.sort((a, b) => {
                 const nameA = (a.name_en || a.name || '').trim().toLowerCase();
                 const nameB = (b.name_en || b.name || '').trim().toLowerCase();
@@ -575,7 +641,6 @@
                 const catKey = item.categoryKey || 'filipino';
                 const resKey = (item.city || 'davao') + '_' + (item.name || idx).replace(/[^a-zA-Z0-9]/g, '');
 
-                // 優先使用 Google Maps 真實打卡照片，若無才退回分類圖庫
                 const imageList = (item.images && Array.isArray(item.images) && item.images.length > 0)
                     ? item.images
                     : getUniqueRestaurantImageArray(item ? item.name : '', catKey);
@@ -588,7 +653,6 @@
 
                 const commentsList = resComments[resKey] || [];
 
-                // 多語系名稱讀取
                 let displayName = item.name || 'Unknown';
                 if (item.names && item.names[currentLang]) {
                     displayName = item.names[currentLang];
@@ -596,7 +660,6 @@
                     displayName = item.name_en;
                 }
 
-                // 多語系描述讀取
                 let displayDesc = langData.noDesc;
                 if (item.descriptions && item.descriptions[currentLang]) {
                     displayDesc = item.descriptions[currentLang];
@@ -720,7 +783,6 @@
             }
 
             newsEl.innerHTML = filteredNews.map(item => {
-                // 1. 動態解析多語系標題
                 let titleText = '';
                 if (item.titles && item.titles[currentLang]) {
                     titleText = item.titles[currentLang];
@@ -730,7 +792,6 @@
                     titleText = item.title || '';
                 }
 
-                // 2. 動態解析多語系標籤 (Tag)
                 let tagText = '';
                 if (item.tags && item.tags[currentLang]) {
                     tagText = item.tags[currentLang];
@@ -740,7 +801,6 @@
                     tagText = item.tag || (item.type === 'promo' ? '🔥 Promo' : '✨ New Spot');
                 }
 
-                // 3. 動態解析有效期限 (Validity)
                 let validityText = '';
                 if (item.validity && typeof item.validity === 'object') {
                     validityText = item.validity[currentLang] || item.validity['en'] || '';
@@ -748,7 +808,6 @@
                     validityText = item.validity;
                 }
 
-                // 4. 動態解析內文描述
                 let descText = '';
                 if (item.descriptions) {
                     descText = item.descriptions[currentLang] || item.descriptions['en'] || '';
@@ -778,6 +837,58 @@
                 `;
             }).join('');
         }
+
+        // ==================== AI 客服視窗互動邏輯 ====================
+        window.toggleChat = function() {
+            const modal = document.getElementById('chat-modal');
+            modal.classList.toggle('show');
+            if (modal.classList.contains('show')) {
+                document.getElementById('chat-input').focus();
+            }
+        };
+
+        window.handleChatKeyPress = function(e) {
+            if (e.key === 'Enter') sendChatMessage();
+        };
+
+        window.sendChatMessage = async function() {
+            const inputEl = document.getElementById('chat-input');
+            const msg = inputEl.value.trim();
+            if (!msg) return;
+
+            const messagesEl = document.getElementById('chat-messages');
+            const langData = i18n[currentLang];
+
+            // 1. 顯示使用者發送的文字
+            messagesEl.innerHTML += `<div class="chat-bubble user">${msg}</div>`;
+            inputEl.value = '';
+            messagesEl.scrollTop = messagesEl.scrollHeight;
+
+            // 2. 顯示「思考中...」狀態
+            const loadingId = "loading-" + Date.now();
+            messagesEl.innerHTML += `<div class="chat-bubble bot" id="${loadingId}">${langData.chatThinking}</div>`;
+            messagesEl.scrollTop = messagesEl.scrollHeight;
+
+            try {
+                const response = await fetch(AI_WORKER_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: msg, lang: currentLang })
+                });
+                const data = await response.json();
+                
+                const loadingEl = document.getElementById(loadingId);
+                if (loadingEl) {
+                    loadingEl.innerText = data.reply;
+                }
+            } catch (err) {
+                const loadingEl = document.getElementById(loadingId);
+                if (loadingEl) {
+                    loadingEl.innerText = langData.chatError;
+                }
+            }
+            messagesEl.scrollTop = messagesEl.scrollHeight;
+        };
 
         fetchData();
     </script>
