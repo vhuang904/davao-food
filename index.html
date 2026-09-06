@@ -14,7 +14,6 @@
         .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
         .header-top h1 { font-size: 1.15rem; font-weight: bold; }
         
-        .selector-group { display: flex; gap: 8px; }
         .app-select { background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.5); padding: 4px 8px; border-radius: 6px; font-size: 0.85rem; outline: none; cursor: pointer; }
         .app-select option { color: #333; background: white; }
 
@@ -70,17 +69,15 @@
     </div>
 
     <script>
-        // 各分類高畫質預設美食圖庫 (Unsplash 免費授權圖)
         const fallbackImages = {
-            chinese: "https://images.unsplash.com/photo-1563245372-f21724e3856d?w=600&auto=format&fit=crop",  // 中式港點麵食
-            american: "https://images.unsplash.com/photo-1550547660-d9450f859349?w=600&auto=format&fit=crop", // 美式漢堡排餐
-            bbq: "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=600&auto=format&fit=crop",      // 燒烤串燒
-            seafood: "https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?w=600&auto=format&fit=crop",  // 鮮魚海鮮
-            cafe: "https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=600&auto=format&fit=crop",     // 咖啡輕食
-            filipino: "https://images.unsplash.com/photo-1541544741938-0af808871cc0?w=600&auto=format&fit=crop" // 菲律賓特色料理
+            chinese: "https://images.unsplash.com/photo-1563245372-f21724e3856d?w=600&auto=format&fit=crop",
+            american: "https://images.unsplash.com/photo-1550547660-d9450f859349?w=600&auto=format&fit=crop",
+            bbq: "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=600&auto=format&fit=crop",
+            seafood: "https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?w=600&auto=format&fit=crop",
+            cafe: "https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=600&auto=format&fit=crop",
+            filipino: "https://images.unsplash.com/photo-1541544741938-0af808871cc0?w=600&auto=format&fit=crop"
         };
 
-        // 3 國語言字典對照表 (繁體中文, English, Tagalog)
         const i18n = {
             'zh-TW': {
                 title: '📍 菲律賓美食指南',
@@ -203,7 +200,6 @@
             document.getElementById('loading').style.display = 'none';
             const langData = i18n[currentLang];
 
-            // 城市 + 分類 雙重過濾邏輯
             const filtered = allRestaurants.filter(item => {
                 const matchesCity = (currentCity === 'all') || (item.city === currentCity);
                 const matchesCat = (currentCategoryKey === 'all') || ((item.categoryKey || 'filipino') === currentCategoryKey);
@@ -218,8 +214,15 @@
             listEl.innerHTML = filtered.map(item => {
                 const catKey = item.categoryKey || 'filipino';
                 const defaultImg = fallbackImages[catKey] || fallbackImages.filipino;
-                // 檢查爬蟲抓到的網址是否有效，無效或破圖時透過 onerror 自動切換為該類別的預設圖片
                 const imgSrc = (item.imageUrl && item.imageUrl.startsWith('http')) ? item.imageUrl : defaultImg;
+
+                // 依據目前語言自動選擇對應的店家介紹欄位
+                let displayDesc = langData.noDesc;
+                if (item.descriptions && item.descriptions[currentLang]) {
+                    displayDesc = item.descriptions[currentLang];
+                } else if (item.description) {
+                    displayDesc = item.description;
+                }
 
                 return `
                     <div class="card">
@@ -233,7 +236,7 @@
                                 <span class="badge">🏷️ ${langData.cats[catKey]}</span>
                             </div>
                             <div class="card-title">${item.name || 'Unknown'}</div>
-                            <div class="card-desc">${item.description || langData.noDesc}</div>
+                            <div class="card-desc">${displayDesc}</div>
                             <div class="info-item">📍 ${item.address || ''}</div>
                             <div class="info-item">📞 ${item.phone || langData.noPhone}</div>
                             <div class="btn-group">
