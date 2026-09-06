@@ -11,21 +11,16 @@
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #fdfbf7; color: #333; padding-bottom: 30px; }
         
         /* 頂部 Header */
-        header { background: #EA580C; color: white; padding: 12px 16px 0 16px; box-shadow: 0 2px 8px rgba(234, 88, 12, 0.15); position: sticky; top: 0; z-index: 100; }
+        header { background: #EA580C; color: white; padding: 12px 16px; box-shadow: 0 2px 8px rgba(234, 88, 12, 0.15); position: sticky; top: 0; z-index: 100; }
         .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
         .header-top h1 { font-size: 1.15rem; font-weight: bold; letter-spacing: 0.5px; }
         
         .btn-share { background: rgba(255, 255, 255, 0.2); color: white; border: 1px solid rgba(255, 255, 255, 0.4); padding: 4px 10px; border-radius: 6px; font-size: 0.8rem; font-weight: bold; cursor: pointer; outline: none; }
         .btn-share:active { background: rgba(255, 255, 255, 0.35); }
 
-        .controls-row { display: flex; gap: 8px; align-items: center; margin-bottom: 10px; }
+        .controls-row { display: flex; gap: 8px; align-items: center; }
         .app-select { flex: 1; background: rgba(255, 255, 255, 0.18); color: white; border: 1px solid rgba(255, 255, 255, 0.4); padding: 6px 10px; border-radius: 6px; font-size: 0.82rem; outline: none; cursor: pointer; text-overflow: ellipsis; }
         .app-select option { color: #333; background: white; }
-
-        /* 主導覽 Tab 切換 (美食地圖 vs 討論區) */
-        .main-tabs { display: flex; border-top: 1px solid rgba(255,255,255,0.2); }
-        .main-tab-btn { flex: 1; text-align: center; padding: 10px; font-weight: bold; font-size: 0.92rem; color: rgba(255,255,255,0.75); border: none; background: none; cursor: pointer; border-bottom: 3px solid transparent; }
-        .main-tab-btn.active { color: white; border-bottom: 3px solid white; }
 
         /* 分類橫向選擇列 */
         .category-bar { display: flex; gap: 8px; overflow-x: auto; padding: 12px 16px; background: #ffffff; border-bottom: 1px solid #f1ece1; }
@@ -35,10 +30,8 @@
 
         /* 卡片與容器 */
         .container { max-width: 600px; margin: 0 auto; padding: 16px; }
-        .tab-content { display: none; }
-        .tab-content.active { display: block; }
 
-        .card { background: white; border-radius: 12px; overflow: hidden; margin-bottom: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.04); border: 1px solid #f3eee3; }
+        .card { background: white; border-radius: 12px; overflow: hidden; margin-bottom: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.04); border: 1px solid #f3eee3; }
         .card img { width: 100%; height: 200px; object-fit: cover; background: #f7f5f0; display: block; }
         .card-body { padding: 16px; }
         
@@ -56,35 +49,33 @@
         .btn-secondary { background: #f5f2eb; color: #44403c; }
         #loading { text-align: center; padding: 40px; color: #a8a29e; }
 
-        /* 餐廳卡片內建：玩家評分與極值點選區塊 */
-        .rating-box { background: #faf8f5; border-radius: 8px; padding: 10px 12px; margin-top: 12px; border: 1px dashed #e7e2d7; }
-        .rating-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+        /* 餐廳卡片下方嵌入式討論與評分區塊 */
+        .card-forum-box { background: #faf8f5; border-radius: 10px; padding: 12px; margin-top: 14px; border: 1px dashed #e7e2d7; }
+        .rating-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
         .rating-score { font-size: 0.88rem; font-weight: bold; color: #d97706; }
         .star-picker { display: flex; gap: 4px; cursor: pointer; }
         .star-picker span { font-size: 1.1rem; color: #d1d5db; transition: color 0.15s; }
         .star-picker span.active { color: #f59e0b; }
         
-        .reviews-section { margin-top: 8px; display: none; padding-top: 8px; border-top: 1px solid #f0eae1; }
-        .reviews-section.show { display: block; }
-        .review-item { font-size: 0.8rem; color: #57534e; padding: 4px 0; border-bottom: 1px solid #f5f2eb; }
+        /* 展開 / 收合討論按鈕 */
+        .btn-toggle-forum { background: none; border: none; color: #ea580c; font-size: 0.82rem; font-weight: bold; cursor: pointer; padding: 6px 0; width: 100%; text-align: left; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #f0eae1; margin-top: 8px; }
+
+        /* 討論區塊內容 (發送表單 + 評論列表) */
+        .forum-content { display: none; margin-top: 10px; padding-top: 10px; border-top: 1px solid #f0eae1; }
+        .forum-content.show { display: block; }
+
+        .mini-comment-form { margin-bottom: 12px; background: #ffffff; padding: 10px; border-radius: 8px; border: 1px solid #eee8dd; }
+        .mini-form-row { display: flex; gap: 6px; margin-bottom: 6px; }
+        .mini-input { flex: 1; padding: 6px 8px; border-radius: 6px; border: 1px solid #e7e5e4; font-size: 0.8rem; outline: none; }
+        .mini-select { width: 90px; padding: 6px 4px; border-radius: 6px; border: 1px solid #e7e5e4; font-size: 0.78rem; outline: none; }
+        .mini-textarea { width: 100%; padding: 6px 8px; border-radius: 6px; border: 1px solid #e7e5e4; font-size: 0.8rem; outline: none; resize: vertical; min-height: 50px; margin-bottom: 6px; }
+        .btn-mini-post { width: 100%; background: #EA580C; color: white; padding: 6px; border-radius: 6px; font-weight: bold; border: none; cursor: pointer; font-size: 0.8rem; }
+
+        .review-item { font-size: 0.82rem; color: #57534e; padding: 8px 0; border-bottom: 1px solid #f5f2eb; }
         .review-item:last-child { border-bottom: none; }
-        .btn-toggle-reviews { background: none; border: none; color: #ea580c; font-size: 0.78rem; font-weight: bold; cursor: pointer; padding: 4px 0; width: 100%; text-align: left; }
-
-        /* 討論區表單與列表 */
-        .comment-form { background: white; border-radius: 12px; padding: 16px; margin-bottom: 20px; border: 1px solid #f3eee3; box-shadow: 0 4px 12px rgba(0,0,0,0.04); }
-        .form-group { margin-bottom: 12px; }
-        .form-group label { display: block; font-size: 0.82rem; font-weight: bold; color: #57534e; margin-bottom: 4px; }
-        .form-control { width: 100%; padding: 8px 12px; border-radius: 6px; border: 1px solid #e7e5e4; font-size: 0.88rem; outline: none; }
-        .form-control:focus { border-color: #EA580C; }
-        textarea.form-control { resize: vertical; min-height: 80px; }
-        .btn-submit { width: 100%; background: #EA580C; color: white; padding: 10px; border-radius: 8px; font-weight: bold; border: none; cursor: pointer; font-size: 0.9rem; }
-
-        .comment-card { background: white; border-radius: 10px; padding: 14px; margin-bottom: 12px; border: 1px solid #f3eee3; }
-        .comment-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
-        .comment-user { font-weight: bold; font-size: 0.9rem; color: #1c1917; }
-        .comment-time { font-size: 0.75rem; color: #a8a29e; }
-        .comment-rating { color: #f59e0b; font-size: 0.85rem; margin-bottom: 6px; }
-        .comment-text { font-size: 0.88rem; color: #44403c; line-height: 1.4; }
+        .review-user { font-weight: bold; color: #1c1917; }
+        .review-time { font-size: 0.72rem; color: #a8a29e; float: right; }
+        .review-text { margin-top: 4px; color: #44403c; line-height: 1.35; }
     </style>
 </head>
 <body>
@@ -107,52 +98,13 @@
                 <option value="tl">Tagalog</option>
             </select>
         </div>
-        <!-- 頂部雙標籤 Tab 頁籤切換 -->
-        <div class="main-tabs">
-            <button class="main-tab-btn active" id="tab-btn-map" onclick="switchMainTab('map')">🗺️ 美食地圖</button>
-            <button class="main-tab-btn" id="tab-btn-forum" onclick="switchMainTab('forum')">💬 討論區</button>
-        </div>
     </header>
 
-    <!-- 1. 美食地圖 Tab 內容 -->
-    <div id="main-tab-map" class="tab-content active">
-        <div class="category-bar" id="category-bar"></div>
-        <div class="container">
-            <div id="loading">Loading...</div>
-            <div id="restaurant-list"></div>
-        </div>
-    </div>
+    <div class="category-bar" id="category-bar"></div>
 
-    <!-- 2. 獨立討論區 Tab 內容 -->
-    <div id="main-tab-forum" class="tab-content">
-        <div class="container">
-            <!-- 發布留言表單 -->
-            <div class="comment-form">
-                <h3 style="font-size: 1rem; font-weight: bold; margin-bottom: 12px; color: #1c1917;" id="forum-form-title">✍️ 發表食記 / 留言討論</h3>
-                <div class="form-group">
-                    <label id="lbl-nickname">暱稱：</label>
-                    <input type="text" id="comment-user" class="form-control" placeholder="請輸入您的暱稱" maxlength="20">
-                </div>
-                <div class="form-group">
-                    <label id="lbl-rating">評分：</label>
-                    <select id="comment-rating" class="form-control">
-                        <option value="5">⭐⭐⭐⭐⭐ (5/5 必吃推薦)</option>
-                        <option value="4">⭐⭐⭐⭐ (4/5 相當美味)</option>
-                        <option value="3">⭐⭐⭐ (3/5 普通可接受)</option>
-                        <option value="2">⭐⭐ (2/5 待改善)</option>
-                        <option value="1">⭐ (1/5 不推薦)</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label id="lbl-content">留言內容：</label>
-                    <textarea id="comment-text" class="form-control" placeholder="分享您在這座城市的餐廳推薦、避雷心得或私房吃法..."></textarea>
-                </div>
-                <button class="btn-submit" id="btn-post" onclick="submitComment()">發送留言</button>
-            </div>
-
-            <!-- 留言列表區塊 -->
-            <div id="forum-comment-list"></div>
-        </div>
+    <div class="container">
+        <div id="loading">Loading...</div>
+        <div id="restaurant-list"></div>
     </div>
 
     <script>
@@ -168,8 +120,6 @@
         const i18n = {
             'zh-TW': {
                 title: '📍 大V的美食地圖',
-                tabMap: '🗺️ 美食地圖',
-                tabForum: '💬 討論區',
                 shareBtn: '📤 分享',
                 shareTitle: '大V的美食地圖',
                 shareText: '推薦給你這個菲律賓美食指南！',
@@ -180,13 +130,11 @@
                 map: '導航地圖',
                 noPhone: '無電話資訊',
                 noDesc: '暫無餐廳介紹資訊。',
-                formTitle: '✍️ 發表食記 / 留言討論',
-                lblNickname: '暱稱：',
-                lblRating: '評分：',
-                lblContent: '留言內容：',
-                btnPost: '發送留言',
-                emptyCommentAlert: '請填寫暱稱與留言內容！',
                 rateSuccess: '感謝評分！您的評分已成功記錄。',
+                commentSuccess: '留言發表成功！',
+                emptyCommentAlert: '請輸入暱稱與留言內容！',
+                toggleForumText: '💬 玩家討論與推薦',
+                postBtnText: '發表對此餐廳的評語',
                 cities: { all: '全部城市', davao: '達沃', manila: '馬尼拉', cebu: '宿霧' },
                 cats: {
                     all: '全部',
@@ -200,8 +148,6 @@
             },
             'en': {
                 title: "📍 Big V's Food Map",
-                tabMap: '🗺️ Food Map',
-                tabForum: '💬 Community',
                 shareBtn: '📤 Share',
                 shareTitle: "Big V's Food Map",
                 shareText: 'Check out this awesome Philippines food guide!',
@@ -212,13 +158,11 @@
                 map: 'Map',
                 noPhone: 'No Phone Info',
                 noDesc: 'No description available.',
-                formTitle: '✍️ Post a Review or Comment',
-                lblNickname: 'Nickname:',
-                lblRating: 'Rating:',
-                lblContent: 'Comment:',
-                btnPost: 'Submit Comment',
-                emptyCommentAlert: 'Please enter both your nickname and comment!',
                 rateSuccess: 'Thank you! Your rating has been recorded.',
+                commentSuccess: 'Review posted successfully!',
+                emptyCommentAlert: 'Please enter both nickname and comment!',
+                toggleForumText: '💬 Reviews & Discussion',
+                postBtnText: 'Submit Review for this spot',
                 cities: { all: 'All Cities', davao: 'Davao', manila: 'Manila', cebu: 'Cebu' },
                 cats: {
                     all: 'All',
@@ -232,8 +176,6 @@
             },
             'tl': {
                 title: '📍 Mapa ng Pagkain ni Big V',
-                tabMap: '🗺️ Mapa ng Pagkain',
-                tabForum: '💬 Diskusyon',
                 shareBtn: '📤 Ibahagi',
                 shareTitle: 'Mapa ng Pagkain ni Big V',
                 shareText: 'Subukan ang gabay sa pagkain sa Pilipinas!',
@@ -244,13 +186,11 @@
                 map: 'Pumunta sa Map',
                 noPhone: 'Walang Telepono',
                 noDesc: 'Walang paglalarawan.',
-                formTitle: '✍️ Mag-iwan ng Komento',
-                lblNickname: 'Pangalan:',
-                lblRating: 'Rating:',
-                lblContent: 'Komento:',
-                btnPost: 'I-post ang Komento',
-                emptyCommentAlert: 'Mangyaring ilagay ang iyong pangalan at komento!',
                 rateSuccess: 'Salamat! Na-itala na ang iyong rating.',
+                commentSuccess: 'Na-ipost na ang komento!',
+                emptyCommentAlert: 'Mangyaring ilagay ang pangalan at komento!',
+                toggleForumText: '💬 Diskusyon at Komento',
+                postBtnText: 'I-post ang Komento',
                 cities: { all: 'Lahat ng Lungsod', davao: 'Davao', manila: 'Manila', cebu: 'Cebu' },
                 cats: {
                     all: 'Lahat',
@@ -267,17 +207,12 @@
         let currentLang = localStorage.getItem('ph_app_lang') || 'zh-TW';
         let currentCity = localStorage.getItem('ph_app_city') || 'all';
         let currentCategoryKey = 'all';
-        let currentMainTab = 'map';
         let allRestaurants = [];
 
-        // 使用者評分與玩家推薦儲存區 (localStorage)
+        // 餐廳評分資料 (localStorage)
         let itemRatings = JSON.parse(localStorage.getItem('ph_item_ratings')) || {};
-
-        // 預設討論區留言
-        let comments = JSON.parse(localStorage.getItem('ph_app_comments')) || [
-            { id: 1, user: "大V", city: "davao", rating: 5, text: "歡迎大家來到達沃美食討論區！推薦大家一定要嘗試馬蒂納 (Matina) 的 Yaki Together 日式燒肉！", time: "2026-03-01 18:30" },
-            { id: 2, user: "DavaoLocal", city: "davao", rating: 5, text: "Jack's Ridge 夜景非常讚，食物也是道地的菲律賓風味！", time: "2026-03-02 12:15" }
-        ];
+        // 餐廳專屬留言資料 (localStorage)
+        let resComments = JSON.parse(localStorage.getItem('ph_res_comments')) || {};
 
         async function fetchRestaurants() {
             try {
@@ -287,15 +222,6 @@
             } catch (error) {
                 document.getElementById('loading').innerText = i18n[currentLang].noData;
             }
-        }
-
-        function switchMainTab(tab) {
-            currentMainTab = tab;
-            document.getElementById('tab-btn-map').classList.toggle('active', tab === 'map');
-            document.getElementById('tab-btn-forum').classList.toggle('active', tab === 'forum');
-            document.getElementById('main-tab-map').classList.toggle('active', tab === 'map');
-            document.getElementById('main-tab-forum').classList.toggle('active', tab === 'forum');
-            if (tab === 'forum') renderComments();
         }
 
         function changeLanguage(lang) {
@@ -308,7 +234,6 @@
             currentCity = city;
             localStorage.setItem('ph_app_city', city);
             renderList();
-            renderComments();
         }
 
         function filterCategory(catKey) {
@@ -341,19 +266,10 @@
             document.getElementById('lang-select').value = currentLang;
             document.getElementById('city-select').value = currentCity;
             document.getElementById('app-title').innerText = langData.title;
-            document.getElementById('tab-btn-map').innerText = langData.tabMap;
-            document.getElementById('tab-btn-forum').innerText = langData.tabForum;
             document.getElementById('share-btn').innerText = langData.shareBtn;
-
-            document.getElementById('forum-form-title').innerText = langData.formTitle;
-            document.getElementById('lbl-nickname').innerText = langData.lblNickname;
-            document.getElementById('lbl-rating').innerText = langData.lblRating;
-            document.getElementById('lbl-content').innerText = langData.lblContent;
-            document.getElementById('btn-post').innerText = langData.btnPost;
 
             renderCategoryBar();
             renderList();
-            renderComments();
         }
 
         function renderCategoryBar() {
@@ -368,7 +284,7 @@
             `).join('');
         }
 
-        // 個別餐廳星級評分點選機制 (1~5顆星)
+        // 星級評分點選機制 (1~5顆星)
         function rateRestaurant(resKey, score) {
             if (!itemRatings[resKey]) {
                 itemRatings[resKey] = { scores: [], userRated: null };
@@ -381,9 +297,47 @@
             renderList();
         }
 
-        function toggleReviews(resKey) {
-            const el = document.getElementById('reviews-' + resKey);
+        // 展開 / 收合特定餐廳的討論區塊
+        function toggleRestaurantForum(resKey) {
+            const el = document.getElementById('forum-' + resKey);
             if (el) el.classList.toggle('show');
+        }
+
+        // 發表針對特定餐廳的留言
+        function postResComment(resKey) {
+            const user = document.getElementById('input-user-' + resKey).value.trim();
+            const rating = parseInt(document.getElementById('select-rating-' + resKey).value);
+            const text = document.getElementById('input-text-' + resKey).value.trim();
+            const langData = i18n[currentLang];
+
+            if (!user || !text) {
+                alert(langData.emptyCommentAlert);
+                return;
+            }
+
+            const now = new Date();
+            const timeStr = (now.getMonth()+1) + '/' + now.getDate() + ' ' + String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
+
+            if (!resComments[resKey]) resComments[resKey] = [];
+            
+            resComments[resKey].unshift({
+                user: user,
+                rating: rating,
+                text: text,
+                time: timeStr
+            });
+
+            // 同步將該評分納入平均分數計算
+            rateRestaurant(resKey, rating);
+
+            localStorage.setItem('ph_res_comments', JSON.stringify(resComments));
+            alert(langData.commentSuccess);
+            
+            document.getElementById('input-text-' + resKey).value = '';
+            renderList();
+            // 自動展現討論區塊
+            const el = document.getElementById('forum-' + resKey);
+            if (el) el.classList.add('show');
         }
 
         function renderList() {
@@ -406,14 +360,19 @@
                 const catKey = item.categoryKey || 'filipino';
                 const defaultImg = fallbackImages[catKey] || fallbackImages.filipino;
                 const imgSrc = (item.imageUrl && item.imageUrl.startsWith('http')) ? item.imageUrl : defaultImg;
+                
+                // 唯一的餐廳 Key
                 const resKey = (item.city || 'davao') + '_' + (item.name || idx).replace(/[^a-zA-Z0-9]/g, '');
 
-                // 計算評分
+                // 評分資料計算
                 const ratingData = itemRatings[resKey] || { scores: [5], userRated: null };
                 const totalScores = ratingData.scores;
                 const avgRating = (totalScores.reduce((a, b) => a + b, 0) / totalScores.length).toFixed(1);
                 const count = totalScores.length;
                 const userScore = ratingData.userRated || 0;
+
+                // 該餐廳專屬留言清單
+                const commentsList = resComments[resKey] || [];
 
                 let displayDesc = langData.noDesc;
                 if (item.descriptions && item.descriptions[currentLang]) {
@@ -421,9 +380,6 @@
                 } else if (item.description) {
                     displayDesc = item.description;
                 }
-
-                // 比對討論區中關於這家餐廳的玩家留言
-                const matchedComments = comments.filter(c => c.text.toLowerCase().includes((item.name || '').toLowerCase()));
 
                 return `
                     <div class="card">
@@ -441,8 +397,8 @@
                             <div class="info-item">📍 ${item.address || ''}</div>
                             <div class="info-item">📞 ${item.phone || langData.noPhone}</div>
 
-                            <!-- 玩家評分與極值 1~5 顆星選擇區塊 -->
-                            <div class="rating-box">
+                            <!-- 餐廳下方嵌入式討論與評分區塊 -->
+                            <div class="card-forum-box">
                                 <div class="rating-header">
                                     <span class="rating-score">⭐ ${avgRating} / 5.0 (${count}則評分)</span>
                                     <div class="star-picker" title="點擊進行評分">
@@ -451,15 +407,42 @@
                                         `).join('')}
                                     </div>
                                 </div>
-                                <button class="btn-toggle-reviews" onclick="toggleReviews('${resKey}')">
-                                    💬 玩家推薦與心得 (${matchedComments.length})
+
+                                <button class="btn-toggle-forum" onclick="toggleRestaurantForum('${resKey}')">
+                                    <span>${langData.toggleForumText} (${commentsList.length})</span>
+                                    <span style="font-size:0.75rem;">▼ 展開 / 留言</span>
                                 </button>
-                                <div class="reviews-section" id="reviews-${resKey}">
-                                    ${matchedComments.length > 0 ? matchedComments.map(mc => `
-                                        <div class="review-item">
-                                            <strong>${mc.user}</strong>: ${mc.text}
+
+                                <div class="forum-content" id="forum-${resKey}">
+                                    <!-- 內嵌快速發表評論表單 -->
+                                    <div class="mini-comment-form">
+                                        <div class="mini-form-row">
+                                            <input type="text" id="input-user-${resKey}" class="mini-input" placeholder="暱稱" maxlength="15">
+                                            <select id="select-rating-${resKey}" class="mini-select">
+                                                <option value="5">⭐⭐⭐⭐⭐</option>
+                                                <option value="4">⭐⭐⭐⭐</option>
+                                                <option value="3">⭐⭐⭐</option>
+                                                <option value="2">⭐⭐</option>
+                                                <option value="1">⭐</option>
+                                            </select>
                                         </div>
-                                    `).join('') : '<div class="review-item" style="color:#a8a29e;">目前尚無針對此餐廳的專屬心得，歡迎在討論區留言！</div>'}
+                                        <textarea id="input-text-${resKey}" class="mini-textarea" placeholder="分享您對這家餐廳的吃法、推薦菜色或避雷心得..."></textarea>
+                                        <button class="btn-mini-post" onclick="postResComment('${resKey}')">${langData.postBtnText}</button>
+                                    </div>
+
+                                    <!-- 評論列表 -->
+                                    <div class="reviews-list">
+                                        ${commentsList.length > 0 ? commentsList.map(c => `
+                                            <div class="review-item">
+                                                <div>
+                                                    <span class="review-user">👤 ${c.user}</span>
+                                                    <span style="color:#f59e0b; font-size:0.75rem; margin-left:4px;">${'⭐'.repeat(c.rating)}</span>
+                                                    <span class="review-time">${c.time}</span>
+                                                </div>
+                                                <div class="review-text">${c.text}</div>
+                                            </div>
+                                        `).join('') : '<div class="review-item" style="color:#a8a29e; text-align:center;">尚無討論，成為第一個評價這家餐廳的人吧！</div>'}
+                                    </div>
                                 </div>
                             </div>
 
@@ -471,61 +454,6 @@
                     </div>
                 `;
             }).join('');
-        }
-
-        // 討論區留言渲染機制
-        function renderComments() {
-            const listEl = document.getElementById('forum-comment-list');
-            const langData = i18n[currentLang];
-
-            const filteredComments = comments.filter(c => (currentCity === 'all') || (c.city === currentCity));
-
-            if (filteredComments.length === 0) {
-                listEl.innerHTML = `<p style="text-align:center; color:#a8a29e; padding: 30px;">尚無對應城市的討論留言，成為第一個留言的人吧！</p>`;
-                return;
-            }
-
-            listEl.innerHTML = filteredComments.map(c => `
-                <div class="comment-card">
-                    <div class="comment-header">
-                        <span class="comment-user">👤 ${c.user} <span style="font-size:0.75rem; color:#0369a1; font-weight:normal;">[${langData.cities[c.city] || c.city}]</span></span>
-                        <span class="comment-time">${c.time}</span>
-                    </div>
-                    <div class="comment-rating">${'⭐'.repeat(c.rating)}</div>
-                    <div class="comment-text">${c.text}</div>
-                </div>
-            `).join('');
-        }
-
-        function submitComment() {
-            const user = document.getElementById('comment-user').value.trim();
-            const rating = parseInt(document.getElementById('comment-rating').value);
-            const text = document.getElementById('comment-text').value.trim();
-            const langData = i18n[currentLang];
-
-            if (!user || !text) {
-                alert(langData.emptyCommentAlert);
-                return;
-            }
-
-            const now = new Date();
-            const timeStr = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0') + '-' + String(now.getDate()).padStart(2,'0') + ' ' + String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
-
-            const newComment = {
-                id: Date.now(),
-                user: user,
-                city: currentCity === 'all' ? 'davao' : currentCity,
-                rating: rating,
-                text: text,
-                time: timeStr
-            };
-
-            comments.unshift(newComment);
-            localStorage.setItem('ph_app_comments', JSON.stringify(comments));
-
-            document.getElementById('comment-text').value = '';
-            renderComments();
-            renderList();
         }
 
         fetchRestaurants();
