@@ -152,7 +152,7 @@
 
     <div id="main-tab-news" class="tab-content">
         <div class="container">
-            <div id="news-list"></div>
+            <div id="news-list">載入最新動態中...</div>
         </div>
     </div>
 
@@ -321,133 +321,34 @@
             }
         };
 
-        const newsData = [
-            {
-                id: "news-pizza-1",
-                city: "all",
-                type: "promo",
-                brand: "🍕 Pizza Hut",
-                tag: "🔥 限時優惠",
-                title: "Pizza Hut 9月重磅促銷：Sensasi Duo 雙人午餐套餐每人僅 ₱45！",
-                validity: "即日起至 2026/09/30",
-                imageUrl: "https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?w=800&auto=format&fit=crop",
-                descriptions: {
-                    "zh-TW": "2026年9月限定！內用點選 Sensasi Duo，包含 1個披薩 + 1份義大利麵/飯 + 1杯飲料，兩人同行只需 ₱90（平均每人 ₱45），供應時間 10:00-14:00。",
-                    "en": "Sensasi Duo Promo! Enjoy 1 Pizza + 1 Pasta/Rice + 1 Drink for only ₱45 per person (₱90 total for two) during lunch hours!",
-                    "tl": "Sensasi Duo Promo! Mag-enjoy ng Pizza + Pasta/Rice + Inumin sa halagang ₱45 bawat tao!"
-                },
-                location: "全菲律賓 Pizza Hut 門市 Dine-in"
-            },
-            {
-                id: "news-mcdo-1",
-                city: "all",
-                type: "promo",
-                brand: "🍔 麥當勞 (McDo)",
-                tag: "🔥 限時優惠",
-                title: "McDonald's BPI 信用卡/簽帳卡專屬：餐點加購價只要 ₱1.75",
-                validity: "即日起至 2026/09/30",
-                imageUrl: "https://images.unsplash.com/photo-1550547660-d9450f859349?w=800&auto=format&fit=crop",
-                descriptions: {
-                    "zh-TW": "透過 McDonald's App 點餐並使用 BPI 卡結帳，即可享有指定套餐加購小點/冷飲僅需 ₱1.75 的專屬優惠，且用餐最高享 40% OFF 折扣！",
-                    "en": "Get BPI-exclusive meal add-ons for only PHP 1.75 when you order via McDonald's App! Enjoy up to 40% OFF.",
-                    "tl": "Kumuha ng BPI-exclusive add-ons sa halagang PHP 1.75 sa McDonald's App!"
-                },
-                location: "全菲律賓門市 / McDo App"
-            },
-            {
-                id: "news-jollibee-1",
-                city: "all",
-                type: "promo",
-                brand: "🐝 Jollibee",
-                tag: "🔥 限時優惠",
-                title: "Jollibee 快樂蜂 9月促銷：6 塊 Chickenjoy 炸雞桶折 ₱50！",
-                validity: "即日起至 2026/09/30",
-                imageUrl: "https://images.unsplash.com/photo-1626777552726-4a6b54c97e46?w=800&auto=format&fit=crop",
-                descriptions: {
-                    "zh-TW": "全菲律賓 Jollibee 門市同步！透過官方 App 點選 6-pc Chickenjoy Bucket，輸入優惠碼【JOYBUCKET50】即可折抵 50 披索！",
-                    "en": "Enjoy ₱50 OFF on 6-pc Chickenjoy Bucket via Jollibee App with voucher code JOYBUCKET50!",
-                    "tl": "Kumuha ng ₱50 OFF sa 6-pc Chickenjoy Bucket sa Jollibee App gamit ang code JOYBUCKET50!"
-                },
-                location: "全菲律賓門市 / Jollibee App Delivery"
-            },
-            {
-                id: "news-kfc-1",
-                city: "all",
-                type: "promo",
-                brand: "🍗 KFC 肯德基",
-                tag: "🔥 限時優惠",
-                title: "KFC 9月促銷碼：外帶與外送組合最高折抵 ₱495！",
-                validity: "即日起至 2026/09/30",
-                imageUrl: "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=800&auto=format&fit=crop",
-                descriptions: {
-                    "zh-TW": "KFC 肯德基推出 9月線上專屬 Voucher！訂購 1-PC Fully Loaded Meal 或 Zinger 套餐可享折扣，滿額最高現折 ₱495。",
-                    "en": "KFC September Promo Codes! Save up to ₱495 on Fully Loaded Meals and Bucket Specials online.",
-                    "tl": "KFC Promo Code ngayong Setyembre! Makatipid hanggang ₱495 sa online orders."
-                },
-                location: "全菲律賓門市 / KFC PH App & Website"
-            },
-            {
-                id: "news-davao-yaki",
-                city: "davao",
-                type: "new",
-                brand: "🥩 燒肉新店",
-                title: "達沃 Yaki Together - Matina 旗艦開幕：全時段日式無煙燒肉 85 折！",
-                validity: "長期有效",
-                imageUrl: "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=800&auto=format&fit=crop",
-                descriptions: {
-                    "zh-TW": "達沃全新燒肉品牌！出示『大V的美食地圖』畫面，即享全桌無煙燒肉 85 折優惠！包含特選和牛與無限量日式小菜！",
-                    "en": "New store in Davao! 15% OFF for all-you-can-eat Japanese Yakiniku at Yaki Together Matina!",
-                    "tl": "Bagong bukas sa Davao! 15% OFF sa Yaki Together Matina kapag ipinakita ang app na ito."
-                },
-                location: "Matina Enclave, Quimpo Blvd, Davao City"
-            },
-            {
-                id: "news-cebu-1",
-                city: "cebu",
-                type: "new",
-                brand: "🦀 海鮮概念店",
-                title: "宿霧 Mactan 海鮮狂歡概念店全新進駐：碳烤大蝦與野生螃蟹試營運",
-                validity: "長期有效",
-                imageUrl: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=800&auto=format&fit=crop",
-                descriptions: {
-                    "zh-TW": "宿霧海邊全新開幕！每晚 6 點後點選碳烤大蝦或野生螃蟹套餐，加贈特調冷飲與第二份刺身半價！",
-                    "en": "New seaside seafood spot in Cebu! Free drinks and 50% off second sashimi set with seafood combos.",
-                    "tl": "Bagong kainan sa Cebu! Libreng inumin at 50% off sa ikalawang sashimi set."
-                },
-                location: "Mactan Island Promenade, Cebu"
-            }
-        ];
-
-        function getInitialLanguage() {
-            const savedLang = localStorage.getItem('ph_app_lang');
-            if (savedLang && i18n[savedLang]) return savedLang;
-
-            const browserLang = (navigator.language || navigator.userLanguage || 'en').toLowerCase();
-            if (browserLang.startsWith('zh')) return 'zh-TW';
-            if (browserLang.startsWith('tl') || browserLang.startsWith('fil')) return 'tl';
-            return 'en';
-        }
-
         let currentLang = getInitialLanguage();
         let currentCity = localStorage.getItem('ph_app_city') || 'all';
         let currentCategoryKey = localStorage.getItem('ph_app_cat') || 'all';
         let currentMainTab = localStorage.getItem('ph_app_tab') || 'map';
         let currentNewsSubFilter = localStorage.getItem('ph_app_news_sub') || 'all';
         let allRestaurants = [];
+        let allNews = [];
 
         let itemRatings = JSON.parse(localStorage.getItem('ph_item_ratings')) || {};
         let resComments = JSON.parse(localStorage.getItem('ph_res_comments')) || {};
 
-        async function fetchRestaurants() {
+        async function fetchData() {
             try {
-                const querySnapshot = await getDocs(collection(db, "restaurants"));
+                // 1. 抓取餐廳資料
+                const resSnapshot = await getDocs(collection(db, "restaurants"));
                 allRestaurants = [];
-                querySnapshot.forEach((doc) => {
+                resSnapshot.forEach((doc) => {
                     allRestaurants.push(doc.data());
+                });
+
+                // 2. 抓取動態新聞/優惠資料
+                const newsSnapshot = await getDocs(collection(db, "news"));
+                allNews = [];
+                newsSnapshot.forEach((doc) => {
+                    allNews.push(doc.data());
                 });
             } catch (error) {
                 console.error("讀取 Firebase 資料失敗：", error);
-                allRestaurants = [];
             }
             renderUI();
             switchMainTab(currentMainTab);
@@ -516,6 +417,15 @@
                     alert("連結：" + shareUrl);
                 });
             }
+        }
+
+        function getInitialLanguage() {
+            const savedLang = localStorage.getItem('ph_app_lang');
+            if (savedLang && i18n[savedLang]) return savedLang;
+            const browserLang = (navigator.language || navigator.userLanguage || 'en').toLowerCase();
+            if (browserLang.startsWith('zh')) return 'zh-TW';
+            if (browserLang.startsWith('tl') || browserLang.startsWith('fil')) return 'tl';
+            return 'en';
         }
 
         function renderUI() {
@@ -757,7 +667,7 @@
             const newsEl = document.getElementById('news-list');
             const langData = i18n[currentLang];
 
-            const filteredNews = newsData.filter(item => {
+            const filteredNews = (allNews || []).filter(item => {
                 const matchesCity = (currentCity === 'all') || (item.city === 'all') || (item.city === currentCity);
                 const matchesSub = (currentNewsSubFilter === 'all') || (item.type === currentNewsSubFilter);
                 return matchesCity && matchesSub;
@@ -768,26 +678,35 @@
                 return;
             }
 
-            newsEl.innerHTML = filteredNews.map(item => `
-                <div class="card">
-                    <img src="${item.imageUrl}" alt="${item.title}" loading="lazy">
-                    <div class="card-body">
-                        <div class="badge-group">
-                            <span class="badge badge-city">${langData.cities[item.city] || '全菲律賓'}</span>
-                            ${item.brand ? `<span class="badge badge-brand">${item.brand}</span>` : ''}
-                            <span class="badge badge-promo">${item.tag}</span>
-                            ${item.validity ? `<span class="badge badge-expiry">⏰ ${item.validity}</span>` : ''}
+            newsEl.innerHTML = filteredNews.map(item => {
+                let descText = '';
+                if (item.descriptions) {
+                    descText = item.descriptions[currentLang] || item.descriptions['en'] || '';
+                } else if (item.description_zh) {
+                    descText = item.description_zh;
+                }
+
+                return `
+                    <div class="card">
+                        <img src="${item.imageUrl || 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=800&auto=format&fit=crop'}" alt="${item.title || ''}" loading="lazy">
+                        <div class="card-body">
+                            <div class="badge-group">
+                                <span class="badge badge-city">${langData.cities[item.city] || '全菲律賓'}</span>
+                                ${item.brand ? `<span class="badge badge-brand">${item.brand}</span>` : ''}
+                                <span class="badge badge-promo">${item.tag || '促銷'}</span>
+                                ${item.validity ? `<span class="badge badge-expiry">⏰ ${item.validity}</span>` : ''}
+                            </div>
+                            <div class="card-title" style="font-size:1.1rem; margin-top:4px;">${item.title || ''}</div>
+                            <div class="card-desc" style="color:#44403c; margin-top:8px;">${descText}</div>
+                            <div class="info-item" style="margin-top:10px;">📍 ${item.location || ''}</div>
                         </div>
-                        <div class="card-title" style="font-size:1.1rem; margin-top:4px;">${item.title}</div>
-                        <div class="card-desc" style="color:#44403c; margin-top:8px;">${item.descriptions[currentLang] || item.descriptions['en']}</div>
-                        <div class="info-item" style="margin-top:10px;">📍 ${item.location}</div>
                     </div>
-                </div>
-            `).join('');
+                `;
+            }).join('');
         }
 
         // 啟動程式
-        fetchRestaurants();
+        fetchData();
     </script>
 </body>
 </html>
