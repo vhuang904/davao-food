@@ -3,31 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Davao Food Guide</title>
+    <title>Philippines Food Guide</title>
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#4CAF50">
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #f4f6f9; color: #333; padding-bottom: 20px; }
         
-        /* 頂部 Header & 語言選擇器 */
-        header { background: #4CAF50; color: white; padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 6px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 100; }
-        header h1 { font-size: 1.15rem; font-weight: bold; }
-        .lang-select { background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.5); padding: 4px 8px; border-radius: 6px; font-size: 0.85rem; outline: none; cursor: pointer; }
-        .lang-select option { color: #333; background: white; }
+        header { background: #4CAF50; color: white; padding: 14px 16px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 100; }
+        .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+        .header-top h1 { font-size: 1.15rem; font-weight: bold; }
+        
+        .selector-group { display: flex; gap: 8px; }
+        .app-select { background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.5); padding: 4px 8px; border-radius: 6px; font-size: 0.85rem; outline: none; cursor: pointer; }
+        .app-select option { color: #333; background: white; }
 
-        /* 分類橫向切換列 */
         .category-bar { display: flex; gap: 8px; overflow-x: auto; padding: 12px 16px; background: white; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
         .category-bar::-webkit-scrollbar { display: none; }
         .cat-chip { padding: 6px 14px; border-radius: 20px; font-size: 0.85rem; background: #f0f0f0; color: #555; white-space: nowrap; border: none; cursor: pointer; }
         .cat-chip.active { background: #4CAF50; color: white; font-weight: bold; }
 
-        /* 餐廳卡片樣式 */
         .container { max-width: 600px; margin: 0 auto; padding: 16px; }
         .card { background: white; border-radius: 12px; overflow: hidden; margin-bottom: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
         .card img { width: 100%; height: 200px; object-fit: cover; background: #eee; }
         .card-body { padding: 16px; }
-        .badge { display: inline-block; background: #e8f5e9; color: #2e7d32; font-size: 0.78rem; padding: 3px 8px; border-radius: 4px; font-weight: bold; margin-bottom: 6px; }
+        .badge-group { display: flex; gap: 6px; margin-bottom: 6px; }
+        .badge { display: inline-block; background: #e8f5e9; color: #2e7d32; font-size: 0.78rem; padding: 3px 8px; border-radius: 4px; font-weight: bold; }
+        .badge-city { background: #e3f2fd; color: #1565c0; }
         .card-title { font-size: 1.2rem; font-weight: bold; margin-bottom: 6px; color: #1a1a1a; }
         .card-desc { font-size: 0.88rem; color: #666; line-height: 1.5; margin-bottom: 10px; }
         .info-item { font-size: 0.85rem; color: #444; margin-bottom: 4px; }
@@ -41,17 +43,25 @@
 <body>
 
     <header>
-        <h1 id="app-title">📍 Davao 美食地圖</h1>
-        <!-- 4 國語言下拉選單 -->
-        <select class="lang-select" id="lang-select" onchange="changeLanguage(this.value)">
-            <option value="zh-TW">繁體中文</option>
-            <option value="zh-CN">簡體中文</option>
-            <option value="en">English</option>
-            <option value="tl">Tagalog</option>
-        </select>
+        <div class="header-top">
+            <h1 id="app-title">📍 菲律賓美食指南</h1>
+            <select class="app-select" id="lang-select" onchange="changeLanguage(this.value)">
+                <option value="zh-TW">繁體中文</option>
+                <option value="en">English</option>
+                <option value="tl">Tagalog</option>
+            </select>
+        </div>
+        <div style="display: flex; align-items: center; gap: 8px;">
+            <span style="font-size: 0.85rem;" id="city-label">選擇城市：</span>
+            <select class="app-select" id="city-select" onchange="changeCity(this.value)" style="flex:1;">
+                <option value="all">全部城市 (All Cities)</option>
+                <option value="davao">達沃 (Davao)</option>
+                <option value="manila">馬尼拉 (Manila)</option>
+                <option value="cebu">宿霧 (Cebu)</option>
+            </select>
+        </div>
     </header>
 
-    <!-- 分類選單 -->
     <div class="category-bar" id="category-bar"></div>
 
     <div class="container">
@@ -60,16 +70,18 @@
     </div>
 
     <script>
-        // 4 國語言字典對照表
+        // 3 國語言字典對照表 (繁體中文, English, Tagalog)
         const i18n = {
             'zh-TW': {
-                title: '📍 Davao 美食地圖',
+                title: '📍 菲律賓美食指南',
+                cityLabel: '選擇城市：',
                 loading: '載入最新美食清單中...',
-                noData: '目前沒有此類別的餐廳',
+                noData: '目前沒有找到對應的餐廳資料',
                 call: '撥打電話',
                 map: '導航地圖',
                 noPhone: '無電話資訊',
                 noDesc: '暫無餐廳介紹資訊。',
+                cities: { all: '全部城市', davao: '達沃', manila: '馬尼拉', cebu: '宿霧' },
                 cats: {
                     all: '全部',
                     filipino: '菲律賓餐',
@@ -80,32 +92,16 @@
                     cafe: '咖啡輕食'
                 }
             },
-            'zh-CN': {
-                title: '📍 Davao 美食地图',
-                loading: '载入最新美食清单中...',
-                noData: '目前没有此类别的餐厅',
-                call: '拨打电话',
-                map: '导航地图',
-                noPhone: '无电话信息',
-                noDesc: '暂无餐厅介绍信息。',
-                cats: {
-                    all: '全部',
-                    filipino: '菲律宾餐',
-                    chinese: '中式餐厅',
-                    american: '美式餐厅',
-                    bbq: '烧烤类',
-                    seafood: '海鲜类',
-                    cafe: '咖啡轻食'
-                }
-            },
             'en': {
-                title: '📍 Davao Food Guide',
+                title: '📍 PH Food Guide',
+                cityLabel: 'City:',
                 loading: 'Loading latest restaurants...',
-                noData: 'No restaurants found in this category',
+                noData: 'No restaurants found',
                 call: 'Call',
                 map: 'Map',
                 noPhone: 'No Phone Info',
                 noDesc: 'No description available.',
+                cities: { all: 'All Cities', davao: 'Davao', manila: 'Manila', cebu: 'Cebu' },
                 cats: {
                     all: 'All',
                     filipino: 'Filipino',
@@ -117,13 +113,15 @@
                 }
             },
             'tl': {
-                title: '📍 Davao Food Guide',
+                title: '📍 PH Food Guide',
+                cityLabel: 'Lungsod:',
                 loading: 'Kina-karga ang mga kainan...',
-                noData: 'Walang nahanap na kainan sa kategoryang ito',
+                noData: 'Walang nahanap na kainan',
                 call: 'Tawagan',
                 map: 'Pumunta sa Map',
-                noPhone: 'Walang Impormasyon sa Telepono',
-                noDesc: 'Walang available na paglalarawan.',
+                noPhone: 'Walang Telepono',
+                noDesc: 'Walang paglalarawan.',
+                cities: { all: 'Lahat ng Lungsod', davao: 'Davao', manila: 'Manila', cebu: 'Cebu' },
                 cats: {
                     all: 'Lahat',
                     filipino: 'Filipino',
@@ -136,9 +134,10 @@
             }
         };
 
-        let currentLang = localStorage.getItem('davao_app_lang') || 'zh-TW';
-        let allRestaurants = [];
+        let currentLang = localStorage.getItem('ph_app_lang') || 'zh-TW';
+        let currentCity = localStorage.getItem('ph_app_city') || 'all';
         let currentCategoryKey = 'all';
+        let allRestaurants = [];
 
         async function fetchRestaurants() {
             try {
@@ -152,8 +151,14 @@
 
         function changeLanguage(lang) {
             currentLang = lang;
-            localStorage.setItem('davao_app_lang', lang);
+            localStorage.setItem('ph_app_lang', lang);
             renderUI();
+        }
+
+        function changeCity(city) {
+            currentCity = city;
+            localStorage.setItem('ph_app_city', city);
+            renderList();
         }
 
         function filterCategory(catKey) {
@@ -163,9 +168,10 @@
         }
 
         function renderUI() {
-            // 設定選單與標題
             document.getElementById('lang-select').value = currentLang;
+            document.getElementById('city-select').value = currentCity;
             document.getElementById('app-title').innerText = i18n[currentLang].title;
+            document.getElementById('city-label').innerText = i18n[currentLang].cityLabel;
             renderCategoryBar();
             renderList();
         }
@@ -185,13 +191,14 @@
         function renderList() {
             const listEl = document.getElementById('restaurant-list');
             document.getElementById('loading').style.display = 'none';
-
             const langData = i18n[currentLang];
 
-            // 類別過濾邏輯
-            const filtered = currentCategoryKey === 'all' 
-                ? allRestaurants 
-                : allRestaurants.filter(item => (item.categoryKey || 'filipino') === currentCategoryKey);
+            // 城市 + 分類 雙重過濾邏輯
+            const filtered = allRestaurants.filter(item => {
+                const matchesCity = (currentCity === 'all') || (item.city === currentCity);
+                const matchesCat = (currentCategoryKey === 'all') || ((item.categoryKey || 'filipino') === currentCategoryKey);
+                return matchesCity && matchesCat;
+            });
 
             if (filtered.length === 0) {
                 listEl.innerHTML = `<p style="text-align:center; color:#888; padding: 40px;">${langData.noData}</p>`;
@@ -202,14 +209,17 @@
                 <div class="card">
                     ${item.imageUrl ? `<img src="${item.imageUrl}" alt="${item.name}">` : ''}
                     <div class="card-body">
-                        <span class="badge">🏷️ ${langData.cats[item.categoryKey || 'filipino']}</span>
+                        <div class="badge-group">
+                            <span class="badge badge-city">🏙️ ${langData.cities[item.city || 'davao']}</span>
+                            <span class="badge">🏷️ ${langData.cats[item.categoryKey || 'filipino']}</span>
+                        </div>
                         <div class="card-title">${item.name || 'Unknown'}</div>
                         <div class="card-desc">${item.description || langData.noDesc}</div>
-                        <div class="info-item">📍 ${item.address || 'Davao City'}</div>
+                        <div class="info-item">📍 ${item.address || ''}</div>
                         <div class="info-item">📞 ${item.phone || langData.noPhone}</div>
                         <div class="btn-group">
                             <a class="btn btn-primary" href="tel:${item.phone}">${langData.call}</a>
-                            <a class="btn btn-secondary" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent((item.name || '') + ' ' + (item.address || '') + ' Davao')}" target="_blank">${langData.map}</a>
+                            <a class="btn btn-secondary" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent((item.name || '') + ' ' + (item.address || ''))}" target="_blank">${langData.map}</a>
                         </div>
                     </div>
                 </div>
