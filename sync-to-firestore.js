@@ -97,16 +97,19 @@ async function syncData() {
     
     for (let i = 0; i < restaurantsData.length; i++) {
       const item = restaurantsData[i];
-      if (!item.name) continue;
+      if (!item || !item.name) continue;
       
       const city = (item.city && item.city.trim() !== '') ? item.city.trim() : 'davao';
       let safeName = item.name.replace(/[^a-zA-Z0-9]/g, '');
-      if (!safeName) {
+      if (!safeName || safeName === '') {
         safeName = 'store_' + i;
       }
       
-      // 強制確保 docId 絕對不為空
       const docId = `${city}_${safeName}`;
+      
+      // 確保 docId 絕對不為空字串
+      if (!docId || docId.trim() === '') continue;
+
       const docRef = db.collection('restaurants').doc(docId);
       batch.set(docRef, item, { merge: true });
     }
