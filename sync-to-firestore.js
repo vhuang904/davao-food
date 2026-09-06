@@ -99,20 +99,20 @@ async function syncData() {
       const item = restaurantsData[i];
       if (!item.name) continue;
       
-      const city = item.city || 'davao';
-      // 確保即使名稱全是中文也不會變成空字串
+      const city = (item.city && item.city.trim() !== '') ? item.city.trim() : 'davao';
       let safeName = item.name.replace(/[^a-zA-Z0-9]/g, '');
       if (!safeName) {
         safeName = 'store_' + i;
       }
       
+      // 強制確保 docId 絕對不為空
       const docId = `${city}_${safeName}`;
       const docRef = db.collection('restaurants').doc(docId);
       batch.set(docRef, item, { merge: true });
     }
 
     await batch.commit();
-    console.log("所有 168 筆餐廳資料已成功同步到 Firebase Firestore！");
+    console.log("所有餐廳資料已成功同步到 Firebase Firestore！");
   } catch (error) {
     console.error("同步失敗：", error);
     process.exit(1);
