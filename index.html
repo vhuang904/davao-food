@@ -44,8 +44,6 @@
         .tab-content.active { display: block; }
 
         .card { background: white; border-radius: 12px; overflow: hidden; margin-bottom: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.04); border: 1px solid #f3eee3; }
-
-        /* 新聞圖片大小與滿版適應 */
         .card > img { width: 100%; height: 200px; object-fit: cover; background: #f7f5f0; display: block; }
 
         /* 多圖輪播容器 */
@@ -224,6 +222,9 @@
                 title: '📍 大V的美食地圖',
                 tabMap: '🗺️ 美食地圖',
                 tabNews: '📰 美食新聞與促銷',
+                newsSubAll: '全部動態',
+                newsSubPromo: '🔥 限時優惠',
+                newsSubNew: '✨ 新開餐廳',
                 shareBtn: '📤 分享',
                 shareTitle: '大V的美食地圖',
                 shareText: '推薦給你這個菲律賓美食指南與最新促銷！',
@@ -242,6 +243,8 @@
                 emptyCommentAlert: '請輸入暱稱與留言內容！',
                 toggleForumText: '💬 玩家討論與推薦',
                 postBtnText: '發表對此餐廳的評語',
+                slideHint: '👈 左右滑動看多圖',
+                ratingsCountText: '則評分',
                 cities: { all: '全部城市', davao: '達沃', manila: '馬尼拉', cebu: '宿霧' },
                 cats: {
                     all: '全部',
@@ -257,6 +260,9 @@
                 title: "📍 Big V's Food Map",
                 tabMap: '🗺️ Food Map',
                 tabNews: '📰 Food News & Deals',
+                newsSubAll: 'All Updates',
+                newsSubPromo: '🔥 Limited Deals',
+                newsSubNew: '✨ New Spots',
                 shareBtn: '📤 Share',
                 shareTitle: "Big V's Food Map",
                 shareText: 'Check out this awesome Philippines food guide & promos!',
@@ -275,6 +281,8 @@
                 emptyCommentAlert: 'Please enter both nickname and comment!',
                 toggleForumText: '💬 Reviews & Discussion',
                 postBtnText: 'Submit Review for this spot',
+                slideHint: '👈 Swipe to view more photos',
+                ratingsCountText: 'reviews',
                 cities: { all: 'All Cities', davao: 'Davao', manila: 'Manila', cebu: 'Cebu' },
                 cats: {
                     all: 'All',
@@ -290,6 +298,9 @@
                 title: '📍 Mapa ng Pagkain ni Big V',
                 tabMap: '🗺️ Mapa ng Pagkain',
                 tabNews: '📰 Balita at Promo',
+                newsSubAll: 'Lahat',
+                newsSubPromo: '🔥 Mga Promo',
+                newsSubNew: '✨ Bagong Bukas',
                 shareBtn: '📤 Ibahagi',
                 shareTitle: 'Mapa ng Pagkain ni Big V',
                 shareText: 'Subukan ang gabay sa pagkain at mga promo sa Pilipinas!',
@@ -308,6 +319,8 @@
                 emptyCommentAlert: 'Mangyaring ilagay ang pangalan at komento!',
                 toggleForumText: '💬 Diskusyon at Komento',
                 postBtnText: 'I-post ang Komento',
+                slideHint: '👈 I-swipe para sa iba pang litrato',
+                ratingsCountText: 'mga review',
                 cities: { all: 'Lahat ng Lungsod', davao: 'Davao', manila: 'Manila', cebu: 'Cebu' },
                 cats: {
                     all: 'Lahat',
@@ -435,6 +448,10 @@
             document.getElementById('tab-btn-news').innerText = langData.tabNews;
             document.getElementById('share-btn').innerText = langData.shareBtn;
 
+            document.getElementById('news-sub-all').innerText = langData.newsSubAll;
+            document.getElementById('news-sub-promo').innerText = langData.newsSubPromo;
+            document.getElementById('news-sub-new').innerText = langData.newsSubNew;
+
             renderCategoryBar();
             renderList();
             renderNewsList();
@@ -561,10 +578,19 @@
 
                 const commentsList = resComments[resKey] || [];
 
+                // 多語系名稱讀取
+                let displayName = item.name || 'Unknown';
+                if (item.names && item.names[currentLang]) {
+                    displayName = item.names[currentLang];
+                } else if (currentLang !== 'zh-TW' && item.name_en) {
+                    displayName = item.name_en;
+                }
+
+                // 多語系描述讀取
                 let displayDesc = langData.noDesc;
                 if (item.descriptions && item.descriptions[currentLang]) {
                     displayDesc = item.descriptions[currentLang];
-                } else if (item.description_zh) {
+                } else if (currentLang === 'zh-TW' && item.description_zh) {
                     displayDesc = item.description_zh;
                 } else if (item.description) {
                     displayDesc = item.description;
@@ -584,7 +610,7 @@
                 return `
                     <div class="card">
                         <div class="carousel-container">
-                            <span class="photo-tag">👈 左右滑動看多圖 (${imageList.length})</span>
+                            <span class="photo-tag">${langData.slideHint} (${imageList.length})</span>
                             <div class="carousel-track" onscroll="handleCarouselScroll(this, '${resKey}')">
                                 ${carouselSlides}
                             </div>
@@ -598,15 +624,15 @@
                                 <span class="badge badge-city">${langData.cities[item.city || 'davao']}</span>
                                 <span class="badge">${langData.cats[catKey] || catKey}</span>
                             </div>
-                            <div class="card-title">${item.name || 'Unknown'}</div>
+                            <div class="card-title">${displayName}</div>
                             <div class="card-desc">${displayDesc}</div>
                             <div class="info-item">📍 ${item.address || ''}</div>
                             <div class="info-item">📞 ${item.phone || langData.noPhone}</div>
 
                             <div class="card-forum-box">
                                 <div class="rating-header">
-                                    <span class="rating-score">⭐ ${avgRating} / 5.0 (${count}則評分)</span>
-                                    <div class="star-picker" title="點擊進行評分">
+                                    <span class="rating-score">⭐ ${avgRating} / 5.0 (${count} ${langData.ratingsCountText})</span>
+                                    <div class="star-picker" title="Rate">
                                         ${[1, 2, 3, 4, 5].map(s => `
                                             <span class="${s <= userScore ? 'active' : ''}" onclick="rateRestaurant('${resKey}', ${s})">★</span>
                                         `).join('')}
@@ -615,13 +641,13 @@
 
                                 <button class="btn-toggle-forum" onclick="toggleRestaurantForum('${resKey}')">
                                     <span>${langData.toggleForumText} (${commentsList.length})</span>
-                                    <span style="font-size:0.75rem;">▼ 展開 / 留言</span>
+                                    <span style="font-size:0.75rem;">▼</span>
                                 </button>
 
                                 <div class="forum-content" id="forum-${resKey}">
                                     <div class="mini-comment-form">
                                         <div class="mini-form-row">
-                                            <input type="text" id="input-user-${resKey}" class="mini-input" placeholder="暱稱" maxlength="15">
+                                            <input type="text" id="input-user-${resKey}" class="mini-input" placeholder="Nickname" maxlength="15">
                                             <select id="select-rating-${resKey}" class="mini-select">
                                                 <option value="5">⭐⭐⭐⭐⭐</option>
                                                 <option value="4">⭐⭐⭐⭐</option>
@@ -630,7 +656,7 @@
                                                 <option value="1">⭐</option>
                                             </select>
                                         </div>
-                                        <textarea id="input-text-${resKey}" class="mini-textarea" placeholder="分享您對這家餐廳的吃法、推薦菜色或避雷心得..."></textarea>
+                                        <textarea id="input-text-${resKey}" class="mini-textarea" placeholder="Share your review or tips..."></textarea>
                                         <button class="btn-mini-post" onclick="postResComment('${resKey}')">${langData.postBtnText}</button>
                                     </div>
 
@@ -644,7 +670,7 @@
                                                 </div>
                                                 <div class="review-text">${c.text}</div>
                                             </div>
-                                        `).join('') : '<div class="review-item" style="color:#a8a29e; text-align:center;">尚無討論，成為第一個評價這家餐廳的人吧！</div>'}
+                                        `).join('') : `<div class="review-item" style="color:#a8a29e; text-align:center;">No reviews yet. Be the first to share!</div>`}
                                     </div>
                                 </div>
                             </div>
@@ -684,6 +710,35 @@
             }
 
             newsEl.innerHTML = filteredNews.map(item => {
+                // 1. 動態解析多語系標題
+                let titleText = '';
+                if (item.titles && item.titles[currentLang]) {
+                    titleText = item.titles[currentLang];
+                } else if (item.titles && item.titles['en']) {
+                    titleText = item.titles['en'];
+                } else {
+                    titleText = item.title || '';
+                }
+
+                // 2. 動態解析多語系標籤 (Tag)
+                let tagText = '';
+                if (item.tags && item.tags[currentLang]) {
+                    tagText = item.tags[currentLang];
+                } else if (item.tags && item.tags['en']) {
+                    tagText = item.tags['en'];
+                } else {
+                    tagText = item.tag || (item.type === 'promo' ? '🔥 Promo' : '✨ New Spot');
+                }
+
+                // 3. 動態解析有效期限 (Validity)
+                let validityText = '';
+                if (item.validity && typeof item.validity === 'object') {
+                    validityText = item.validity[currentLang] || item.validity['en'] || '';
+                } else if (typeof item.validity === 'string') {
+                    validityText = item.validity;
+                }
+
+                // 4. 動態解析內文描述
                 let descText = '';
                 if (item.descriptions) {
                     descText = item.descriptions[currentLang] || item.descriptions['en'] || '';
@@ -691,20 +746,19 @@
                     descText = item.description_zh;
                 }
 
-                // 支援點擊標題直接跳轉到外部網站
                 const titleHtml = item.url 
-                    ? `<a href="${item.url}" target="_blank" style="color: #1c1917; text-decoration: none; border-bottom: 2px solid #EA580C;" title="點擊前往官方網站">${item.title || ''} 🔗</a>` 
-                    : (item.title || '');
+                    ? `<a href="${item.url}" target="_blank" style="color: #1c1917; text-decoration: none; border-bottom: 2px solid #EA580C;" title="Visit Website">${titleText} 🔗</a>` 
+                    : titleText;
 
                 return `
                     <div class="card">
-                        <img src="${item.imageUrl || 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=800&auto=format&fit=crop'}" alt="${item.title || ''}" loading="lazy">
+                        <img src="${item.imageUrl || 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=800&auto=format&fit=crop'}" alt="${titleText}" loading="lazy">
                         <div class="card-body">
                             <div class="badge-group">
-                                <span class="badge badge-city">${langData.cities[item.city] || '全菲律賓'}</span>
+                                <span class="badge badge-city">${langData.cities[item.city] || 'Philippines'}</span>
                                 ${item.brand ? `<span class="badge badge-brand">${item.brand}</span>` : ''}
-                                <span class="badge badge-promo">${item.tag || '促銷'}</span>
-                                ${item.validity ? `<span class="badge badge-expiry">⏰ ${item.validity}</span>` : ''}
+                                <span class="badge badge-promo">${tagText}</span>
+                                ${validityText ? `<span class="badge badge-expiry">⏰ ${validityText}</span>` : ''}
                             </div>
                             <div class="card-title" style="font-size:1.1rem; margin-top:4px;">${titleHtml}</div>
                             <div class="card-desc" style="color:#44403c; margin-top:8px;">${descText}</div>
