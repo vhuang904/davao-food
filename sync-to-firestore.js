@@ -9,7 +9,6 @@ admin.initializeApp({
 
 const db = admin.firestore();
 
-// 確保強制重新載入的版本標籤 v2026.09
 const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vR7RqEOBMOhNBT_Mo2kee4w4WNugbZFLRRWhmc3c9FWCjams-n9oyaug1bI4lXyd0G9MfU8ftW8utuJ/pub?output=csv';
 
 function parseCSV(text) {
@@ -62,7 +61,8 @@ function parseCSV(text) {
       obj[header] = val.replace(/^"|"$/g, '').trim();
     });
     
-    if (obj.name) {
+    // 只要這一行有任何內容就收錄
+    if (obj.name || obj.city) {
       result.push(obj);
     }
   }
@@ -83,7 +83,7 @@ function fetchCSVData(url) {
 }
 
 async function syncData() {
-  console.log("【最新版 v2】正在從 Google 試算表抓取最新 CSV 資料...");
+  console.log("【最新版 v3】正在從 Google 試算表抓取最新 CSV 資料...");
   try {
     const csvText = await fetchCSVData(SHEET_CSV_URL);
     const restaurantsData = parseCSV(csvText);
@@ -99,17 +99,25 @@ async function syncData() {
     let successCount = 0;
     for (let i = 0; i < restaurantsData.length; i++) {
       const item = restaurantsData[i];
-      if (!item || !item.name) continue;
       
-      const city = (item.city && item.city.trim() !== '') ? item.city.trim().toLowerCase() : 'davao';
-      let safeName = item.name.replace(/[^a-zA-Z0-9]/g, '');
+      // 清理 city 與 name，確保絕對不是空字串
+      const city = (item.city && typeof item.city === 'string' && item.city.trim() !== '') 
+        ? item.city.trim().toLowerCase() 
+        : 'davao';
+        
+      let safeName = (item.name && typeof item.name === 'string') 
+        ? item.name.replace(/[^a-zA-Z0-9]/g, '') 
+        : '';
+        
       if (!safeName || safeName.trim() === '') {
-        safeName = 'store_' + i;
+        safeName = 'restaurant_' + i;
       }
       
       const docId = `${city}_${safeName}`;
       
-      if (!docId || typeof docId !== 'string' || docId.trim() === '' || docId === '_') {
+      // 最終安全防線：檢查 docId 是否為空
+      if (!docId || docId.trim() === '' || docId === '_') {
+        console.log(`跳過無效項目索引 ${i}`);
         continue;
       }
 
@@ -121,7 +129,7 @@ async function syncData() {
     await batch.commit();
     console.log(`所有 ${successCount} 筆餐廳資料已成功同步到 Firebase Firestore！`);
   } catch (error) {
-    console.error("同步失敗：", error);
+    console.error("同步失敗詳細原因：", error);
     process.exit(1);
   }
 }
