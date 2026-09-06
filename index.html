@@ -10,7 +10,7 @@
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #fdfbf7; color: #333; padding-bottom: 30px; }
         
-        /* 頂部 Header：完整包裹所有篩選列，滾動時 100% 固定不移位 */
+        /* 頂部 Header */
         header { background: #EA580C; color: white; padding: 12px 16px 0 16px; box-shadow: 0 4px 10px rgba(0,0,0,0.08); position: sticky; top: 0; z-index: 100; }
         .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
         .header-top h1 { font-size: 1.15rem; font-weight: bold; letter-spacing: 0.5px; }
@@ -22,18 +22,18 @@
         .app-select { flex: 1; background: rgba(255, 255, 255, 0.18); color: white; border: 1px solid rgba(255, 255, 255, 0.4); padding: 6px 10px; border-radius: 6px; font-size: 0.82rem; outline: none; cursor: pointer; text-overflow: ellipsis; }
         .app-select option { color: #333; background: white; }
 
-        /* 主導覽 Tab 切換 (美食地圖 vs 美食新聞) */
+        /* 主導覽 Tab 切換 */
         .main-tabs { display: flex; border-top: 1px solid rgba(255,255,255,0.2); }
         .main-tab-btn { flex: 1; text-align: center; padding: 10px; font-weight: bold; font-size: 0.92rem; color: rgba(255,255,255,0.75); border: none; background: none; cursor: pointer; border-bottom: 3px solid transparent; }
         .main-tab-btn.active { color: white; border-bottom: 3px solid white; }
 
-        /* 包裹在 Header 內的美食地圖分類橫條 */
+        /* 分類列 */
         .category-bar { display: flex; gap: 8px; overflow-x: auto; padding: 10px 16px; background: #ffffff; margin: 0 -16px; border-bottom: 1px solid #f1ece1; }
         .category-bar::-webkit-scrollbar { display: none; }
         .cat-chip { padding: 6px 14px; border-radius: 18px; font-size: 0.85rem; background: #f5f2eb; color: #666; white-space: nowrap; border: none; cursor: pointer; transition: all 0.2s; }
         .cat-chip.active { background: #EA580C; color: white; font-weight: bold; }
 
-        /* 包裹在 Header 內的新聞二級篩選 Bar */
+        /* 新聞二級篩選 Bar */
         .news-filter-bar { display: none; gap: 8px; padding: 10px 16px; background: #ffffff; margin: 0 -16px; border-bottom: 1px solid #f1ece1; }
         .news-sub-btn { flex: 1; padding: 8px 4px; border-radius: 8px; font-size: 0.83rem; font-weight: bold; border: 1px solid #e7e2d7; background: #ffffff; color: #666; cursor: pointer; text-align: center; white-space: nowrap; }
         .news-sub-btn.active { background: #ea580c; color: white; border-color: #ea580c; }
@@ -45,14 +45,14 @@
 
         .card { background: white; border-radius: 12px; overflow: hidden; margin-bottom: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.04); border: 1px solid #f3eee3; }
 
-        /* 🎯 3~5 張圖片滑動輪播器容器 */
+        /* 多圖輪播容器 */
         .carousel-container { position: relative; width: 100%; height: 210px; background: #f7f5f0; overflow: hidden; }
         .carousel-track { display: flex; width: 100%; height: 100%; overflow-x: auto; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; }
         .carousel-track::-webkit-scrollbar { display: none; }
         .carousel-slide { flex: 0 0 100%; width: 100%; height: 100%; scroll-snap-align: start; position: relative; }
         .carousel-slide img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
-        /* 滑動提示指示點 */
+        /* 指示點與標籤 */
         .carousel-dots { position: absolute; bottom: 8px; left: 0; right: 0; display: flex; justify-content: center; gap: 5px; z-index: 10; pointer-events: none; }
         .dot { width: 6px; height: 6px; border-radius: 50%; background: rgba(255, 255, 255, 0.5); }
         .dot.active { background: #ffffff; width: 14px; border-radius: 4px; }
@@ -77,7 +77,7 @@
         .btn-secondary { background: #f5f2eb; color: #44403c; }
         #loading { text-align: center; padding: 40px; color: #a8a29e; }
 
-        /* 討論與評分區塊 */
+        /* 討論區塊 */
         .card-forum-box { background: #faf8f5; border-radius: 10px; padding: 12px; margin-top: 14px; border: 1px dashed #e7e2d7; }
         .rating-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
         .rating-score { font-size: 0.88rem; font-weight: bold; color: #d97706; }
@@ -124,16 +124,13 @@
                 <option value="tl">Tagalog</option>
             </select>
         </div>
-        <!-- 頂部頁籤：美食地圖 vs 美食新聞與促銷 -->
         <div class="main-tabs">
             <button class="main-tab-btn active" id="tab-btn-map" onclick="switchMainTab('map')">🗺️ 美食地圖</button>
             <button class="main-tab-btn" id="tab-btn-news" onclick="switchMainTab('news')">📰 美食新聞與促銷</button>
         </div>
         
-        <!-- 包裹在 Header 內：美食地圖專用分類列 -->
         <div class="category-bar" id="category-bar"></div>
 
-        <!-- 包裹在 Header 內：美食新聞專用篩選列 -->
         <div class="news-filter-bar" id="news-filter-bar">
             <button class="news-sub-btn active" id="news-sub-all" onclick="filterNewsType('all')">全部動態</button>
             <button class="news-sub-btn" id="news-sub-promo" onclick="filterNewsType('promo')">🔥 限時優惠</button>
@@ -141,7 +138,6 @@
         </div>
     </header>
 
-    <!-- 1. 美食地圖 Tab 內容 -->
     <div id="main-tab-map" class="tab-content active">
         <div class="container">
             <div id="loading">載入最新美食清單中...</div>
@@ -149,7 +145,6 @@
         </div>
     </div>
 
-    <!-- 2. 獨立新聞與特惠 Tab 內容 -->
     <div id="main-tab-news" class="tab-content">
         <div class="container">
             <div id="news-list"></div>
@@ -562,7 +557,6 @@
             if (el) el.classList.add('show');
         }
 
-        // 🎯 生成 3 ~ 5 張多圖高清輪播陣列演算法
         function getUniqueRestaurantImageArray(name, catKey) {
             const pool = categoryImagePools[catKey] || categoryImagePools.filipino;
             let hash = 0;
@@ -572,7 +566,6 @@
             }
             const startIndex = Math.abs(hash) % pool.length;
             
-            // 隨機選取 4 張相片組合
             const images = [];
             for (let i = 0; i < 4; i++) {
                 images.push(pool[(startIndex + i) % pool.length]);
@@ -580,7 +573,6 @@
             return images;
         }
 
-        // 🎯 監聽輪播滑動，自動切換提示圓點 (Indicator Dots)
         function handleCarouselScroll(el, resKey) {
             const scrollLeft = el.scrollLeft;
             const width = el.clientWidth;
@@ -613,7 +605,6 @@
                 const catKey = item.categoryKey || 'filipino';
                 const resKey = (item.city || 'davao') + '_' + (item.name || idx).replace(/[^a-zA-Z0-9]/g, '');
 
-                // 取得 4 張輪播圖片清單
                 const imageList = getUniqueRestaurantImageArray(item ? item.name : '', catKey);
 
                 const ratingData = itemRatings[resKey] || { scores: [5], userRated: null };
@@ -631,22 +622,24 @@
                     displayDesc = item.description;
                 }
 
+                // 修正純字串拼接，避免語法解析拋錯
+                var carouselSlides = imageList.map(function(imgUrl) {
+                    return '<div class="carousel-slide"><img src="' + imgUrl + '" alt="Restaurant" loading="lazy"></div>';
+                }).join('');
+
+                var carouselDots = imageList.map(function(_, imgIdx) {
+                    return '<div class="dot ' + (imgIdx === 0 ? 'active' : '') + '"></div>';
+                }).join('');
+
                 return `
                     <div class="card">
-                        <!-- 🎯 多圖左右滑動輪播模組 (包含 4 張照片與圓點指示器) -->
                         <div class="carousel-container">
                             <span class="photo-tag">👈 左右滑動看多圖 (${imageList.length})</span>
                             <div class="carousel-track" onscroll="handleCarouselScroll(this, '${resKey}')">
-                                ${imageList.map((imgUrl, imgIdx) => `
-                                    <div class="carousel-slide">
-                                        <img src="${imgUrl}" alt="${item.name || 'Restaurant'}" loading="lazy">
-                                    </div>
-                                `).join('')}
+                                ${carouselSlides}
                             </div>
                             <div class="carousel-dots" id="dots-${resKey}">
-                                ${imageList.map((_, imgIdx) => `
-                                    <div class="dot ${imgIdx === 0 ? 'active' : ''}"></div>
-                                `).join('')}
+                                ${carouselDots}
                             </div>
                         </div>
 
