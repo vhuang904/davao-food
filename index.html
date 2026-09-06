@@ -669,7 +669,15 @@
 
             const filteredNews = (allNews || []).filter(item => {
                 const matchesCity = (currentCity === 'all') || (item.city === 'all') || (item.city === currentCity);
-                const matchesSub = (currentNewsSubFilter === 'all') || (item.type === currentNewsSubFilter);
+                
+                // 這裡精準對應子標籤過濾邏輯
+                let matchesSub = true;
+                if (currentNewsSubFilter === 'promo') {
+                    matchesSub = (item.type === 'promo');
+                } else if (currentNewsSubFilter === 'new') {
+                    matchesSub = (item.type === 'new');
+                }
+
                 return matchesCity && matchesSub;
             });
 
