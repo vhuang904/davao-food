@@ -61,8 +61,11 @@ function parseCSV(text) {
       obj[header] = val.replace(/^"|"$/g, '').trim();
     });
     
-    // 只要這一行有任何內容就收錄
-    if (obj.name || obj.city) {
+    // 過濾掉 Google 試算表分組產生的無效行（例如群組標題、數字計數行）
+    if (obj.name && 
+        !obj.name.toLowerCase().startsWith('city:') && 
+        !/^\d+$/.test(obj.name) &&
+        obj.categoryKey) {
       result.push(obj);
     }
   }
@@ -83,13 +86,13 @@ function fetchCSVData(url) {
 }
 
 async function syncData() {
-  console.log("【最新版 v3】正在從 Google 試算表抓取最新 CSV 資料...");
+  console.log("【最新版 v4 - 支援分組表格】正在從 Google 試算表抓取最新 CSV 資料...");
   try {
     const csvText = await fetchCSVData(SHEET_CSV_URL);
     const restaurantsData = parseCSV(csvText);
 
     if (restaurantsData.length === 0) {
-      console.log("警告：解析後沒有找到任何餐廳資料。");
+      console.log("警告：解析後沒有找到任何餐廳資料。請檢查試算表格式。");
       return;
     }
 
@@ -100,7 +103,6 @@ async function syncData() {
     for (let i = 0; i < restaurantsData.length; i++) {
       const item = restaurantsData[i];
       
-      // 清理 city 與 name，確保絕對不是空字串
       const city = (item.city && typeof item.city === 'string' && item.city.trim() !== '') 
         ? item.city.trim().toLowerCase() 
         : 'davao';
@@ -115,9 +117,7 @@ async function syncData() {
       
       const docId = `${city}_${safeName}`;
       
-      // 最終安全防線：檢查 docId 是否為空
       if (!docId || docId.trim() === '' || docId === '_') {
-        console.log(`跳過無效項目索引 ${i}`);
         continue;
       }
 
