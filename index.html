@@ -51,10 +51,24 @@
         .info-item { font-size: 0.85rem; color: #78716c; margin-bottom: 4px; display: flex; align-items: center; gap: 6px; }
         
         .btn-group { display: flex; gap: 8px; margin-top: 14px; }
-        .btn { flex: 1; padding: 10px; border-radius: 8px; font-size: 0.85rem; font-weight: bold; text-align: center; text-decoration: none; border: none; }
+        .btn { flex: 1; padding: 10px; border-radius: 8px; font-size: 0.85rem; font-weight: bold; text-align: center; text-decoration: none; border: none; cursor: pointer; }
         .btn-primary { background: #EA580C; color: white; }
         .btn-secondary { background: #f5f2eb; color: #44403c; }
         #loading { text-align: center; padding: 40px; color: #a8a29e; }
+
+        /* 餐廳卡片內建：玩家評分與極值點選區塊 */
+        .rating-box { background: #faf8f5; border-radius: 8px; padding: 10px 12px; margin-top: 12px; border: 1px dashed #e7e2d7; }
+        .rating-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+        .rating-score { font-size: 0.88rem; font-weight: bold; color: #d97706; }
+        .star-picker { display: flex; gap: 4px; cursor: pointer; }
+        .star-picker span { font-size: 1.1rem; color: #d1d5db; transition: color 0.15s; }
+        .star-picker span.active { color: #f59e0b; }
+        
+        .reviews-section { margin-top: 8px; display: none; padding-top: 8px; border-top: 1px solid #f0eae1; }
+        .reviews-section.show { display: block; }
+        .review-item { font-size: 0.8rem; color: #57534e; padding: 4px 0; border-bottom: 1px solid #f5f2eb; }
+        .review-item:last-child { border-bottom: none; }
+        .btn-toggle-reviews { background: none; border: none; color: #ea580c; font-size: 0.78rem; font-weight: bold; cursor: pointer; padding: 4px 0; width: 100%; text-align: left; }
 
         /* 討論區表單與列表 */
         .comment-form { background: white; border-radius: 12px; padding: 16px; margin-bottom: 20px; border: 1px solid #f3eee3; box-shadow: 0 4px 12px rgba(0,0,0,0.04); }
@@ -172,6 +186,7 @@
                 lblContent: '留言內容：',
                 btnPost: '發送留言',
                 emptyCommentAlert: '請填寫暱稱與留言內容！',
+                rateSuccess: '感謝評分！您的評分已成功記錄。',
                 cities: { all: '全部城市', davao: '達沃', manila: '馬尼拉', cebu: '宿霧' },
                 cats: {
                     all: '全部',
@@ -203,6 +218,7 @@
                 lblContent: 'Comment:',
                 btnPost: 'Submit Comment',
                 emptyCommentAlert: 'Please enter both your nickname and comment!',
+                rateSuccess: 'Thank you! Your rating has been recorded.',
                 cities: { all: 'All Cities', davao: 'Davao', manila: 'Manila', cebu: 'Cebu' },
                 cats: {
                     all: 'All',
@@ -234,6 +250,7 @@
                 lblContent: 'Komento:',
                 btnPost: 'I-post ang Komento',
                 emptyCommentAlert: 'Mangyaring ilagay ang iyong pangalan at komento!',
+                rateSuccess: 'Salamat! Na-itala na ang iyong rating.',
                 cities: { all: 'Lahat ng Lungsod', davao: 'Davao', manila: 'Manila', cebu: 'Cebu' },
                 cats: {
                     all: 'Lahat',
@@ -253,7 +270,10 @@
         let currentMainTab = 'map';
         let allRestaurants = [];
 
-        // 預設討論區範例留言
+        // 使用者評分與玩家推薦儲存區 (localStorage)
+        let itemRatings = JSON.parse(localStorage.getItem('ph_item_ratings')) || {};
+
+        // 預設討論區留言
         let comments = JSON.parse(localStorage.getItem('ph_app_comments')) || [
             { id: 1, user: "大V", city: "davao", rating: 5, text: "歡迎大家來到達沃美食討論區！推薦大家一定要嘗試馬蒂納 (Matina) 的 Yaki Together 日式燒肉！", time: "2026-03-01 18:30" },
             { id: 2, user: "DavaoLocal", city: "davao", rating: 5, text: "Jack's Ridge 夜景非常讚，食物也是道地的菲律賓風味！", time: "2026-03-02 12:15" }
@@ -348,6 +368,24 @@
             `).join('');
         }
 
+        // 個別餐廳星級評分點選機制 (1~5顆星)
+        function rateRestaurant(resKey, score) {
+            if (!itemRatings[resKey]) {
+                itemRatings[resKey] = { scores: [], userRated: null };
+            }
+            itemRatings[resKey].scores.push(score);
+            itemRatings[resKey].userRated = score;
+            localStorage.setItem('ph_item_ratings', JSON.stringify(itemRatings));
+            
+            alert(i18n[currentLang].rateSuccess);
+            renderList();
+        }
+
+        function toggleReviews(resKey) {
+            const el = document.getElementById('reviews-' + resKey);
+            if (el) el.classList.toggle('show');
+        }
+
         function renderList() {
             const listEl = document.getElementById('restaurant-list');
             document.getElementById('loading').style.display = 'none';
@@ -364,10 +402,18 @@
                 return;
             }
 
-            listEl.innerHTML = filtered.map(item => {
+            listEl.innerHTML = filtered.map((item, idx) => {
                 const catKey = item.categoryKey || 'filipino';
                 const defaultImg = fallbackImages[catKey] || fallbackImages.filipino;
                 const imgSrc = (item.imageUrl && item.imageUrl.startsWith('http')) ? item.imageUrl : defaultImg;
+                const resKey = (item.city || 'davao') + '_' + (item.name || idx).replace(/[^a-zA-Z0-9]/g, '');
+
+                // 計算評分
+                const ratingData = itemRatings[resKey] || { scores: [5], userRated: null };
+                const totalScores = ratingData.scores;
+                const avgRating = (totalScores.reduce((a, b) => a + b, 0) / totalScores.length).toFixed(1);
+                const count = totalScores.length;
+                const userScore = ratingData.userRated || 0;
 
                 let displayDesc = langData.noDesc;
                 if (item.descriptions && item.descriptions[currentLang]) {
@@ -375,6 +421,9 @@
                 } else if (item.description) {
                     displayDesc = item.description;
                 }
+
+                // 比對討論區中關於這家餐廳的玩家留言
+                const matchedComments = comments.filter(c => c.text.toLowerCase().includes((item.name || '').toLowerCase()));
 
                 return `
                     <div class="card">
@@ -391,6 +440,29 @@
                             <div class="card-desc">${displayDesc}</div>
                             <div class="info-item">📍 ${item.address || ''}</div>
                             <div class="info-item">📞 ${item.phone || langData.noPhone}</div>
+
+                            <!-- 玩家評分與極值 1~5 顆星選擇區塊 -->
+                            <div class="rating-box">
+                                <div class="rating-header">
+                                    <span class="rating-score">⭐ ${avgRating} / 5.0 (${count}則評分)</span>
+                                    <div class="star-picker" title="點擊進行評分">
+                                        ${[1, 2, 3, 4, 5].map(s => `
+                                            <span class="${s <= userScore ? 'active' : ''}" onclick="rateRestaurant('${resKey}', ${s})">★</span>
+                                        `).join('')}
+                                    </div>
+                                </div>
+                                <button class="btn-toggle-reviews" onclick="toggleReviews('${resKey}')">
+                                    💬 玩家推薦與心得 (${matchedComments.length})
+                                </button>
+                                <div class="reviews-section" id="reviews-${resKey}">
+                                    ${matchedComments.length > 0 ? matchedComments.map(mc => `
+                                        <div class="review-item">
+                                            <strong>${mc.user}</strong>: ${mc.text}
+                                        </div>
+                                    `).join('') : '<div class="review-item" style="color:#a8a29e;">目前尚無針對此餐廳的專屬心得，歡迎在討論區留言！</div>'}
+                                </div>
+                            </div>
+
                             <div class="btn-group">
                                 <a class="btn btn-primary" href="tel:${item.phone}">${langData.call}</a>
                                 <a class="btn btn-secondary" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent((item.name || '') + ' ' + (item.address || ''))}" target="_blank">${langData.map}</a>
@@ -453,6 +525,7 @@
 
             document.getElementById('comment-text').value = '';
             renderComments();
+            renderList();
         }
 
         fetchRestaurants();
