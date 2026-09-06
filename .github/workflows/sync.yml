@@ -24,7 +24,6 @@ jobs:
         env:
           FIRECRAWL_KEY: ${{ secrets.FIRECRAWL_API_KEY }}
         run: |
-          # 定義抓取函式，支援 OpenTable, Yelp, Tripadvisor 與 Google 食記部落格
           fetch_city() {
             CITY=$1
             
@@ -32,21 +31,19 @@ jobs:
             curl -X POST https://api.firecrawl.dev/v1/scrape \
               -H "Content-Type: application/json" \
               -H "Authorization: Bearer $FIRECRAWL_KEY" \
-              -d "{\"url\": \"https://www.tripadvisor.com/Search?q=${CITY}+restaurants\", \"formats\": [\"extract\"], \"extract\": {\"prompt\": \"Extract restaurant listings in ${CITY} with name, phone, address, description, imageUrl, and cuisine type.\", \"schema\": {\"type\": \"object\", \"properties\": {\"restaurants\": {\"type\": \"array\", \"items\": {\"type\": \"object\", \"properties\": {\"name\": {\"type\": \"string\"}, \"phone\": {\"type\": \"string\"}, \"address\": {\"type\": \"string\"}, \"description\": {\"type\": \"string\"}, \"imageUrl\": {\"type\": \"string\"}, \"category\": {\"type\": \"string\"}}}}}}}}" > "res_${CITY}_ta.json"
+              -d "{\"url\": \"https://www.tripadvisor.com/Search?q=${CITY}+restaurants\", \"formats\": [\"extract\"], \"extract\": {\"prompt\": \"Extract restaurant listings in ${CITY}. For each, provide name, phone, address, imageUrl, cuisine category, and write a short description in Traditional Chinese (desc_zh), English (desc_en), and Tagalog (desc_tl).\", \"schema\": {\"type\": \"object\", \"properties\": {\"restaurants\": {\"type\": \"array\", \"items\": {\"type\": \"object\", \"properties\": {\"name\": {\"type\": \"string\"}, \"phone\": {\"type\": \"string\"}, \"address\": {\"type\": \"string\"}, \"desc_zh\": {\"type\": \"string\"}, \"desc_en\": {\"type\": \"string\"}, \"desc_tl\": {\"type\": \"string\"}, \"imageUrl\": {\"type\": \"string\"}, \"category\": {\"type\": \"string\"}}}}}}}}" > "res_${CITY}_ta.json"
 
             # 2. OpenTable / Yelp / 食記部落格綜合搜尋
             curl -X POST https://api.firecrawl.dev/v1/scrape \
               -H "Content-Type: application/json" \
               -H "Authorization: Bearer $FIRECRAWL_KEY" \
-              -d "{\"url\": \"https://www.google.com/search?q=top+restaurants+and+food+blogs+in+${CITY}+site:opentable.com+OR+site:yelp.com+OR+blogs\", \"formats\": [\"extract\"], \"extract\": {\"prompt\": \"Extract popular restaurants and blog recommendations in ${CITY} including name, address, phone, description, imageUrl, and cuisine type.\", \"schema\": {\"type\": \"object\", \"properties\": {\"restaurants\": {\"type\": \"array\", \"items\": {\"type\": \"object\", \"properties\": {\"name\": {\"type\": \"string\"}, \"phone\": {\"type\": \"string\"}, \"address\": {\"type\": \"string\"}, \"description\": {\"type\": \"string\"}, \"imageUrl\": {\"type\": \"string\"}, \"category\": {\"type\": \"string\"}}}}}}}}" > "res_${CITY}_blogs.json"
+              -d "{\"url\": \"https://www.google.com/search?q=top+restaurants+in+${CITY}+site:opentable.com+OR+site:yelp.com\", \"formats\": [\"extract\"], \"extract\": {\"prompt\": \"Extract popular restaurants in ${CITY} including name, address, phone, imageUrl, cuisine category, and write short descriptions in Traditional Chinese (desc_zh), English (desc_en), and Tagalog (desc_tl).\", \"schema\": {\"type\": \"object\", \"properties\": {\"restaurants\": {\"type\": \"array\", \"items\": {\"type\": \"object\", \"properties\": {\"name\": {\"type\": \"string\"}, \"phone\": {\"type\": \"string\"}, \"address\": {\"type\": \"string\"}, \"desc_zh\": {\"type\": \"string\"}, \"desc_en\": {\"type\": \"string\"}, \"desc_tl\": {\"type\": \"string\"}, \"imageUrl\": {\"type\": \"string\"}, \"category\": {\"type\": \"string\"}}}}}}}}" > "res_${CITY}_blogs.json"
           }
 
-          # 依次抓取三個城市
           fetch_city "davao"
           fetch_city "manila"
           fetch_city "cebu"
 
-          # 使用 Node.js 彙整、去重並標註城市標籤
           node -e "
             const fs = require('fs');
 
@@ -58,7 +55,7 @@ jobs:
             }
 
             function mapCategoryKey(item) {
-              const text = ((item.category || '') + ' ' + (item.name || '') + ' ' + (item.description || '')).toLowerCase();
+              const text = ((item.category || '') + ' ' + (item.name || '') + ' ' + (item.desc_en || '')).toLowerCase();
               if (/chinese|dim sum|noodle|asian|taiwanese|hong kong/i.test(text)) return 'chinese';
               if (/american|burger|steak|pizza|fast food/i.test(text)) return 'american';
               if (/bbq|barbecue|grill|lechon|ihaw/i.test(text)) return 'bbq';
@@ -83,7 +80,11 @@ jobs:
                     name: r.name,
                     phone: r.phone || '',
                     address: r.address || (city.toUpperCase() + ' City'),
-                    description: r.description || '',
+                    descriptions: {
+                      'zh-TW': r.desc_zh || r.desc_en || '暫無介紹。',
+                      'en': r.desc_en || r.desc_zh || 'No description available.',
+                      'tl': r.desc_tl || r.desc_en || 'Walang magagamit na paglalarawan.'
+                    },
                     imageUrl: r.imageUrl || '',
                     categoryKey: mapCategoryKey(r)
                   });
@@ -93,7 +94,7 @@ jobs:
 
             const merged = Array.from(map.values());
             fs.writeFileSync('restaurants.json', JSON.stringify(merged, null, 2));
-            console.log('Saved ' + merged.length + ' restaurants across Davao, Manila, and Cebu.');
+            console.log('Saved ' + merged.length + ' multi-lingual description restaurants.');
           "
 
       - name: Commit and Push updated JSON
@@ -101,5 +102,5 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add restaurants.json
-          git commit -m "Expand scraping to Manila, Cebu, Davao with multi-platform sources" || exit 0
+          git commit -m "Add multi-language restaurant descriptions (ZH, EN, TL)" || exit 0
           git push
