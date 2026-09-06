@@ -10,11 +10,13 @@
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #f4f6f9; color: #333; padding-bottom: 20px; }
         
-        header { background: #4CAF50; color: white; padding: 14px 16px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 100; }
-        .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+        header { background: #4CAF50; color: white; padding: 12px 16px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 100; }
+        .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
         .header-top h1 { font-size: 1.15rem; font-weight: bold; }
         
-        .app-select { background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.5); padding: 4px 8px; border-radius: 6px; font-size: 0.85rem; outline: none; cursor: pointer; }
+        /* 同一排選單排版 */
+        .controls-row { display: flex; gap: 8px; align-items: center; }
+        .app-select { flex: 1; background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.5); padding: 6px 8px; border-radius: 6px; font-size: 0.82rem; outline: none; cursor: pointer; text-overflow: ellipsis; }
         .app-select option { color: #333; background: white; }
 
         .category-bar { display: flex; gap: 8px; overflow-x: auto; padding: 12px 16px; background: white; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
@@ -44,19 +46,19 @@
     <header>
         <div class="header-top">
             <h1 id="app-title">📍 菲律賓美食指南</h1>
-            <select class="app-select" id="lang-select" onchange="changeLanguage(this.value)">
-                <option value="zh-TW">繁體中文</option>
-                <option value="en">English</option>
-                <option value="tl">Tagalog</option>
-            </select>
         </div>
-        <div style="display: flex; align-items: center; gap: 8px;">
-            <span style="font-size: 0.85rem;" id="city-label">選擇城市：</span>
-            <select class="app-select" id="city-select" onchange="changeCity(this.value)" style="flex:1;">
-                <option value="all">全部城市 (All Cities)</option>
-                <option value="davao">達沃 (Davao)</option>
-                <option value="manila">馬尼拉 (Manila)</option>
-                <option value="cebu">宿霧 (Cebu)</option>
+        <!-- 城市與語系放在同一排 -->
+        <div class="controls-row">
+            <select class="app-select" id="city-select" onchange="changeCity(this.value)">
+                <option value="all">🏙️ 全部城市 (All Cities)</option>
+                <option value="davao">🏙️ 達沃 (Davao)</option>
+                <option value="manila">🏙️ 馬尼拉 (Manila)</option>
+                <option value="cebu">🏙️ 宿霧 (Cebu)</option>
+            </select>
+            <select class="app-select" id="lang-select" onchange="changeLanguage(this.value)">
+                <option value="zh-TW">🌐 繁體中文</option>
+                <option value="en">🌐 English</option>
+                <option value="tl">🌐 Tagalog</option>
             </select>
         </div>
     </header>
@@ -81,7 +83,6 @@
         const i18n = {
             'zh-TW': {
                 title: '📍 菲律賓美食指南',
-                cityLabel: '選擇城市：',
                 loading: '載入最新美食清單中...',
                 noData: '目前沒有找到對應的餐廳資料',
                 call: '撥打電話',
@@ -101,7 +102,6 @@
             },
             'en': {
                 title: '📍 PH Food Guide',
-                cityLabel: 'City:',
                 loading: 'Loading latest restaurants...',
                 noData: 'No restaurants found',
                 call: 'Call',
@@ -121,7 +121,6 @@
             },
             'tl': {
                 title: '📍 PH Food Guide',
-                cityLabel: 'Lungsod:',
                 loading: 'Kina-karga ang mga kainan...',
                 noData: 'Walang nahanap na kainan',
                 call: 'Tawagan',
@@ -178,7 +177,6 @@
             document.getElementById('lang-select').value = currentLang;
             document.getElementById('city-select').value = currentCity;
             document.getElementById('app-title').innerText = i18n[currentLang].title;
-            document.getElementById('city-label').innerText = i18n[currentLang].cityLabel;
             renderCategoryBar();
             renderList();
         }
@@ -216,7 +214,6 @@
                 const defaultImg = fallbackImages[catKey] || fallbackImages.filipino;
                 const imgSrc = (item.imageUrl && item.imageUrl.startsWith('http')) ? item.imageUrl : defaultImg;
 
-                // 依據目前語言自動選擇對應的店家介紹欄位
                 let displayDesc = langData.noDesc;
                 if (item.descriptions && item.descriptions[currentLang]) {
                     displayDesc = item.descriptions[currentLang];
