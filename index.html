@@ -568,7 +568,10 @@
                 const catKey = item.categoryKey || 'filipino';
                 const resKey = (item.city || 'davao') + '_' + (item.name || idx).replace(/[^a-zA-Z0-9]/g, '');
 
-                const imageList = getUniqueRestaurantImageArray(item ? item.name : '', catKey);
+                // 核心重點（步驟三）：優先讀取 Google Places API 抓取的真實照片，沒有時才用分類圖庫備援
+                const imageList = (item.images && Array.isArray(item.images) && item.images.length > 0)
+                    ? item.images
+                    : getUniqueRestaurantImageArray(item ? item.name : '', catKey);
 
                 const ratingData = itemRatings[resKey] || { scores: [5], userRated: null };
                 const totalScores = ratingData.scores;
