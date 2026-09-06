@@ -44,7 +44,20 @@
         .tab-content.active { display: block; }
 
         .card { background: white; border-radius: 12px; overflow: hidden; margin-bottom: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.04); border: 1px solid #f3eee3; }
-        .card img { width: 100%; height: 200px; object-fit: cover; background: #f7f5f0; display: block; }
+
+        /* 🎯 3~5 張圖片滑動輪播器容器 */
+        .carousel-container { position: relative; width: 100%; height: 210px; background: #f7f5f0; overflow: hidden; }
+        .carousel-track { display: flex; width: 100%; height: 100%; overflow-x: auto; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; }
+        .carousel-track::-webkit-scrollbar { display: none; }
+        .carousel-slide { flex: 0 0 100%; width: 100%; height: 100%; scroll-snap-align: start; position: relative; }
+        .carousel-slide img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+        /* 滑動提示指示點 */
+        .carousel-dots { position: absolute; bottom: 8px; left: 0; right: 0; display: flex; justify-content: center; gap: 5px; z-index: 10; pointer-events: none; }
+        .dot { width: 6px; height: 6px; border-radius: 50%; background: rgba(255, 255, 255, 0.5); }
+        .dot.active { background: #ffffff; width: 14px; border-radius: 4px; }
+        .photo-tag { position: absolute; top: 8px; right: 8px; background: rgba(0, 0, 0, 0.55); color: white; font-size: 0.7rem; padding: 2px 6px; border-radius: 4px; z-index: 10; }
+
         .card-body { padding: 16px; }
         
         .badge-group { display: flex; gap: 6px; margin-bottom: 8px; flex-wrap: wrap; }
@@ -149,36 +162,42 @@
                 "https://images.unsplash.com/photo-1563245372-f21724e3856d?w=800&auto=format&fit=crop",
                 "https://images.unsplash.com/photo-1541696432-82c6da8ce7bf?w=800&auto=format&fit=crop",
                 "https://images.unsplash.com/photo-1525755662778-989d0524087e?w=800&auto=format&fit=crop",
-                "https://images.unsplash.com/photo-1585032226651-759b368d7246?w=800&auto=format&fit=crop"
+                "https://images.unsplash.com/photo-1585032226651-759b368d7246?w=800&auto=format&fit=crop",
+                "https://images.unsplash.com/photo-1569058242567-93de6f36f8e6?w=800&auto=format&fit=crop"
             ],
             japanese_korean: [
                 "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=800&auto=format&fit=crop",
                 "https://images.unsplash.com/photo-1579871494447-9811cf80d66c?w=800&auto=format&fit=crop",
                 "https://images.unsplash.com/photo-1553621042-f6e147245754?w=800&auto=format&fit=crop",
-                "https://images.unsplash.com/photo-1611143669185-af224c5e3252?w=800&auto=format&fit=crop"
+                "https://images.unsplash.com/photo-1611143669185-af224c5e3252?w=800&auto=format&fit=crop",
+                "https://images.unsplash.com/photo-1580822184713-fc5400e7fe10?w=800&auto=format&fit=crop"
             ],
             american_western: [
                 "https://images.unsplash.com/photo-1550547660-d9450f859349?w=800&auto=format&fit=crop",
                 "https://images.unsplash.com/photo-1586190848861-99aa4a171e90?w=800&auto=format&fit=crop",
                 "https://images.unsplash.com/photo-1544025162-d76694265947?w=800&auto=format&fit=crop",
-                "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=800&auto=format&fit=crop"
+                "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=800&auto=format&fit=crop",
+                "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=800&auto=format&fit=crop"
             ],
             bbq_seafood: [
                 "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=800&auto=format&fit=crop",
                 "https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?w=800&auto=format&fit=crop",
                 "https://images.unsplash.com/photo-1529193591184-b1d58069ecdd?w=800&auto=format&fit=crop",
-                "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=800&auto=format&fit=crop"
+                "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=800&auto=format&fit=crop",
+                "https://images.unsplash.com/photo-1544025162-d76694265947?w=800&auto=format&fit=crop"
             ],
             cafe_dessert: [
                 "https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=800&auto=format&fit=crop",
                 "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=800&auto=format&fit=crop",
                 "https://images.unsplash.com/photo-1517256064527-09c73fc73e38?w=800&auto=format&fit=crop",
-                "https://images.unsplash.com/photo-1559925393-8be0ec4767c8?w=800&auto=format&fit=crop"
+                "https://images.unsplash.com/photo-1559925393-8be0ec4767c8?w=800&auto=format&fit=crop",
+                "https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=800&auto=format&fit=crop"
             ],
             filipino: [
                 "https://images.unsplash.com/photo-1541544741938-0af808871cc0?w=800&auto=format&fit=crop",
                 "https://images.unsplash.com/photo-1626777552726-4a6b54c97e46?w=800&auto=format&fit=crop",
-                "https://images.unsplash.com/photo-1565299585323-38d6b0865b47?w=800&auto=format&fit=crop"
+                "https://images.unsplash.com/photo-1565299585323-38d6b0865b47?w=800&auto=format&fit=crop",
+                "https://images.unsplash.com/photo-1604382354936-07c5d9983bd3?w=800&auto=format&fit=crop"
             ]
         };
 
@@ -375,7 +394,6 @@
             }
         ];
 
-        // 🎯 透過 localStorage 讀取並記住當前頁面與分類狀態
         let currentLang = localStorage.getItem('ph_app_lang') || 'zh-TW';
         let currentCity = localStorage.getItem('ph_app_city') || 'all';
         let currentCategoryKey = localStorage.getItem('ph_app_cat') || 'all';
@@ -399,13 +417,10 @@
                 allRestaurants = [];
             }
             renderUI();
-            
-            // 🎯 載入後，恢復使用者上次停留在的頁面狀態
             switchMainTab(currentMainTab);
             filterNewsType(currentNewsSubFilter);
         }
 
-        /* 🎯 切換主 Tab：同步存入 localStorage 記憶 */
         function switchMainTab(tab) {
             currentMainTab = tab;
             localStorage.setItem('ph_app_tab', tab);
@@ -421,7 +436,6 @@
             if (tab === 'news') renderNewsList();
         }
 
-        /* 🎯 切換新聞子分類：同步存入 localStorage 記憶 */
         function filterNewsType(subType) {
             currentNewsSubFilter = subType;
             localStorage.setItem('ph_app_news_sub', subType);
@@ -548,25 +562,34 @@
             if (el) el.classList.add('show');
         }
 
-        function getUniqueRestaurantImage(name, catKey) {
+        // 🎯 生成 3 ~ 5 張多圖高清輪播陣列演算法
+        function getUniqueRestaurantImageArray(name, catKey) {
             const pool = categoryImagePools[catKey] || categoryImagePools.filipino;
             let hash = 0;
             const str = name || 'default';
             for (let i = 0; i < str.length; i++) {
                 hash = str.charCodeAt(i) + ((hash << 5) - hash);
             }
-            const index = Math.abs(hash) % pool.length;
-            return pool[index];
+            const startIndex = Math.abs(hash) % pool.length;
+            
+            // 隨機選取 4 張相片組合
+            const images = [];
+            for (let i = 0; i < 4; i++) {
+                images.push(pool[(startIndex + i) % pool.length]);
+            }
+            return images;
         }
 
-        function getInitialImage(item, catKey) {
-            if (item && item.imageUrl && typeof item.imageUrl === 'string') {
-                const url = item.imageUrl.trim();
-                if (!url.includes('google') && !url.includes('maps') && !url.includes('lh3') && url.startsWith('http')) {
-                    return url;
-                }
-            }
-            return getUniqueRestaurantImage(item ? item.name : '', catKey || 'filipino');
+        // 🎯 監聽輪播滑動，自動切換提示圓點 (Indicator Dots)
+        function handleCarouselScroll(el, resKey) {
+            const scrollLeft = el.scrollLeft;
+            const width = el.clientWidth;
+            const index = Math.round(scrollLeft / width);
+            
+            const dots = document.querySelectorAll('#dots-' + resKey + ' .dot');
+            dots.forEach((dot, idx) => {
+                dot.classList.toggle('active', idx === index);
+            });
         }
 
         function renderList() {
@@ -588,10 +611,10 @@
 
             listEl.innerHTML = filtered.map((item, idx) => {
                 const catKey = item.categoryKey || 'filipino';
-                const imgSrc = getInitialImage(item, catKey);
-                const defaultImg = getUniqueRestaurantImage(item ? item.name : '', catKey);
-                
                 const resKey = (item.city || 'davao') + '_' + (item.name || idx).replace(/[^a-zA-Z0-9]/g, '');
+
+                // 取得 4 張輪播圖片清單
+                const imageList = getUniqueRestaurantImageArray(item ? item.name : '', catKey);
 
                 const ratingData = itemRatings[resKey] || { scores: [5], userRated: null };
                 const totalScores = ratingData.scores;
@@ -610,10 +633,23 @@
 
                 return `
                     <div class="card">
-                        <img src="${imgSrc}" 
-                             alt="${item.name || 'Restaurant'}" 
-                             onerror="this.onerror=null; this.src='${defaultImg}';" 
-                             loading="lazy">
+                        <!-- 🎯 多圖左右滑動輪播模組 (包含 4 張照片與圓點指示器) -->
+                        <div class="carousel-container">
+                            <span class="photo-tag">👈 左右滑動看多圖 (${imageList.length})</span>
+                            <div class="carousel-track" onscroll="handleCarouselScroll(this, '${resKey}')">
+                                ${imageList.map((imgUrl, imgIdx) => `
+                                    <div class="carousel-slide">
+                                        <img src="${imgUrl}" alt="${item.name || 'Restaurant'}" loading="lazy">
+                                    </div>
+                                `).join('')}
+                            </div>
+                            <div class="carousel-dots" id="dots-${resKey}">
+                                ${imageList.map((_, imgIdx) => `
+                                    <div class="dot ${imgIdx === 0 ? 'active' : ''}"></div>
+                                `).join('')}
+                            </div>
+                        </div>
+
                         <div class="card-body">
                             <div class="badge-group">
                                 <span class="badge badge-city">${langData.cities[item.city || 'davao']}</span>
