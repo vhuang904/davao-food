@@ -1,7 +1,8 @@
 name: Sync Restaurants to Firestore
 
-on:
+on: 
   push:
+  workflow_dispatch:
     branches: [ main ] # 當你手動修改推送到 main 時觸發
   schedule:
     - cron: '0 0 * * 1' # 每週一自動執行一次 (UTC 時間)
