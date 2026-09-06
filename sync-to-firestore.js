@@ -99,21 +99,21 @@ async function syncData() {
       const item = restaurantsData[i];
       if (!item || !item.name) continue;
       
-      const city = (item.city && item.city.trim() !== '') ? item.city.trim() : 'davao';
+      const city = (item.city && item.city.trim() !== '') ? item.city.trim().toLowerCase() : 'davao';
       let safeName = item.name.replace(/[^a-zA-Z0-9]/g, '');
-      if (!safeName || safeName === '') {
+      if (!safeName || safeName.trim() === '') {
         safeName = 'store_' + i;
       }
       
       const docId = `${city}_${safeName}`;
-      if (!docId || docId.trim() === '') continue;
+      if (!docId || docId.trim() === '' || docId === '_') continue;
 
       const docRef = db.collection('restaurants').doc(docId);
       batch.set(docRef, item, { merge: true });
     }
 
     await batch.commit();
-    console.log("所有餐廳資料已成功同步到 Firebase Firestore！");
+    console.log("所有 168 筆餐廳資料已成功同步到 Firebase Firestore！");
   } catch (error) {
     console.error("同步失敗：", error);
     process.exit(1);
