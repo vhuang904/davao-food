@@ -1,4 +1,4 @@
-name: Weekly Davao Food Sync
+name: Weekly Multi-City Food Sync
 
 on:
   schedule:
@@ -20,72 +20,33 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Fetch All Davao Restaurants via Firecrawl API
+      - name: Multi-Source Scraping for Davao, Manila & Cebu
         env:
           FIRECRAWL_KEY: ${{ secrets.FIRECRAWL_API_KEY }}
         run: |
-          curl -X POST https://api.firecrawl.dev/v1/scrape \
-            -H "Content-Type: application/json" \
-            -H "Authorization: Bearer $FIRECRAWL_KEY" \
-            -d '{
-                  "url": "https://www.tripadvisor.com/Restaurants-g298459-Davao_City_Davao_del_Sur_Mindanao.html",
-                  "formats": ["extract"],
-                  "extract": {
-                    "prompt": "Extract ALL Davao City restaurant listings including name, phone, address, description, imageUrl, and classify cuisine into (chinese, american, filipino, bbq, seafood, or cafe).",
-                    "schema": {
-                      "type": "object",
-                      "properties": {
-                        "restaurants": {
-                          "type": "array",
-                          "items": {
-                            "type": "object",
-                            "properties": {
-                              "name": {"type": "string"},
-                              "phone": {"type": "string"},
-                              "address": {"type": "string"},
-                              "description": {"type": "string"},
-                              "imageUrl": {"type": "string"},
-                              "category": {"type": "string"}
-                            },
-                            "required": ["name"]
-                          }
-                        }
-                      }
-                    }
-                  }
-                }' > response_ta.json
+          # 定義抓取函式，支援 OpenTable, Yelp, Tripadvisor 與 Google 食記部落格
+          fetch_city() {
+            CITY=$1
+            
+            # 1. Tripadvisor
+            curl -X POST https://api.firecrawl.dev/v1/scrape \
+              -H "Content-Type: application/json" \
+              -H "Authorization: Bearer $FIRECRAWL_KEY" \
+              -d "{\"url\": \"https://www.tripadvisor.com/Search?q=${CITY}+restaurants\", \"formats\": [\"extract\"], \"extract\": {\"prompt\": \"Extract restaurant listings in ${CITY} with name, phone, address, description, imageUrl, and cuisine type.\", \"schema\": {\"type\": \"object\", \"properties\": {\"restaurants\": {\"type\": \"array\", \"items\": {\"type\": \"object\", \"properties\": {\"name\": {\"type\": \"string\"}, \"phone\": {\"type\": \"string\"}, \"address\": {\"type\": \"string\"}, \"description\": {\"type\": \"string\"}, \"imageUrl\": {\"type\": \"string\"}, \"category\": {\"type\": \"string\"}}}}}}}}" > "res_${CITY}_ta.json"
 
-          curl -X POST https://api.firecrawl.dev/v1/scrape \
-            -H "Content-Type: application/json" \
-            -H "Authorization: Bearer $FIRECRAWL_KEY" \
-            -d '{
-                  "url": "https://www.google.com/search?q=best+restaurants+and+cafes+in+davao+city",
-                  "formats": ["extract"],
-                  "extract": {
-                    "prompt": "Extract popular Davao City restaurants including name, address, phone, description, imageUrl, and classify cuisine.",
-                    "schema": {
-                      "type": "object",
-                      "properties": {
-                        "restaurants": {
-                          "type": "array",
-                          "items": {
-                            "type": "object",
-                            "properties": {
-                              "name": {"type": "string"},
-                              "phone": {"type": "string"},
-                              "address": {"type": "string"},
-                              "description": {"type": "string"},
-                              "imageUrl": {"type": "string"},
-                              "category": {"type": "string"}
-                            },
-                            "required": ["name"]
-                          }
-                        }
-                      }
-                    }
-                  }
-                }' > response_google.json
+            # 2. OpenTable / Yelp / 食記部落格綜合搜尋
+            curl -X POST https://api.firecrawl.dev/v1/scrape \
+              -H "Content-Type: application/json" \
+              -H "Authorization: Bearer $FIRECRAWL_KEY" \
+              -d "{\"url\": \"https://www.google.com/search?q=top+restaurants+and+food+blogs+in+${CITY}+site:opentable.com+OR+site:yelp.com+OR+blogs\", \"formats\": [\"extract\"], \"extract\": {\"prompt\": \"Extract popular restaurants and blog recommendations in ${CITY} including name, address, phone, description, imageUrl, and cuisine type.\", \"schema\": {\"type\": \"object\", \"properties\": {\"restaurants\": {\"type\": \"array\", \"items\": {\"type\": \"object\", \"properties\": {\"name\": {\"type\": \"string\"}, \"phone\": {\"type\": \"string\"}, \"address\": {\"type\": \"string\"}, \"description\": {\"type\": \"string\"}, \"imageUrl\": {\"type\": \"string\"}, \"category\": {\"type\": \"string\"}}}}}}}}" > "res_${CITY}_blogs.json"
+          }
 
+          # 依次抓取三個城市
+          fetch_city "davao"
+          fetch_city "manila"
+          fetch_city "cebu"
+
+          # 使用 Node.js 彙整、去重並標註城市標籤
           node -e "
             const fs = require('fs');
 
@@ -95,10 +56,6 @@ jobs:
                 return raw.data?.extract?.restaurants || [];
               } catch(e) { return []; }
             }
-
-            const fetchedTA = getList('response_ta.json');
-            const fetchedGoogle = getList('response_google.json');
-            const allFetched = [...fetchedTA, ...fetchedGoogle];
 
             function mapCategoryKey(item) {
               const text = ((item.category || '') + ' ' + (item.name || '') + ' ' + (item.description || '')).toLowerCase();
@@ -110,24 +67,33 @@ jobs:
               return 'filipino';
             }
 
+            const cities = ['davao', 'manila', 'cebu'];
             const map = new Map();
-            allFetched.forEach(r => {
-              if(r.name && r.name.trim().length > 0) {
-                const key = r.name.trim().toLowerCase();
-                map.set(key, {
-                  name: r.name,
-                  phone: r.phone || '',
-                  address: r.address || 'Davao City',
-                  description: r.description || '',
-                  imageUrl: r.imageUrl || '',
-                  categoryKey: mapCategoryKey(r)
-                });
-              }
+
+            cities.forEach(city => {
+              const listTA = getList('res_' + city + '_ta.json');
+              const listBlogs = getList('res_' + city + '_blogs.json');
+              const combined = [...listTA, ...listBlogs];
+
+              combined.forEach(r => {
+                if(r.name && r.name.trim().length > 0) {
+                  const key = city + '_' + r.name.trim().toLowerCase();
+                  map.set(key, {
+                    city: city,
+                    name: r.name,
+                    phone: r.phone || '',
+                    address: r.address || (city.toUpperCase() + ' City'),
+                    description: r.description || '',
+                    imageUrl: r.imageUrl || '',
+                    categoryKey: mapCategoryKey(r)
+                  });
+                }
+              });
             });
 
             const merged = Array.from(map.values());
             fs.writeFileSync('restaurants.json', JSON.stringify(merged, null, 2));
-            console.log('Saved ' + merged.length + ' restaurants with i18n categoryKeys.');
+            console.log('Saved ' + merged.length + ' restaurants across Davao, Manila, and Cebu.');
           "
 
       - name: Commit and Push updated JSON
@@ -135,5 +101,5 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add restaurants.json
-          git commit -m "Auto-update Davao restaurants with multilingual category keys" || exit 0
+          git commit -m "Expand scraping to Manila, Cebu, Davao with multi-platform sources" || exit 0
           git push
