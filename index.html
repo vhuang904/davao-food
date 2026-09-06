@@ -5,60 +5,68 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Philippines Food Guide</title>
     <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#4CAF50">
+    <meta name="theme-color" content="#EA580C">
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #f4f6f9; color: #333; padding-bottom: 20px; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #fdfbf7; color: #333; padding-bottom: 20px; }
         
-        header { background: #4CAF50; color: white; padding: 12px 16px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 100; }
+        /* 暖色系 Header (赤陶暖橘) */
+        header { background: #EA580C; color: white; padding: 12px 16px; box-shadow: 0 2px 8px rgba(234, 88, 12, 0.15); position: sticky; top: 0; z-index: 100; }
         .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-        .header-top h1 { font-size: 1.15rem; font-weight: bold; }
+        .header-top h1 { font-size: 1.15rem; font-weight: bold; letter-spacing: 0.5px; }
         
-        /* 同一排選單排版 */
+        /* 極簡同排下拉選單 */
         .controls-row { display: flex; gap: 8px; align-items: center; }
-        .app-select { flex: 1; background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.5); padding: 6px 8px; border-radius: 6px; font-size: 0.82rem; outline: none; cursor: pointer; text-overflow: ellipsis; }
+        .app-select { flex: 1; background: rgba(255, 255, 255, 0.18); color: white; border: 1px solid rgba(255, 255, 255, 0.4); padding: 6px 10px; border-radius: 6px; font-size: 0.82rem; outline: none; cursor: pointer; text-overflow: ellipsis; }
         .app-select option { color: #333; background: white; }
 
-        .category-bar { display: flex; gap: 8px; overflow-x: auto; padding: 12px 16px; background: white; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        /* 分類橫向選擇列 */
+        .category-bar { display: flex; gap: 8px; overflow-x: auto; padding: 12px 16px; background: #ffffff; border-bottom: 1px solid #f1ece1; }
         .category-bar::-webkit-scrollbar { display: none; }
-        .cat-chip { padding: 6px 14px; border-radius: 20px; font-size: 0.85rem; background: #f0f0f0; color: #555; white-space: nowrap; border: none; cursor: pointer; }
-        .cat-chip.active { background: #4CAF50; color: white; font-weight: bold; }
+        .cat-chip { padding: 6px 14px; border-radius: 18px; font-size: 0.85rem; background: #f5f2eb; color: #666; white-space: nowrap; border: none; cursor: pointer; transition: all 0.2s; }
+        .cat-chip.active { background: #EA580C; color: white; font-weight: bold; }
 
+        /* 卡片設計 */
         .container { max-width: 600px; margin: 0 auto; padding: 16px; }
-        .card { background: white; border-radius: 12px; overflow: hidden; margin-bottom: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
-        .card img { width: 100%; height: 200px; object-fit: cover; background: #eee; display: block; }
+        .card { background: white; border-radius: 12px; overflow: hidden; margin-bottom: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.04); border: 1px solid #f3eee3; }
+        .card img { width: 100%; height: 200px; object-fit: cover; background: #f7f5f0; display: block; }
         .card-body { padding: 16px; }
-        .badge-group { display: flex; gap: 6px; margin-bottom: 6px; }
-        .badge { display: inline-block; background: #e8f5e9; color: #2e7d32; font-size: 0.78rem; padding: 3px 8px; border-radius: 4px; font-weight: bold; }
-        .badge-city { background: #e3f2fd; color: #1565c0; }
-        .card-title { font-size: 1.2rem; font-weight: bold; margin-bottom: 6px; color: #1a1a1a; }
-        .card-desc { font-size: 0.88rem; color: #666; line-height: 1.5; margin-bottom: 10px; }
-        .info-item { font-size: 0.85rem; color: #444; margin-bottom: 4px; }
-        .btn-group { display: flex; gap: 8px; margin-top: 12px; }
+        
+        /* 極簡風格 Badge */
+        .badge-group { display: flex; gap: 6px; margin-bottom: 8px; }
+        .badge { display: inline-block; background: #fff7ed; color: #c2410c; font-size: 0.75rem; padding: 3px 8px; border-radius: 4px; font-weight: 600; border: 1px solid #ffedd5; }
+        .badge-city { background: #f0f9ff; color: #0369a1; border-color: #e0f2fe; }
+        
+        .card-title { font-size: 1.2rem; font-weight: bold; margin-bottom: 6px; color: #1c1917; }
+        .card-desc { font-size: 0.88rem; color: #57534e; line-height: 1.5; margin-bottom: 12px; }
+        .info-item { font-size: 0.85rem; color: #78716c; margin-bottom: 4px; display: flex; align-items: center; gap: 6px; }
+        
+        /* 極簡暖色按鈕 */
+        .btn-group { display: flex; gap: 8px; margin-top: 14px; }
         .btn { flex: 1; padding: 10px; border-radius: 8px; font-size: 0.85rem; font-weight: bold; text-align: center; text-decoration: none; border: none; }
-        .btn-primary { background: #4CAF50; color: white; }
-        .btn-secondary { background: #f0f0f0; color: #333; }
-        #loading { text-align: center; padding: 40px; color: #888; }
+        .btn-primary { background: #EA580C; color: white; }
+        .btn-secondary { background: #f5f2eb; color: #44403c; }
+        #loading { text-align: center; padding: 40px; color: #a8a29e; }
     </style>
 </head>
 <body>
 
     <header>
         <div class="header-top">
-            <h1 id="app-title">📍 菲律賓美食指南</h1>
+            <h1 id="app-title"> Philippines Food Guide</h1>
         </div>
-        <!-- 城市與語系放在同一排 -->
+        <!-- 同一排極簡下拉選單 -->
         <div class="controls-row">
             <select class="app-select" id="city-select" onchange="changeCity(this.value)">
-                <option value="all">🏙️ 全部城市 (All Cities)</option>
-                <option value="davao">🏙️ 達沃 (Davao)</option>
-                <option value="manila">🏙️ 馬尼拉 (Manila)</option>
-                <option value="cebu">🏙️ 宿霧 (Cebu)</option>
+                <option value="all">全部城市 (All Cities)</option>
+                <option value="davao">達沃 (Davao)</option>
+                <option value="manila">馬尼拉 (Manila)</option>
+                <option value="cebu">宿霧 (Cebu)</option>
             </select>
             <select class="app-select" id="lang-select" onchange="changeLanguage(this.value)">
-                <option value="zh-TW">🌐 繁體中文</option>
-                <option value="en">🌐 English</option>
-                <option value="tl">🌐 Tagalog</option>
+                <option value="zh-TW">繁體中文</option>
+                <option value="en">English</option>
+                <option value="tl">Tagalog</option>
             </select>
         </div>
     </header>
@@ -82,7 +90,7 @@
 
         const i18n = {
             'zh-TW': {
-                title: '📍 菲律賓美食指南',
+                title: '菲律賓美食指南',
                 loading: '載入最新美食清單中...',
                 noData: '目前沒有找到對應的餐廳資料',
                 call: '撥打電話',
@@ -101,7 +109,7 @@
                 }
             },
             'en': {
-                title: '📍 PH Food Guide',
+                title: 'PH Food Guide',
                 loading: 'Loading latest restaurants...',
                 noData: 'No restaurants found',
                 call: 'Call',
@@ -120,7 +128,7 @@
                 }
             },
             'tl': {
-                title: '📍 PH Food Guide',
+                title: 'PH Food Guide',
                 loading: 'Kina-karga ang mga kainan...',
                 noData: 'Walang nahanap na kainan',
                 call: 'Tawagan',
@@ -205,7 +213,7 @@
             });
 
             if (filtered.length === 0) {
-                listEl.innerHTML = `<p style="text-align:center; color:#888; padding: 40px;">${langData.noData}</p>`;
+                listEl.innerHTML = `<p style="text-align:center; color:#a8a29e; padding: 40px;">${langData.noData}</p>`;
                 return;
             }
 
@@ -229,8 +237,8 @@
                              loading="lazy">
                         <div class="card-body">
                             <div class="badge-group">
-                                <span class="badge badge-city">🏙️ ${langData.cities[item.city || 'davao']}</span>
-                                <span class="badge">🏷️ ${langData.cats[catKey]}</span>
+                                <span class="badge badge-city">${langData.cities[item.city || 'davao']}</span>
+                                <span class="badge">${langData.cats[catKey]}</span>
                             </div>
                             <div class="card-title">${item.name || 'Unknown'}</div>
                             <div class="card-desc">${displayDesc}</div>
