@@ -106,14 +106,35 @@
         .review-time { font-size: 0.72rem; color: #a8a29e; float: right; }
         .review-text { margin-top: 4px; color: #44403c; line-height: 1.35; }
 
-        /* 懸浮 AI 客服按鈕與對話視窗 */
-        .chat-fab { position: fixed; bottom: 22px; right: 20px; width: 56px; height: 56px; border-radius: 50%; background: #EA580C; color: white; border: none; box-shadow: 0 4px 16px rgba(234, 88, 12, 0.45); font-size: 1.6rem; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 1000; transition: transform 0.2s, box-shadow 0.2s; }
+        /* 專屬大V黏土公仔懸浮按鈕 */
+        .chat-fab { 
+            position: fixed; 
+            bottom: 22px; 
+            right: 20px; 
+            width: 60px; 
+            height: 60px; 
+            border-radius: 50%; 
+            background: #ffffff; 
+            border: 3px solid #EA580C; 
+            box-shadow: 0 6px 18px rgba(234, 88, 12, 0.45); 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            cursor: pointer; 
+            z-index: 1000; 
+            transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1); 
+            padding: 0;
+            overflow: hidden;
+        }
         .chat-fab:active { transform: scale(0.92); }
+        .chat-fab svg { width: 48px; height: 48px; }
 
-        .chat-modal { display: none; position: fixed; bottom: 90px; right: 20px; width: 340px; max-width: calc(100vw - 36px); height: 480px; max-height: calc(100vh - 120px); background: #ffffff; border-radius: 18px; box-shadow: 0 12px 36px rgba(0,0,0,0.18); border: 1px solid #eee5d8; flex-direction: column; z-index: 1000; overflow: hidden; }
+        /* 聊天視窗 */
+        .chat-modal { display: none; position: fixed; bottom: 92px; right: 20px; width: 340px; max-width: calc(100vw - 36px); height: 480px; max-height: calc(100vh - 120px); background: #ffffff; border-radius: 18px; box-shadow: 0 12px 36px rgba(0,0,0,0.18); border: 1px solid #eee5d8; flex-direction: column; z-index: 1000; overflow: hidden; }
         .chat-modal.show { display: flex; }
 
         .chat-header { background: #EA580C; color: white; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; font-weight: bold; font-size: 0.95rem; }
+        .chat-header-title-box { display: flex; align-items: center; gap: 8px; }
         .btn-close-chat { background: none; border: none; color: white; font-size: 1.2rem; cursor: pointer; padding: 4px; line-height: 1; }
 
         .chat-messages { flex: 1; padding: 12px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; background: #fdfbf7; font-size: 0.85rem; }
@@ -173,13 +194,39 @@
         </div>
     </div>
 
-    <!-- 懸浮客服機器人按鈕 -->
-    <button class="chat-fab" id="chat-fab" onclick="toggleChat()" title="AI 客服助理">🤖</button>
+    <!-- 懸浮專屬公仔客服按鈕 (自帶大V向量公仔圖示) -->
+    <button class="chat-fab" id="chat-fab" onclick="toggleChat()" title="大V美食管家">
+        <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M22 95 C22 75 78 75 78 95 Z" fill="#262626"/>
+            <rect x="42" y="68" width="16" height="12" rx="4" fill="#FAD4B2"/>
+            <circle cx="27" cy="53" r="6.5" fill="#FAD4B2"/>
+            <circle cx="73" cy="53" r="6.5" fill="#FAD4B2"/>
+            <ellipse cx="50" cy="52" rx="23" ry="21" fill="#FDE0C5"/>
+            <path d="M30 42 Q40 36 50 41 Q60 36 70 42 Q65 48 55 46 Q40 48 30 42 Z" fill="#4A2E18"/>
+            <path d="M25 40 C25 18 75 18 75 40 Z" fill="#E14D43"/>
+            <path d="M18 40 Q50 34 82 40 Q50 48 18 40 Z" fill="#C93B32"/>
+            <circle cx="50" cy="20" r="3" fill="#B32B23"/>
+            <rect x="30" y="44" width="16" height="13" rx="4.5" fill="#FFFFFF" stroke="#222222" stroke-width="3"/>
+            <rect x="54" y="44" width="16" height="13" rx="4.5" fill="#FFFFFF" stroke="#222222" stroke-width="3"/>
+            <line x1="46" y1="49" x2="54" y2="49" stroke="#222222" stroke-width="3"/>
+            <line x1="26" y1="48" x2="30" y2="49" stroke="#222222" stroke-width="2.5"/>
+            <line x1="70" y1="49" x2="74" y2="48" stroke="#222222" stroke-width="2.5"/>
+            <circle cx="38" cy="50.5" r="3" fill="#1F2937"/>
+            <circle cx="39" cy="49.5" r="1" fill="#FFFFFF"/>
+            <circle cx="62" cy="50.5" r="3" fill="#1F2937"/>
+            <circle cx="63" cy="49.5" r="1" fill="#FFFFFF"/>
+            <path d="M44 61 Q50 66 56 61" stroke="#BA6C4D" stroke-width="2" stroke-linecap="round" fill="none"/>
+            <ellipse cx="32" cy="57" rx="3.5" ry="2" fill="#FCA5A5" opacity="0.6"/>
+            <ellipse cx="68" cy="57" rx="3.5" ry="2" fill="#FCA5A5" opacity="0.6"/>
+        </svg>
+    </button>
 
     <!-- 聊天視窗彈窗 -->
     <div class="chat-modal" id="chat-modal">
         <div class="chat-header">
-            <span id="chat-header-title">🤖 大V美食管家 (AI 客服)</span>
+            <div class="chat-header-title-box">
+                <span id="chat-header-title">🧢 大V美食管家 (AI 客服)</span>
+            </div>
             <button class="btn-close-chat" onclick="toggleChat()">✕</button>
         </div>
         <div class="chat-messages" id="chat-messages">
@@ -297,7 +344,7 @@
                     coffee_drinks: '咖啡與手搖飲',
                     filipino: '菲律賓餐'
                 },
-                chatHeader: '🤖 大V美食管家 (AI 客服)',
+                chatHeader: '🧢 大V美食管家 (AI 客服)',
                 chatWelcome: '嗨！我是大V美食管家 👋 有任何菲律賓美食推薦、外送疑問或 App 使用問題，都可以隨時問我喔！',
                 chatPlaceholder: '問點什麼吧...',
                 chatSend: '發送',
@@ -341,7 +388,7 @@
                     coffee_drinks: 'Coffee & Drinks',
                     filipino: 'Filipino'
                 },
-                chatHeader: "🤖 Big V's AI Concierge",
+                chatHeader: "🧢 Big V's AI Concierge",
                 chatWelcome: 'Hi! I am your Philippines Food Concierge 👋 Ask me anything about local restaurants, food delivery, or how to use this app!',
                 chatPlaceholder: 'Ask a question...',
                 chatSend: 'Send',
@@ -385,7 +432,7 @@
                     coffee_drinks: 'Kape at Inumin',
                     filipino: 'Filipino'
                 },
-                chatHeader: '🤖 AI Katulong ni Big V',
+                chatHeader: '🧢 AI Katulong ni Big V',
                 chatWelcome: 'Kamusta! Ako ang iyong AI Food Concierge 👋 Magtanong ng anuman tungkol sa mga kainan, delivery, o paano gamitin ang app na ito!',
                 chatPlaceholder: 'Magtanong dito...',
                 chatSend: 'Ipadala',
@@ -512,7 +559,7 @@
             document.getElementById('news-sub-promo').innerText = langData.newsSubPromo;
             document.getElementById('news-sub-new').innerText = langData.newsSubNew;
 
-            // AI 客服介面多語言即時切換
+            // AI 客服多語言切換
             document.getElementById('chat-header-title').innerText = langData.chatHeader;
             document.getElementById('chat-welcome-msg').innerText = langData.chatWelcome;
             document.getElementById('chat-input').placeholder = langData.chatPlaceholder;
@@ -630,7 +677,7 @@
                 return;
             }
 
-            // 方案 A：一律以英文原名 A 到 Z 排序
+            // 方案 A：一律依英文原名從 A 到 Z 排序
             filtered.sort((a, b) => {
                 const nameA = (a.name_en || a.name || '').trim().toLowerCase();
                 const nameB = (b.name_en || b.name || '').trim().toLowerCase();
