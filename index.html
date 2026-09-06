@@ -334,14 +334,12 @@
 
         async function fetchData() {
             try {
-                // 1. 抓取餐廳資料
                 const resSnapshot = await getDocs(collection(db, "restaurants"));
                 allRestaurants = [];
                 resSnapshot.forEach((doc) => {
                     allRestaurants.push(doc.data());
                 });
 
-                // 2. 抓取動態新聞/優惠資料
                 const newsSnapshot = await getDocs(collection(db, "news"));
                 allNews = [];
                 newsSnapshot.forEach((doc) => {
@@ -670,7 +668,6 @@
             const filteredNews = (allNews || []).filter(item => {
                 const matchesCity = (currentCity === 'all') || (item.city === 'all') || (item.city === currentCity);
                 
-                // 這裡精準對應子標籤過濾邏輯
                 let matchesSub = true;
                 if (currentNewsSubFilter === 'promo') {
                     matchesSub = (item.type === 'promo');
@@ -694,6 +691,11 @@
                     descText = item.description_zh;
                 }
 
+                // 支援點擊標題直接跳轉到外部網站
+                const titleHtml = item.url 
+                    ? `<a href="${item.url}" target="_blank" style="color: #1c1917; text-decoration: none; border-bottom: 2px solid #EA580C;" title="點擊前往官方網站">${item.title || ''} 🔗</a>` 
+                    : (item.title || '');
+
                 return `
                     <div class="card">
                         <img src="${item.imageUrl || 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=800&auto=format&fit=crop'}" alt="${item.title || ''}" loading="lazy">
@@ -704,7 +706,7 @@
                                 <span class="badge badge-promo">${item.tag || '促銷'}</span>
                                 ${item.validity ? `<span class="badge badge-expiry">⏰ ${item.validity}</span>` : ''}
                             </div>
-                            <div class="card-title" style="font-size:1.1rem; margin-top:4px;">${item.title || ''}</div>
+                            <div class="card-title" style="font-size:1.1rem; margin-top:4px;">${titleHtml}</div>
                             <div class="card-desc" style="color:#44403c; margin-top:8px;">${descText}</div>
                             <div class="info-item" style="margin-top:10px;">📍 ${item.location || ''}</div>
                         </div>
@@ -713,7 +715,6 @@
             }).join('');
         }
 
-        // 啟動程式
         fetchData();
     </script>
 </body>
