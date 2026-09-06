@@ -10,8 +10,8 @@
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #fdfbf7; color: #333; padding-bottom: 30px; }
         
-        /* 頂部 Header */
-        header { background: #EA580C; color: white; padding: 12px 16px 0 16px; box-shadow: 0 2px 8px rgba(234, 88, 12, 0.15); position: sticky; top: 0; z-index: 100; }
+        /* 頂部 Header：將分類列完整包裹在內，確保滑動時完全不變動、不遮擋 */
+        header { background: #EA580C; color: white; padding: 12px 16px 0 16px; box-shadow: 0 4px 10px rgba(0,0,0,0.08); position: sticky; top: 0; z-index: 100; }
         .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
         .header-top h1 { font-size: 1.15rem; font-weight: bold; letter-spacing: 0.5px; }
         
@@ -27,8 +27,8 @@
         .main-tab-btn { flex: 1; text-align: center; padding: 10px; font-weight: bold; font-size: 0.92rem; color: rgba(255,255,255,0.75); border: none; background: none; cursor: pointer; border-bottom: 3px solid transparent; }
         .main-tab-btn.active { color: white; border-bottom: 3px solid white; }
 
-        /* 🎯 完全避開 Header 的置頂吸附分類橫條 */
-        .category-bar { display: flex; gap: 8px; overflow-x: auto; padding: 10px 16px; background: #ffffff; border-bottom: 1px solid #f1ece1; position: sticky; top: 116px; z-index: 90; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.06); }
+        /* 包裹在 Header 內的分類列，完全與頂部固定在一起 */
+        .category-bar { display: flex; gap: 8px; overflow-x: auto; padding: 10px 16px; background: #ffffff; margin: 0 -16px; border-bottom: 1px solid #f1ece1; }
         .category-bar::-webkit-scrollbar { display: none; }
         .cat-chip { padding: 6px 14px; border-radius: 18px; font-size: 0.85rem; background: #f5f2eb; color: #666; white-space: nowrap; border: none; cursor: pointer; transition: all 0.2s; }
         .cat-chip.active { background: #EA580C; color: white; font-weight: bold; }
@@ -109,11 +109,12 @@
             <button class="main-tab-btn active" id="tab-btn-map" onclick="switchMainTab('map')">🗺️ 美食地圖</button>
             <button class="main-tab-btn" id="tab-btn-news" onclick="switchMainTab('news')">📰 美食新聞</button>
         </div>
+        <!-- 分類橫條直接包進 Header，完全隨頂部固定 -->
+        <div class="category-bar" id="category-bar"></div>
     </header>
 
     <!-- 1. 美食地圖 Tab 內容 -->
     <div id="main-tab-map" class="tab-content active">
-        <div class="category-bar" id="category-bar"></div>
         <div class="container">
             <div id="loading">載入最新美食清單中...</div>
             <div id="restaurant-list"></div>
@@ -556,7 +557,7 @@
                                                 <option value="5">⭐⭐⭐⭐⭐</option>
                                                 <option value="4">⭐⭐⭐⭐</option>
                                                 <option value="3">⭐⭐⭐</option>
-                                                <option value="2">⭐⭐</option>
+                                                <option value="2">⭐⭐⭐⭐</option>
                                                 <option value="1">⭐</option>
                                             </select>
                                         </div>
