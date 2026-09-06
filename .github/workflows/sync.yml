@@ -18,7 +18,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
 
       - name: Direct Google Places Text Search Sync
         env:
@@ -111,13 +111,7 @@ jobs:
                   const key = target.city + '_' + placeId;
 
                   if (!restaurantMap.has(key)) {
-                    // 取得 Google 官方高清照片網址
-                    let photoUrl = '';
-                    if (place.photos && place.photos.length > 0) {
-                      const photoRef = place.photos[0].photo_reference;
-                      photoUrl = 'https://maps.googleapis.com/maps/api/place/photo?maxwidth=800&photo_reference=' + photoRef + '&key=' + API_KEY;
-                    }
-
+                    // 僅紀錄地圖資料，防護 API 金鑰在儲存時洩漏
                     const rating = place.rating ? ('⭐ ' + place.rating + ' (' + (place.user_ratings_total || 0) + ')') : '熱門餐廳';
                     const categoryKey = preciseCategory(name, place.types, place.formatted_address || '');
 
@@ -131,7 +125,7 @@ jobs:
                         'en': 'Google Maps rating ' + rating + '. Highly rated spot in ' + target.city.toUpperCase() + '.',
                         'tl': 'Google Maps rating ' + rating + '. Sikat na kainan sa ' + target.city.toUpperCase() + '.'
                       },
-                      imageUrl: photoUrl,
+                      imageUrl: '',
                       categoryKey: categoryKey
                     });
                   }
@@ -151,5 +145,5 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add restaurants.json
-          git commit -m "Directly sync restaurants from Google Places with refined Japanese/Korean Yaki classification" || exit 0
+          git commit -m "Upgrade Node.js environment to v22 and sync restaurants" || exit 0
           git push
