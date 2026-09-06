@@ -10,7 +10,7 @@
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #fdfbf7; color: #333; padding-bottom: 30px; }
         
-        /* 頂部 Header：將分類列完整包裹在內，確保滑動時完全不變動、不遮擋 */
+        /* 頂部 Header：完整包裹選單與分類列，確保滑動時完全固定 */
         header { background: #EA580C; color: white; padding: 12px 16px 0 16px; box-shadow: 0 4px 10px rgba(0,0,0,0.08); position: sticky; top: 0; z-index: 100; }
         .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
         .header-top h1 { font-size: 1.15rem; font-weight: bold; letter-spacing: 0.5px; }
@@ -27,7 +27,7 @@
         .main-tab-btn { flex: 1; text-align: center; padding: 10px; font-weight: bold; font-size: 0.92rem; color: rgba(255,255,255,0.75); border: none; background: none; cursor: pointer; border-bottom: 3px solid transparent; }
         .main-tab-btn.active { color: white; border-bottom: 3px solid white; }
 
-        /* 包裹在 Header 內的分類列，完全與頂部固定在一起 */
+        /* 包裹在 Header 內的分類橫條 */
         .category-bar { display: flex; gap: 8px; overflow-x: auto; padding: 10px 16px; background: #ffffff; margin: 0 -16px; border-bottom: 1px solid #f1ece1; }
         .category-bar::-webkit-scrollbar { display: none; }
         .cat-chip { padding: 6px 14px; border-radius: 18px; font-size: 0.85rem; background: #f5f2eb; color: #666; white-space: nowrap; border: none; cursor: pointer; transition: all 0.2s; }
@@ -42,10 +42,11 @@
         .card img { width: 100%; height: 200px; object-fit: cover; background: #f7f5f0; display: block; }
         .card-body { padding: 16px; }
         
-        .badge-group { display: flex; gap: 6px; margin-bottom: 8px; }
+        .badge-group { display: flex; gap: 6px; margin-bottom: 8px; flex-wrap: wrap; }
         .badge { display: inline-block; background: #fff7ed; color: #c2410c; font-size: 0.75rem; padding: 3px 8px; border-radius: 4px; font-weight: 600; border: 1px solid #ffedd5; }
         .badge-city { background: #f0f9ff; color: #0369a1; border-color: #e0f2fe; }
         .badge-promo { background: #fef2f2; color: #dc2626; border-color: #fecaca; }
+        .badge-brand { background: #fefce8; color: #a16207; border-color: #fef08a; }
 
         .card-title { font-size: 1.2rem; font-weight: bold; margin-bottom: 6px; color: #1c1917; }
         .card-desc { font-size: 0.88rem; color: #57534e; line-height: 1.5; margin-bottom: 12px; }
@@ -57,7 +58,7 @@
         .btn-secondary { background: #f5f2eb; color: #44403c; }
         #loading { text-align: center; padding: 40px; color: #a8a29e; }
 
-        /* 餐廳卡片內建：嵌入式討論與評分區塊 */
+        /* 討論與評分區塊 */
         .card-forum-box { background: #faf8f5; border-radius: 10px; padding: 12px; margin-top: 14px; border: 1px dashed #e7e2d7; }
         .rating-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
         .rating-score { font-size: 0.88rem; font-weight: bold; color: #d97706; }
@@ -104,12 +105,12 @@
                 <option value="tl">Tagalog</option>
             </select>
         </div>
-        <!-- 頂部雙頁籤切換：美食地圖 vs 美食新聞 -->
+        <!-- 頂部頁籤：美食地圖 vs 美食新聞 -->
         <div class="main-tabs">
             <button class="main-tab-btn active" id="tab-btn-map" onclick="switchMainTab('map')">🗺️ 美食地圖</button>
             <button class="main-tab-btn" id="tab-btn-news" onclick="switchMainTab('news')">📰 美食新聞</button>
         </div>
-        <!-- 分類橫條直接包進 Header，完全隨頂部固定 -->
+        <!-- 包裹在 Header 內的分類橫條 -->
         <div class="category-bar" id="category-bar"></div>
     </header>
 
@@ -129,7 +130,6 @@
     </div>
 
     <script>
-        // 各菜系高質感高清圖片庫清單
         const categoryImagePools = {
             chinese: [
                 "https://images.unsplash.com/photo-1563245372-f21724e3856d?w=800&auto=format&fit=crop",
@@ -175,7 +175,7 @@
                 tabNews: '📰 美食新聞',
                 shareBtn: '📤 分享',
                 shareTitle: '大V的美食地圖',
-                shareText: '推薦給你這個菲律賓美食指南！',
+                shareText: '推薦給你這個菲律賓美食指南與最新促銷！',
                 shareSuccess: '已複製美食地圖連結！可以貼上傳給朋友囉。',
                 loading: '載入最新美食清單中...',
                 noData: '目前沒有找到對應的餐廳資料',
@@ -206,7 +206,7 @@
                 tabNews: '📰 Food News',
                 shareBtn: '📤 Share',
                 shareTitle: "Big V's Food Map",
-                shareText: 'Check out this awesome Philippines food guide!',
+                shareText: 'Check out this awesome Philippines food guide & promos!',
                 shareSuccess: 'App link copied to clipboard!',
                 loading: 'Loading latest restaurants...',
                 noData: 'No restaurants found',
@@ -237,7 +237,7 @@
                 tabNews: '📰 Balita sa Pagkain',
                 shareBtn: '📤 Ibahagi',
                 shareTitle: 'Mapa ng Pagkain ni Big V',
-                shareText: 'Subukan ang gabay sa pagkain sa Pilipinas!',
+                shareText: 'Subukan ang gabay sa pagkain at mga promo sa Pilipinas!',
                 shareSuccess: 'Na-kopyang link para maibahagi!',
                 loading: 'Kina-karga ang mga kainan...',
                 noData: 'Walang nahanap na kainan',
@@ -264,46 +264,93 @@
             }
         };
 
+        // 豐富的大牌速食促銷與多城市熱門新聞資料庫
         const newsData = [
             {
-                id: "news-1",
-                city: "davao",
-                tag: "🔥 限時優惠",
-                title: "達沃 Yaki Together - Matina 歡慶開幕：日式燒肉全時段 85 折優惠！",
+                id: "news-jollibee-1",
+                city: "all",
+                brand: "🐝 Jollibee",
+                tag: "🔥 品牌限定折價",
+                title: "Jollibee 快樂蜂：Chickenjoy 6 塊炸雞桶套餐限時折 ₱50！",
+                date: "2026-03-06",
+                imageUrl: "https://images.unsplash.com/photo-1626777552726-4a6b54c97e46?w=800&auto=format&fit=crop",
+                descriptions: {
+                    "zh-TW": "全菲律賓 Jollibee 門市同步！透過官方 APP 或出示本畫面點選 6-pc Chickenjoy Bucket，輸入優惠碼【JOYBUCKET50】折抵 50 披索！",
+                    "en": "Enjoy ₱50 OFF on 6-pc Chickenjoy Bucket via Jollibee App with code JOYBUCKET50 nationwide!",
+                    "tl": "Kumuha ng ₱50 OFF sa 6-pc Chickenjoy Bucket gamit ang Jollibee App at code na JOYBUCKET50!"
+                },
+                location: "全菲律賓門市 / Jollibee App Delivery"
+            },
+            {
+                id: "news-mcdo-1",
+                city: "all",
+                brand: "🍔 麥當勞 (McDo)",
+                tag: "⚡ APP 專屬促銷",
+                title: "McDonald's McSaver Mix & Match：兩樣經典點心僅需 ₱75",
                 date: "2026-03-05",
+                imageUrl: "https://images.unsplash.com/photo-1550547660-d9450f859349?w=800&auto=format&fit=crop",
+                descriptions: {
+                    "zh-TW": "麥當勞超值組合回歸！大麥克/麥克鷄塊搭配冰淇淋或冷飲，自由搭配只要 ₱75。出示 McDo App 專屬 Voucher 即可兌換。",
+                    "en": "Mix & Match your favorites for only ₱75! Download the McDonald's App to claim daily deals.",
+                    "tl": "Pumili ng 2 paborito mo sa halagang ₱75 lamang sa McDonald's App!"
+                },
+                location: "全菲律賓門市 / McDo App"
+            },
+            {
+                id: "news-kfc-1",
+                city: "all",
+                brand: "🍗 KFC 肯德基",
+                tag: "🔥 期間限定",
+                title: "KFC Zinger Stacker 折價特惠：加 ₱1 雙倍美味起司薯條！",
+                date: "2026-03-04",
+                imageUrl: "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=800&auto=format&fit=crop",
+                descriptions: {
+                    "zh-TW": "凡購買尊爵版 Zinger Stacker 堡餐，即可以 ₱1 加購全份起司咔啦薯條，數量有限售完為止。",
+                    "en": "Get Cheese Fries for only ₱1 when you buy a Zinger Stacker Combo Meal at KFC Philippines!",
+                    "tl": "Magdagdag ng ₱1 para sa Cheese Fries kapag bumili ng Zinger Stacker Combo sa KFC!"
+                },
+                location: "全菲律賓門市 / KFC Delivery"
+            },
+            {
+                id: "news-pizza-1",
+                city: "manila",
+                brand: "🍕 Pizza Hut",
+                tag: "✨ 買一送一",
+                title: "Pizza Hut 馬尼拉限定：買大披薩送大超級至尊披薩 (Buy 1 Get 1)",
+                date: "2026-03-03",
+                imageUrl: "https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?w=800&auto=format&fit=crop",
+                descriptions: {
+                    "zh-TW": "馬尼拉 Metro 區域門市外帶/外送專屬！外帶任一大尺寸餅皮披薩，即免費贈送大份 Super Supreme 披薩一個。",
+                    "en": "Buy 1 Get 1 Free Large Pizza in Metro Manila! Available for takeout and delivery via Pizza Hut Website.",
+                    "tl": "Bumili ng 1 Kumuha ng 1 Libreng Large Pizza sa Metro Manila sa Pizza Hut!"
+                },
+                location: "Metro Manila 各門市 / Pizza Hut PH Website"
+            },
+            {
+                id: "news-davao-yaki",
+                city: "davao",
+                brand: "🥩 燒肉新店",
+                title: "達沃 Yaki Together - Matina 歡慶開幕：全時段日式燒肉 85 折！",
+                date: "2026-03-02",
                 imageUrl: "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=800&auto=format&fit=crop",
                 descriptions: {
-                    "zh-TW": "凡於本月中前至 Matina 門市出示『大V的美食地圖』畫面，即享全桌無煙燒肉 85 折優惠！包含特選和牛與無限量日式小菜，趕快約朋友一起來嚐鮮！",
-                    "en": "Enjoy 15% OFF for all-you-can-eat Japanese Yakiniku at Yaki Together Matina! Show this app at checkout.",
-                    "tl": "Kumuha ng 15% OFF sa Yaki Together Matina! Ipakita ang app na ito kapag magbabayad na."
+                    "zh-TW": "至 Matina 門市出示『大V的美食地圖』畫面，即享全桌無煙燒肉 85 折優惠！包含特選和牛與無限量日式小菜！",
+                    "en": "15% OFF for all-you-can-eat Japanese Yakiniku at Yaki Together Matina! Show this app at checkout.",
+                    "tl": "15% OFF sa Yaki Together Matina! Ipakita ang app na ito kapag magbabayad na."
                 },
                 location: "Matina Enclave, Quimpo Blvd, Davao City"
             },
             {
-                id: "news-2",
-                city: "manila",
-                tag: "✨ 新店開幕",
-                title: "馬尼拉 BGC 概念新店推出：港式飲茶極致吃到飽 Promos",
-                date: "2026-03-03",
-                imageUrl: "https://images.unsplash.com/photo-1563245372-f21724e3856d?w=800&auto=format&fit=crop",
-                descriptions: {
-                    "zh-TW": "位於 BGC 核心區的新港式餐廳全新開幕！即日起至本月底，三人同行一人免費，包含現蒸蝦餃、小籠包與經典楊枝甘露，千萬別錯過。",
-                    "en": "New Dim Sum Unlimited promo in BGC Manila! Buy 2 Get 1 Free for all dim sum lovers this month.",
-                    "tl": "Bagong bukas na Dim Sum Unlimited promo sa BGC Manila! Bumili ng 2 Kumuha ng 1 Libre ngayong buwan."
-                },
-                location: "High Street, Bonifacio Global City, Manila"
-            },
-            {
-                id: "news-3",
+                id: "news-cebu-1",
                 city: "cebu",
-                tag: "🔥 節慶優惠",
-                title: "宿霧海鮮狂歡節：現蒸螃蟹與鮮鮪魚刺身特惠買一送一",
+                brand: "🦀 宿霧海鮮季",
+                title: "宿霧 Mactan 海鮮狂歡節：現蒸螃蟹與鮮鮪魚刺身特惠買一送一",
                 date: "2026-03-01",
-                imageUrl: "https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?w=800&auto=format&fit=crop",
+                imageUrl: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=800&auto=format&fit=crop",
                 descriptions: {
                     "zh-TW": "宿霧海邊餐廳推出限定海鮮季特惠，每晚 6 點後點選碳烤大蝦或野生螃蟹套餐，加贈特調冷飲與第二份刺身 5 折！",
-                    "en": "Cebu Seafood Festival! Buy 1 Get 1 free on selected fresh crab and tuna sashimi sets every evening.",
-                    "tl": "Pista ng Seafood sa Cebu! Bumili ng 1 Kumuha ng 1 Libre sa napiling fresh crab at tuna sashimi."
+                    "en": "Buy 1 Get 1 free on selected fresh crab and tuna sashimi sets every evening in Cebu!",
+                    "tl": "Bumili ng 1 Kumuha ng 1 Libre sa napiling fresh crab at tuna sashimi sa Cebu!"
                 },
                 location: "Mactan Island Promenade, Cebu"
             }
@@ -457,7 +504,6 @@
             if (el) el.classList.add('show');
         }
 
-        // 依據餐廳名稱字串 Hash 分配獨一無二照片
         function getUniqueRestaurantImage(name, catKey) {
             const pool = categoryImagePools[catKey] || categoryImagePools.filipino;
             let hash = 0;
@@ -557,7 +603,7 @@
                                                 <option value="5">⭐⭐⭐⭐⭐</option>
                                                 <option value="4">⭐⭐⭐⭐</option>
                                                 <option value="3">⭐⭐⭐</option>
-                                                <option value="2">⭐⭐⭐⭐</option>
+                                                <option value="2">⭐⭐</option>
                                                 <option value="1">⭐</option>
                                             </select>
                                         </div>
@@ -594,7 +640,7 @@
             const newsEl = document.getElementById('news-list');
             const langData = i18n[currentLang];
 
-            const filteredNews = newsData.filter(item => (currentCity === 'all') || (item.city === currentCity));
+            const filteredNews = newsData.filter(item => (currentCity === 'all') || (item.city === 'all') || (item.city === currentCity));
 
             if (!filteredNews || filteredNews.length === 0) {
                 newsEl.innerHTML = `<p style="text-align:center; color:#a8a29e; padding: 40px;">${langData.noNewsData}</p>`;
@@ -606,7 +652,8 @@
                     <img src="${item.imageUrl}" alt="${item.title}" loading="lazy">
                     <div class="card-body">
                         <div class="badge-group">
-                            <span class="badge badge-city">${langData.cities[item.city]}</span>
+                            <span class="badge badge-city">${langData.cities[item.city] || '全菲律賓'}</span>
+                            ${item.brand ? `<span class="badge badge-brand">${item.brand}</span>` : ''}
                             <span class="badge badge-promo">${item.tag}</span>
                             <span style="font-size:0.75rem; color:#a8a29e; margin-left:auto; display:flex; align-items:center;">📅 ${item.date}</span>
                         </div>
