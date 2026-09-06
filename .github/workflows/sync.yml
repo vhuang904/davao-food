@@ -1,28 +1,33 @@
-name: Sync Restaurants to Firestore
+name: Auto Sync and News Update
 
-on: 
+on:
   push:
+    branches: [ main ]
   workflow_dispatch:
-    branches: [ main ] # 當你手動修改推送到 main 時觸發
   schedule:
-    - cron: '0 0 * * 1' # 每週一自動執行一次 (UTC 時間)
+    - cron: '0 0 * * 1' # 每週一自動執行一次
 
 jobs:
-  sync:
+  build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+    - name: Checkout repository
+      uses: actions/checkout@v4
+    
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        
+    - name: Install dependencies
+      run: npm install firebase-admin
+      
+    - name: Run sync script
+      env:
+        FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+      run: node sync-to-firestore.js
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '18'
-
-      - name: Install dependencies
-        run: npm install firebase-admin
-
-      - name: Run sync script
-        env:
-          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
-        run: node sync-to-firestore.js
+    - name: Run Auto News Script
+      env:
+        FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+      run: node auto-fetch-news.js
