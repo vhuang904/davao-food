@@ -1,11 +1,11 @@
 /**
  * sync-attractions.js
  * 菲律賓景點、購物商場 (Malls) 與頂級賭場 (Casinos / Integrated Resorts) 自動同步腳本
- * 支援城市：達沃 (Davao)、馬尼拉 (Manila)、宿霧 (Cebu)、長灘島 (Boracay)、巴拉望 (Palawan)
+ * Node.js CommonJS 相容版
  */
 
-import { initializeApp } from "firebase/app";
-import { getFirestore, collection, doc, setDoc } from "firebase/firestore";
+const { initializeApp } = require("firebase/app");
+const { getFirestore, doc, setDoc } = require("firebase/firestore");
 
 // 公開安全之 Firebase 前端專案設定
 const firebaseConfig = {
