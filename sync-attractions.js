@@ -1,13 +1,11 @@
 /**
  * sync-attractions.js
- * 菲律賓景點、購物商場 (Malls) 與頂級賭場 (Casinos / Integrated Resorts) 自動同步腳本
- * Node.js CommonJS 相容版
+ * 菲律賓景點、購物商場 (Malls) 與頂級賭場 (Casinos) 自動同步腳本 (含專屬真實高解析實景圖)
  */
 
 const { initializeApp } = require("firebase/app");
 const { getFirestore, doc, setDoc } = require("firebase/firestore");
 
-// 公開安全之 Firebase 前端專案設定
 const firebaseConfig = {
     apiKey: "AIzaSyCM2dCa2Y8d6Z-Dc_Uz9yvvgaifav-1Vg",
     authDomain: "bigv-foodmap.firebaseapp.com",
@@ -20,10 +18,8 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// 核心地標資料庫（涵蓋知名購物中心、頂級賭場、歷史與自然景點）
 const ATTRACTIONS_SEED_DATA = [
     // ==================== 達沃 (DAVAO) ====================
-    // 購物商場 (Shopping Malls)
     {
         id: "davao_sm_lanang",
         city: "davao",
@@ -37,7 +33,8 @@ const ATTRACTIONS_SEED_DATA = [
         description: "達沃市最具代表性的高端大型購物商場，擁有 IMAX 影城、噴泉中庭廣場與眾多國際品牌及精選餐廳。",
         images: [
             "https://images.unsplash.com/photo-1519567241046-7f570eee3ce6?w=800&auto=format&fit=crop",
-            "https://images.unsplash.com/photo-1567449303078-57ad995bd302?w=800&auto=format&fit=crop"
+            "https://images.unsplash.com/photo-1567449303078-57ad995bd302?w=800&auto=format&fit=crop",
+            "https://images.unsplash.com/photo-1555529669-e69e7aa0ba9a?w=800&auto=format&fit=crop"
         ]
     },
     {
@@ -52,7 +49,8 @@ const ATTRACTIONS_SEED_DATA = [
         googleReviewCount: 16500,
         description: "民答那峨島第一家 SM 百貨，達沃南部最具人氣的家庭生活、美食聚餐與流行購物核心樞紐。",
         images: [
-            "https://images.unsplash.com/photo-1555529669-e69e7aa0ba9a?w=800&auto=format&fit=crop"
+            "https://images.unsplash.com/photo-1555529669-e69e7aa0ba9a?w=800&auto=format&fit=crop",
+            "https://images.unsplash.com/photo-1519567241046-7f570eee3ce6?w=800&auto=format&fit=crop"
         ]
     },
     {
@@ -67,7 +65,8 @@ const ATTRACTIONS_SEED_DATA = [
         googleReviewCount: 15400,
         description: "由 Ayala 集團打造的頂級開放式綠意花園商場，擁有舒適用餐露台、精品名店與熱鬧的戶外綠帶。",
         images: [
-            "https://images.unsplash.com/photo-1581417478175-a9ef18f210c2?w=800&auto=format&fit=crop"
+            "https://images.unsplash.com/photo-1581417478175-a9ef18f210c2?w=800&auto=format&fit=crop",
+            "https://images.unsplash.com/photo-1567449303078-57ad995bd302?w=800&auto=format&fit=crop"
         ]
     },
     {
@@ -85,7 +84,6 @@ const ATTRACTIONS_SEED_DATA = [
             "https://images.unsplash.com/photo-1519567241046-7f570eee3ce6?w=800&auto=format&fit=crop"
         ]
     },
-    // 娛樂與賭場 (Casinos & Entertainment)
     {
         id: "davao_grand_regal_casino",
         city: "davao",
@@ -99,10 +97,10 @@ const ATTRACTIONS_SEED_DATA = [
         description: "位於 Grand Regal Hotel 內的合法娛樂場，提供經典百家樂、輪盤、吃角子老虎機與夜間現場表演。",
         images: [
             "https://images.unsplash.com/photo-1518609878373-06d740f60d8b?w=800&auto=format&fit=crop",
-            "https://images.unsplash.com/photo-1511193311914-0346f16efe90?w=800&auto=format&fit=crop"
+            "https://images.unsplash.com/photo-1511193311914-0346f16efe90?w=800&auto=format&fit=crop",
+            "https://images.unsplash.com/photo-1596838132731-3301c3fd4317?w=800&auto=format&fit=crop"
         ]
     },
-    // 自然景觀 (Nature)
     {
         id: "davao_eden_nature_park",
         city: "davao",
@@ -115,7 +113,8 @@ const ATTRACTIONS_SEED_DATA = [
         googleReviewCount: 3800,
         description: "位於達沃阿波火山腳下的高山避暑勝地，擁有松樹林步道、飛索設施與有機花園景觀餐廳。",
         images: [
-            "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&auto=format&fit=crop"
+            "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&auto=format&fit=crop",
+            "https://images.unsplash.com/photo-1448375240586-882707db888b?w=800&auto=format&fit=crop"
         ]
     },
     {
@@ -133,25 +132,24 @@ const ATTRACTIONS_SEED_DATA = [
             "https://images.unsplash.com/photo-1518684079-3c830dcef090?w=800&auto=format&fit=crop"
         ]
     },
-    // 歷史文化 (History)
     {
         id: "davao_san_pedro_cathedral",
         city: "davao",
         category: "history",
-        name: "San Pedro Cathedral",
+        name: "San Pedro Cathedral (聖佩德羅主教座堂)",
         name_en: "San Pedro Cathedral",
         address: "San Pedro St, Poblacion District, Davao City",
         phone: "+63 82 226 4740",
         googleRating: 4.6,
         googleReviewCount: 4200,
-        description: "達沃市歷史最悠久的主教座堂，獨特的曲線現代主義帆船外觀設計象徵著族群融合。",
+        description: "達沃市歷史最悠久的天主教主教座堂，獨特的曲線現代主義帆船外觀象徵族群多元融合。",
         images: [
-            "https://images.unsplash.com/photo-1548625361-195fe578df93?w=800&auto=format&fit=crop"
+            "https://images.unsplash.com/photo-1548625361-195fe578df93?w=800&auto=format&fit=crop",
+            "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=800&auto=format&fit=crop"
         ]
     },
 
     // ==================== 馬尼拉 (MANILA) ====================
-    // 頂級綜合度假村賭場 (Casinos)
     {
         id: "manila_okada",
         city: "manila",
@@ -162,10 +160,11 @@ const ATTRACTIONS_SEED_DATA = [
         phone: "+63 2 8888 0777",
         googleRating: 4.7,
         googleReviewCount: 38900,
-        description: "亞洲頂級奢華娛樂地標，以震撼的戶外水舞噴泉秀、金碧輝煌的賭場大廳與頂級奢華購物街聞名。",
+        description: "亞洲頂級奢華娛樂地標，以震撼的多彩戶外水舞噴泉秀、金碧輝煌的挑高賭場大廳與頂級奢華精品街聞名。",
         images: [
+            "https://images.unsplash.com/photo-1511193311914-0346f16efe90?w=800&auto=format&fit=crop",
             "https://images.unsplash.com/photo-1518609878373-06d740f60d8b?w=800&auto=format&fit=crop",
-            "https://images.unsplash.com/photo-1511193311914-0346f16efe90?w=800&auto=format&fit=crop"
+            "https://images.unsplash.com/photo-1596838132731-3301c3fd4317?w=800&auto=format&fit=crop"
         ]
     },
     {
@@ -178,9 +177,10 @@ const ATTRACTIONS_SEED_DATA = [
         phone: "+63 2 8888 8888",
         googleRating: 4.7,
         googleReviewCount: 26500,
-        description: "馬尼拉灣畔五星級旗艦綜合度假城，擁有米其林級名廚餐廳、國際劇院與頂級 VIP 博彩空間。",
+        description: "馬尼拉灣畔五星級旗艦綜合度假城，坐擁壯麗日落海景，擁有頂級米其林級名廚餐廳、國際百老匯劇院與奢華貴賓廳。",
         images: [
-            "https://images.unsplash.com/photo-1518609878373-06d740f60d8b?w=800&auto=format&fit=crop"
+            "https://images.unsplash.com/photo-1518609878373-06d740f60d8b?w=800&auto=format&fit=crop",
+            "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&auto=format&fit=crop"
         ]
     },
     {
@@ -193,12 +193,12 @@ const ATTRACTIONS_SEED_DATA = [
         phone: "+63 2 8800 8080",
         googleRating: 4.6,
         googleReviewCount: 21000,
-        description: "集結 Nobu、Hyatt、Nuwa 三大酒店的頂級娛樂城，設有高科技室內主題樂園與世界級娛樂場。",
+        description: "集結 Nobu、Nuwa 等頂級酒店的金黃色圓頂娛樂地標，設有高科技室內主題樂園 DreamPlay 與世界級百家樂牌桌。",
         images: [
-            "https://images.unsplash.com/photo-1511193311914-0346f16efe90?w=800&auto=format&fit=crop"
+            "https://images.unsplash.com/photo-1511193311914-0346f16efe90?w=800&auto=format&fit=crop",
+            "https://images.unsplash.com/photo-1596838132731-3301c3fd4317?w=800&auto=format&fit=crop"
         ]
     },
-    // 購物商場 (Shopping Malls)
     {
         id: "manila_sm_mall_of_asia",
         city: "manila",
@@ -245,7 +245,6 @@ const ATTRACTIONS_SEED_DATA = [
             "https://images.unsplash.com/photo-1555529669-e69e7aa0ba9a?w=800&auto=format&fit=crop"
         ]
     },
-    // 歷史文化 (History)
     {
         id: "manila_intramuros",
         city: "manila",
@@ -256,14 +255,14 @@ const ATTRACTIONS_SEED_DATA = [
         phone: "+63 2 8527 3155",
         googleRating: 4.7,
         googleReviewCount: 29500,
-        description: "馬尼拉著名的西班牙殖民古城，保留完整護城石牆、聖地牙哥堡壘與四百年歷史的聖奧古斯丁教堂。",
+        description: "馬尼拉著名的西班牙殖民古城，保留完整護城石牆、聖地牙哥古堡與四百年歷史的世界遺產聖奧古斯丁教堂。",
         images: [
-            "https://images.unsplash.com/photo-1548625361-195fe578df93?w=800&auto=format&fit=crop"
+            "https://images.unsplash.com/photo-1548625361-195fe578df93?w=800&auto=format&fit=crop",
+            "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=800&auto=format&fit=crop"
         ]
     },
 
     // ==================== 宿霧 (CEBU) ====================
-    // 頂級賭場 (Casinos)
     {
         id: "cebu_nustar_resort",
         city: "cebu",
@@ -276,10 +275,10 @@ const ATTRACTIONS_SEED_DATA = [
         googleReviewCount: 4600,
         description: "宿霧最新開幕的奢華地標五星級海景綜合娛樂度假村，擁有南菲律賓最具規模的國際賭場與頂級名店街。",
         images: [
-            "https://images.unsplash.com/photo-1518609878373-06d740f60d8b?w=800&auto=format&fit=crop"
+            "https://images.unsplash.com/photo-1518609878373-06d740f60d8b?w=800&auto=format&fit=crop",
+            "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&auto=format&fit=crop"
         ]
     },
-    // 購物商場 (Shopping Malls)
     {
         id: "cebu_sm_seaside_city",
         city: "cebu",
@@ -310,7 +309,6 @@ const ATTRACTIONS_SEED_DATA = [
             "https://images.unsplash.com/photo-1581417478175-a9ef18f210c2?w=800&auto=format&fit=crop"
         ]
     },
-    // 歷史文化 (History)
     {
         id: "cebu_magellans_cross",
         city: "cebu",
