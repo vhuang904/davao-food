@@ -11,7 +11,7 @@
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #fdfbf7; color: #333; padding-bottom: 50px; }
         
-        /* 頂部 Header */
+        /* 頂部 Header 與導覽列完美鎖定 */
         header { background: #EA580C; color: white; padding: 12px 16px 0 16px; box-shadow: 0 4px 10px rgba(0,0,0,0.08); position: sticky; top: 0; z-index: 100; }
         .header-inner { max-width: 600px; margin: 0 auto; width: 100%; }
         
@@ -25,16 +25,15 @@
         .app-select { flex: 1; background: rgba(255, 255, 255, 0.18); color: white; border: 1px solid rgba(255, 255, 255, 0.4); padding: 6px 10px; border-radius: 6px; font-size: 0.82rem; outline: none; cursor: pointer; text-overflow: ellipsis; }
         .app-select option { color: #333; background: white; }
 
-        /* 即時搜尋框容器 */
+        /* 即時搜尋框 */
         .search-container { position: relative; margin-bottom: 10px; display: flex; align-items: center; width: 100%; }
         .search-input { width: 100%; background: #ffffff; color: #292524; border: 1px solid #fed7aa; border-radius: 22px; padding: 8px 36px 8px 36px; font-size: 0.85rem; outline: none; box-shadow: 0 2px 6px rgba(0,0,0,0.06); transition: all 0.2s; }
         .search-input:focus { border-color: #ea580c; box-shadow: 0 2px 10px rgba(234, 88, 12, 0.2); }
         .search-icon { position: absolute; left: 12px; color: #ea580c; font-size: 0.85rem; pointer-events: none; }
         .search-clear-btn { position: absolute; right: 10px; background: #e7e5e4; border: none; width: 20px; height: 20px; border-radius: 50%; color: #78716c; font-size: 0.72rem; cursor: pointer; display: none; align-items: center; justify-content: center; line-height: 1; }
-        .search-clear-btn:active { background: #d6d3d1; }
 
-        /* 三欄式主導覽 Tab 切換 */
-        .main-tabs { display: flex; border-top: 1px solid rgba(255,255,255,0.2); width: 100%; margin-top: 4px; }
+        /* 三欄式主導覽 Tab 切換（直接包含在 Header 內，絕不跑版） */
+        .main-tabs { display: flex; border-top: 1px solid rgba(255,255,255,0.2); width: 100%; margin-top: 6px; }
         .main-tab-btn { flex: 1; text-align: center; padding: 10px 4px; font-weight: bold; font-size: 0.85rem; color: rgba(255,255,255,0.75); border: none; background: none; cursor: pointer; border-bottom: 3px solid transparent; white-space: nowrap; }
         .main-tab-btn.active { color: white; border-bottom: 3px solid white; }
 
@@ -44,39 +43,31 @@
         .cat-chip { padding: 6px 14px; border-radius: 18px; font-size: 0.85rem; background: #f5f2eb; color: #666; white-space: nowrap; border: none; cursor: pointer; transition: all 0.2s; flex-shrink: 0; }
         .cat-chip.active { background: #EA580C; color: white; font-weight: bold; }
 
-        /* 響應式容器與內容排版 */
+        /* 內容容器與卡片設計 */
         .container { max-width: 600px; margin: 0 auto; padding: 16px; }
         .tab-content { display: none; }
         .tab-content.active { display: block; }
-
         .grid-layout { display: flex; flex-direction: column; gap: 20px; }
-
         .search-results-info { font-size: 0.8rem; color: #78716c; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; }
 
-        /* 卡片設計 */
         .card { background: white; border-radius: 14px; overflow: hidden; box-shadow: 0 4px 14px rgba(0,0,0,0.05); border: 1px solid #f0eae1; display: flex; flex-direction: column; }
-
-        /* 修復後的圖片輪播容器（確保絕對不會消失） */
         .carousel-container { position: relative; width: 100%; height: 210px; min-height: 210px; background: #f7f5f0; overflow: hidden; flex-shrink: 0; }
         .carousel-track { display: flex; width: 100%; height: 210px; overflow-x: auto; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; }
         .carousel-track::-webkit-scrollbar { display: none; }
         .carousel-slide { flex: 0 0 100%; width: 100%; height: 210px; scroll-snap-align: start; position: relative; }
         .carousel-slide img { width: 100%; height: 210px; object-fit: cover; display: block; }
-
         .carousel-dots { position: absolute; bottom: 8px; left: 0; right: 0; display: flex; justify-content: center; gap: 5px; z-index: 10; pointer-events: none; }
         .dot { width: 6px; height: 6px; border-radius: 50%; background: rgba(255, 255, 255, 0.5); }
         .dot.active { background: #ffffff; width: 14px; border-radius: 4px; }
         .photo-tag { position: absolute; top: 8px; right: 8px; background: rgba(0, 0, 0, 0.6); color: white; font-size: 0.7rem; padding: 3px 8px; border-radius: 6px; z-index: 10; }
 
         .card-body { padding: 16px; display: flex; flex-direction: column; flex: 1; }
-        
         .badge-group { display: flex; gap: 6px; margin-bottom: 10px; flex-wrap: wrap; align-items: center; }
         .badge { display: inline-flex; align-items: center; background: #fff7ed; color: #c2410c; font-size: 0.75rem; padding: 3px 8px; border-radius: 6px; font-weight: 600; border: 1px solid #ffedd5; }
         .badge-city { background: #f0f9ff; color: #0369a1; border-color: #e0f2fe; }
         .badge-promo { background: #fef2f2; color: #dc2626; border-color: #fecaca; }
         .badge-brand { background: #fefce8; color: #a16207; border-color: #fef08a; }
         .badge-expiry { background: #f0fdf4; color: #15803d; border-color: #bbf7d0; font-weight: bold; }
-
         .badge-google-rating { background: #fef3c7; color: #92400e; border-color: #fde68a; font-weight: bold; gap: 4px; }
         .badge-elite-choice { background: #fff1f2; color: #e11d48; border-color: #fecdd3; font-weight: bold; gap: 4px; }
 
@@ -100,51 +91,37 @@
         .rating-label { font-size: 0.82rem; font-weight: bold; color: #78716c; }
         .rating-score-num { font-size: 0.95rem; font-weight: 800; color: #ea580c; }
         .rating-count-hint { font-size: 0.72rem; color: #a8a29e; }
-        
         .star-picker { display: flex; gap: 3px; cursor: pointer; }
         .star-picker span { font-size: 1.15rem; color: #e2dcd2; transition: color 0.15s; line-height: 1; }
         .star-picker span.active { color: #f59e0b; }
-        
         .btn-toggle-forum { background: none; border: none; color: #57534e; font-size: 0.8rem; font-weight: 600; cursor: pointer; padding: 8px 0 2px 0; width: 100%; text-align: left; display: flex; justify-content: space-between; align-items: center; border-top: 1px dashed #e7dfd3; margin-top: 8px; }
-        .btn-toggle-forum:hover { color: #ea580c; }
-
         .forum-content { display: none; margin-top: 10px; padding-top: 10px; border-top: 1px solid #ede5d8; }
         .forum-content.show { display: block; }
-
         .mini-comment-form { margin-bottom: 12px; background: #ffffff; padding: 10px; border-radius: 8px; border: 1px solid #eee8dd; }
         .mini-form-row { display: flex; gap: 6px; margin-bottom: 6px; }
         .mini-input { flex: 1; padding: 6px 8px; border-radius: 6px; border: 1px solid #e7e5e4; font-size: 0.8rem; outline: none; }
         .mini-select { width: 90px; padding: 6px 4px; border-radius: 6px; border: 1px solid #e7e5e4; font-size: 0.78rem; outline: none; }
         .mini-textarea { width: 100%; padding: 6px 8px; border-radius: 6px; border: 1px solid #e7e5e4; font-size: 0.8rem; outline: none; resize: vertical; min-height: 50px; margin-bottom: 6px; }
         .btn-mini-post { width: 100%; background: #EA580C; color: white; padding: 6px; border-radius: 6px; font-weight: bold; border: none; cursor: pointer; font-size: 0.8rem; }
-
         .review-item { font-size: 0.82rem; color: #57534e; padding: 8px 0; border-bottom: 1px solid #f5f2eb; }
-        .review-item:last-child { border-bottom: none; }
         .review-user { font-weight: bold; color: #1c1917; }
         .review-time { font-size: 0.72rem; color: #a8a29e; float: right; }
         .review-text { margin-top: 4px; color: #44403c; line-height: 1.35; }
 
-        /* 3D 角色頭像懸浮 AI 管家按鈕 */
-        .chat-fab { position: fixed; bottom: 24px; right: 20px; width: 56px; height: 56px; border-radius: 50%; background: #ffffff; border: 2px solid #ea580c; box-shadow: 0 6px 20px rgba(234, 88, 12, 0.45); overflow: hidden; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 1000; transition: transform 0.2s, box-shadow 0.2s; }
-        .chat-fab:active { transform: scale(0.92); }
+        /* 3D AI 管家懸浮按鈕 */
+        .chat-fab { position: fixed; bottom: 24px; right: 20px; width: 56px; height: 56px; border-radius: 50%; background: #ffffff; border: 2px solid #ea580c; box-shadow: 0 6px 20px rgba(234, 88, 12, 0.45); overflow: hidden; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 1000; }
         .chat-fab img { width: 100%; height: 100%; object-fit: cover; }
-
         .chat-modal { display: none; position: fixed; bottom: 92px; right: 20px; width: 350px; max-width: calc(100vw - 32px); height: 500px; max-height: calc(100vh - 110px); background: #ffffff; border-radius: 20px; box-shadow: 0 16px 40px rgba(0,0,0,0.18); border: 1px solid #f0e6d8; flex-direction: column; z-index: 1000; overflow: hidden; }
         .chat-modal.show { display: flex; }
-
         .chat-header { background: #EA580C; color: white; padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; }
         .chat-header-info { display: flex; align-items: center; gap: 8px; }
         .chat-avatar-small { width: 34px; height: 34px; border-radius: 50%; overflow: hidden; border: 1.5px solid white; background: white; flex-shrink: 0; }
         .chat-avatar-small img { width: 100%; height: 100%; object-fit: cover; }
-        .chat-header-info h3 { font-size: 0.95rem; font-weight: bold; margin: 0; }
-        .chat-header-info span { font-size: 0.72rem; color: #fed7aa; display: block; }
         .btn-close-chat { background: rgba(255,255,255,0.2); border: none; color: white; width: 26px; height: 26px; border-radius: 50%; font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-
         .chat-messages { flex: 1; padding: 14px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; background: #fdfbf7; font-size: 0.85rem; }
         .chat-bubble { max-width: 82%; padding: 10px 14px; border-radius: 16px; line-height: 1.45; word-break: break-word; }
         .chat-bubble.bot { background: #ffffff; border: 1px solid #e7e2d7; align-self: flex-start; color: #292524; border-top-left-radius: 4px; }
         .chat-bubble.user { background: #EA580C; color: white; align-self: flex-end; border-top-right-radius: 4px; }
-
         .chat-input-area { display: flex; border-top: 1px solid #efe8dc; padding: 10px 12px; background: #ffffff; gap: 8px; align-items: center; }
         .chat-input { flex: 1; border: 1px solid #e2d9cd; border-radius: 20px; padding: 9px 14px; font-size: 0.85rem; outline: none; background: #faf8f5; }
         .btn-send-chat { background: #EA580C; color: white; border: none; width: 36px; height: 36px; border-radius: 50%; font-weight: bold; font-size: 0.9rem; cursor: pointer; display: flex; align-items: center; justify-content: center; }
@@ -180,7 +157,7 @@
                 <button class="search-clear-btn" id="search-clear-btn" onclick="clearSearch()" title="清除">✕</button>
             </div>
 
-            <!-- 三欄式主導覽 Tab 切換 -->
+            <!-- 三欄式主導覽 Tab 切換（完美包覆在橘色 Header 內底部） -->
             <div class="main-tabs">
                 <button class="main-tab-btn active" id="tab-btn-map" onclick="switchMainTab('map')">🗺️ 美食地圖</button>
                 <button class="main-tab-btn" id="tab-btn-attraction" onclick="switchMainTab('attraction')">🏛️ 景點導覽</button>
@@ -543,9 +520,7 @@
                 const normName = normalizeName(item.name_en || item.name || '');
                 const city = (item.city || 'davao').toLowerCase();
                 const key = `${city}_${normName}`;
-                if (!uniqueMap.has(key)) {
-                    uniqueMap.set(key, item);
-                }
+                if (!uniqueMap.has(key)) uniqueMap.set(key, item);
             });
             return Array.from(uniqueMap.values());
         }
@@ -566,8 +541,7 @@
                 if (allAttractions.length === 0) {
                     allAttractions = [
                         { city: 'davao', category: 'nature', name: 'Eden Nature Park & Resort', address: 'Toril, Davao City', phone: '+82 82 295 1020', googleRating: 4.6, googleReviewCount: 1420, description: '位於達沃市山區的超人氣生態度假村，擁有涼爽氣候與森林步道。' },
-                        { city: 'manila', category: 'history', name: 'Intramuros (Walled City)', address: 'Manila, Metro Manila', phone: '+63 2 8527 3155', googleRating: 4.7, googleReviewCount: 18500, description: '馬尼拉著名的西班牙殖民時期歷史古城。' },
-                        { city: 'boracay', category: 'nature', name: 'Boracay White Beach', address: 'Boracay Island, Malay', phone: '', googleRating: 4.9, googleReviewCount: 42000, description: '世界聞名的絕美白色沙灘與湛藍海水。' }
+                        { city: 'manila', category: 'history', name: 'Intramuros (Walled City)', address: 'Manila, Metro Manila', phone: '+63 2 8527 3155', googleRating: 4.7, googleReviewCount: 18500, description: '馬尼拉著名的西班牙殖民時期歷史古城。' }
                     ];
                 }
 
@@ -580,8 +554,7 @@
                 if (allNews.length === 0) {
                     allNews = [
                         { city: 'manila', type: 'event', brand: 'TicketWorld', title: 'Ed Sheeran Mathematics Tour in Manila', tag: '🎵 演唱會與活動', validity: '2026/09/25 演出', description: '西洋流行天王 Ed Sheeran 降臨馬尼拉開唱，帶來震撼金曲合輯！', location: 'SMDC Festival Grounds, Manila', url: 'https://ticketworld.com.ph' },
-                        { city: 'all', type: 'promo', brand: 'GrabFood', title: 'September 50% OFF Weekend Promo', tag: '🔥 限時優惠', validity: '9月底截止', description: '週末全菲律賓 GrabFood 外送精選指定餐廳滿額享 5 折優惠！', location: 'Manila, Davao, Cebu', url: 'https://grab.com' },
-                        { city: 'cebu', type: 'movie', brand: 'SM Cinema', title: 'Marvel Studios New Blockbuster Premiere', tag: '🎬 電影與娛樂', validity: '本週上映', description: '漫威最新強檔鉅獻於全菲 IMAX 影城同步盛大上映。', location: 'SM City Cebu Cinema', url: 'https://smcinema.com' }
+                        { city: 'all', type: 'promo', brand: 'GrabFood', title: 'September 50% OFF Weekend Promo', tag: '🔥 限時優惠', validity: '9月底截止', description: '週末全菲律賓 GrabFood 外送精選指定餐廳滿額享 5 折優惠！', location: 'Manila, Davao, Cebu', url: 'https://grab.com' }
                     ];
                 }
             } catch (err) {
@@ -782,9 +755,7 @@
             const query = q.toLowerCase();
             const keywords = new Set([query]);
             Object.keys(SYNONYM_MAP).forEach(k => {
-                if (query.includes(k) || k.includes(query)) {
-                    SYNONYM_MAP[k].forEach(s => keywords.add(s.toLowerCase()));
-                }
+                if (query.includes(k) || k.includes(query)) SYNONYM_MAP[k].forEach(s => keywords.add(s.toLowerCase()));
             });
             const text = `${item.name || ''} ${item.name_en || ''} ${item.address || ''} ${item.description || ''} ${item.title || ''}`.toLowerCase();
             for (const kw of keywords) {
@@ -965,7 +936,7 @@
             }).join('');
         }
 
-        // 渲染城市動態
+        // 渲染城市動態（修復欄位對應與防止 [object Object]）
         function renderNewsList() {
             const listEl = document.getElementById('news-list');
             const langData = i18n[currentLang];
@@ -987,7 +958,8 @@
                 const title = item.title || 'Event News';
                 const tag = item.tag || '🔥 動態';
                 const validity = item.validity || '';
-                const desc = item.description || item.description_zh || langData.noDesc;
+                // 修正：確保只抓取字串敘述，避免抓到物件
+                const desc = typeof item.description === 'string' ? item.description : (typeof item.description_zh === 'string' ? item.description_zh : (item.description?.zh || langData.noDesc));
                 const location = item.location || 'Philippines';
                 const img = item.imageUrl || (item.type === 'movie' ? categoryImagePools.movie[0] : (item.type === 'event' ? categoryImagePools.event[0] : categoryImagePools.filipino[0]));
                 const titleHtml = item.url ? `<a href="${item.url}" target="_blank" style="color:#1c1917; text-decoration:none; border-bottom:2px solid #EA580C;">${title} 🔗</a>` : title;
