@@ -144,7 +144,7 @@
             line-height: 1;
         }
 
-        /* 三欄式主導覽 Tab（緊鎖在 Header 橘色底內） */
+        /* 三欄式主導覽 Tab 切換 */
         .main-tabs {
             display: flex;
             border-top: 1px solid rgba(255, 255, 255, 0.2);
@@ -171,7 +171,7 @@
             border-bottom: 3px solid white;
         }
 
-        /* 二級篩選 Bar（置於 Header 底端一體化，橫向滑動） */
+        /* 二級篩選 Bar */
         .sub-nav-wrapper {
             background: #ffffff;
             border-bottom: 1px solid #f1ece1;
@@ -845,11 +845,11 @@
             <!-- 即時搜尋框 -->
             <div class="search-container" id="search-container">
                 <i class="fa-solid fa-magnifying-glass search-icon"></i>
-                <input type="text" class="search-input" id="search-input" placeholder="搜尋燒肉、火鍋、景點、演唱會、賭場..." oninput="handleSearchInput(this.value)">
+                <input type="text" class="search-input" id="search-input" placeholder="搜尋燒肉、火鍋、景點、演唱會、商場、賭場..." oninput="handleSearchInput(this.value)">
                 <button class="search-clear-btn" id="search-clear-btn" onclick="clearSearch()" title="清除">✕</button>
             </div>
 
-            <!-- 三欄式主導覽 Tab 切換（與 Header 底線咬合） -->
+            <!-- 三欄式主導覽 Tab 切換（緊密貼合 Header 底線） -->
             <div class="main-tabs">
                 <button class="main-tab-btn active" id="tab-btn-map" onclick="switchMainTab('map')">🗺️ 美食地圖</button>
                 <button class="main-tab-btn" id="tab-btn-attraction" onclick="switchMainTab('attraction')">🏛️ 景點導覽</button>
@@ -857,12 +857,12 @@
             </div>
         </div>
 
-        <!-- 二級篩選列包覆區（緊貼在 Header 最下方，確保排版穩定不跳動） -->
+        <!-- 二級篩選列包覆區（緊貼在 Header 最下方） -->
         <div class="sub-nav-wrapper">
             <!-- 美食分類列 -->
             <div class="category-bar" id="category-bar"></div>
 
-            <!-- 景點二級分類 Bar（新增 🎰 賭場娛樂） -->
+            <!-- 景點二級分類 Bar（含 🛒 購物商場 與 🎰 賭場娛樂） -->
             <div class="sub-filter-bar" id="attraction-filter-bar">
                 <button class="cat-chip active" id="att-sub-all" onclick="filterAttractionCat('all')">全部景點</button>
                 <button class="cat-chip" id="att-sub-shopping" onclick="filterAttractionCat('shopping')">🛒 購物商場</button>
@@ -957,55 +957,76 @@
 
         const AI_WORKER_URL = "https://food-ai-assistant.vhuang904.workers.dev";
 
-        // 分類專屬備援圖庫池
+        // 分類專屬高解析度備援圖庫池（提供中餐、燒肉、日韓、速食、手搖飲、菲律賓菜、商場、賭場、歷史古蹟）
         const categoryImagePools = {
             chinese: [
                 "https://images.unsplash.com/photo-1563245372-f21724e3856d?w=800&auto=format&fit=crop",
-                "https://images.unsplash.com/photo-1541696432-82c6da8ce7bf?w=800&auto=format&fit=crop"
+                "https://images.unsplash.com/photo-1541696432-82c6da8ce7bf?w=800&auto=format&fit=crop",
+                "https://images.unsplash.com/photo-1525755662778-989d0524087e?w=800&auto=format&fit=crop"
             ],
             japanese_korean: [
                 "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=800&auto=format&fit=crop",
-                "https://images.unsplash.com/photo-1579871494447-9811cf80d66c?w=800&auto=format&fit=crop"
+                "https://images.unsplash.com/photo-1579871494447-9811cf80d66c?w=800&auto=format&fit=crop",
+                "https://images.unsplash.com/photo-1617196034796-73dfa7b1fd56?w=800&auto=format&fit=crop"
             ],
             fast_food: [
                 "https://images.unsplash.com/photo-1550547660-d9450f859349?w=800&auto=format&fit=crop",
-                "https://images.unsplash.com/photo-1586190848861-99aa4a171e90?w=800&auto=format&fit=crop"
+                "https://images.unsplash.com/photo-1586190848861-99aa4a171e90?w=800&auto=format&fit=crop",
+                "https://images.unsplash.com/photo-1561758033-d89a9ad46330?w=800&auto=format&fit=crop"
             ],
             bbq_seafood: [
                 "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=800&auto=format&fit=crop",
-                "https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?w=800&auto=format&fit=crop"
+                "https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?w=800&auto=format&fit=crop",
+                "https://images.unsplash.com/photo-1544025162-d76694265947?w=800&auto=format&fit=crop"
             ],
             coffee_drinks: [
                 "https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=800&auto=format&fit=crop",
-                "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=800&auto=format&fit=crop"
+                "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=800&auto=format&fit=crop",
+                "https://images.unsplash.com/photo-1517256064527-09c73fc73e38?w=800&auto=format&fit=crop"
             ],
             filipino: [
                 "https://images.unsplash.com/photo-1541544741938-0af808871cc0?w=800&auto=format&fit=crop",
-                "https://images.unsplash.com/photo-1626777552726-4a6b54c97e46?w=800&auto=format&fit=crop"
+                "https://images.unsplash.com/photo-1626777552726-4a6b54c97e46?w=800&auto=format&fit=crop",
+                "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=800&auto=format&fit=crop"
+            ],
+            history: [
+                "https://images.unsplash.com/photo-1548625361-195fe578df93?w=800&auto=format&fit=crop",
+                "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=800&auto=format&fit=crop",
+                "https://images.unsplash.com/photo-1569154941061-e231b4725ef1?w=800&auto=format&fit=crop"
+            ],
+            nature: [
+                "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&auto=format&fit=crop",
+                "https://images.unsplash.com/photo-1518684079-3c830dcef090?w=800&auto=format&fit=crop",
+                "https://images.unsplash.com/photo-1448375240586-882707db888b?w=800&auto=format&fit=crop"
             ],
             attraction: [
                 "https://images.unsplash.com/photo-1518684079-3c830dcef090?w=800&auto=format&fit=crop",
-                "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&auto=format&fit=crop"
+                "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&auto=format&fit=crop",
+                "https://images.unsplash.com/photo-1548625361-195fe578df93?w=800&auto=format&fit=crop"
             ],
             shopping: [
                 "https://images.unsplash.com/photo-1519567241046-7f570eee3ce6?w=800&auto=format&fit=crop",
-                "https://images.unsplash.com/photo-1567449303078-57ad995bd302?w=800&auto=format&fit=crop"
+                "https://images.unsplash.com/photo-1567449303078-57ad995bd302?w=800&auto=format&fit=crop",
+                "https://images.unsplash.com/photo-1555529669-e69e7aa0ba9a?w=800&auto=format&fit=crop"
             ],
             casino: [
                 "https://images.unsplash.com/photo-1518609878373-06d740f60d8b?w=800&auto=format&fit=crop",
-                "https://images.unsplash.com/photo-1511193311914-0346f16efe90?w=800&auto=format&fit=crop"
+                "https://images.unsplash.com/photo-1511193311914-0346f16efe90?w=800&auto=format&fit=crop",
+                "https://images.unsplash.com/photo-1596838132731-3301c3fd4317?w=800&auto=format&fit=crop"
             ],
             event: [
                 "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=800&auto=format&fit=crop",
-                "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=800&auto=format&fit=crop"
+                "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=800&auto=format&fit=crop",
+                "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=800&auto=format&fit=crop"
             ],
             movie: [
                 "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=800&auto=format&fit=crop",
-                "https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=800&auto=format&fit=crop"
+                "https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=800&auto=format&fit=crop",
+                "https://images.unsplash.com/photo-1517604931442-7e0c8ed2963c?w=800&auto=format&fit=crop"
             ]
         };
 
-        // 多語系字典（包含購物商場與賭場娛樂）
+        // 多語系字典
         const i18n = {
             'zh-TW': {
                 title: '📍 大V的旅遊窩',
@@ -1047,7 +1068,7 @@
                 openStatus: '🟢 營業中',
                 closedStatus: '🔴 已打烊',
                 eliteChoice: '🌟 大V精選',
-                searchPlaceholder: '搜尋燒肉、火鍋、景點、演唱會、賭場...',
+                searchPlaceholder: '搜尋燒肉、火鍋、景點、演唱會、商場、賭場...',
                 searchResultText: '找到 {count} 筆符合「{keyword}」的結果',
                 clearSearch: '清除',
                 cities: { all: '全部城市', davao: '達沃', manila: '馬尼拉', cebu: '宿霧', boracay: '長灘島', palawan: '巴拉望', bohol: '薄荷島' },
@@ -1200,7 +1221,7 @@
         let itemRatings = JSON.parse(localStorage.getItem('ph_item_ratings')) || {};
         let resComments = JSON.parse(localStorage.getItem('ph_res_comments')) || {};
 
-        // 完整同義詞搜尋對應表（增加賭場、商場關鍵字）
+        // 完整同義詞搜尋對應表（涵蓋各品類關鍵字）
         const SYNONYM_MAP = {
             '燒肉': ['bbq', 'barbecue', 'grill', 'yakiniku', 'samgyupsal', '烤肉', 'japanese_korean', 'bbq_seafood'],
             '烤肉': ['bbq', 'barbecue', 'grill', 'yakiniku', 'samgyupsal', '燒肉', 'japanese_korean', 'bbq_seafood'],
@@ -1217,8 +1238,8 @@
             'chicken': ['炸雞', 'chicken joy', 'jollibee', 'fast_food'],
             '演唱會': ['concert', 'event', 'music', 'show', 'live'],
             '電影': ['movie', 'cinema', 'film', 'imax'],
-            '商場': ['mall', 'sm', 'shopping', 'ayala', 'abreeza', 'center'],
-            '百貨': ['mall', 'sm', 'shopping', 'department', 'abreeza'],
+            '商場': ['mall', 'sm', 'shopping', 'ayala', 'abreeza', 'center', 'gaisano'],
+            '百貨': ['mall', 'sm', 'shopping', 'department', 'abreeza', 'gaisano'],
             '賭場': ['casino', 'okada', 'solaire', 'nustar', 'resort', 'entertainment city', 'filipino'],
             'casino': ['賭場', 'okada', 'solaire', 'nustar', 'resort', 'entertainment city']
         };
@@ -1241,7 +1262,7 @@
             return Array.from(uniqueMap.values());
         }
 
-        // 資料讀取（支援 Firestore 即時資料與完整備援）
+        // 資料讀取（支援 Firestore 即時資料與安全備援）
         async function fetchData() {
             try {
                 // 1. 抓取餐廳
@@ -1269,7 +1290,7 @@
                     allNews = [];
                 }
 
-                // 動態備用資料（防止 Firestore 剛建立時完全空白）
+                // 動態備用資料
                 if (allNews.length === 0) {
                     allNews = [
                         { city: 'manila', type: 'event', brand: 'TicketWorld', title: 'Ed Sheeran Mathematics Tour in Manila', tag: '🎵 演唱會與活動', validity: '2026/09/25 演出', description: '西洋流行天王 Ed Sheeran 降臨馬尼拉開唱，帶來震撼金曲合輯！', location: 'SMDC Festival Grounds, Manila', url: 'https://ticketworld.com.ph' },
@@ -1459,6 +1480,7 @@
             if (forum) forum.classList.add('show');
         };
 
+        // 智慧型多圖輪播備援演算法（保證回傳 3 張高解析實景圖片）
         function getImageArray(name, poolKey) {
             const pool = categoryImagePools[poolKey] || categoryImagePools.attraction;
             let hash = 0;
@@ -1492,7 +1514,7 @@
             return false;
         }
 
-        // 渲染美食地圖
+        // 渲染美食地圖（核心防禦：空陣列安全驗證）
         function renderList() {
             const listEl = document.getElementById('restaurant-list');
             document.getElementById('loading').style.display = 'none';
@@ -1521,7 +1543,10 @@
             listEl.innerHTML = filtered.map((item, idx) => {
                 const catKey = item.categoryKey || 'filipino';
                 const key = 'res_' + (item.city || 'davao') + '_' + idx;
-                const images = item.images || getImageArray(item.name, catKey);
+                
+                // 升級防禦：判斷是否為非空陣列，否則啟用高解析備援圖庫
+                const hasValidImages = Array.isArray(item.images) && item.images.length > 0;
+                const images = hasValidImages ? item.images : getImageArray(item.name, catKey);
 
                 const ratingData = itemRatings[key] || { scores: [], userRated: null };
                 const count = ratingData.scores.length;
@@ -1610,7 +1635,7 @@
             }).join('');
         }
 
-        // 渲染景點、購物商場與賭場
+        // 渲染景點、購物商場與賭場（核心防禦：空陣列安全驗證）
         function renderAttractionList() {
             const listEl = document.getElementById('attraction-list');
             const langData = i18n[currentLang];
@@ -1630,8 +1655,12 @@
 
             listEl.innerHTML = filtered.map((item, idx) => {
                 const key = 'att_' + (item.city || 'davao') + '_' + idx;
-                const poolKey = (item.category === 'casino' || item.category === 'shopping') ? item.category : 'attraction';
-                const images = item.images || getImageArray(item.name, poolKey);
+                const poolKey = (item.category === 'casino' || item.category === 'shopping' || item.category === 'history' || item.category === 'nature') ? item.category : 'attraction';
+                
+                // 升級防禦：空陣列與圖片安全保護
+                const hasValidImages = Array.isArray(item.images) && item.images.length > 0;
+                const images = hasValidImages ? item.images : getImageArray(item.name, poolKey);
+                
                 const name = item.name || 'Attraction';
                 const desc = typeof item.description === 'string' ? item.description : (typeof item.description_zh === 'string' ? item.description_zh : langData.noDesc);
                 
@@ -1644,6 +1673,9 @@
                 } else if (item.category === 'casino') {
                     catBadgeText = '🎰 賭場娛樂';
                     catBadgeStyle = 'background:#fee2e2; color:#b91c1c;';
+                } else if (item.category === 'history') {
+                    catBadgeText = '🏛️ 歷史文化';
+                    catBadgeStyle = 'background:#eff6ff; color:#1d4ed8;';
                 } else if (item.category === 'nature') {
                     catBadgeText = '🌳 自然海灘';
                     catBadgeStyle = 'background:#ecfdf5; color:#047857;';
