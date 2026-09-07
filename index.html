@@ -71,6 +71,9 @@
         .badge-open { background: #ecfdf5; color: #047857; border-color: #a7f3d0; font-weight: bold; }
         .badge-closed { background: #fef2f2; color: #b91c1c; border-color: #fecaca; font-weight: bold; }
 
+        /* Google 真實評分徽章 */
+        .badge-rating { background: #fefce8; color: #b45309; border-color: #fde047; font-weight: bold; }
+
         .card-title { font-size: 1.2rem; font-weight: bold; margin-bottom: 6px; color: #1c1917; }
         .card-desc { font-size: 0.88rem; color: #57534e; line-height: 1.5; margin-bottom: 12px; }
         .info-item { font-size: 0.85rem; color: #78716c; margin-bottom: 5px; display: flex; align-items: flex-start; gap: 6px; }
@@ -659,7 +662,6 @@
             const weekdayList = openingHours.weekdayDescriptions || [];
             const periods = openingHours.periods || [];
 
-            // 若既無時段描述，又無 periods，且 openNow 為 null/undefined
             if (weekdayList.length === 0 && periods.length === 0 && (openingHours.openNow === undefined || openingHours.openNow === null)) {
                 return { hasData: false, isOpen: null, todayText: null, weeklyList: [] };
             }
@@ -672,7 +674,6 @@
                          ? openingHours.openNow 
                          : false;
 
-            // 若有詳細 periods，用當前時間精確計算
             if (periods.length > 0) {
                 for (const period of periods) {
                     if (!period.open) continue;
@@ -696,7 +697,6 @@
                 }
             }
 
-            // 取得今日時間文字
             let todayPeriodStr = "";
             const todayIndex = (currentDay === 0) ? 6 : (currentDay - 1);
             if (weekdayList.length > 0) {
@@ -746,11 +746,20 @@
                     ? item.images
                     : getUniqueRestaurantImageArray(item ? item.name : '', catKey);
 
+                // ==================== 評分邏輯核心升級：優先讀取 Google 真實評分 ====================
                 const ratingData = itemRatings[resKey] || { scores: [5], userRated: null };
                 const totalScores = ratingData.scores;
-                const avgRating = (totalScores.reduce((a, b) => a + b, 0) / totalScores.length).toFixed(1);
+                const localAvgRating = (totalScores.reduce((a, b) => a + b, 0) / totalScores.length).toFixed(1);
                 const count = totalScores.length;
                 const userScore = ratingData.userRated || 0;
+
+                const realGoogleRating = (item.googleRating !== undefined && item.googleRating !== null) ? Number(item.googleRating).toFixed(1) : null;
+                const realReviewCount = item.googleReviewCount ? `${item.googleReviewCount} 則評價` : null;
+
+                // 頂部徽章優先顯示 Google 真實數據
+                const badgeRatingHtml = realGoogleRating 
+                    ? `<span class="badge badge-rating">⭐ ${realGoogleRating} (${realReviewCount || 'Google 好評'})</span>`
+                    : `<span class="badge badge-rating">⭐ ${localAvgRating} (${count} ${langData.ratingsCountText})</span>`;
 
                 const commentsList = resComments[resKey] || [];
 
@@ -824,6 +833,7 @@
                                 <span class="badge badge-city">${langData.cities[item.city || 'davao']}</span>
                                 <span class="badge">${langData.cats[catKey] || catKey}</span>
                                 ${openStatusBadge}
+                                ${badgeRatingHtml}
                             </div>
                             <div class="card-title">${displayName}</div>
                             <div class="card-desc">${displayDesc}</div>
@@ -833,7 +843,7 @@
 
                             <div class="card-forum-box">
                                 <div class="rating-header">
-                                    <span class="rating-score">⭐ ${avgRating} / 5.0 (${count} ${langData.ratingsCountText})</span>
+                                    <span class="rating-score">💬 本地評分: ${localAvgRating} / 5.0 (${count} ${langData.ratingsCountText})</span>
                                     <div class="star-picker" title="Rate">
                                         ${[1, 2, 3, 4, 5].map(s => `
                                             <span class="${s <= userScore ? 'active' : ''}" onclick="rateRestaurant('${resKey}', ${s})">★</span>
