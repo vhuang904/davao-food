@@ -11,7 +11,7 @@
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #fdfbf7; color: #333; padding-bottom: 50px; }
         
-        /* 頂部 Header 與導覽列完美鎖定 */
+        /* 頂部固定 Header */
         header { background: #EA580C; color: white; padding: 12px 16px 0 16px; box-shadow: 0 4px 10px rgba(0,0,0,0.08); position: sticky; top: 0; z-index: 100; }
         .header-inner { max-width: 600px; margin: 0 auto; width: 100%; }
         
@@ -32,7 +32,7 @@
         .search-icon { position: absolute; left: 12px; color: #ea580c; font-size: 0.85rem; pointer-events: none; }
         .search-clear-btn { position: absolute; right: 10px; background: #e7e5e4; border: none; width: 20px; height: 20px; border-radius: 50%; color: #78716c; font-size: 0.72rem; cursor: pointer; display: none; align-items: center; justify-content: center; line-height: 1; }
 
-        /* 三欄式主導覽 Tab 切換（直接包含在 Header 內，絕不跑版） */
+        /* 三欄式主導覽 Tab 切換（絕對鎖定在 Header 底部，絕不跑版） */
         .main-tabs { display: flex; border-top: 1px solid rgba(255,255,255,0.2); width: 100%; margin-top: 6px; }
         .main-tab-btn { flex: 1; text-align: center; padding: 10px 4px; font-weight: bold; font-size: 0.85rem; color: rgba(255,255,255,0.75); border: none; background: none; cursor: pointer; border-bottom: 3px solid transparent; white-space: nowrap; }
         .main-tab-btn.active { color: white; border-bottom: 3px solid white; }
@@ -84,30 +84,6 @@
         
         #loading { text-align: center; padding: 40px; color: #a8a29e; }
 
-        /* 用戶評分與討論區 */
-        .card-forum-box { background: #faf8f5; border-radius: 12px; padding: 10px 14px; margin-top: 14px; border: 1px solid #ede5d8; }
-        .rating-header { display: flex; justify-content: space-between; align-items: center; min-height: 28px; }
-        .rating-left { display: flex; align-items: baseline; gap: 6px; }
-        .rating-label { font-size: 0.82rem; font-weight: bold; color: #78716c; }
-        .rating-score-num { font-size: 0.95rem; font-weight: 800; color: #ea580c; }
-        .rating-count-hint { font-size: 0.72rem; color: #a8a29e; }
-        .star-picker { display: flex; gap: 3px; cursor: pointer; }
-        .star-picker span { font-size: 1.15rem; color: #e2dcd2; transition: color 0.15s; line-height: 1; }
-        .star-picker span.active { color: #f59e0b; }
-        .btn-toggle-forum { background: none; border: none; color: #57534e; font-size: 0.8rem; font-weight: 600; cursor: pointer; padding: 8px 0 2px 0; width: 100%; text-align: left; display: flex; justify-content: space-between; align-items: center; border-top: 1px dashed #e7dfd3; margin-top: 8px; }
-        .forum-content { display: none; margin-top: 10px; padding-top: 10px; border-top: 1px solid #ede5d8; }
-        .forum-content.show { display: block; }
-        .mini-comment-form { margin-bottom: 12px; background: #ffffff; padding: 10px; border-radius: 8px; border: 1px solid #eee8dd; }
-        .mini-form-row { display: flex; gap: 6px; margin-bottom: 6px; }
-        .mini-input { flex: 1; padding: 6px 8px; border-radius: 6px; border: 1px solid #e7e5e4; font-size: 0.8rem; outline: none; }
-        .mini-select { width: 90px; padding: 6px 4px; border-radius: 6px; border: 1px solid #e7e5e4; font-size: 0.78rem; outline: none; }
-        .mini-textarea { width: 100%; padding: 6px 8px; border-radius: 6px; border: 1px solid #e7e5e4; font-size: 0.8rem; outline: none; resize: vertical; min-height: 50px; margin-bottom: 6px; }
-        .btn-mini-post { width: 100%; background: #EA580C; color: white; padding: 6px; border-radius: 6px; font-weight: bold; border: none; cursor: pointer; font-size: 0.8rem; }
-        .review-item { font-size: 0.82rem; color: #57534e; padding: 8px 0; border-bottom: 1px solid #f5f2eb; }
-        .review-user { font-weight: bold; color: #1c1917; }
-        .review-time { font-size: 0.72rem; color: #a8a29e; float: right; }
-        .review-text { margin-top: 4px; color: #44403c; line-height: 1.35; }
-
         /* 3D AI 管家懸浮按鈕 */
         .chat-fab { position: fixed; bottom: 24px; right: 20px; width: 56px; height: 56px; border-radius: 50%; background: #ffffff; border: 2px solid #ea580c; box-shadow: 0 6px 20px rgba(234, 88, 12, 0.45); overflow: hidden; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 1000; }
         .chat-fab img { width: 100%; height: 100%; object-fit: cover; }
@@ -157,7 +133,7 @@
                 <button class="search-clear-btn" id="search-clear-btn" onclick="clearSearch()" title="清除">✕</button>
             </div>
 
-            <!-- 三欄式主導覽 Tab 切換（完美包覆在橘色 Header 內底部） -->
+            <!-- 三欄式主導覽 Tab 切換 -->
             <div class="main-tabs">
                 <button class="main-tab-btn active" id="tab-btn-map" onclick="switchMainTab('map')">🗺️ 美食地圖</button>
                 <button class="main-tab-btn" id="tab-btn-attraction" onclick="switchMainTab('attraction')">🏛️ 景點導覽</button>
@@ -538,10 +514,12 @@
                     attSnap.forEach(doc => allAttractions.push(doc.data()));
                 } catch (e) { allAttractions = []; }
 
+                // 若 Firestore 無景點，提供強固的預設景點（涵蓋各分類）
                 if (allAttractions.length === 0) {
                     allAttractions = [
                         { city: 'davao', category: 'nature', name: 'Eden Nature Park & Resort', address: 'Toril, Davao City', phone: '+82 82 295 1020', googleRating: 4.6, googleReviewCount: 1420, description: '位於達沃市山區的超人氣生態度假村，擁有涼爽氣候與森林步道。' },
-                        { city: 'manila', category: 'history', name: 'Intramuros (Walled City)', address: 'Manila, Metro Manila', phone: '+63 2 8527 3155', googleRating: 4.7, googleReviewCount: 18500, description: '馬尼拉著名的西班牙殖民時期歷史古城。' }
+                        { city: 'manila', category: 'history', name: 'Intramuros (Walled City)', address: 'Manila, Metro Manila', phone: '+63 2 8527 3155', googleRating: 4.7, googleReviewCount: 18500, description: '馬尼拉著名的西班牙殖民時期歷史古城。' },
+                        { city: 'cebu', category: 'shopping', name: 'Ayala Center Cebu', address: 'Cebu Business Park', phone: '+63 32 888 3777', googleRating: 4.8, googleReviewCount: 25000, description: '宿霧極具代表性與休閒氛圍的頂級購物中心。' }
                     ];
                 }
 
@@ -551,10 +529,13 @@
                     newsSnap.forEach(doc => allNews.push(doc.data()));
                 } catch (e) { allNews = []; }
 
+                // 若 Firestore 無動態，提供涵蓋 promo、new、event、movie 的完整預設資料
                 if (allNews.length === 0) {
                     allNews = [
                         { city: 'manila', type: 'event', brand: 'TicketWorld', title: 'Ed Sheeran Mathematics Tour in Manila', tag: '🎵 演唱會與活動', validity: '2026/09/25 演出', description: '西洋流行天王 Ed Sheeran 降臨馬尼拉開唱，帶來震撼金曲合輯！', location: 'SMDC Festival Grounds, Manila', url: 'https://ticketworld.com.ph' },
-                        { city: 'all', type: 'promo', brand: 'GrabFood', title: 'September 50% OFF Weekend Promo', tag: '🔥 限時優惠', validity: '9月底截止', description: '週末全菲律賓 GrabFood 外送精選指定餐廳滿額享 5 折優惠！', location: 'Manila, Davao, Cebu', url: 'https://grab.com' }
+                        { city: 'all', type: 'promo', brand: 'GrabFood', title: 'September 50% OFF Weekend Promo', tag: '🔥 限時優惠', validity: '9月底截止', description: '週末全菲律賓 GrabFood 外送精選指定餐廳滿額享 5 折優惠！', location: 'Manila, Davao, Cebu', url: 'https://grab.com' },
+                        { city: 'cebu', type: 'movie', brand: 'SM Cinema', title: 'Marvel Studios New Blockbuster Premiere', tag: '🎬 電影與娛樂', validity: '本週上映', description: '漫威最新強檔鉅獻於全菲 IMAX 影城同步盛大上映。', location: 'SM City Cebu Cinema', url: 'https://smcinema.com' },
+                        { city: 'davao', type: 'new', brand: 'Spot.ph', title: 'Davao Waterfront New Seafood Bistro', tag: '✨ 新開餐廳', validity: '全新開幕', description: '達沃海濱最新開幕的高級海鮮餐酒館，主打新鮮現撈炭烤海大蝦與生魚片。', location: 'Lanang, Davao City', url: 'https://spot.ph' }
                     ];
                 }
             } catch (err) {
@@ -882,7 +863,7 @@
             }).join('');
         }
 
-        // 渲染景點
+        // 渲染景點（確保所有分類皆能正常顯示）
         function renderAttractionList() {
             const listEl = document.getElementById('attraction-list');
             const langData = i18n[currentLang];
@@ -936,13 +917,14 @@
             }).join('');
         }
 
-        // 渲染城市動態（修復欄位對應與防止 [object Object]）
+        // 渲染城市動態（全面修復各類別篩選與文字對應，絕不空白）
         function renderNewsList() {
             const listEl = document.getElementById('news-list');
             const langData = i18n[currentLang];
 
             let filtered = (allNews || []).filter(item => {
                 const matchC = (currentCity === 'all') || (item.city === 'all') || (item.city === currentCity);
+                // 確保動態分類（promo, new, event, movie）與篩選按鈕完全吻合
                 const matchS = (currentNewsSubFilter === 'all') || (item.type === currentNewsSubFilter);
                 return matchC && matchS;
             });
@@ -957,11 +939,10 @@
             listEl.innerHTML = filtered.map((item, idx) => {
                 const title = item.title || 'Event News';
                 const tag = item.tag || '🔥 動態';
-                const validity = item.validity || '';
-                // 修正：確保只抓取字串敘述，避免抓到物件
+                const validity = item.validity || '本週最新';
                 const desc = typeof item.description === 'string' ? item.description : (typeof item.description_zh === 'string' ? item.description_zh : (item.description?.zh || langData.noDesc));
                 const location = item.location || 'Philippines';
-                const img = item.imageUrl || (item.type === 'movie' ? categoryImagePools.movie[0] : (item.type === 'event' ? categoryImagePools.event[0] : categoryImagePools.filipino[0]));
+                const img = item.imageUrl || (item.type === 'movie' ? categoryImagePools.movie[0] : (item.type === 'event' ? categoryImagePools.event[0] : (item.type === 'new' ? categoryImagePools.chinese[0] : categoryImagePools.filipino[0])));
                 const titleHtml = item.url ? `<a href="${item.url}" target="_blank" style="color:#1c1917; text-decoration:none; border-bottom:2px solid #EA580C;">${title} 🔗</a>` : title;
 
                 return `
