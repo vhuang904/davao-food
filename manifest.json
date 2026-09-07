@@ -1,15 +1,16 @@
 {
   "name": "大V的旅遊窩",
   "short_name": "大V旅遊窩",
-  "start_url": "/",
+  "start_url": "./index.html",
   "display": "standalone",
-  "background_color": "#fdfbf7",
+  "background_color": "#111111",
   "theme_color": "#EA580C",
   "icons": [
     {
       "src": "icon.svg",
-      "sizes": "any",
-      "type": "image/svg+xml"
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
     }
   ]
 }
