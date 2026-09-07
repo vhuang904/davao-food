@@ -79,7 +79,7 @@
         .card-desc { font-size: 0.88rem; color: #57534e; line-height: 1.5; margin-bottom: 12px; }
         .info-item { font-size: 0.85rem; color: #78716c; margin-bottom: 6px; display: flex; align-items: flex-start; gap: 8px; line-height: 1.4; }
         
-        /* 營業時間自適應排版（解決擠壓跑行問題） */
+        /* 營業時間自適應排版 */
         .hours-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; width: 100%; }
         .hours-text { flex: 1; word-break: break-word; }
         .hours-dropdown { white-space: nowrap; color: #ea580c; font-weight: bold; cursor: pointer; text-decoration: underline; font-size: 0.8rem; shrink: 0; padding-top: 1px; }
@@ -296,7 +296,8 @@
                 rateSuccess: '感謝評分！您的評分已成功記錄。',
                 commentSuccess: '留言發表成功！',
                 emptyCommentAlert: '請輸入暱稱與留言內容！',
-                toggleForumText: '💬 玩家討論與推薦',
+                toggleForumText: '💬 大V用戶評分與討論',
+                localScoreLabel: '大V評分',
                 postBtnText: '發表對此餐廳的評語',
                 slideHint: '👈 左右滑動看多圖',
                 ratingsCountText: '則評分',
@@ -346,7 +347,8 @@
                 rateSuccess: 'Thank you! Your rating has been recorded.',
                 commentSuccess: 'Review posted successfully!',
                 emptyCommentAlert: 'Please enter both nickname and comment!',
-                toggleForumText: '💬 Reviews & Discussion',
+                toggleForumText: '💬 Big V Reviews & Tips',
+                localScoreLabel: 'Big V Rating',
                 postBtnText: 'Submit Review for this spot',
                 slideHint: '👈 Swipe to view more photos',
                 ratingsCountText: 'reviews',
@@ -396,7 +398,8 @@
                 rateSuccess: 'Salamat! Na-itala na ang iyong rating.',
                 commentSuccess: 'Na-ipost na ang komento!',
                 emptyCommentAlert: 'Mangyaring ilagay ang pangalan at komento!',
-                toggleForumText: '💬 Diskusyon at Komento',
+                toggleForumText: '💬 Big V Komento at Tips',
+                localScoreLabel: 'Big V Rating',
                 postBtnText: 'I-post ang Komento',
                 slideHint: '👈 I-swipe para sa iba pang litrato',
                 ratingsCountText: 'mga review',
@@ -745,7 +748,7 @@
                     ? item.images
                     : getUniqueRestaurantImageArray(item ? item.name : '', catKey);
 
-                // ==================== 評分核心升級：標明 Google 口碑評分 ====================
+                // ==================== 評分簡化邏輯：頂部只留 Google 權威標籤 ====================
                 const ratingData = itemRatings[resKey] || { scores: [5], userRated: null };
                 const totalScores = ratingData.scores;
                 const localAvgRating = (totalScores.reduce((a, b) => a + b, 0) / totalScores.length).toFixed(1);
@@ -754,12 +757,12 @@
 
                 const hasGoogleRating = (item.googleRating !== undefined && item.googleRating !== null);
                 const realGoogleRating = hasGoogleRating ? Number(item.googleRating).toFixed(1) : null;
-                const realReviewCount = item.googleReviewCount ? `${item.googleReviewCount} 則` : '';
+                const realReviewCount = item.googleReviewCount ? `${item.googleReviewCount}則` : '';
 
-                // 明確標示 Google 徽章
+                // 頂部只放 Google 評分徽章；若無則顯示大V精選
                 const ratingBadgeHtml = hasGoogleRating
-                    ? `<span class="badge badge-google-rating"><i class="fa-solid fa-star" style="color:#eab308;"></i> Google ${realGoogleRating} (${realReviewCount}評價)</span>`
-                    : `<span class="badge badge-google-rating"><i class="fa-solid fa-star" style="color:#eab308;"></i> ${localAvgRating} (${count} ${langData.ratingsCountText})</span>`;
+                    ? `<span class="badge badge-google-rating"><i class="fa-solid fa-star" style="color:#eab308;"></i> Google ${realGoogleRating} (${realReviewCount})</span>`
+                    : `<span class="badge badge-google-rating"><i class="fa-solid fa-star" style="color:#eab308;"></i> 大V精選</span>`;
 
                 const commentsList = resComments[resKey] || [];
 
@@ -779,7 +782,7 @@
                     displayDesc = item.description;
                 }
 
-                // 營業時間動態解析（自適應彈性容器排版）
+                // 營業時間動態解析
                 const hoursInfo = parseOpeningStatus(item.openingHours);
                 let openStatusBadge = '';
                 let hoursDisplayHtml = '';
@@ -844,9 +847,10 @@
                             <div class="info-item"><span>📞</span> <span>${item.phone || langData.noPhone}</span></div>
                             ${hoursDisplayHtml}
 
+                            <!-- 下方社群專區：明確標註為大V用戶評分 -->
                             <div class="card-forum-box">
                                 <div class="rating-header">
-                                    <span class="rating-score">💬 本地評分: ${localAvgRating} / 5.0 (${count} ${langData.ratingsCountText})</span>
+                                    <span class="rating-score">💬 ${langData.localScoreLabel}: ${localAvgRating} / 5.0 (${count} ${langData.ratingsCountText})</span>
                                     <div class="star-picker" title="Rate">
                                         ${[1, 2, 3, 4, 5].map(s => `
                                             <span class="${s <= userScore ? 'active' : ''}" onclick="rateRestaurant('${resKey}', ${s})">★</span>
