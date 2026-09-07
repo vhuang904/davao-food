@@ -2,10 +2,11 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>大V的美食地圖</title>
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#EA580C">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #fdfbf7; color: #333; padding-bottom: 30px; }
@@ -72,13 +73,13 @@
         .badge-closed { background: #fef2f2; color: #b91c1c; border-color: #fecaca; font-weight: bold; }
 
         /* Google 真實評分徽章 */
-        .badge-rating { background: #fefce8; color: #b45309; border-color: #fde047; font-weight: bold; }
+        .badge-google-rating { background: #fef3c7; color: #b45309; border-color: #fde68a; font-weight: bold; display: inline-flex; align-items: center; gap: 4px; }
 
         .card-title { font-size: 1.2rem; font-weight: bold; margin-bottom: 6px; color: #1c1917; }
         .card-desc { font-size: 0.88rem; color: #57534e; line-height: 1.5; margin-bottom: 12px; }
         .info-item { font-size: 0.85rem; color: #78716c; margin-bottom: 5px; display: flex; align-items: flex-start; gap: 6px; }
         
-        /* 營業時間可展開區塊 */
+        /* 營業時間展開抽屜 */
         .hours-dropdown { cursor: pointer; color: #ea580c; font-weight: 600; text-decoration: underline; font-size: 0.8rem; margin-left: 4px; }
         .weekly-hours-box { display: none; background: #faf8f5; border: 1px solid #eee8dd; border-radius: 8px; padding: 8px 12px; margin-top: 6px; font-size: 0.8rem; color: #57534e; line-height: 1.6; }
         .weekly-hours-box.show { display: block; }
@@ -119,24 +120,32 @@
         .review-time { font-size: 0.72rem; color: #a8a29e; float: right; }
         .review-text { margin-top: 4px; color: #44403c; line-height: 1.35; }
 
-        /* 懸浮 AI 客服按鈕與對話視窗 */
-        .chat-fab { position: fixed; bottom: 22px; right: 20px; width: 56px; height: 56px; border-radius: 50%; background: #EA580C; color: white; border: none; box-shadow: 0 4px 16px rgba(234, 88, 12, 0.45); font-size: 1.6rem; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 1000; transition: transform 0.2s, box-shadow 0.2s; }
+        /* 升級版：質感 AI 管家懸浮按鈕與彈窗 */
+        .chat-fab { position: fixed; bottom: 24px; right: 20px; width: 52px; height: 52px; border-radius: 26px; background: linear-gradient(135deg, #ea580c 0%, #f97316 100%); color: white; border: none; box-shadow: 0 6px 20px rgba(234, 88, 12, 0.4); font-size: 1.4rem; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 1000; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
+        .chat-fab:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(234, 88, 12, 0.5); }
         .chat-fab:active { transform: scale(0.92); }
 
-        .chat-modal { display: none; position: fixed; bottom: 90px; right: 20px; width: 340px; max-width: calc(100vw - 36px); height: 480px; max-height: calc(100vh - 120px); background: #ffffff; border-radius: 18px; box-shadow: 0 12px 36px rgba(0,0,0,0.18); border: 1px solid #eee5d8; flex-direction: column; z-index: 1000; overflow: hidden; }
+        .chat-modal { display: none; position: fixed; bottom: 86px; right: 20px; width: 350px; max-width: calc(100vw - 32px); height: 500px; max-height: calc(100vh - 110px); background: #ffffff; border-radius: 20px; box-shadow: 0 16px 40px rgba(0,0,0,0.16); border: 1px solid #f0e6d8; flex-direction: column; z-index: 1000; overflow: hidden; animation: slideUp 0.25s ease-out; }
         .chat-modal.show { display: flex; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
 
-        .chat-header { background: #EA580C; color: white; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; font-weight: bold; font-size: 0.95rem; }
-        .btn-close-chat { background: none; border: none; color: white; font-size: 1.2rem; cursor: pointer; padding: 4px; line-height: 1; }
+        .chat-header { background: #EA580C; color: white; padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; }
+        .chat-header-info { display: flex; align-items: center; gap: 8px; }
+        .chat-header-info h3 { font-size: 0.95rem; font-weight: bold; margin: 0; }
+        .chat-header-info span { font-size: 0.72rem; color: #fed7aa; display: block; }
+        .btn-close-chat { background: rgba(255,255,255,0.2); border: none; color: white; width: 26px; height: 26px; border-radius: 50%; font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.15s; }
+        .btn-close-chat:hover { background: rgba(255,255,255,0.3); }
 
-        .chat-messages { flex: 1; padding: 12px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; background: #fdfbf7; font-size: 0.85rem; }
-        .chat-bubble { max-width: 82%; padding: 9px 13px; border-radius: 14px; line-height: 1.45; word-break: break-word; }
-        .chat-bubble.bot { background: #ffffff; border: 1px solid #e7e2d7; align-self: flex-start; color: #292524; }
-        .chat-bubble.user { background: #EA580C; color: white; align-self: flex-end; }
+        .chat-messages { flex: 1; padding: 14px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; background: #fdfbf7; font-size: 0.85rem; }
+        .chat-bubble { max-width: 82%; padding: 10px 14px; border-radius: 16px; line-height: 1.45; word-break: break-word; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
+        .chat-bubble.bot { background: #ffffff; border: 1px solid #e7e2d7; align-self: flex-start; color: #292524; border-top-left-radius: 4px; }
+        .chat-bubble.user { background: #EA580C; color: white; align-self: flex-end; border-top-right-radius: 4px; }
 
-        .chat-input-area { display: flex; border-top: 1px solid #efe8dc; padding: 8px 10px; background: #ffffff; gap: 6px; }
-        .chat-input { flex: 1; border: 1px solid #e7e5e4; border-radius: 20px; padding: 8px 14px; font-size: 0.85rem; outline: none; }
-        .btn-send-chat { background: #EA580C; color: white; border: none; border-radius: 20px; padding: 8px 14px; font-weight: bold; font-size: 0.82rem; cursor: pointer; }
+        .chat-input-area { display: flex; border-top: 1px solid #efe8dc; padding: 10px 12px; background: #ffffff; gap: 8px; align-items: center; }
+        .chat-input { flex: 1; border: 1px solid #e2d9cd; border-radius: 20px; padding: 9px 14px; font-size: 0.85rem; outline: none; transition: border-color 0.2s; background: #faf8f5; }
+        .chat-input:focus { border-color: #ea580c; background: #ffffff; }
+        .btn-send-chat { background: #EA580C; color: white; border: none; width: 36px; height: 36px; border-radius: 50%; font-weight: bold; font-size: 0.9rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.15s; shrink: 0; }
+        .btn-send-chat:active { transform: scale(0.92); }
     </style>
 </head>
 <body>
@@ -186,23 +195,33 @@
         </div>
     </div>
 
-    <!-- 懸浮客服機器人按鈕 -->
-    <button class="chat-fab" id="chat-fab" onclick="toggleChat()" title="AI 客服助理">🤖</button>
+    <!-- 質感 AI 客服機器人懸浮按鈕 -->
+    <button class="chat-fab" id="chat-fab" onclick="toggleChat()" title="AI 美食管家">
+        <i class="fa-solid fa-robot"></i>
+    </button>
 
-    <!-- 聊天視窗彈窗 -->
+    <!-- 質感 AI 美食管家彈窗 -->
     <div class="chat-modal" id="chat-modal">
         <div class="chat-header">
-            <span id="chat-header-title">🤖 大V美食管家 (AI 客服)</span>
+            <div class="chat-header-info">
+                <i class="fa-solid fa-robot" style="font-size:1.2rem;"></i>
+                <div>
+                    <h3 id="chat-header-title">大V美食管家</h3>
+                    <span>Powered by Gemini 3.7 Flash</span>
+                </div>
+            </div>
             <button class="btn-close-chat" onclick="toggleChat()">✕</button>
         </div>
         <div class="chat-messages" id="chat-messages">
             <div class="chat-bubble bot" id="chat-welcome-msg">
-                嗨！我是大V美食管家 👋 有任何菲律賓美食推薦、外送疑問或 App 使用問題，都可以隨時問我喔！
+                嗨！我是大V美食管家 👋 有任何菲律賓在地美食推薦、外送疑問或招牌菜諮詢，都可以隨時問我喔！
             </div>
         </div>
         <div class="chat-input-area">
-            <input type="text" id="chat-input" class="chat-input" placeholder="問點什麼吧..." onkeypress="handleChatKeyPress(event)">
-            <button class="btn-send-chat" id="chat-send-btn" onclick="sendChatMessage()">發送</button>
+            <input type="text" id="chat-input" class="chat-input" placeholder="問點什麼吧（例：推薦達沃高分燒肉）..." onkeypress="handleChatKeyPress(event)">
+            <button class="btn-send-chat" id="chat-send-btn" onclick="sendChatMessage()">
+                <i class="fa-solid fa-paper-plane" style="font-size:0.85rem;"></i>
+            </button>
         </div>
     </div>
 
@@ -316,11 +335,11 @@
                     coffee_drinks: '咖啡與手搖飲',
                     filipino: '菲律賓餐'
                 },
-                chatHeader: '🤖 大V美食管家 (AI 客服)',
-                chatWelcome: '嗨！我是大V美食管家 👋 有任何菲律賓美食推薦、外送疑問或 App 使用問題，都可以隨時問我喔！',
-                chatPlaceholder: '問點什麼吧...',
+                chatHeader: '大V美食管家',
+                chatWelcome: '嗨！我是大V美食管家 👋 有任何菲律賓在地美食推薦、外送疑問或招牌菜諮詢，都可以隨時問我喔！',
+                chatPlaceholder: '問點什麼吧（例：推薦達沃高分燒肉）...',
                 chatSend: '發送',
-                chatThinking: '思考中... ⏳',
+                chatThinking: '管家正在思考中... ⏳',
                 chatError: '連線異常，請稍候再試。'
             },
             'en': {
@@ -366,8 +385,8 @@
                     coffee_drinks: 'Coffee & Drinks',
                     filipino: 'Filipino'
                 },
-                chatHeader: "🤖 Big V's AI Concierge",
-                chatWelcome: 'Hi! I am your Philippines Food Concierge 👋 Ask me anything about local restaurants, food delivery, or how to use this app!',
+                chatHeader: "Big V's AI Concierge",
+                chatWelcome: 'Hi! I am your Philippines Food Concierge 👋 Ask me anything about local restaurants, food delivery, or dish recommendations!',
                 chatPlaceholder: 'Ask a question...',
                 chatSend: 'Send',
                 chatThinking: 'Thinking... ⏳',
@@ -416,7 +435,7 @@
                     coffee_drinks: 'Kape at Inumin',
                     filipino: 'Filipino'
                 },
-                chatHeader: '🤖 AI Katulong ni Big V',
+                chatHeader: 'AI Katulong ni Big V',
                 chatWelcome: 'Kamusta! Ako ang iyong AI Food Concierge 👋 Magtanong ng anuman tungkol sa mga kainan, delivery, o paano gamitin ang app na ito!',
                 chatPlaceholder: 'Magtanong dito...',
                 chatSend: 'Ipadala',
@@ -546,7 +565,6 @@
             document.getElementById('chat-header-title').innerText = langData.chatHeader;
             document.getElementById('chat-welcome-msg').innerText = langData.chatWelcome;
             document.getElementById('chat-input').placeholder = langData.chatPlaceholder;
-            document.getElementById('chat-send-btn').innerText = langData.chatSend;
 
             renderCategoryBar();
             renderList();
@@ -653,7 +671,7 @@
             });
         }
 
-        // ==================== 寬鬆相容版營業狀態解析 ====================
+        // 營業時間動態解析
         function parseOpeningStatus(openingHours) {
             if (!openingHours) {
                 return { hasData: false, isOpen: null, todayText: null, weeklyList: [] };
@@ -667,7 +685,7 @@
             }
 
             const now = new Date();
-            const currentDay = now.getDay(); // 0 = 週日, 1 = 週一...
+            const currentDay = now.getDay();
             const currentMinutes = now.getHours() * 60 + now.getMinutes();
 
             let isOpen = (openingHours.openNow !== undefined && openingHours.openNow !== null) 
@@ -746,20 +764,22 @@
                     ? item.images
                     : getUniqueRestaurantImageArray(item ? item.name : '', catKey);
 
-                // ==================== 評分邏輯核心升級：優先讀取 Google 真實評分 ====================
+                // ==================== 評分核心升級：優先讀取 Google 真實評分 ====================
                 const ratingData = itemRatings[resKey] || { scores: [5], userRated: null };
                 const totalScores = ratingData.scores;
                 const localAvgRating = (totalScores.reduce((a, b) => a + b, 0) / totalScores.length).toFixed(1);
                 const count = totalScores.length;
                 const userScore = ratingData.userRated || 0;
 
-                const realGoogleRating = (item.googleRating !== undefined && item.googleRating !== null) ? Number(item.googleRating).toFixed(1) : null;
-                const realReviewCount = item.googleReviewCount ? `${item.googleReviewCount} 則評價` : null;
+                // 檢查後端寫入的 googleRating 與 googleReviewCount
+                const hasGoogleRating = (item.googleRating !== undefined && item.googleRating !== null);
+                const realGoogleRating = hasGoogleRating ? Number(item.googleRating).toFixed(1) : null;
+                const realReviewCount = item.googleReviewCount ? `${item.googleReviewCount} 則評價` : 'Google 好評';
 
-                // 頂部徽章優先顯示 Google 真實數據
-                const badgeRatingHtml = realGoogleRating 
-                    ? `<span class="badge badge-rating">⭐ ${realGoogleRating} (${realReviewCount || 'Google 好評'})</span>`
-                    : `<span class="badge badge-rating">⭐ ${localAvgRating} (${count} ${langData.ratingsCountText})</span>`;
+                // 徽章標籤：優先顯示 Google 真實評分
+                const ratingBadgeHtml = hasGoogleRating
+                    ? `<span class="badge badge-google-rating">⭐ ${realGoogleRating} (${realReviewCount})</span>`
+                    : `<span class="badge badge-google-rating">⭐ ${localAvgRating} (${count} ${langData.ratingsCountText})</span>`;
 
                 const commentsList = resComments[resKey] || [];
 
@@ -833,7 +853,7 @@
                                 <span class="badge badge-city">${langData.cities[item.city || 'davao']}</span>
                                 <span class="badge">${langData.cats[catKey] || catKey}</span>
                                 ${openStatusBadge}
-                                ${badgeRatingHtml}
+                                ${ratingBadgeHtml}
                             </div>
                             <div class="card-title">${displayName}</div>
                             <div class="card-desc">${displayDesc}</div>
@@ -843,7 +863,7 @@
 
                             <div class="card-forum-box">
                                 <div class="rating-header">
-                                    <span class="rating-score">💬 本地評分: ${localAvgRating} / 5.0 (${count} ${langData.ratingsCountText})</span>
+                                    <span class="rating-score">💬 玩家評分: ${localAvgRating} / 5.0 (${count} ${langData.ratingsCountText})</span>
                                     <div class="star-picker" title="Rate">
                                         ${[1, 2, 3, 4, 5].map(s => `
                                             <span class="${s <= userScore ? 'active' : ''}" onclick="rateRestaurant('${resKey}', ${s})">★</span>
@@ -1006,7 +1026,6 @@
             messagesEl.innerHTML += `<div class="chat-bubble bot" id="${loadingId}">${langData.chatThinking}</div>`;
             messagesEl.scrollTop = messagesEl.scrollHeight;
 
-            // 即時精準獲取當前選單中的城市
             const activeCity = document.getElementById('city-select').value || currentCity;
 
             const catMap = {
