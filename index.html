@@ -97,7 +97,7 @@
         
         #loading { text-align: center; padding: 40px; color: #a8a29e; }
 
-        /* ==================== 重新重構：精簡乾淨的用戶評分區 ==================== */
+        /* 用戶評分區塊 */
         .card-forum-box { background: #faf8f5; border-radius: 12px; padding: 10px 14px; margin-top: 14px; border: 1px solid #ede5d8; }
         .rating-header { display: flex; justify-content: space-between; align-items: center; min-height: 28px; }
         .rating-left { display: flex; align-items: baseline; gap: 6px; }
@@ -444,13 +444,60 @@
         let itemRatings = JSON.parse(localStorage.getItem('ph_item_ratings')) || {};
         let resComments = JSON.parse(localStorage.getItem('ph_res_comments')) || {};
 
+        // ==================== 核心標準化與去重函式 ====================
+        function normalizeRestaurantName(name) {
+            if (!name) return '';
+            return name.toLowerCase()
+                       .replace(/\([^)]*\)/g, '')   // 移除括號內的備註分店，如 (Greenbelt)
+                       .replace(/restaurant|cafe|bistro|grill|express/g, '') // 移除常見通用後綴
+                       .replace(/[^a-z0-9\u4e00-\u9fa5]/g, '') // 只保留純英數字與中文字元
+                       .trim();
+        }
+
+        // 以 Google 搜尋/正規資料為主的除重處理
+        function deduplicateRestaurants(list) {
+            const uniqueMap = new Map();
+
+            list.forEach(item => {
+                const normName = normalizeRestaurantName(item.name_en || item.name || '');
+                const city = (item.city || 'davao').toLowerCase();
+                const dedupKey = `${city}_${normName}`;
+
+                if (!uniqueMap.has(dedupKey)) {
+                    uniqueMap.set(dedupKey, item);
+                } else {
+                    const existing = uniqueMap.get(dedupKey);
+
+                    // 權重計分：有真實 Google 評分 +50 分，有營業時間 +20 分，照片多 +10 分
+                    const score = (r) => {
+                        let s = 0;
+                        if (r.googleRating !== undefined && r.googleRating !== null) s += 50;
+                        if (r.googleReviewCount) s += 20;
+                        if (r.openingHours && r.openingHours.weekdayDescriptions && r.openingHours.weekdayDescriptions.length > 0) s += 20;
+                        if (r.images && r.images.length > 0) s += r.images.length * 2;
+                        return s;
+                    };
+
+                    // 只要新進這筆的 Google 數據或完整度更高，就替換掉舊的那筆
+                    if (score(item) > score(existing)) {
+                        uniqueMap.set(dedupKey, item);
+                    }
+                }
+            });
+
+            return Array.from(uniqueMap.values());
+        }
+
         async function fetchData() {
             try {
                 const resSnapshot = await getDocs(collection(db, "restaurants"));
-                allRestaurants = [];
+                const rawRestaurants = [];
                 resSnapshot.forEach((doc) => {
-                    allRestaurants.push(doc.data());
+                    rawRestaurants.push(doc.data());
                 });
+
+                // 執行智慧去重，以 Google 數據優先
+                allRestaurants = deduplicateRestaurants(rawRestaurants);
 
                 const newsSnapshot = await getDocs(collection(db, "news"));
                 allNews = [];
@@ -852,13 +899,13 @@
                             <div class="info-item"><span>📞</span> <span>${item.phone || langData.noPhone}</span></div>
                             ${hoursDisplayHtml}
 
-                            <!-- 重新優化排版：整齊俐落的「用戶評分」區塊 -->
+                            <!-- 精簡俐落的用戶評分專區 -->
                             <div class="card-forum-box">
                                 <div class="rating-header">
                                     <div class="rating-left">
                                         <span class="rating-label">${langData.localScoreLabel}</span>
                                         <span class="rating-score-num">${localAvgRating}</span>
-                                        <span class="rating-count-hint">(${count}${langData.ratingsCountText})</span>
+                                        <span class="rating-count-hint">(${count} ${langData.ratingsCountText})</span>
                                     </div>
                                     <div class="star-picker" title="Rate">
                                         ${[1, 2, 3, 4, 5].map(s => `
