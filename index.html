@@ -11,7 +11,7 @@
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #fdfbf7; color: #333; padding-bottom: 50px; }
         
-        /* 頂部 Header 保持乾淨俐落與統一置中 */
+        /* 頂部 Header */
         header { background: #EA580C; color: white; padding: 12px 16px 0 16px; box-shadow: 0 4px 10px rgba(0,0,0,0.08); position: sticky; top: 0; z-index: 100; }
         .header-inner { max-width: 600px; margin: 0 auto; width: 100%; }
         
@@ -33,7 +33,7 @@
         .search-clear-btn { position: absolute; right: 10px; background: #e7e5e4; border: none; width: 20px; height: 20px; border-radius: 50%; color: #78716c; font-size: 0.72rem; cursor: pointer; display: none; align-items: center; justify-content: center; line-height: 1; }
         .search-clear-btn:active { background: #d6d3d1; }
 
-        /* 三欄式主導覽 Tab 切換（完美收納在橘色 Header 底部） */
+        /* 三欄式主導覽 Tab 切換 */
         .main-tabs { display: flex; border-top: 1px solid rgba(255,255,255,0.2); width: 100%; margin-top: 4px; }
         .main-tab-btn { flex: 1; text-align: center; padding: 10px 4px; font-weight: bold; font-size: 0.85rem; color: rgba(255,255,255,0.75); border: none; background: none; cursor: pointer; border-bottom: 3px solid transparent; white-space: nowrap; }
         .main-tab-btn.active { color: white; border-bottom: 3px solid white; }
@@ -56,12 +56,12 @@
         /* 卡片設計 */
         .card { background: white; border-radius: 14px; overflow: hidden; box-shadow: 0 4px 14px rgba(0,0,0,0.05); border: 1px solid #f0eae1; display: flex; flex-direction: column; }
 
-        /* 多圖輪播容器 */
-        .carousel-container { position: relative; width: 100%; height: 210px; background: #f7f5f0; overflow: hidden; flex-shrink: 0; }
-        .carousel-track { display: flex; width: 100%; height: 100%; overflow-x: auto; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; }
+        /* 修復後的圖片輪播容器（確保絕對不會消失） */
+        .carousel-container { position: relative; width: 100%; height: 210px; min-height: 210px; background: #f7f5f0; overflow: hidden; flex-shrink: 0; }
+        .carousel-track { display: flex; width: 100%; height: 210px; overflow-x: auto; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; }
         .carousel-track::-webkit-scrollbar { display: none; }
-        .carousel-slide { flex: 0 0 100%; width: 100%; height: 100%; scroll-snap-align: start; position: relative; }
-        .carousel-slide img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .carousel-slide { flex: 0 0 100%; width: 100%; height: 210px; scroll-snap-align: start; position: relative; }
+        .carousel-slide img { width: 100%; height: 210px; object-fit: cover; display: block; }
 
         .carousel-dots { position: absolute; bottom: 8px; left: 0; right: 0; display: flex; justify-content: center; gap: 5px; z-index: 10; pointer-events: none; }
         .dot { width: 6px; height: 6px; border-radius: 50%; background: rgba(255, 255, 255, 0.5); }
@@ -180,7 +180,7 @@
                 <button class="search-clear-btn" id="search-clear-btn" onclick="clearSearch()" title="清除">✕</button>
             </div>
 
-            <!-- 三欄式主導覽 Tab 切換（完美包覆在橘色 Header 內） -->
+            <!-- 三欄式主導覽 Tab 切換 -->
             <div class="main-tabs">
                 <button class="main-tab-btn active" id="tab-btn-map" onclick="switchMainTab('map')">🗺️ 美食地圖</button>
                 <button class="main-tab-btn" id="tab-btn-attraction" onclick="switchMainTab('attraction')">🏛️ 景點導覽</button>
