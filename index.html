@@ -869,19 +869,29 @@
             messagesEl.innerHTML += `<div class="chat-bubble bot" id="${loadingId}">${langData.chatThinking}</div>`;
             messagesEl.scrollTop = messagesEl.scrollHeight;
 
-            // 3. 提取當前已載入的自建餐廳資料作為上下文注入 AI
+            // 3. 提取自建餐廳資料，並將分類轉為易於語意檢索的中文標籤
+            const catMap = {
+                'bbq_seafood': '海鮮燒烤、火烤兩吃、BBQ、烤肉',
+                'japanese_korean': '日韓料理、韓式烤肉、日式鍋物',
+                'chinese': '中式料理、合菜、點心',
+                'fast_food': '美式速食、炸雞漢堡',
+                'coffee_drinks': '咖啡、手搖飲料、甜點',
+                'filipino': '菲律賓在地傳統菜、烤乳豬 Lechon'
+            };
+
             const relevantRestaurants = (allRestaurants || []).filter(item => {
                 return currentCity === 'all' || item.city === currentCity;
-            }).slice(0, 60);
+            }).slice(0, 80);
 
             const restaurantsContext = relevantRestaurants.map((item, idx) => {
                 const deliveryOptions = [];
                 if (item.grabUrl) deliveryOptions.push("GrabFood");
                 if (item.foodpandaUrl) deliveryOptions.push("Foodpanda");
-                const deliveryText = deliveryOptions.length > 0 ? `外送支援: ${deliveryOptions.join(', ')}` : "無外送";
+                const deliveryText = deliveryOptions.length > 0 ? `外送支援: ${deliveryOptions.join(', ')}` : "無配合外送";
 
+                const catDesc = catMap[item.categoryKey] || item.categoryKey || '精選美食';
                 const localizedName = (item.names && item.names[currentLang]) ? item.names[currentLang] : (item.name || '未知');
-                return `${idx + 1}. 【${localizedName} (${item.name || ''})】 城市: ${item.city || 'davao'}, 分類: ${item.categoryKey || '一般美食'}, 地址: ${item.address || '無地址'}, ${deliveryText}`;
+                return `${idx + 1}. 【${localizedName} / 英文名: ${item.name || ''}】 城市: ${item.city || 'davao'}, 標籤特色: ${catDesc}, 地址: ${item.address || ''}, ${deliveryText}`;
             }).join('\n');
 
             try {
