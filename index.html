@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>大V的美食地圖</title>
+    <title>大V的旅遊窩</title>
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#EA580C">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -31,21 +31,16 @@
         .search-clear-btn { position: absolute; right: 10px; background: #e7e5e4; border: none; width: 20px; height: 20px; border-radius: 50%; color: #78716c; font-size: 0.72rem; cursor: pointer; display: none; align-items: center; justify-content: center; line-height: 1; }
         .search-clear-btn:active { background: #d6d3d1; }
 
-        /* 主導覽 Tab 切換 */
+        /* 三欄式主導覽 Tab 切換 */
         .main-tabs { display: flex; border-top: 1px solid rgba(255,255,255,0.2); }
-        .main-tab-btn { flex: 1; text-align: center; padding: 10px; font-weight: bold; font-size: 0.92rem; color: rgba(255,255,255,0.75); border: none; background: none; cursor: pointer; border-bottom: 3px solid transparent; }
+        .main-tab-btn { flex: 1; text-align: center; padding: 10px 4px; font-weight: bold; font-size: 0.85rem; color: rgba(255,255,255,0.75); border: none; background: none; cursor: pointer; border-bottom: 3px solid transparent; white-space: nowrap; }
         .main-tab-btn.active { color: white; border-bottom: 3px solid white; }
 
-        /* 分類列 */
-        .category-bar { display: flex; gap: 8px; overflow-x: auto; padding: 10px 16px; background: #ffffff; margin: 0 -16px; border-bottom: 1px solid #f1ece1; }
-        .category-bar::-webkit-scrollbar { display: none; }
+        /* 分類列與二級篩選 Bar */
+        .category-bar, .sub-filter-bar { display: none; gap: 8px; overflow-x: auto; padding: 10px 16px; background: #ffffff; margin: 0 -16px; border-bottom: 1px solid #f1ece1; }
+        .category-bar::-webkit-scrollbar, .sub-filter-bar::-webkit-scrollbar { display: none; }
         .cat-chip { padding: 6px 14px; border-radius: 18px; font-size: 0.85rem; background: #f5f2eb; color: #666; white-space: nowrap; border: none; cursor: pointer; transition: all 0.2s; }
         .cat-chip.active { background: #EA580C; color: white; font-weight: bold; }
-
-        /* 新聞二級篩選 Bar */
-        .news-filter-bar { display: none; gap: 8px; padding: 10px 16px; background: #ffffff; margin: 0 -16px; border-bottom: 1px solid #f1ece1; }
-        .news-sub-btn { flex: 1; padding: 8px 4px; border-radius: 8px; font-size: 0.83rem; font-weight: bold; border: 1px solid #e7e2d7; background: #ffffff; color: #666; cursor: pointer; text-align: center; white-space: nowrap; }
-        .news-sub-btn.active { background: #ea580c; color: white; border-color: #ea580c; }
 
         /* 卡片與容器 */
         .container { max-width: 600px; margin: 0 auto; padding: 16px; }
@@ -82,8 +77,9 @@
         .badge-open { background: #ecfdf5; color: #047857; border-color: #a7f3d0; font-weight: bold; }
         .badge-closed { background: #fef2f2; color: #b91c1c; border-color: #fecaca; font-weight: bold; }
 
-        /* Google 權威真實評分徽章 */
+        /* Google 權威真實評分與大V精選徽章 */
         .badge-google-rating { background: #fef3c7; color: #92400e; border-color: #fde68a; font-weight: bold; gap: 4px; }
+        .badge-elite-choice { background: #fff1f2; color: #e11d48; border-color: #fecdd3; font-weight: bold; gap: 4px; }
 
         .card-title { font-size: 1.25rem; font-weight: 800; margin-bottom: 6px; color: #1c1917; line-height: 1.35; }
         .card-desc { font-size: 0.88rem; color: #57534e; line-height: 1.5; margin-bottom: 12px; }
@@ -138,15 +134,18 @@
         .review-time { font-size: 0.72rem; color: #a8a29e; float: right; }
         .review-text { margin-top: 4px; color: #44403c; line-height: 1.35; }
 
-        /* 質感圓形懸浮 AI 管家按鈕 */
-        .chat-fab { position: fixed; bottom: 24px; right: 20px; width: 54px; height: 54px; border-radius: 27px; background: linear-gradient(135deg, #ea580c 0%, #f97316 100%); color: white; border: none; box-shadow: 0 6px 20px rgba(234, 88, 12, 0.45); font-size: 1.4rem; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 1000; transition: transform 0.2s, box-shadow 0.2s; }
+        /* 3D 角色頭像懸浮 AI 管家按鈕 */
+        .chat-fab { position: fixed; bottom: 24px; right: 20px; width: 56px; height: 56px; border-radius: 50%; background: #ffffff; border: 2px solid #ea580c; box-shadow: 0 6px 20px rgba(234, 88, 12, 0.45); overflow: hidden; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 1000; transition: transform 0.2s, box-shadow 0.2s; }
         .chat-fab:active { transform: scale(0.92); }
+        .chat-fab img { width: 100%; height: 100%; object-fit: cover; }
 
-        .chat-modal { display: none; position: fixed; bottom: 88px; right: 20px; width: 350px; max-width: calc(100vw - 32px); height: 500px; max-height: calc(100vh - 110px); background: #ffffff; border-radius: 20px; box-shadow: 0 16px 40px rgba(0,0,0,0.18); border: 1px solid #f0e6d8; flex-direction: column; z-index: 1000; overflow: hidden; }
+        .chat-modal { display: none; position: fixed; bottom: 92px; right: 20px; width: 350px; max-width: calc(100vw - 32px); height: 500px; max-height: calc(100vh - 110px); background: #ffffff; border-radius: 20px; box-shadow: 0 16px 40px rgba(0,0,0,0.18); border: 1px solid #f0e6d8; flex-direction: column; z-index: 1000; overflow: hidden; }
         .chat-modal.show { display: flex; }
 
         .chat-header { background: #EA580C; color: white; padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; }
         .chat-header-info { display: flex; align-items: center; gap: 8px; }
+        .chat-avatar-small { width: 34px; height: 34px; border-radius: 50%; overflow: hidden; border: 1.5px solid white; background: white; flex-shrink: 0; }
+        .chat-avatar-small img { width: 100%; height: 100%; object-fit: cover; }
         .chat-header-info h3 { font-size: 0.95rem; font-weight: bold; margin: 0; }
         .chat-header-info span { font-size: 0.72rem; color: #fed7aa; display: block; }
         .btn-close-chat { background: rgba(255,255,255,0.2); border: none; color: white; width: 26px; height: 26px; border-radius: 50%; font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; }
@@ -165,7 +164,7 @@
 
     <header>
         <div class="header-top">
-            <h1 id="app-title">📍 大V的美食地圖</h1>
+            <h1 id="app-title">📍 大V的旅遊窩</h1>
             <button class="btn-share" id="share-btn" onclick="shareApp()">📤 分享</button>
         </div>
         
@@ -183,54 +182,78 @@
             </select>
         </div>
 
-        <!-- 頂部即時搜尋框 -->
+        <!-- 即時搜尋框 -->
         <div class="search-container" id="search-container">
             <i class="fa-solid fa-magnifying-glass search-icon"></i>
-            <input type="text" class="search-input" id="search-input" placeholder="搜尋燒肉、火鍋、Jollibee、商圈或菜名..." oninput="handleSearchInput(this.value)">
+            <input type="text" class="search-input" id="search-input" placeholder="搜尋燒肉、火鍋、景點、演唱會..." oninput="handleSearchInput(this.value)">
             <button class="search-clear-btn" id="search-clear-btn" onclick="clearSearch()" title="清除">✕</button>
         </div>
 
+        <!-- 三欄式主導覽 Tab 切換 -->
         <div class="main-tabs">
             <button class="main-tab-btn active" id="tab-btn-map" onclick="switchMainTab('map')">🗺️ 美食地圖</button>
-            <button class="main-tab-btn" id="tab-btn-news" onclick="switchMainTab('news')">📰 美食新聞與促銷</button>
+            <button class="main-tab-btn" id="tab-btn-attraction" onclick="switchMainTab('attraction')">🏛️ 景點導覽</button>
+            <button class="main-tab-btn" id="tab-btn-news" onclick="switchMainTab('news')">📰 城市動態</button>
         </div>
         
+        <!-- 美食分類列 -->
         <div class="category-bar" id="category-bar"></div>
 
-        <div class="news-filter-bar" id="news-filter-bar">
-            <button class="news-sub-btn active" id="news-sub-all" onclick="filterNewsType('all')">全部動態</button>
-            <button class="news-sub-btn" id="news-sub-promo" onclick="filterNewsType('promo')">🔥 限時優惠</button>
-            <button class="news-sub-btn" id="news-sub-new" onclick="filterNewsType('new')">✨ 新開餐廳</button>
+        <!-- 景點二級分類 Bar -->
+        <div class="sub-filter-bar" id="attraction-filter-bar">
+            <button class="cat-chip active" id="att-sub-all" onclick="filterAttractionCat('all')">全部景點</button>
+            <button class="cat-chip" id="att-sub-history" onclick="filterAttractionCat('history')">🏛️ 歷史文化</button>
+            <button class="cat-chip" id="att-sub-nature" onclick="filterAttractionCat('nature')">🌳 自然海灘</button>
+            <button class="cat-chip" id="att-sub-shopping" onclick="filterAttractionCat('shopping')">🛒 購物商場</button>
+        </div>
+
+        <!-- 城市動態二級篩選 Bar -->
+        <div class="sub-filter-bar" id="news-filter-bar">
+            <button class="cat-chip active" id="news-sub-all" onclick="filterNewsType('all')">全部動態</button>
+            <button class="cat-chip" id="news-sub-promo" onclick="filterNewsType('promo')">🔥 限時優惠</button>
+            <button class="cat-chip" id="news-sub-new" onclick="filterNewsType('new')">✨ 新開餐廳</button>
+            <button class="cat-chip" id="news-sub-event" onclick="filterNewsType('event')">🎵 演唱會與活動</button>
+            <button class="cat-chip" id="news-sub-movie" onclick="filterNewsType('movie')">🎬 電影與娛樂</button>
         </div>
     </header>
 
+    <!-- 美食地圖 Tab 內容 -->
     <div id="main-tab-map" class="tab-content active">
         <div class="container">
-            <!-- 搜尋狀態列 -->
             <div id="search-results-info" class="search-results-info" style="display:none;"></div>
-            <div id="loading">載入最新美食清單中...</div>
+            <div id="loading">載入最新美食與旅遊清單中...</div>
             <div id="restaurant-list"></div>
         </div>
     </div>
 
-    <div id="main-tab-news" class="tab-content">
+    <!-- 景點導覽 Tab 內容 -->
+    <div id="main-tab-attraction" class="tab-content">
         <div class="container">
-            <div id="news-list">載入最新動態中...</div>
+            <div id="attraction-list">載入景點導覽中...</div>
         </div>
     </div>
 
-    <!-- 質感圓形懸浮 AI 管家按鈕 -->
-    <button class="chat-fab" id="chat-fab" onclick="toggleChat()" title="AI 美食管家">
-        <i class="fa-solid fa-robot"></i>
+    <!-- 城市動態 Tab 內容 -->
+    <div id="main-tab-news" class="tab-content">
+        <div class="container">
+            <div id="news-list">載入城市動態中...</div>
+        </div>
+    </div>
+
+    <!-- 3D 角色頭像懸浮 AI 管家按鈕 -->
+    <button class="chat-fab" id="chat-fab" onclick="toggleChat()" title="大V旅遊窩管家">
+        <img src="ai-avatar.png" alt="AI 管家" onerror="this.src='https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop'">
     </button>
 
-    <!-- 質感 AI 美食管家彈窗 -->
+    <!-- AI 旅遊窩管家彈窗 -->
     <div class="chat-modal" id="chat-modal">
         <div class="chat-header">
             <div class="chat-header-info">
-                <i class="fa-solid fa-robot" style="font-size:1.2rem;"></i>
+                <div class="chat-avatar-small">
+                    <img src="ai-avatar.png" alt="AI" onerror="this.src='https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop'">
+                </div>
                 <div>
-                    <h3 id="chat-header-title">大V美食管家</h3>
+                    <h3 id="chat-header-title">大V旅遊窩管家</h3>
                     <span>Powered by Gemini 3.7 Flash</span>
                 </div>
             </div>
@@ -238,11 +261,11 @@
         </div>
         <div class="chat-messages" id="chat-messages">
             <div class="chat-bubble bot" id="chat-welcome-msg">
-                嗨！我是大V美食管家 👋 有任何菲律賓在地美食推薦、外送疑問或招牌菜諮詢，都可以隨時問我喔！
+                嗨！我是大V旅遊窩管家 👋 歡迎來到菲律賓！有任何餐廳推薦、必去景點、演唱會活動或外送疑問，隨時問我喔！
             </div>
         </div>
         <div class="chat-input-area">
-            <input type="text" id="chat-input" class="chat-input" placeholder="問點什麼吧（例：推薦達沃高分燒肉）..." onkeypress="handleChatKeyPress(event)">
+            <input type="text" id="chat-input" class="chat-input" placeholder="問點什麼吧（例：達沃有什麼推薦景點？）..." onkeypress="handleChatKeyPress(event)">
             <button class="btn-send-chat" id="chat-send-btn" onclick="sendChatMessage()">
                 <i class="fa-solid fa-paper-plane" style="font-size:0.85rem;"></i>
             </button>
@@ -295,46 +318,60 @@
             filipino: [
                 "https://images.unsplash.com/photo-1541544741938-0af808871cc0?w=800&auto=format&fit=crop",
                 "https://images.unsplash.com/photo-1626777552726-4a6b54c97e46?w=800&auto=format&fit=crop"
+            ],
+            attraction: [
+                "https://images.unsplash.com/photo-1518684079-3c830dcef090?w=800&auto=format&fit=crop",
+                "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&auto=format&fit=crop",
+                "https://images.unsplash.com/photo-1569263979104-865ab9cd8d5c?w=800&auto=format&fit=crop"
             ]
         };
 
         const i18n = {
             'zh-TW': {
-                title: '📍 大V的美食地圖',
+                title: '📍 大V的旅遊窩',
                 tabMap: '🗺️ 美食地圖',
-                tabNews: '📰 美食新聞與促銷',
+                tabAttraction: '🏛️ 景點導覽',
+                tabNews: '📰 城市動態',
+                attSubAll: '全部景點',
+                attSubHistory: '🏛️ 歷史文化',
+                attSubNature: '🌳 自然海灘',
+                attSubShopping: '🛒 購物商場',
                 newsSubAll: '全部動態',
                 newsSubPromo: '🔥 限時優惠',
                 newsSubNew: '✨ 新開餐廳',
+                newsSubEvent: '🎵 演唱會與活動',
+                newsSubMovie: '🎬 電影與娛樂',
                 shareBtn: '📤 分享',
-                shareTitle: '大V的美食地圖',
-                shareText: '推薦給你這個菲律賓美食指南與最新促銷！',
-                shareSuccess: '已複製美食地圖連結！可以貼上傳給朋友囉。',
-                loading: '載入最新美食清單中...',
-                noData: '目前沒有找到對應的餐廳資料',
-                noNewsData: '目前沒有此類別的最新活動或促銷資訊',
+                shareTitle: '大V的旅遊窩',
+                shareText: '推薦給你這個菲律賓美食旅遊指南與最新活動動態！',
+                shareSuccess: '已複製地圖連結！可以貼上傳給朋友囉。',
+                loading: '載入最新美食旅遊清單中...',
+                noData: '目前沒有找到對應的資料',
+                noAttractionData: '目前沒有此類別的景點資料',
+                noNewsData: '目前沒有此類別的活動或促銷資訊',
                 call: '撥打電話',
                 map: '導航地圖',
                 grab: '🟢 Grab 外送',
                 foodpanda: '🌸 Foodpanda',
                 noPhone: '無電話資訊',
-                noDesc: '暫無餐廳介紹資訊。',
+                noDesc: '暫無詳細介紹資訊。',
                 rateSuccess: '感謝評分！您的評分已成功記錄。',
                 commentSuccess: '留言發表成功！',
                 emptyCommentAlert: '請輸入暱稱與留言內容！',
                 toggleForumText: '用戶評分與討論',
                 localScoreLabel: '用戶評分',
-                postBtnText: '發表對此餐廳的評語',
+                postBtnText: '發表評語',
                 slideHint: '👈 左右滑動看多圖',
                 ratingsCountText: '則',
-                openStatus: '🟢 營業中',
-                closedStatus: '🔴 已打烊',
-                noHoursInfo: '營業時間請洽店家',
-                todayHours: '今日營業時間',
+                openStatus: '🟢 營業中 / 開放中',
+                closedStatus: '🔴 已打烊 / 休息中',
+                noHoursInfo: '開放時間請洽現場',
+                todayHours: '今日時間',
                 viewWeekly: '查看一週',
                 hideWeekly: '收合',
-                searchPlaceholder: '搜尋燒肉、火鍋、Jollibee、商圈或菜名...',
-                searchResultText: '找到 {count} 間符合「{keyword}」的餐廳',
+                eliteChoice: '🌟 大V精選',
+                searchPlaceholder: '搜尋燒肉、火鍋、景點、演唱會、Jollibee...',
+                searchResultText: '找到 {count} 筆符合「{keyword}」的結果',
                 clearSearch: '清除搜尋',
                 cities: { all: '全部城市', davao: '達沃', manila: '馬尼拉', cebu: '宿霧' },
                 cats: {
@@ -346,27 +383,35 @@
                     coffee_drinks: '咖啡與手搖飲',
                     filipino: '菲律賓餐'
                 },
-                chatHeader: '大V美食管家',
-                chatWelcome: '嗨！我是大V美食管家 👋 有任何菲律賓在地美食推薦、外送疑問或招牌菜諮詢，都可以隨時問我喔！',
-                chatPlaceholder: '問點什麼吧（例：推薦達沃高分燒肉）...',
+                chatHeader: '大V旅遊窩管家',
+                chatWelcome: '嗨！我是大V旅遊窩管家 👋 歡迎來到菲律賓！有任何餐廳推薦、必去景點、演唱會活動或外送疑問，隨時問我喔！',
+                chatPlaceholder: '問點什麼吧（例：達沃有什麼推薦景點？）...',
                 chatSend: '發送',
                 chatThinking: '管家正在思考中... ⏳',
                 chatError: '連線異常，請稍候再試。'
             },
             'en': {
-                title: "📍 Big V's Food Map",
+                title: "📍 Big V's Travel Nest",
                 tabMap: '🗺️ Food Map',
-                tabNews: '📰 Food News & Deals',
+                tabAttraction: '🏛️ Attractions',
+                tabNews: '📰 City News & Events',
+                attSubAll: 'All',
+                attSubHistory: '🏛️ History',
+                attSubNature: '🌳 Nature & Beach',
+                attSubShopping: '🛒 Shopping',
                 newsSubAll: 'All Updates',
-                newsSubPromo: '🔥 Limited Deals',
+                newsSubPromo: '🔥 Deals',
                 newsSubNew: '✨ New Spots',
+                newsSubEvent: '🎵 Concerts & Events',
+                newsSubMovie: '🎬 Movies & Entertainment',
                 shareBtn: '📤 Share',
-                shareTitle: "Big V's Food Map",
-                shareText: 'Check out this awesome Philippines food guide & promos!',
-                shareSuccess: 'App link copied to clipboard!',
-                loading: 'Loading latest restaurants...',
-                noData: 'No restaurants found',
-                noNewsData: 'No active promotions or news found for this category.',
+                shareTitle: "Big V's Travel Nest",
+                shareText: 'Check out this awesome Philippines travel guide, restaurants & events!',
+                shareSuccess: 'Link copied to clipboard!',
+                loading: 'Loading travel guides...',
+                noData: 'No items found',
+                noAttractionData: 'No attractions found for this category.',
+                noNewsData: 'No news or events found.',
                 call: 'Call',
                 map: 'Map',
                 grab: '🟢 GrabFood',
@@ -378,7 +423,7 @@
                 emptyCommentAlert: 'Please enter both nickname and comment!',
                 toggleForumText: 'User Reviews & Tips',
                 localScoreLabel: 'User Rating',
-                postBtnText: 'Submit Review for this spot',
+                postBtnText: 'Submit Review',
                 slideHint: '👈 Swipe to view more photos',
                 ratingsCountText: 'reviews',
                 openStatus: '🟢 Open Now',
@@ -387,8 +432,9 @@
                 todayHours: 'Today',
                 viewWeekly: 'Weekly Hours',
                 hideWeekly: 'Hide',
-                searchPlaceholder: 'Search BBQ, Hotpot, Jollibee, landmark or dish...',
-                searchResultText: 'Found {count} spots matching "{keyword}"',
+                eliteChoice: '🌟 Big V Choice',
+                searchPlaceholder: 'Search BBQ, Hotpot, Attraction, Concert...',
+                searchResultText: 'Found {count} results matching "{keyword}"',
                 clearSearch: 'Clear',
                 cities: { all: 'All Cities', davao: 'Davao', manila: 'Manila', cebu: 'Cebu' },
                 cats: {
@@ -401,28 +447,36 @@
                     filipino: 'Filipino'
                 },
                 chatHeader: "Big V's AI Concierge",
-                chatWelcome: 'Hi! I am your Philippines Food Concierge 👋 Ask me anything about local restaurants, food delivery, or dish recommendations!',
+                chatWelcome: 'Hi! I am your Travel Nest Concierge 👋 Ask me anything about local attractions, restaurants, concerts or delivery!',
                 chatPlaceholder: 'Ask a question...',
                 chatSend: 'Send',
                 chatThinking: 'Thinking... ⏳',
                 chatError: 'Connection error, please try again later.'
             },
             'tl': {
-                title: '📍 Mapa ng Pagkain ni Big V',
+                title: '📍 Tahanan ng Paglalakbay ni Big V',
                 tabMap: '🗺️ Mapa ng Pagkain',
-                tabNews: '📰 Balita at Promo',
+                tabAttraction: '🏛️ Mga Atraksyon',
+                tabNews: '📰 Balita at Kaganapan',
+                attSubAll: 'Lahat',
+                attSubHistory: '🏛️ Kasaysayan',
+                attSubNature: '🌳 Kalikasan at Beach',
+                attSubShopping: '🛒 Pamimili',
                 newsSubAll: 'Lahat',
                 newsSubPromo: '🔥 Mga Promo',
                 newsSubNew: '✨ Bagong Bukas',
+                newsSubEvent: '🎵 Konsiyerto at Events',
+                newsSubMovie: '🎬 Sine at Libangan',
                 shareBtn: '📤 Ibahagi',
-                shareTitle: 'Mapa ng Pagkain ni Big V',
-                shareText: 'Subukan ang gabay sa pagkain at mga promo sa Pilipinas!',
-                shareSuccess: 'Na-kopyang link para maibahagi!',
-                loading: 'Kina-karga ang mga kainan...',
-                noData: 'Walang nahanap na kainan',
-                noNewsData: 'Walang nahanap na bagong balita o promo.',
+                shareTitle: 'Tahanan ng Paglalakbay ni Big V',
+                shareText: 'Subukan ang gabay sa paglilibot at kainan sa Pilipinas!',
+                shareSuccess: 'Na-kopyang link!',
+                loading: 'Kina-karga ang mga gabay...',
+                noData: 'Walang nahanap',
+                noAttractionData: 'Walang nahanap na atraksyon.',
+                noNewsData: 'Walang nahanap na balita o kaganapan.',
                 call: 'Tawagan',
-                map: 'Pumunta sa Map',
+                map: 'Mapa',
                 grab: '🟢 GrabFood',
                 foodpanda: '🌸 Foodpanda',
                 noPhone: 'Walang Telepono',
@@ -432,7 +486,7 @@
                 emptyCommentAlert: 'Mangyaring ilagay ang pangalan at komento!',
                 toggleForumText: 'Komento ng Gumagamit at Tips',
                 localScoreLabel: 'Rating ng Gumagamit',
-                postBtnText: 'I-post ang Komento',
+                postBtnText: 'I-post',
                 slideHint: '👈 I-swipe para sa iba pang litrato',
                 ratingsCountText: 'reviews',
                 openStatus: '🟢 Bukas Ngayon',
@@ -441,8 +495,9 @@
                 todayHours: 'Ngayong Araw',
                 viewWeekly: 'Lahat ng Oras',
                 hideWeekly: 'Itago',
-                searchPlaceholder: 'Maghanap ng BBQ, kainan, lugar...',
-                searchResultText: 'Nahanap ang {count} kainan para sa "{keyword}"',
+                eliteChoice: '🌟 Pinili ni Big V',
+                searchPlaceholder: 'Maghanap ng BBQ, Atraksyon, Konsiyerto...',
+                searchResultText: 'Nahanap ang {count} para sa "{keyword}"',
                 clearSearch: 'Linisin',
                 cities: { all: 'Lahat ng Lungsod', davao: 'Davao', manila: 'Manila', cebu: 'Cebu' },
                 cats: {
@@ -455,7 +510,7 @@
                     filipino: 'Filipino'
                 },
                 chatHeader: 'AI Katulong ni Big V',
-                chatWelcome: 'Kamusta! Ako ang iyong AI Food Concierge 👋 Magtanong ng anuman tungkol sa mga kainan, delivery, o paano gamitin ang app na ito!',
+                chatWelcome: 'Kamusta! Ako ang iyong Travel Nest Concierge 👋 Magtanong ng anuman tungkol sa mga pasyalan, kainan, o konsiyerto!',
                 chatPlaceholder: 'Magtanong dito...',
                 chatSend: 'Ipadala',
                 chatThinking: 'Nag-iisip... ⏳',
@@ -467,15 +522,17 @@
         let currentCity = localStorage.getItem('ph_app_city') || 'all';
         let currentCategoryKey = localStorage.getItem('ph_app_cat') || 'all';
         let currentMainTab = localStorage.getItem('ph_app_tab') || 'map';
-        let currentNewsSubFilter = localStorage.getItem('ph_app_news_sub') || 'all';
+        let currentAttractionCat = 'all';
+        let currentNewsSubFilter = 'all';
         let currentSearchQuery = '';
         let allRestaurants = [];
+        let allAttractions = [];
         let allNews = [];
 
         let itemRatings = JSON.parse(localStorage.getItem('ph_item_ratings')) || {};
         let resComments = JSON.parse(localStorage.getItem('ph_res_comments')) || {};
 
-        // ==================== 智慧同義詞對照庫 (Synonym Knowledge Base) ====================
+        // 智慧同義詞對照庫
         const SYNONYM_MAP = {
             '燒肉': ['bbq', 'barbecue', 'grill', 'yakiniku', 'samgyupsal', 'korean bbq', '烤肉', 'japanese_korean', 'bbq_seafood'],
             '烤肉': ['bbq', 'barbecue', 'grill', 'yakiniku', 'samgyupsal', 'korean bbq', '燒肉', 'japanese_korean', 'bbq_seafood'],
@@ -501,11 +558,11 @@
             'buffet': ['吃到飽', 'unlimited', 'vikings', 'tong yang'],
             '烤乳豬': ['lechon', 'crispy pork', 'filipino'],
             'lechon': ['烤乳豬', 'filipino'],
-            '中餐': ['chinese', 'dim sum', 'dumpling', '點心', '小籠包', 'chinese'],
-            '日韓': ['japanese', 'korean', 'japanese_korean', '燒肉', '拉麵', '壽司']
+            '景點': ['attraction', 'tourist', 'park', 'museum', 'history', 'beach', 'mall', 'history', 'nature', 'shopping'],
+            '演唱會': ['concert', 'event', 'music', 'show', 'live'],
+            '電影': ['movie', 'cinema', 'film', 'imax']
         };
 
-        // 名稱正規化
         function normalizeRestaurantName(name) {
             if (!name) return '';
             return name.toLowerCase()
@@ -515,10 +572,8 @@
                        .trim();
         }
 
-        // 以 Google 搜尋/正規資料為主的除重處理
         function deduplicateRestaurants(list) {
             const uniqueMap = new Map();
-
             list.forEach(item => {
                 const normName = normalizeRestaurantName(item.name_en || item.name || '');
                 const city = (item.city || 'davao').toLowerCase();
@@ -536,47 +591,69 @@
                         if (r.images && r.images.length > 0) s += r.images.length * 2;
                         return s;
                     };
-
                     if (score(item) > score(existing)) {
                         uniqueMap.set(dedupKey, item);
                     }
                 }
             });
-
             return Array.from(uniqueMap.values());
         }
 
         async function fetchData() {
             try {
+                // 1. 讀取餐廳資料
                 const resSnapshot = await getDocs(collection(db, "restaurants"));
                 const rawRestaurants = [];
-                resSnapshot.forEach((doc) => {
-                    rawRestaurants.push(doc.data());
-                });
-
+                resSnapshot.forEach((doc) => { rawRestaurants.push(doc.data()); });
                 allRestaurants = deduplicateRestaurants(rawRestaurants);
 
-                const newsSnapshot = await getDocs(collection(db, "news"));
-                allNews = [];
-                newsSnapshot.forEach((doc) => {
-                    allNews.push(doc.data());
-                });
+                // 2. 讀取景點資料
+                try {
+                    const attSnapshot = await getDocs(collection(db, "attractions"));
+                    allAttractions = [];
+                    attSnapshot.forEach((doc) => { allAttractions.push(doc.data()); });
+                } catch (e) { allAttractions = []; }
+
+                if (allAttractions.length === 0) {
+                    allAttractions = [
+                        { city: 'davao', category: 'nature', name: 'Eden Nature Park & Resort', name_en: 'Eden Nature Park', address: 'Toril, Davao City', phone: '+82 82 295 1020', googleRating: 4.6, googleReviewCount: 1420, description: '位於達沃市山區的超人氣生態度假村，擁有涼爽氣候與豐富的森林步道。', description_zh: '位於達沃市山區的超人氣生態度假村，擁有涼爽氣候與豐富的森林步道。' },
+                        { city: 'davao', category: 'history', name: 'Dajao Museo Dabawenyo', name_en: 'Museo Dabawenyo', address: 'Corazon Aquino St, Davao City', phone: '+82 82 222 6727', googleRating: 4.4, googleReviewCount: 310, description: '展示達沃在地原住民文化與歷史文物的重要博物館。', description_zh: '展示達沃在地原住民文化與歷史文物的重要博物館。' },
+                        { city: 'manila', category: 'history', name: 'Intramuros (Walled City)', name_en: 'Intramuros Manila', address: 'Manila, Metro Manila', phone: '+63 2 8527 3155', googleRating: 4.7, googleReviewCount: 18500, description: '馬尼拉著名的西班牙殖民時期歷史古城，充滿古蹟與聖地牙哥堡。', description_zh: '馬尼拉著名的西班牙殖民時期歷史古城，充滿古蹟與聖地牙哥堡。' },
+                        { city: 'manila', category: 'shopping', name: 'SM Mall of Asia (MOA)', name_en: 'SM Mall of Asia', address: 'Pasay, Metro Manila', phone: '+63 2 8556 0680', googleRating: 4.8, googleReviewCount: 95000, description: '世界級的巨大海濱購物中心，擁有無敵夕陽海景與巨型摩天輪。', description_zh: '世界級的巨大海濱購物中心，擁有無敵夕陽海景與巨型摩天輪。' },
+                        { city: 'cebu', category: 'nature', name: 'Kawasan Falls', name_en: 'Kawasan Falls Badian', address: 'Badian, Cebu', phone: '', googleRating: 4.6, googleReviewCount: 8400, description: '宿霧知名的絕美三層瀑布，湛藍清澈的溪水是溯溪與游泳的天堂。', description_zh: '宿霧知名的絕美三層瀑布，湛藍清澈的溪水是溯溪與游泳的天堂。' }
+                    ];
+                }
+
+                // 3. 讀取新聞與活動資料
+                try {
+                    const newsSnapshot = await getDocs(collection(db, "news"));
+                    allNews = [];
+                    newsSnapshot.forEach((doc) => { allNews.push(doc.data()); });
+                } catch (e) { allNews = []; }
+
+                if (allNews.length === 0) {
+                    allNews = [
+                        { city: 'manila', type: 'event', brand: 'TicketWorld', title: 'Ed Sheeran Mathematics Tour in Manila', tag: '🎵 演唱會與活動', validity: '2026/09/25 演出', description: '西洋流行天王 Ed Sheeran 降臨馬尼拉開唱，帶來震撼的全場金曲合輯！', location: 'SMDC Festival Grounds, Manila', url: 'https://ticketworld.com.ph' },
+                        { city: 'all', type: 'promo', brand: 'GrabFood', title: 'September 50% OFF Weekend Promo', tag: '🔥 限時優惠', validity: '9月底截止', description: '九月週末全菲律賓 GrabFood 外送精選指定餐廳滿額享 5 折優惠！', location: 'Manila, Davao, Cebu', url: 'https://grab.com' },
+                        { city: 'cebu', type: 'movie', brand: 'SM Cinema', title: 'Marvel Studios New Blockbuster Premiere', tag: '🎬 電影與娛樂', validity: '本週上映', description: '漫威最新強檔鉅獻於全菲 IMAX 影城同步盛大上映。', location: 'SM City Cebu Cinema', url: 'https://smcinema.com' }
+                    ];
+                }
+
             } catch (error) {
                 console.error("讀取 Firebase 資料失敗：", error);
             }
             renderUI();
             switchMainTab(currentMainTab);
-            filterNewsType(currentNewsSubFilter);
         }
 
-        // 即時搜尋框互動邏輯
+        // 搜尋與 Tab 切換
         window.handleSearchInput = function(val) {
             currentSearchQuery = val.trim();
             const clearBtn = document.getElementById('search-clear-btn');
-            if (clearBtn) {
-                clearBtn.style.display = currentSearchQuery ? 'flex' : 'none';
-            }
+            if (clearBtn) clearBtn.style.display = currentSearchQuery ? 'flex' : 'none';
             renderList();
+            renderAttractionList();
+            renderNewsList();
         };
 
         window.clearSearch = function() {
@@ -586,6 +663,8 @@
             const clearBtn = document.getElementById('search-clear-btn');
             if (clearBtn) clearBtn.style.display = 'none';
             renderList();
+            renderAttractionList();
+            renderNewsList();
         };
 
         window.switchMainTab = function(tab) {
@@ -593,24 +672,44 @@
             localStorage.setItem('ph_app_tab', tab);
 
             document.getElementById('tab-btn-map').classList.toggle('active', tab === 'map');
+            document.getElementById('tab-btn-attraction').classList.toggle('active', tab === 'attraction');
             document.getElementById('tab-btn-news').classList.toggle('active', tab === 'news');
+
             document.getElementById('main-tab-map').classList.toggle('active', tab === 'map');
+            document.getElementById('main-tab-attraction').classList.toggle('active', tab === 'attraction');
             document.getElementById('main-tab-news').classList.toggle('active', tab === 'news');
             
             document.getElementById('category-bar').style.display = (tab === 'map') ? 'flex' : 'none';
-            document.getElementById('search-container').style.display = (tab === 'map') ? 'flex' : 'none';
+            document.getElementById('attraction-filter-bar').style.display = (tab === 'attraction') ? 'flex' : 'none';
             document.getElementById('news-filter-bar').style.display = (tab === 'news') ? 'flex' : 'none';
+            document.getElementById('search-container').style.display = 'flex';
 
+            if (tab === 'attraction') renderAttractionList();
             if (tab === 'news') renderNewsList();
+        }
+
+        window.filterCategory = function(catKey) {
+            currentCategoryKey = catKey;
+            localStorage.setItem('ph_app_cat', catKey);
+            renderCategoryBar();
+            renderList();
+        }
+
+        window.filterAttractionCat = function(cat) {
+            currentAttractionCat = cat;
+            ['all', 'history', 'nature', 'shopping'].forEach(c => {
+                const btn = document.getElementById('att-sub-' + c);
+                if (btn) btn.classList.toggle('active', c === cat);
+            });
+            renderAttractionList();
         }
 
         window.filterNewsType = function(subType) {
             currentNewsSubFilter = subType;
-            localStorage.setItem('ph_app_news_sub', subType);
-
-            document.getElementById('news-sub-all').classList.toggle('active', subType === 'all');
-            document.getElementById('news-sub-promo').classList.toggle('active', subType === 'promo');
-            document.getElementById('news-sub-new').classList.toggle('active', subType === 'new');
+            ['all', 'promo', 'new', 'event', 'movie'].forEach(s => {
+                const btn = document.getElementById('news-sub-' + s);
+                if (btn) btn.classList.toggle('active', s === subType);
+            });
             renderNewsList();
         }
 
@@ -624,39 +723,24 @@
             currentCity = city;
             localStorage.setItem('ph_app_city', city);
             renderList();
+            renderAttractionList();
             renderNewsList();
-        }
-
-        window.filterCategory = function(catKey) {
-            currentCategoryKey = catKey;
-            localStorage.setItem('ph_app_cat', catKey);
-            renderCategoryBar();
-            renderList();
         }
 
         window.shareApp = function() {
             const langData = i18n[currentLang];
             const shareUrl = window.location.href;
-
             if (navigator.share) {
-                navigator.share({
-                    title: langData.shareTitle,
-                    text: langData.shareText,
-                    url: shareUrl
-                }).catch(() => {});
+                navigator.share({ title: langData.shareTitle, text: langData.shareText, url: shareUrl }).catch(() => {});
             } else {
-                navigator.clipboard.writeText(shareUrl).then(() => {
-                    alert(langData.shareSuccess);
-                }).catch(() => {
-                    alert("連結：" + shareUrl);
-                });
+                navigator.clipboard.writeText(shareUrl).then(() => { alert(langData.shareSuccess); }).catch(() => {});
             }
         }
 
         function getInitialLanguage() {
             const savedLang = localStorage.getItem('ph_app_lang');
             if (savedLang && i18n[savedLang]) return savedLang;
-            const browserLang = (navigator.language || navigator.userLanguage || 'en').toLowerCase();
+            const browserLang = (navigator.language || '').toLowerCase();
             if (browserLang.startsWith('zh')) return 'zh-TW';
             if (browserLang.startsWith('tl') || browserLang.startsWith('fil')) return 'tl';
             return 'en';
@@ -668,14 +752,22 @@
             document.getElementById('city-select').value = currentCity;
             document.getElementById('app-title').innerText = langData.title;
             document.getElementById('tab-btn-map').innerText = langData.tabMap;
+            document.getElementById('tab-btn-attraction').innerText = langData.tabAttraction;
             document.getElementById('tab-btn-news').innerText = langData.tabNews;
             document.getElementById('share-btn').innerText = langData.shareBtn;
 
             document.getElementById('search-input').placeholder = langData.searchPlaceholder;
 
+            document.getElementById('att-sub-all').innerText = langData.attSubAll;
+            document.getElementById('att-sub-history').innerText = langData.attSubHistory;
+            document.getElementById('att-sub-nature').innerText = langData.attSubNature;
+            document.getElementById('att-sub-shopping').innerText = langData.attSubShopping;
+
             document.getElementById('news-sub-all').innerText = langData.newsSubAll;
             document.getElementById('news-sub-promo').innerText = langData.newsSubPromo;
             document.getElementById('news-sub-new').innerText = langData.newsSubNew;
+            document.getElementById('news-sub-event').innerText = langData.newsSubEvent;
+            document.getElementById('news-sub-movie').innerText = langData.newsSubMovie;
 
             document.getElementById('chat-header-title').innerText = langData.chatHeader;
             document.getElementById('chat-welcome-msg').innerText = langData.chatWelcome;
@@ -683,6 +775,7 @@
 
             renderCategoryBar();
             renderList();
+            renderAttractionList();
             renderNewsList();
         }
 
@@ -690,7 +783,6 @@
             const bar = document.getElementById('category-bar');
             const cats = i18n[currentLang].cats;
             const keys = ['all', 'chinese', 'japanese_korean', 'fast_food', 'bbq_seafood', 'coffee_drinks', 'filipino'];
-
             bar.innerHTML = keys.map(key => `
                 <button class="cat-chip ${key === currentCategoryKey ? 'active' : ''}" onclick="filterCategory('${key}')">
                     ${cats[key]}
@@ -705,9 +797,9 @@
             itemRatings[resKey].scores.push(score);
             itemRatings[resKey].userRated = score;
             localStorage.setItem('ph_item_ratings', JSON.stringify(itemRatings));
-            
             alert(i18n[currentLang].rateSuccess);
             renderList();
+            renderAttractionList();
         }
 
         window.toggleRestaurantForum = function(resKey) {
@@ -740,34 +832,27 @@
             const timeStr = (now.getMonth()+1) + '/' + now.getDate() + ' ' + String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
 
             if (!resComments[resKey]) resComments[resKey] = [];
-            
-            resComments[resKey].unshift({
-                user: user,
-                rating: rating,
-                text: text,
-                time: timeStr
-            });
+            resComments[resKey].unshift({ user: user, rating: rating, text: text, time: timeStr });
 
             window.rateRestaurant(resKey, rating);
-
             localStorage.setItem('ph_res_comments', JSON.stringify(resComments));
             alert(langData.commentSuccess);
             
             document.getElementById('input-text-' + resKey).value = '';
             renderList();
+            renderAttractionList();
             const el = document.getElementById('forum-' + resKey);
             if (el) el.classList.add('show');
         }
 
         function getUniqueRestaurantImageArray(name, catKey) {
-            const pool = categoryImagePools[catKey] || categoryImagePools.filipino;
+            const pool = categoryImagePools[catKey] || categoryImagePools.attraction;
             let hash = 0;
             const str = name || 'default';
             for (let i = 0; i < str.length; i++) {
                 hash = str.charCodeAt(i) + ((hash << 5) - hash);
             }
             const startIndex = Math.abs(hash) % pool.length;
-            
             const images = [];
             for (let i = 0; i < 4; i++) {
                 images.push(pool[(startIndex + i) % pool.length]);
@@ -779,57 +864,23 @@
             const scrollLeft = el.scrollLeft;
             const width = el.clientWidth;
             const index = Math.round(scrollLeft / width);
-            
             const dots = document.querySelectorAll('#dots-' + resKey + ' .dot');
             dots.forEach((dot, idx) => {
                 dot.classList.toggle('active', idx === index);
             });
         }
 
-        // 營業時間動態解析
         function parseOpeningStatus(openingHours) {
-            if (!openingHours) {
-                return { hasData: false, isOpen: null, todayText: null, weeklyList: [] };
-            }
-
+            if (!openingHours) return { hasData: false, isOpen: null, todayText: null, weeklyList: [] };
             const weekdayList = openingHours.weekdayDescriptions || [];
             const periods = openingHours.periods || [];
-
             if (weekdayList.length === 0 && periods.length === 0 && (openingHours.openNow === undefined || openingHours.openNow === null)) {
                 return { hasData: false, isOpen: null, todayText: null, weeklyList: [] };
             }
-
             const now = new Date();
             const currentDay = now.getDay();
             const currentMinutes = now.getHours() * 60 + now.getMinutes();
-
-            let isOpen = (openingHours.openNow !== undefined && openingHours.openNow !== null) 
-                         ? openingHours.openNow 
-                         : false;
-
-            if (periods.length > 0) {
-                for (const period of periods) {
-                    if (!period.open) continue;
-                    const openDay = period.open.day;
-                    const openMin = (period.open.hour || 0) * 60 + (period.open.minute || 0);
-
-                    if (period.close) {
-                        const closeDay = period.close.day;
-                        const closeMin = (period.close.hour || 0) * 60 + (period.close.minute || 0);
-
-                        if (openDay === closeDay && openDay === currentDay) {
-                            if (currentMinutes >= openMin && currentMinutes < closeMin) isOpen = true;
-                        } else if (openDay === currentDay && currentMinutes >= openMin) {
-                            isOpen = true;
-                        } else if (closeDay === currentDay && currentMinutes < closeMin) {
-                            isOpen = true;
-                        }
-                    } else {
-                        if (openDay === currentDay) isOpen = true;
-                    }
-                }
-            }
-
+            let isOpen = (openingHours.openNow !== undefined && openingHours.openNow !== null) ? openingHours.openNow : false;
             let todayPeriodStr = "";
             const todayIndex = (currentDay === 0) ? 6 : (currentDay - 1);
             if (weekdayList.length > 0) {
@@ -837,16 +888,34 @@
                 const parts = fullText.split(': ');
                 todayPeriodStr = parts.length > 1 ? parts.slice(1).join(': ') : fullText;
             }
-
-            return {
-                hasData: true,
-                isOpen: isOpen,
-                todayText: todayPeriodStr || (isOpen ? "營業中" : "已打烊"),
-                weeklyList: weekdayList,
-                todayDayIndex: todayIndex
-            };
+            return { hasData: true, isOpen: isOpen, todayText: todayPeriodStr || "營業中", weeklyList: weekdayList, todayDayIndex: todayIndex };
         }
 
+        // 智慧同義詞過濾判定
+        function matchQuery(item, query, langData) {
+            if (!query) return true;
+            const q = query.toLowerCase();
+            const searchKeywords = new Set([q]);
+            Object.keys(SYNONYM_MAP).forEach(key => {
+                if (q.includes(key) || key.includes(q)) {
+                    SYNONYM_MAP[key].forEach(syn => searchKeywords.add(syn.toLowerCase()));
+                }
+            });
+
+            const name = (item.name || '').toLowerCase();
+            const nameEn = (item.name_en || '').toLowerCase();
+            const address = (item.address || '').toLowerCase();
+            const desc = (item.description || item.description_zh || '').toLowerCase();
+            const catKey = (item.categoryKey || item.category || '').toLowerCase();
+            const searchableText = `${name} ${nameEn} ${address} ${desc} ${catKey}`;
+
+            for (const kw of searchKeywords) {
+                if (searchableText.includes(kw)) return true;
+            }
+            return false;
+        }
+
+        // 渲染餐廳清單
         function renderList() {
             const listEl = document.getElementById('restaurant-list');
             const loadingEl = document.getElementById('loading');
@@ -854,43 +923,14 @@
             if (loadingEl) loadingEl.style.display = 'none';
             const langData = i18n[currentLang];
 
-            // 1. 城市與分類篩選
             let filtered = (allRestaurants || []).filter(item => {
                 const matchesCity = (currentCity === 'all') || (item.city === currentCity);
                 const matchesCat = (currentCategoryKey === 'all') || ((item.categoryKey || 'filipino') === currentCategoryKey);
                 return matchesCity && matchesCat;
             });
 
-            // 2. 智慧同義詞即時搜尋演算法
             if (currentSearchQuery) {
-                const rawQuery = currentSearchQuery.toLowerCase();
-                
-                // 收集同義詞候選群
-                const searchKeywords = new Set([rawQuery]);
-                Object.keys(SYNONYM_MAP).forEach(key => {
-                    if (rawQuery.includes(key) || key.includes(rawQuery)) {
-                        SYNONYM_MAP[key].forEach(syn => searchKeywords.add(syn.toLowerCase()));
-                    }
-                });
-
-                filtered = filtered.filter(item => {
-                    const name = (item.name || '').toLowerCase();
-                    const nameEn = (item.name_en || '').toLowerCase();
-                    const address = (item.address || '').toLowerCase();
-                    const desc = (item.description || item.description_zh || '').toLowerCase();
-                    const catKey = (item.categoryKey || '').toLowerCase();
-                    const catName = (langData.cats[item.categoryKey] || '').toLowerCase();
-
-                    // 合併所有可供檢索的文字欄位
-                    const searchableText = `${name} ${nameEn} ${address} ${desc} ${catKey} ${catName}`;
-
-                    // 只要符合原始字詞或任何擴展同義詞，即視為命中
-                    for (const kw of searchKeywords) {
-                        if (searchableText.includes(kw)) return true;
-                    }
-                    return false;
-                });
-
+                filtered = filtered.filter(item => matchQuery(item, currentSearchQuery, langData));
                 if (searchInfoEl) {
                     searchInfoEl.style.display = 'flex';
                     searchInfoEl.innerHTML = `
@@ -907,7 +947,6 @@
                 return;
             }
 
-            // 方案 A：一律以英文原名 A 到 Z 自然排序
             filtered.sort((a, b) => {
                 const nameA = (a.name_en || a.name || '').trim().toLowerCase();
                 const nameB = (b.name_en || b.name || '').trim().toLowerCase();
@@ -917,81 +956,31 @@
             listEl.innerHTML = filtered.map((item, idx) => {
                 const catKey = item.categoryKey || 'filipino';
                 const resKey = (item.city || 'davao') + '_' + (item.name || idx).replace(/[^a-zA-Z0-9]/g, '');
+                const imageList = (item.images && Array.isArray(item.images) && item.images.length > 0) ? item.images : getUniqueRestaurantImageArray(item.name, catKey);
 
-                const imageList = (item.images && Array.isArray(item.images) && item.images.length > 0)
-                    ? item.images
-                    : getUniqueRestaurantImageArray(item ? item.name : '', catKey);
-
-                // 評分邏輯：頂部只放 Google 權威標籤
-                const ratingData = itemRatings[resKey] || { scores: [5], userRated: null };
+                const ratingData = itemRatings[resKey] || { scores: [], userRated: null };
                 const totalScores = ratingData.scores;
-                const localAvgRating = (totalScores.reduce((a, b) => a + b, 0) / totalScores.length).toFixed(1);
-                const count = totalScores.length;
+                const localScoreCount = totalScores.length;
+                const localAvgRating = localScoreCount > 0 ? (totalScores.reduce((a, b) => a + b, 0) / localScoreCount).toFixed(1) : 0;
                 const userScore = ratingData.userRated || 0;
 
                 const hasGoogleRating = (item.googleRating !== undefined && item.googleRating !== null);
                 const realGoogleRating = hasGoogleRating ? Number(item.googleRating).toFixed(1) : null;
                 const realReviewCount = item.googleReviewCount ? `${item.googleReviewCount}則` : '';
 
-                // 頂部只放 Google 評分徽章；若無則顯示大V精選
-                const ratingBadgeHtml = hasGoogleRating
-                    ? `<span class="badge badge-google-rating"><i class="fa-solid fa-star" style="color:#eab308;"></i> Google ${realGoogleRating} (${realReviewCount})</span>`
-                    : `<span class="badge badge-google-rating"><i class="fa-solid fa-star" style="color:#eab308;"></i> 大V精選</span>`;
+                let ratingBadgeHtml = '';
+                if (hasGoogleRating) {
+                    ratingBadgeHtml = `<span class="badge badge-google-rating"><i class="fa-solid fa-star" style="color:#eab308;"></i> Google ${realGoogleRating} (${realReviewCount})</span>`;
+                } else if (localScoreCount >= 10 && Number(localAvgRating) >= 4.8) {
+                    ratingBadgeHtml = `<span class="badge badge-elite-choice"><i class="fa-solid fa-award"></i> ${langData.eliteChoice} (${localScoreCount}則)</span>`;
+                }
 
                 const commentsList = resComments[resKey] || [];
+                let displayName = item.names && item.names[currentLang] ? item.names[currentLang] : (currentLang !== 'zh-TW' && item.name_en ? item.name_en : (item.name || 'Unknown'));
+                let displayDesc = item.descriptions && item.descriptions[currentLang] ? item.descriptions[currentLang] : (item.description || langData.noDesc);
 
-                let displayName = item.name || 'Unknown';
-                if (item.names && item.names[currentLang]) {
-                    displayName = item.names[currentLang];
-                } else if (currentLang !== 'zh-TW' && item.name_en) {
-                    displayName = item.name_en;
-                }
-
-                let displayDesc = langData.noDesc;
-                if (item.descriptions && item.descriptions[currentLang]) {
-                    displayDesc = item.descriptions[currentLang];
-                } else if (currentLang === 'zh-TW' && item.description_zh) {
-                    displayDesc = item.description_zh;
-                } else if (item.description) {
-                    displayDesc = item.description;
-                }
-
-                // 營業時間動態解析
                 const hoursInfo = parseOpeningStatus(item.openingHours);
-                let openStatusBadge = '';
-                let hoursDisplayHtml = '';
-
-                if (hoursInfo.hasData) {
-                    openStatusBadge = hoursInfo.isOpen 
-                        ? `<span class="badge badge-open">${langData.openStatus}</span>` 
-                        : `<span class="badge badge-closed">${langData.closedStatus}</span>`;
-                    
-                    const weeklyHtml = hoursInfo.weeklyList.map((line, wIdx) => {
-                        const isToday = (wIdx === hoursInfo.todayDayIndex);
-                        return `<div class="${isToday ? 'today' : ''}">${line}</div>`;
-                    }).join('');
-
-                    hoursDisplayHtml = `
-                        <div class="info-item">
-                            <span style="font-size:1rem; line-height:1.2;">⏰</span>
-                            <div class="hours-row">
-                                <div class="hours-text">${langData.todayHours}: <strong>${hoursInfo.todayText || '營業中'}</strong></div>
-                                ${hoursInfo.weeklyList.length > 0 ? `<div class="hours-dropdown" id="hours-btn-${resKey}" onclick="toggleWeeklyHours('${resKey}')">[${langData.viewWeekly}]</div>` : ''}
-                            </div>
-                        </div>
-                        ${hoursInfo.weeklyList.length > 0 ? `<div class="weekly-hours-box" id="hours-box-${resKey}">${weeklyHtml}</div>` : ''}
-                    `;
-                } else {
-                    hoursDisplayHtml = `<div class="info-item"><span style="font-size:1rem;">⏰</span> <span>${langData.noHoursInfo}</span></div>`;
-                }
-
-                var carouselSlides = imageList.map(function(imgUrl) {
-                    return '<div class="carousel-slide"><img src="' + imgUrl + '" alt="Restaurant" loading="lazy"></div>';
-                }).join('');
-
-                var carouselDots = imageList.map(function(_, imgIdx) {
-                    return '<div class="dot ' + (imgIdx === 0 ? 'active' : '') + '"></div>';
-                }).join('');
+                let openStatusBadge = hoursInfo.hasData ? (hoursInfo.isOpen ? `<span class="badge badge-open">${langData.openStatus}</span>` : `<span class="badge badge-closed">${langData.closedStatus}</span>`) : '';
 
                 var grabBtnHtml = item.grabUrl ? `<a class="btn btn-grab" href="${item.grabUrl}" target="_blank">${langData.grab}</a>` : '';
                 var foodpandaBtnHtml = item.foodpandaUrl ? `<a class="btn btn-foodpanda" href="${item.foodpandaUrl}" target="_blank">${langData.foodpanda}</a>` : '';
@@ -1001,13 +990,12 @@
                         <div class="carousel-container">
                             <span class="photo-tag">${langData.slideHint} (${imageList.length})</span>
                             <div class="carousel-track" onscroll="handleCarouselScroll(this, '${resKey}')">
-                                ${carouselSlides}
+                                ${imageList.map(img => `<div class="carousel-slide"><img src="${img}" alt="Food" loading="lazy"></div>`).join('')}
                             </div>
                             <div class="carousel-dots" id="dots-${resKey}">
-                                ${carouselDots}
+                                ${imageList.map((_, i) => `<div class="dot ${i === 0 ? 'active' : ''}"></div>`).join('')}
                             </div>
                         </div>
-
                         <div class="card-body">
                             <div class="badge-group">
                                 <span class="badge badge-city">${langData.cities[item.city || 'davao']}</span>
@@ -1019,28 +1007,23 @@
                             <div class="card-desc">${displayDesc}</div>
                             <div class="info-item"><span>📍</span> <span>${item.address || ''}</span></div>
                             <div class="info-item"><span>📞</span> <span>${item.phone || langData.noPhone}</span></div>
-                            ${hoursDisplayHtml}
 
-                            <!-- 精簡俐落的用戶評分專區 -->
+                            <!-- 評分與留言區 -->
                             <div class="card-forum-box">
                                 <div class="rating-header">
                                     <div class="rating-left">
                                         <span class="rating-label">${langData.localScoreLabel}</span>
                                         <span class="rating-score-num">${localAvgRating}</span>
-                                        <span class="rating-count-hint">(${count} ${langData.ratingsCountText})</span>
+                                        <span class="rating-count-hint">(${localScoreCount} ${langData.ratingsCountText})</span>
                                     </div>
-                                    <div class="star-picker" title="Rate">
-                                        ${[1, 2, 3, 4, 5].map(s => `
-                                            <span class="${s <= userScore ? 'active' : ''}" onclick="rateRestaurant('${resKey}', ${s})">★</span>
-                                        `).join('')}
+                                    <div class="star-picker">
+                                        ${[1, 2, 3, 4, 5].map(s => `<span class="${s <= userScore ? 'active' : ''}" onclick="rateRestaurant('${resKey}', ${s})">★</span>`).join('')}
                                     </div>
                                 </div>
-
                                 <button class="btn-toggle-forum" onclick="toggleRestaurantForum('${resKey}')">
                                     <span>💬 ${langData.toggleForumText} (${commentsList.length})</span>
                                     <span style="font-size:0.75rem; color:#a8a29e;">▼</span>
                                 </button>
-
                                 <div class="forum-content" id="forum-${resKey}">
                                     <div class="mini-comment-form">
                                         <div class="mini-form-row">
@@ -1053,28 +1036,23 @@
                                                 <option value="1">⭐</option>
                                             </select>
                                         </div>
-                                        <textarea id="input-text-${resKey}" class="mini-textarea" placeholder="Share your review or tips..."></textarea>
+                                        <textarea id="input-text-${resKey}" class="mini-textarea" placeholder="Share tips..."></textarea>
                                         <button class="btn-mini-post" onclick="postResComment('${resKey}')">${langData.postBtnText}</button>
                                     </div>
-
                                     <div class="reviews-list">
                                         ${commentsList.length > 0 ? commentsList.map(c => `
                                             <div class="review-item">
-                                                <div>
-                                                    <span class="review-user">👤 ${c.user}</span>
-                                                    <span style="color:#f59e0b; font-size:0.75rem; margin-left:4px;">${'⭐'.repeat(c.rating)}</span>
-                                                    <span class="review-time">${c.time}</span>
-                                                </div>
+                                                <div><span class="review-user">👤 ${c.user}</span> <span style="color:#f59e0b;">${'⭐'.repeat(c.rating)}</span><span class="review-time">${c.time}</span></div>
                                                 <div class="review-text">${c.text}</div>
                                             </div>
-                                        `).join('') : `<div class="review-item" style="color:#a8a29e; text-align:center;">No reviews yet. Be the first to share!</div>`}
+                                        `).join('') : `<div class="review-item" style="color:#a8a29e; text-align:center;">No reviews yet.</div>`}
                                     </div>
                                 </div>
                             </div>
 
                             <div class="btn-group">
                                 <a class="btn btn-primary" href="tel:${item.phone}">${langData.call}</a>
-                                <a class="btn btn-secondary" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent((item.name || '') + ' ' + (item.address || ''))}" target="_blank">${langData.map}</a>
+                                <a class="btn btn-secondary" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(displayName + ' ' + (item.address || ''))}" target="_blank">${langData.map}</a>
                                 ${grabBtnHtml}
                                 ${foodpandaBtnHtml}
                             </div>
@@ -1084,20 +1062,123 @@
             }).join('');
         }
 
+        // 渲染景點導覽清單
+        function renderAttractionList() {
+            const listEl = document.getElementById('attraction-list');
+            const langData = i18n[currentLang];
+
+            let filtered = (allAttractions || []).filter(item => {
+                const matchesCity = (currentCity === 'all') || (item.city === currentCity);
+                const matchesCat = (currentAttractionCat === 'all') || (item.category === currentAttractionCat);
+                return matchesCity && matchesCat;
+            });
+
+            if (currentSearchQuery) {
+                filtered = filtered.filter(item => matchQuery(item, currentSearchQuery, langData));
+            }
+
+            if (!filtered || filtered.length === 0) {
+                listEl.innerHTML = `<p style="text-align:center; color:#a8a29e; padding: 40px;">${langData.noAttractionData}</p>`;
+                return;
+            }
+
+            listEl.innerHTML = filtered.map((item, idx) => {
+                const resKey = 'att_' + (item.city || 'davao') + '_' + (item.name || idx).replace(/[^a-zA-Z0-9]/g, '');
+                const imageList = (item.images && item.images.length > 0) ? item.images : getUniqueRestaurantImageArray(item.name, 'attraction');
+
+                const ratingData = itemRatings[resKey] || { scores: [], userRated: null };
+                const totalScores = ratingData.scores;
+                const localScoreCount = totalScores.length;
+                const localAvgRating = localScoreCount > 0 ? (totalScores.reduce((a, b) => a + b, 0) / localScoreCount).toFixed(1) : 0;
+                const userScore = ratingData.userRated || 0;
+
+                const hasGoogleRating = (item.googleRating !== undefined && item.googleRating !== null);
+                let ratingBadgeHtml = hasGoogleRating ? `<span class="badge badge-google-rating"><i class="fa-solid fa-star" style="color:#eab308;"></i> Google ${Number(item.googleRating).toFixed(1)} (${item.googleReviewCount || 0}則)</span>` : '';
+
+                const commentsList = resComments[resKey] || [];
+                const displayName = item.name || 'Attraction';
+                const displayDesc = item.description_zh || item.description || langData.noDesc;
+
+                return `
+                    <div class="card">
+                        <div class="carousel-container">
+                            <span class="photo-tag">${langData.slideHint} (${imageList.length})</span>
+                            <div class="carousel-track" onscroll="handleCarouselScroll(this, '${resKey}')">
+                                ${imageList.map(img => `<div class="carousel-slide"><img src="${img}" alt="Attraction" loading="lazy"></div>`).join('')}
+                            </div>
+                            <div class="carousel-dots" id="dots-${resKey}">
+                                ${imageList.map((_, i) => `<div class="dot ${i === 0 ? 'active' : ''}"></div>`).join('')}
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="badge-group">
+                                <span class="badge badge-city">${langData.cities[item.city || 'davao']}</span>
+                                <span class="badge" style="background:#fdf4ff; color:#a21caf; border-color:#f5d0fe;">🏛️ 景點導覽</span>
+                                ${ratingBadgeHtml}
+                            </div>
+                            <div class="card-title">${displayName}</div>
+                            <div class="card-desc">${displayDesc}</div>
+                            <div class="info-item"><span>📍</span> <span>${item.address || ''}</span></div>
+                            <div class="info-item"><span>📞</span> <span>${item.phone || langData.noPhone}</span></div>
+
+                            <div class="card-forum-box">
+                                <div class="rating-header">
+                                    <div class="rating-left">
+                                        <span class="rating-label">${langData.localScoreLabel}</span>
+                                        <span class="rating-score-num">${localAvgRating}</span>
+                                        <span class="rating-count-hint">(${localScoreCount} ${langData.ratingsCountText})</span>
+                                    </div>
+                                    <div class="star-picker">
+                                        ${[1, 2, 3, 4, 5].map(s => `<span class="${s <= userScore ? 'active' : ''}" onclick="rateRestaurant('${resKey}', ${s})">★</span>`).join('')}
+                                    </div>
+                                </div>
+                                <button class="btn-toggle-forum" onclick="toggleRestaurantForum('${resKey}')">
+                                    <span>💬 ${langData.toggleForumText} (${commentsList.length})</span>
+                                    <span style="font-size:0.75rem; color:#a8a29e;">▼</span>
+                                </button>
+                                <div class="forum-content" id="forum-${resKey}">
+                                    <div class="mini-comment-form">
+                                        <div class="mini-form-row">
+                                            <input type="text" id="input-user-${resKey}" class="mini-input" placeholder="Nickname" maxlength="15">
+                                            <select id="select-rating-${resKey}" class="mini-select">
+                                                <option value="5">⭐⭐⭐⭐⭐</option><option value="4">⭐⭐⭐⭐</option><option value="3">⭐⭐⭐</option><option value="2">⭐⭐</option><option value="1">⭐</option>
+                                            </select>
+                                        </div>
+                                        <textarea id="input-text-${resKey}" class="mini-textarea" placeholder="Share travel tips..."></textarea>
+                                        <button class="btn-mini-post" onclick="postResComment('${resKey}')">${langData.postBtnText}</button>
+                                    </div>
+                                    <div class="reviews-list">
+                                        ${commentsList.length > 0 ? commentsList.map(c => `
+                                            <div class="review-item">
+                                                <div><span class="review-user">👤 ${c.user}</span> <span style="color:#f59e0b;">${'⭐'.repeat(c.rating)}</span><span class="review-time">${c.time}</span></div>
+                                                <div class="review-text">${c.text}</div>
+                                            </div>
+                                        `).join('') : `<div class="review-item" style="color:#a8a29e; text-align:center;">No reviews yet.</div>`}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="btn-group">
+                                <a class="btn btn-primary" href="tel:${item.phone || ''}">${langData.call}</a>
+                                <a class="btn btn-secondary" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(displayName + ' ' + (item.address || ''))}" target="_blank">${langData.map}</a>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // 渲染城市動態清單
         function renderNewsList() {
             const newsEl = document.getElementById('news-list');
             const langData = i18n[currentLang];
 
             const filteredNews = (allNews || []).filter(item => {
                 const matchesCity = (currentCity === 'all') || (item.city === 'all') || (item.city === currentCity);
-                
                 let matchesSub = true;
-                if (currentNewsSubFilter === 'promo') {
-                    matchesSub = (item.type === 'promo');
-                } else if (currentNewsSubFilter === 'new') {
-                    matchesSub = (item.type === 'new');
+                if (currentNewsSubFilter !== 'all') {
+                    matchesSub = (item.type === currentNewsSubFilter);
                 }
-
                 return matchesCity && matchesSub;
             });
 
@@ -1107,45 +1188,15 @@
             }
 
             newsEl.innerHTML = filteredNews.map(item => {
-                let titleText = '';
-                if (item.titles && item.titles[currentLang]) {
-                    titleText = item.titles[currentLang];
-                } else if (item.titles && item.titles['en']) {
-                    titleText = item.titles['en'];
-                } else {
-                    titleText = item.title || '';
-                }
-
-                let tagText = '';
-                if (item.tags && item.tags[currentLang]) {
-                    tagText = item.tags[currentLang];
-                } else if (item.tags && item.tags['en']) {
-                    tagText = item.tags['en'];
-                } else {
-                    tagText = item.tag || (item.type === 'promo' ? '🔥 Promo' : '✨ New Spot');
-                }
-
-                let validityText = '';
-                if (item.validity && typeof item.validity === 'object') {
-                    validityText = item.validity[currentLang] || item.validity['en'] || '';
-                } else if (typeof item.validity === 'string') {
-                    validityText = item.validity;
-                }
-
-                let descText = '';
-                if (item.descriptions) {
-                    descText = item.descriptions[currentLang] || item.descriptions['en'] || '';
-                } else if (item.description_zh) {
-                    descText = item.description_zh;
-                }
-
-                const titleHtml = item.url 
-                    ? `<a href="${item.url}" target="_blank" style="color: #1c1917; text-decoration: none; border-bottom: 2px solid #EA580C;" title="Visit Website">${titleText} 🔗</a>` 
-                    : titleText;
+                const titleText = item.title || 'Event News';
+                const tagText = item.tag || '🔥 Promo';
+                const validityText = item.validity || '';
+                const descText = item.description || item.description_zh || '';
+                const titleHtml = item.url ? `<a href="${item.url}" target="_blank" style="color: #1c1917; text-decoration: none; border-bottom: 2px solid #EA580C;">${titleText} 🔗</a>` : titleText;
 
                 return `
                     <div class="card">
-                        <img src="${item.imageUrl || 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=800&auto=format&fit=crop'}" alt="${titleText}" loading="lazy">
+                        <img src="${item.imageUrl || 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=800&auto=format&fit=crop'}" alt="Event" loading="lazy">
                         <div class="card-body">
                             <div class="badge-group">
                                 <span class="badge badge-city">${langData.cities[item.city] || 'Philippines'}</span>
@@ -1162,18 +1213,14 @@
             }).join('');
         }
 
-        // ==================== AI 客服視窗互動邏輯 ====================
+        // AI 管家聊天互動
         window.toggleChat = function() {
             const modal = document.getElementById('chat-modal');
             modal.classList.toggle('show');
-            if (modal.classList.contains('show')) {
-                document.getElementById('chat-input').focus();
-            }
+            if (modal.classList.contains('show')) document.getElementById('chat-input').focus();
         };
 
-        window.handleChatKeyPress = function(e) {
-            if (e.key === 'Enter') sendChatMessage();
-        };
+        window.handleChatKeyPress = function(e) { if (e.key === 'Enter') sendChatMessage(); };
 
         window.sendChatMessage = async function() {
             const inputEl = document.getElementById('chat-input');
@@ -1192,53 +1239,28 @@
             messagesEl.scrollTop = messagesEl.scrollHeight;
 
             const activeCity = document.getElementById('city-select').value || currentCity;
+            const relevantRestaurants = (allRestaurants || []).filter(i => activeCity === 'all' || i.city === activeCity).slice(0, 50);
+            const relevantAttractions = (allAttractions || []).filter(i => activeCity === 'all' || i.city === activeCity).slice(0, 20);
 
-            const catMap = {
-                'bbq_seafood': '海鮮燒烤、火烤兩吃、BBQ、烤肉',
-                'japanese_korean': '日韓料理、韓式烤肉、日式鍋物',
-                'chinese': '中式料理、合菜、點心',
-                'fast_food': '美式速食、炸雞漢堡',
-                'coffee_drinks': '咖啡、手搖飲料、甜點',
-                'filipino': '菲律賓在地傳統菜、烤乳豬 Lechon'
-            };
-
-            const relevantRestaurants = (allRestaurants || []).filter(item => {
-                return activeCity === 'all' || item.city === activeCity;
-            }).slice(0, 80);
-
-            const restaurantsContext = relevantRestaurants.map((item, idx) => {
-                const deliveryOptions = [];
-                if (item.grabUrl) deliveryOptions.push("GrabFood");
-                if (item.foodpandaUrl) deliveryOptions.push("Foodpanda");
-                const deliveryText = deliveryOptions.length > 0 ? `外送支援: ${deliveryOptions.join(', ')}` : "無外送";
-
-                const catDesc = catMap[item.categoryKey] || item.categoryKey || '精選美食';
-                const localizedName = (item.names && item.names[currentLang]) ? item.names[currentLang] : (item.name || '未知');
-                return `${idx + 1}. 【${localizedName} / 英文名: ${item.name || ''}】 城市: ${item.city || 'davao'}, 標籤特色: ${catDesc}, 地址: ${item.address || ''}, ${deliveryText}`;
-            }).join('\n');
+            const contextText = [
+                "【餐廳清單】",
+                ...relevantRestaurants.map(r => `${r.name} (${r.city}, ${r.categoryKey || 'food'})`),
+                "【景點清單】",
+                ...relevantAttractions.map(a => `${a.name} (${a.city}, ${a.category})`)
+            ].join('\n');
 
             try {
                 const response = await fetch(AI_WORKER_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ 
-                        message: msg, 
-                        lang: currentLang,
-                        currentCity: activeCity,
-                        restaurantsContext: restaurantsContext
-                    })
+                    body: JSON.stringify({ message: msg, lang: currentLang, currentCity: activeCity, restaurantsContext: contextText })
                 });
                 const data = await response.json();
-                
                 const loadingEl = document.getElementById(loadingId);
-                if (loadingEl) {
-                    loadingEl.innerText = data.reply;
-                }
+                if (loadingEl) loadingEl.innerText = data.reply;
             } catch (err) {
                 const loadingEl = document.getElementById(loadingId);
-                if (loadingEl) {
-                    loadingEl.innerText = langData.chatError;
-                }
+                if (loadingEl) loadingEl.innerText = langData.chatError;
             }
             messagesEl.scrollTop = messagesEl.scrollHeight;
         };
