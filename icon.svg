@@ -1,16 +1,23 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <!-- 1. 滿版純黑背景，不帶圓角，保證鋪滿任何形狀的圖示 -->
+  <rect width="512" height="512" fill="#111111"/>
+
+  <!-- 2. 奢華科技風微光同心圓環 -->
+  <circle cx="256" cy="256" r="170" fill="none" stroke="#222222" stroke-width="4"/>
+  <circle cx="256" cy="256" r="160" fill="none" stroke="#EA580C" stroke-width="3" stroke-dasharray="8 6" opacity="0.8"/>
+
+  <!-- 3. 專屬品牌標誌：大V主體（居中於 Safe Zone，保證裁切後完美呈現） -->
+  <path d="M176 190 L236 330 Q256 375 276 330 L336 190 Q344 172 324 172 L294 172 Q284 172 278 186 L256 255 L234 186 Q228 172 218 172 L188 172 Q168 172 176 190 Z" 
+        fill="url(#gradV)" />
+
+  <!-- 4. 頂部奢華金色裝飾圓點 -->
+  <circle cx="256" cy="150" r="10" fill="#F59E0B" />
+
+  <!-- 5. 漸層填色定義 -->
   <defs>
-    <linearGradient id="pureBlack" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#18181b" />
-      <stop offset="100%" stop-color="#09090b" />
-    </linearGradient>
-    <linearGradient id="vibrantOrange" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#F97316" />
+    <linearGradient id="gradV" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FF7A00" />
       <stop offset="100%" stop-color="#EA580C" />
     </linearGradient>
   </defs>
-  <rect width="512" height="512" rx="116" fill="url(#pureBlack)" />
-  <circle cx="256" cy="256" r="180" fill="none" stroke="#27272a" stroke-width="6" />
-  <circle cx="256" cy="256" r="168" fill="none" stroke="url(#vibrantOrange)" stroke-width="3" stroke-dasharray="12 6" opacity="0.7"/>
-  <path d="M170 174l86 164 86-164h-44l-42 80-42-80h-44z" fill="url(#vibrantOrange)" />
 </svg>
