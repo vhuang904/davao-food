@@ -17,7 +17,7 @@ const GOOGLE_MAPS_API_KEY = process.env.GOOGLE_MAPS_API_KEY;
 const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
 /**
- * 簡易原生 CSV 解析器（支援逗號、引號處理，免裝 csv-parser）
+ * 簡易原生 CSV 解析器（免裝任何第三方套件）
  */
 function parseCSV(text) {
   const lines = text.split(/\r?\n/).filter(line => line.trim() !== '');
@@ -59,7 +59,6 @@ function parseCSV(text) {
 
 /**
  * 呼叫 Google Places API (New) 搜尋店家
- * 使用原生 fetch
  */
 async function fetchPlaceData(name, address, city) {
   if (!GOOGLE_MAPS_API_KEY) {
@@ -76,6 +75,7 @@ async function fetchPlaceData(name, address, city) {
       headers: {
         'Content-Type': 'application/json',
         'X-Goog-Api-Key': GOOGLE_MAPS_API_KEY,
+        // 請求完整照片與營業時間
         'X-Goog-FieldMask': 'places.id,places.displayName,places.photos,places.regularOpeningHours'
       },
       body: JSON.stringify({ textQuery: query })
@@ -100,7 +100,7 @@ async function fetchPlaceData(name, address, city) {
       }
     }
 
-    // 2. 營業時間
+    // 2. 營業時間結構
     let openingHours = null;
     if (place.regularOpeningHours) {
       openingHours = {
@@ -134,11 +134,11 @@ async function syncData() {
   if (!res.ok) throw new Error(`無法下載 CSV: ${res.statusText}`);
   const csvText = await res.text();
 
-  // 2. 原生解析 CSV
+  // 2. 解析 CSV
   const rows = parseCSV(csvText);
   console.log(`📊 成功自試算表讀取 ${rows.length} 筆店家紀錄。`);
 
-  // 3. 讀取現有快取
+  // 3. 讀取現有資料庫快取
   const existingSnapshot = await db.collection('restaurants').get();
   const existingMap = new Map();
   existingSnapshot.forEach(doc => {
@@ -155,19 +155,26 @@ async function syncData() {
     const city = (row.city || row.City || row['城市'] || 'davao').trim().toLowerCase();
     const safeDocId = `${city}_${rawName.replace(/[^a-zA-Z0-9\u4e00-\u9fa5]/g, '_')}`;
 
-    // 快取檢查
     const cachedData = existingMap.get(safeDocId);
     let images = [];
     let openingHours = null;
 
-    if (cachedData && cachedData.images && cachedData.images.length > 0 && cachedData.openingHours) {
+    // 【關鍵修復點】：必須同時有照片且營業時間裡有每週時段資料 (periods/weekdayDescriptions)，才算完整快取
+    const hasCompleteHours = cachedData && cachedData.openingHours && 
+                             cachedData.openingHours.periods && 
+                             cachedData.openingHours.periods.length > 0;
+
+    if (cachedData && cachedData.images && cachedData.images.length > 0 && hasCompleteHours) {
       images = cachedData.images;
       openingHours = cachedData.openingHours;
     } else {
+      // 缺營業時間者，立即向 Places API 重新檢索補齊
       const address = (row.address || row.Address || row['地址'] || '').trim();
-      console.log(`   🔎 正在向 Places API 查詢: ${rawName} (${city})...`);
+      console.log(`   🔎 正在為 [${rawName}] 補齊最新營業時間與照片...`);
       const placeData = await fetchPlaceData(rawName, address, city);
-      images = placeData.images;
+      
+      // 如果這次查到了照片就用新的，否則沿用舊照片
+      images = (placeData.images && placeData.images.length > 0) ? placeData.images : (cachedData?.images || []);
       openingHours = placeData.openingHours;
 
       await sleep(250);
@@ -192,7 +199,7 @@ async function syncData() {
     count++;
   }
 
-  console.log(`🎉 恭喜！全數 ${count} 間餐廳資料已順利同步至 Firestore（包含真實照片與營業時間）！`);
+  console.log(`🎉 恭喜！全數 ${count} 間餐廳資料已順利更新（已全面補齊營業時間資料）！`);
 }
 
 syncData().catch(err => {
