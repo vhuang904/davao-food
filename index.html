@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #fdfbf7; color: #333; padding-bottom: 30px; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #fdfbf7; color: #333; padding-bottom: 40px; }
         
         /* 頂部 Header */
         header { background: #EA580C; color: white; padding: 12px 16px 0 16px; box-shadow: 0 4px 10px rgba(0,0,0,0.08); position: sticky; top: 0; z-index: 100; }
@@ -44,7 +44,7 @@
         .tab-content { display: none; }
         .tab-content.active { display: block; }
 
-        .card { background: white; border-radius: 12px; overflow: hidden; margin-bottom: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.04); border: 1px solid #f3eee3; }
+        .card { background: white; border-radius: 14px; overflow: hidden; margin-bottom: 20px; box-shadow: 0 4px 14px rgba(0,0,0,0.05); border: 1px solid #f0eae1; }
         .card > img { width: 100%; height: 200px; object-fit: cover; background: #f7f5f0; display: block; }
 
         /* 多圖輪播容器 */
@@ -57,12 +57,12 @@
         .carousel-dots { position: absolute; bottom: 8px; left: 0; right: 0; display: flex; justify-content: center; gap: 5px; z-index: 10; pointer-events: none; }
         .dot { width: 6px; height: 6px; border-radius: 50%; background: rgba(255, 255, 255, 0.5); }
         .dot.active { background: #ffffff; width: 14px; border-radius: 4px; }
-        .photo-tag { position: absolute; top: 8px; right: 8px; background: rgba(0, 0, 0, 0.55); color: white; font-size: 0.7rem; padding: 2px 6px; border-radius: 4px; z-index: 10; }
+        .photo-tag { position: absolute; top: 8px; right: 8px; background: rgba(0, 0, 0, 0.6); color: white; font-size: 0.7rem; padding: 3px 8px; border-radius: 6px; z-index: 10; backdrop-blur: 2px; }
 
         .card-body { padding: 16px; }
         
-        .badge-group { display: flex; gap: 6px; margin-bottom: 8px; flex-wrap: wrap; align-items: center; }
-        .badge { display: inline-block; background: #fff7ed; color: #c2410c; font-size: 0.75rem; padding: 3px 8px; border-radius: 4px; font-weight: 600; border: 1px solid #ffedd5; }
+        .badge-group { display: flex; gap: 6px; margin-bottom: 10px; flex-wrap: wrap; align-items: center; }
+        .badge { display: inline-flex; align-items: center; background: #fff7ed; color: #c2410c; font-size: 0.75rem; padding: 3px 8px; border-radius: 6px; font-weight: 600; border: 1px solid #ffedd5; }
         .badge-city { background: #f0f9ff; color: #0369a1; border-color: #e0f2fe; }
         .badge-promo { background: #fef2f2; color: #dc2626; border-color: #fecaca; }
         .badge-brand { background: #fefce8; color: #a16207; border-color: #fef08a; }
@@ -72,21 +72,24 @@
         .badge-open { background: #ecfdf5; color: #047857; border-color: #a7f3d0; font-weight: bold; }
         .badge-closed { background: #fef2f2; color: #b91c1c; border-color: #fecaca; font-weight: bold; }
 
-        /* Google 真實評分徽章 */
-        .badge-google-rating { background: #fef3c7; color: #b45309; border-color: #fde68a; font-weight: bold; display: inline-flex; align-items: center; gap: 4px; }
+        /* Google 權威真實評分徽章 */
+        .badge-google-rating { background: #fef3c7; color: #92400e; border-color: #fde68a; font-weight: bold; gap: 4px; }
 
-        .card-title { font-size: 1.2rem; font-weight: bold; margin-bottom: 6px; color: #1c1917; }
+        .card-title { font-size: 1.25rem; font-weight: 800; margin-bottom: 6px; color: #1c1917; line-height: 1.35; }
         .card-desc { font-size: 0.88rem; color: #57534e; line-height: 1.5; margin-bottom: 12px; }
-        .info-item { font-size: 0.85rem; color: #78716c; margin-bottom: 5px; display: flex; align-items: flex-start; gap: 6px; }
+        .info-item { font-size: 0.85rem; color: #78716c; margin-bottom: 6px; display: flex; align-items: flex-start; gap: 8px; line-height: 1.4; }
         
-        /* 營業時間展開抽屜 */
-        .hours-dropdown { cursor: pointer; color: #ea580c; font-weight: 600; text-decoration: underline; font-size: 0.8rem; margin-left: 4px; }
-        .weekly-hours-box { display: none; background: #faf8f5; border: 1px solid #eee8dd; border-radius: 8px; padding: 8px 12px; margin-top: 6px; font-size: 0.8rem; color: #57534e; line-height: 1.6; }
+        /* 營業時間自適應排版（解決擠壓跑行問題） */
+        .hours-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; width: 100%; }
+        .hours-text { flex: 1; word-break: break-word; }
+        .hours-dropdown { white-space: nowrap; color: #ea580c; font-weight: bold; cursor: pointer; text-decoration: underline; font-size: 0.8rem; shrink: 0; padding-top: 1px; }
+        
+        .weekly-hours-box { display: none; background: #faf8f5; border: 1px solid #eee8dd; border-radius: 8px; padding: 10px 12px; margin-top: 8px; font-size: 0.8rem; color: #57534e; line-height: 1.6; }
         .weekly-hours-box.show { display: block; }
         .weekly-hours-box div.today { font-weight: bold; color: #ea580c; }
 
         .btn-group { display: flex; gap: 6px; margin-top: 14px; flex-wrap: wrap; }
-        .btn { flex: 1; min-width: calc(50% - 3px); padding: 9px 6px; border-radius: 8px; font-size: 0.82rem; font-weight: bold; text-align: center; text-decoration: none; border: none; cursor: pointer; }
+        .btn { flex: 1; min-width: calc(50% - 3px); padding: 10px 6px; border-radius: 8px; font-size: 0.82rem; font-weight: bold; text-align: center; text-decoration: none; border: none; cursor: pointer; }
         .btn-primary { background: #EA580C; color: white; }
         .btn-secondary { background: #f5f2eb; color: #44403c; }
         .btn-grab { background: #00B14F; color: white; }
@@ -97,7 +100,7 @@
         /* 討論區塊 */
         .card-forum-box { background: #faf8f5; border-radius: 10px; padding: 12px; margin-top: 14px; border: 1px dashed #e7e2d7; }
         .rating-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
-        .rating-score { font-size: 0.88rem; font-weight: bold; color: #d97706; }
+        .rating-score { font-size: 0.85rem; font-weight: bold; color: #d97706; }
         .star-picker { display: flex; gap: 4px; cursor: pointer; }
         .star-picker span { font-size: 1.1rem; color: #d1d5db; transition: color 0.15s; }
         .star-picker span.active { color: #f59e0b; }
@@ -120,32 +123,27 @@
         .review-time { font-size: 0.72rem; color: #a8a29e; float: right; }
         .review-text { margin-top: 4px; color: #44403c; line-height: 1.35; }
 
-        /* 升級版：質感 AI 管家懸浮按鈕與彈窗 */
-        .chat-fab { position: fixed; bottom: 24px; right: 20px; width: 52px; height: 52px; border-radius: 26px; background: linear-gradient(135deg, #ea580c 0%, #f97316 100%); color: white; border: none; box-shadow: 0 6px 20px rgba(234, 88, 12, 0.4); font-size: 1.4rem; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 1000; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
-        .chat-fab:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(234, 88, 12, 0.5); }
+        /* 質感圓形懸浮 AI 管家按鈕 */
+        .chat-fab { position: fixed; bottom: 24px; right: 20px; width: 56px; height: 56px; border-radius: 28px; background: linear-gradient(135deg, #ea580c 0%, #f97316 100%); color: white; border: none; box-shadow: 0 6px 20px rgba(234, 88, 12, 0.45); font-size: 1.5rem; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 1000; transition: transform 0.2s, box-shadow 0.2s; }
         .chat-fab:active { transform: scale(0.92); }
 
-        .chat-modal { display: none; position: fixed; bottom: 86px; right: 20px; width: 350px; max-width: calc(100vw - 32px); height: 500px; max-height: calc(100vh - 110px); background: #ffffff; border-radius: 20px; box-shadow: 0 16px 40px rgba(0,0,0,0.16); border: 1px solid #f0e6d8; flex-direction: column; z-index: 1000; overflow: hidden; animation: slideUp 0.25s ease-out; }
+        .chat-modal { display: none; position: fixed; bottom: 90px; right: 20px; width: 350px; max-width: calc(100vw - 32px); height: 500px; max-height: calc(100vh - 110px); background: #ffffff; border-radius: 20px; box-shadow: 0 16px 40px rgba(0,0,0,0.18); border: 1px solid #f0e6d8; flex-direction: column; z-index: 1000; overflow: hidden; }
         .chat-modal.show { display: flex; }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
 
         .chat-header { background: #EA580C; color: white; padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; }
         .chat-header-info { display: flex; align-items: center; gap: 8px; }
         .chat-header-info h3 { font-size: 0.95rem; font-weight: bold; margin: 0; }
         .chat-header-info span { font-size: 0.72rem; color: #fed7aa; display: block; }
-        .btn-close-chat { background: rgba(255,255,255,0.2); border: none; color: white; width: 26px; height: 26px; border-radius: 50%; font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.15s; }
-        .btn-close-chat:hover { background: rgba(255,255,255,0.3); }
+        .btn-close-chat { background: rgba(255,255,255,0.2); border: none; color: white; width: 26px; height: 26px; border-radius: 50%; font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; }
 
         .chat-messages { flex: 1; padding: 14px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; background: #fdfbf7; font-size: 0.85rem; }
-        .chat-bubble { max-width: 82%; padding: 10px 14px; border-radius: 16px; line-height: 1.45; word-break: break-word; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
+        .chat-bubble { max-width: 82%; padding: 10px 14px; border-radius: 16px; line-height: 1.45; word-break: break-word; }
         .chat-bubble.bot { background: #ffffff; border: 1px solid #e7e2d7; align-self: flex-start; color: #292524; border-top-left-radius: 4px; }
         .chat-bubble.user { background: #EA580C; color: white; align-self: flex-end; border-top-right-radius: 4px; }
 
         .chat-input-area { display: flex; border-top: 1px solid #efe8dc; padding: 10px 12px; background: #ffffff; gap: 8px; align-items: center; }
-        .chat-input { flex: 1; border: 1px solid #e2d9cd; border-radius: 20px; padding: 9px 14px; font-size: 0.85rem; outline: none; transition: border-color 0.2s; background: #faf8f5; }
-        .chat-input:focus { border-color: #ea580c; background: #ffffff; }
-        .btn-send-chat { background: #EA580C; color: white; border: none; width: 36px; height: 36px; border-radius: 50%; font-weight: bold; font-size: 0.9rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.15s; shrink: 0; }
-        .btn-send-chat:active { transform: scale(0.92); }
+        .chat-input { flex: 1; border: 1px solid #e2d9cd; border-radius: 20px; padding: 9px 14px; font-size: 0.85rem; outline: none; background: #faf8f5; }
+        .btn-send-chat { background: #EA580C; color: white; border: none; width: 36px; height: 36px; border-radius: 50%; font-weight: bold; font-size: 0.9rem; cursor: pointer; display: flex; align-items: center; justify-content: center; }
     </style>
 </head>
 <body>
@@ -195,7 +193,7 @@
         </div>
     </div>
 
-    <!-- 質感 AI 客服機器人懸浮按鈕 -->
+    <!-- 質感圓形懸浮 AI 管家按鈕 -->
     <button class="chat-fab" id="chat-fab" onclick="toggleChat()" title="AI 美食管家">
         <i class="fa-solid fa-robot"></i>
     </button>
@@ -243,51 +241,34 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // 綁定 Cloudflare Worker API 網址
         const AI_WORKER_URL = "https://food-ai-assistant.vhuang904.workers.dev";
 
         const categoryImagePools = {
             chinese: [
                 "https://images.unsplash.com/photo-1563245372-f21724e3856d?w=800&auto=format&fit=crop",
                 "https://images.unsplash.com/photo-1541696432-82c6da8ce7bf?w=800&auto=format&fit=crop",
-                "https://images.unsplash.com/photo-1525755662778-989d0524087e?w=800&auto=format&fit=crop",
-                "https://images.unsplash.com/photo-1585032226651-759b368d7246?w=800&auto=format&fit=crop",
-                "https://images.unsplash.com/photo-1569058242567-93de6f36f8e6?w=800&auto=format&fit=crop"
+                "https://images.unsplash.com/photo-1525755662778-989d0524087e?w=800&auto=format&fit=crop"
             ],
             japanese_korean: [
                 "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=800&auto=format&fit=crop",
                 "https://images.unsplash.com/photo-1579871494447-9811cf80d66c?w=800&auto=format&fit=crop",
-                "https://images.unsplash.com/photo-1553621042-f6e147245754?w=800&auto=format&fit=crop",
-                "https://images.unsplash.com/photo-1611143669185-af224c5e3252?w=800&auto=format&fit=crop",
-                "https://images.unsplash.com/photo-1580822184713-fc5400e7fe10?w=800&auto=format&fit=crop"
+                "https://images.unsplash.com/photo-1553621042-f6e147245754?w=800&auto=format&fit=crop"
             ],
             fast_food: [
                 "https://images.unsplash.com/photo-1550547660-d9450f859349?w=800&auto=format&fit=crop",
-                "https://images.unsplash.com/photo-1586190848861-99aa4a171e90?w=800&auto=format&fit=crop",
-                "https://images.unsplash.com/photo-1626777552726-4a6b54c97e46?w=800&auto=format&fit=crop",
-                "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=800&auto=format&fit=crop",
-                "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=800&auto=format&fit=crop"
+                "https://images.unsplash.com/photo-1586190848861-99aa4a171e90?w=800&auto=format&fit=crop"
             ],
             bbq_seafood: [
                 "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=800&auto=format&fit=crop",
-                "https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?w=800&auto=format&fit=crop",
-                "https://images.unsplash.com/photo-1529193591184-b1d58069ecdd?w=800&auto=format&fit=crop",
-                "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=800&auto=format&fit=crop",
-                "https://images.unsplash.com/photo-1544025162-d76694265947?w=800&auto=format&fit=crop"
+                "https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?w=800&auto=format&fit=crop"
             ],
             coffee_drinks: [
                 "https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=800&auto=format&fit=crop",
-                "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=800&auto=format&fit=crop",
-                "https://images.unsplash.com/photo-1517256064527-09c73fc73e38?w=800&auto=format&fit=crop",
-                "https://images.unsplash.com/photo-1559925393-8be0ec4767c8?w=800&auto=format&fit=crop",
-                "https://images.unsplash.com/photo-1541167760496-1628856ab772?w=800&auto=format&fit=crop",
-                "https://images.unsplash.com/photo-1572442388796-11668a67e53d?w=800&auto=format&fit=crop"
+                "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=800&auto=format&fit=crop"
             ],
             filipino: [
                 "https://images.unsplash.com/photo-1541544741938-0af808871cc0?w=800&auto=format&fit=crop",
-                "https://images.unsplash.com/photo-1626777552726-4a6b54c97e46?w=800&auto=format&fit=crop",
-                "https://images.unsplash.com/photo-1565299585323-38d6b0865b47?w=800&auto=format&fit=crop",
-                "https://images.unsplash.com/photo-1604382354936-07c5d9983bd3?w=800&auto=format&fit=crop"
+                "https://images.unsplash.com/photo-1626777552726-4a6b54c97e46?w=800&auto=format&fit=crop"
             ]
         };
 
@@ -764,22 +745,21 @@
                     ? item.images
                     : getUniqueRestaurantImageArray(item ? item.name : '', catKey);
 
-                // ==================== 評分核心升級：優先讀取 Google 真實評分 ====================
+                // ==================== 評分核心升級：標明 Google 口碑評分 ====================
                 const ratingData = itemRatings[resKey] || { scores: [5], userRated: null };
                 const totalScores = ratingData.scores;
                 const localAvgRating = (totalScores.reduce((a, b) => a + b, 0) / totalScores.length).toFixed(1);
                 const count = totalScores.length;
                 const userScore = ratingData.userRated || 0;
 
-                // 檢查後端寫入的 googleRating 與 googleReviewCount
                 const hasGoogleRating = (item.googleRating !== undefined && item.googleRating !== null);
                 const realGoogleRating = hasGoogleRating ? Number(item.googleRating).toFixed(1) : null;
-                const realReviewCount = item.googleReviewCount ? `${item.googleReviewCount} 則評價` : 'Google 好評';
+                const realReviewCount = item.googleReviewCount ? `${item.googleReviewCount} 則` : '';
 
-                // 徽章標籤：優先顯示 Google 真實評分
+                // 明確標示 Google 徽章
                 const ratingBadgeHtml = hasGoogleRating
-                    ? `<span class="badge badge-google-rating">⭐ ${realGoogleRating} (${realReviewCount})</span>`
-                    : `<span class="badge badge-google-rating">⭐ ${localAvgRating} (${count} ${langData.ratingsCountText})</span>`;
+                    ? `<span class="badge badge-google-rating"><i class="fa-solid fa-star" style="color:#eab308;"></i> Google ${realGoogleRating} (${realReviewCount}評價)</span>`
+                    : `<span class="badge badge-google-rating"><i class="fa-solid fa-star" style="color:#eab308;"></i> ${localAvgRating} (${count} ${langData.ratingsCountText})</span>`;
 
                 const commentsList = resComments[resKey] || [];
 
@@ -799,7 +779,7 @@
                     displayDesc = item.description;
                 }
 
-                // 營業時間動態解析
+                // 營業時間動態解析（自適應彈性容器排版）
                 const hoursInfo = parseOpeningStatus(item.openingHours);
                 let openStatusBadge = '';
                 let hoursDisplayHtml = '';
@@ -816,13 +796,16 @@
 
                     hoursDisplayHtml = `
                         <div class="info-item">
-                            <span>⏰ ${langData.todayHours}: <strong>${hoursInfo.todayText || '營業中'}</strong></span>
-                            ${hoursInfo.weeklyList.length > 0 ? `<span class="hours-dropdown" id="hours-btn-${resKey}" onclick="toggleWeeklyHours('${resKey}')">[${langData.viewWeekly}]</span>` : ''}
+                            <span style="font-size:1rem; line-height:1.2;">⏰</span>
+                            <div class="hours-row">
+                                <div class="hours-text">${langData.todayHours}: <strong>${hoursInfo.todayText || '營業中'}</strong></div>
+                                ${hoursInfo.weeklyList.length > 0 ? `<div class="hours-dropdown" id="hours-btn-${resKey}" onclick="toggleWeeklyHours('${resKey}')">[${langData.viewWeekly}]</div>` : ''}
+                            </div>
                         </div>
                         ${hoursInfo.weeklyList.length > 0 ? `<div class="weekly-hours-box" id="hours-box-${resKey}">${weeklyHtml}</div>` : ''}
                     `;
                 } else {
-                    hoursDisplayHtml = `<div class="info-item">⏰ ${langData.noHoursInfo}</div>`;
+                    hoursDisplayHtml = `<div class="info-item"><span style="font-size:1rem;">⏰</span> <span>${langData.noHoursInfo}</span></div>`;
                 }
 
                 var carouselSlides = imageList.map(function(imgUrl) {
@@ -857,13 +840,13 @@
                             </div>
                             <div class="card-title">${displayName}</div>
                             <div class="card-desc">${displayDesc}</div>
-                            <div class="info-item">📍 ${item.address || ''}</div>
-                            <div class="info-item">📞 ${item.phone || langData.noPhone}</div>
+                            <div class="info-item"><span>📍</span> <span>${item.address || ''}</span></div>
+                            <div class="info-item"><span>📞</span> <span>${item.phone || langData.noPhone}</span></div>
                             ${hoursDisplayHtml}
 
                             <div class="card-forum-box">
                                 <div class="rating-header">
-                                    <span class="rating-score">💬 玩家評分: ${localAvgRating} / 5.0 (${count} ${langData.ratingsCountText})</span>
+                                    <span class="rating-score">💬 本地評分: ${localAvgRating} / 5.0 (${count} ${langData.ratingsCountText})</span>
                                     <div class="star-picker" title="Rate">
                                         ${[1, 2, 3, 4, 5].map(s => `
                                             <span class="${s <= userScore ? 'active' : ''}" onclick="rateRestaurant('${resKey}', ${s})">★</span>
@@ -990,7 +973,7 @@
                             </div>
                             <div class="card-title" style="font-size:1.1rem; margin-top:4px;">${titleHtml}</div>
                             <div class="card-desc" style="color:#44403c; margin-top:8px;">${descText}</div>
-                            <div class="info-item" style="margin-top:10px;">📍 ${item.location || ''}</div>
+                            <div class="info-item"><span>📍</span> <span>${item.location || ''}</span></div>
                         </div>
                     </div>
                 `;
