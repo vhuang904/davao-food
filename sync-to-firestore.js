@@ -16,7 +16,7 @@ const GOOGLE_MAPS_API_KEY = process.env.GOOGLE_MAPS_API_KEY;
 const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
 /**
- * 簡易原生 CSV 解析
+ * 原生簡易 CSV 解析
  */
 function parseCSV(text) {
   const lines = text.split(/\r?\n/).filter(line => line.trim() !== '');
@@ -61,11 +61,8 @@ function parseCSV(text) {
  */
 function buildCleanQueries(name, city) {
   const queries = [];
-  
-  // 1. 去除括號及其內部文字，例如 "Jollibee (SM City Davao)" -> "Jollibee"
   const cleanName = name.replace(/\([^)]*\)/g, '').trim();
   
-  // 2. 城市名稱標準化
   const cityNameMap = {
     'davao': 'Davao City',
     'manila': 'Manila',
@@ -73,28 +70,24 @@ function buildCleanQueries(name, city) {
   };
   const properCity = cityNameMap[city.toLowerCase()] || city;
 
-  // 策略 A：括號內的商場/分店名 + 乾淨店名
   const matchParen = name.match(/\(([^)]+)\)/);
   if (matchParen && matchParen[1]) {
     queries.push(`${cleanName} ${matchParen[1]} ${properCity}`.trim());
   }
 
-  // 策略 B：乾淨店名 + 城市
   queries.push(`${cleanName} ${properCity}`.trim());
-
-  // 策略 C：原始店名（若無括號時有效）
   queries.push(`${name} ${properCity}`.trim());
 
   return [...new Set(queries.filter(q => q.length > 0))];
 }
 
 /**
- * 兩階段精準查詢 + 完整除錯日誌
+ * 兩階段查詢 Google Places API（含真實評分與評價數）
  */
 async function fetchPlaceData(name, address, city) {
   if (!GOOGLE_MAPS_API_KEY) {
     console.warn("⚠️ 缺少 GOOGLE_MAPS_API_KEY");
-    return { images: [], openingHours: null };
+    return { images: [], openingHours: null, googleRating: null, googleReviewCount: null };
   }
 
   const queries = buildCleanQueries(name, city);
@@ -115,10 +108,9 @@ async function fetchPlaceData(name, address, city) {
 
       const searchData = await searchRes.json();
 
-      // 若 Google API 報錯，直接印出真實原因（金鑰無效/配額問題/權限未開）
       if (searchData.error) {
         console.error(`   🚨 Google API 回傳錯誤: [${searchData.error.status}] ${searchData.error.message}`);
-        return { images: [], openingHours: null };
+        return { images: [], openingHours: null, googleRating: null, googleReviewCount: null };
       }
 
       if (searchData.places && searchData.places.length > 0) {
@@ -133,10 +125,10 @@ async function fetchPlaceData(name, address, city) {
 
   if (!placeId) {
     console.log(`   ℹ️ Places 未查找到: [${name}] (城市: ${city})`);
-    return { images: [], openingHours: null };
+    return { images: [], openingHours: null, googleRating: null, googleReviewCount: null };
   }
 
-  // 階段二：取得完整營業時段
+  // 階段二：取得完整營業時段、照片、真實評分與評論數
   try {
     const detailsUrl = `https://places.googleapis.com/v1/places/${placeId}`;
     const detailsRes = await fetch(detailsUrl, {
@@ -144,7 +136,7 @@ async function fetchPlaceData(name, address, city) {
       headers: {
         'Content-Type': 'application/json',
         'X-Goog-Api-Key': GOOGLE_MAPS_API_KEY,
-        'X-Goog-FieldMask': 'photos,regularOpeningHours,currentOpeningHours'
+        'X-Goog-FieldMask': 'photos,regularOpeningHours,currentOpeningHours,rating,userRatingCount'
       }
     });
 
@@ -171,11 +163,17 @@ async function fetchPlaceData(name, address, city) {
       console.log(`   ✅ 成功抓取 [${name}] 營業時間！週時段數: ${openingHours.weekdayDescriptions.length}`);
     }
 
-    return { images, openingHours };
+    const googleRating = place.rating || null;
+    const googleReviewCount = place.userRatingCount || null;
+    if (googleRating) {
+      console.log(`   ⭐ 取得 Google 評分: ${googleRating} (${googleReviewCount} 則評價)`);
+    }
+
+    return { images, openingHours, googleRating, googleReviewCount };
 
   } catch (error) {
     console.warn(`   ⚠️ 抓取 Place Details 失敗 [${name}]:`, error.message);
-    return { images: [], openingHours: null };
+    return { images: [], openingHours: null, googleRating: null, googleReviewCount: null };
   }
 }
 
@@ -203,7 +201,7 @@ async function syncData() {
     existingMap.set(doc.id, doc.data());
   });
 
-  console.log(`🔍 開始處理店家資料並檢索營業時間與影像...`);
+  console.log(`🔍 開始處理店家資料並檢索營業時間、評分與影像...`);
 
   let count = 0;
   for (const row of rows) {
@@ -216,21 +214,28 @@ async function syncData() {
     const cachedData = existingMap.get(safeDocId);
     let images = [];
     let openingHours = null;
+    let googleRating = null;
+    let googleReviewCount = null;
 
     const hasValidHours = cachedData && cachedData.openingHours && 
                           cachedData.openingHours.weekdayDescriptions && 
                           cachedData.openingHours.weekdayDescriptions.length > 0;
+    const hasValidRating = cachedData && cachedData.googleRating !== undefined && cachedData.googleRating !== null;
 
-    if (cachedData && cachedData.images && cachedData.images.length > 0 && hasValidHours) {
+    if (cachedData && cachedData.images && cachedData.images.length > 0 && hasValidHours && hasValidRating) {
       images = cachedData.images;
       openingHours = cachedData.openingHours;
+      googleRating = cachedData.googleRating;
+      googleReviewCount = cachedData.googleReviewCount;
     } else {
       const address = (row.address || row.Address || row['地址'] || '').trim();
       console.log(`   🔎 檢索店家: ${rawName} (${city})...`);
       const placeData = await fetchPlaceData(rawName, address, city);
       
       images = (placeData.images && placeData.images.length > 0) ? placeData.images : (cachedData?.images || []);
-      openingHours = placeData.openingHours;
+      openingHours = placeData.openingHours || cachedData?.openingHours || null;
+      googleRating = placeData.googleRating || cachedData?.googleRating || null;
+      googleReviewCount = placeData.googleReviewCount || cachedData?.googleReviewCount || null;
 
       await sleep(350);
     }
@@ -247,6 +252,8 @@ async function syncData() {
       foodpandaUrl: (row.foodpandaUrl || row.FoodpandaUrl || row['Foodpanda外送連結'] || '').trim(),
       images: images,
       openingHours: openingHours,
+      googleRating: googleRating,
+      googleReviewCount: googleReviewCount,
       updatedAt: admin.firestore.FieldValue.serverTimestamp()
     };
 
@@ -254,7 +261,7 @@ async function syncData() {
     count++;
   }
 
-  console.log(`🎉 成功同步 ${count} 間店家！`);
+  console.log(`🎉 成功同步 ${count} 間店家（評分與營業時間已入庫）！`);
 }
 
 syncData().catch(err => {
