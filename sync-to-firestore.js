@@ -1,6 +1,4 @@
 const admin = require('firebase-admin');
-const csv = require('csv-parser');
-const stream = require('stream');
 
 // 1. 初始化 Firebase Admin SDK
 const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
@@ -15,12 +13,53 @@ const db = admin.firestore();
 const GOOGLE_SHEET_CSV_URL = process.env.GOOGLE_SHEET_CSV_URL;
 const GOOGLE_MAPS_API_KEY = process.env.GOOGLE_MAPS_API_KEY;
 
-// 延遲工具函式，避免請求過於密集
+// 延遲工具函式
 const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
 /**
+ * 簡易原生 CSV 解析器（支援逗號、引號處理，免裝 csv-parser）
+ */
+function parseCSV(text) {
+  const lines = text.split(/\r?\n/).filter(line => line.trim() !== '');
+  if (lines.length === 0) return [];
+
+  function splitLine(line) {
+    const result = [];
+    let current = '';
+    let inQuotes = false;
+    for (let i = 0; i < line.length; i++) {
+      const char = line[i];
+      if (char === '"') {
+        inQuotes = !inQuotes;
+      } else if (char === ',' && !inQuotes) {
+        result.push(current.trim().replace(/^"|"$/g, '').replace(/""/g, '"'));
+        current = '';
+      } else {
+        current += char;
+      }
+    }
+    result.push(current.trim().replace(/^"|"$/g, '').replace(/""/g, '"'));
+    return result;
+  }
+
+  const headers = splitLine(lines[0]);
+  const rows = [];
+
+  for (let i = 1; i < lines.length; i++) {
+    const values = splitLine(lines[i]);
+    const obj = {};
+    headers.forEach((h, idx) => {
+      obj[h] = values[idx] || '';
+    });
+    rows.push(obj);
+  }
+
+  return rows;
+}
+
+/**
  * 呼叫 Google Places API (New) 搜尋店家
- * 使用 Node 18 原生 fetch，不依賴 axios
+ * 使用原生 fetch
  */
 async function fetchPlaceData(name, address, city) {
   if (!GOOGLE_MAPS_API_KEY) {
@@ -51,7 +90,7 @@ async function fetchPlaceData(name, address, city) {
 
     const place = places[0];
 
-    // 1. 抓取門市/菜色照片（最多 5 張）
+    // 1. 照片（最多 5 張）
     const images = [];
     if (place.photos && Array.isArray(place.photos)) {
       for (let i = 0; i < Math.min(place.photos.length, 5); i++) {
@@ -61,7 +100,7 @@ async function fetchPlaceData(name, address, city) {
       }
     }
 
-    // 2. 抓取營業時間資料
+    // 2. 營業時間
     let openingHours = null;
     if (place.regularOpeningHours) {
       openingHours = {
@@ -80,7 +119,7 @@ async function fetchPlaceData(name, address, city) {
 }
 
 /**
- * 主執行流程：下載 CSV ➔ 解析 ➔ 檢索 Places 資料 ➔ 寫入 Firestore
+ * 主執行流程
  */
 async function syncData() {
   console.log("🚀 開始執行 Google Sheets 同步至 Firestore 流程...");
@@ -89,27 +128,17 @@ async function syncData() {
     throw new Error("❌ 缺少環境變數 GOOGLE_SHEET_CSV_URL！");
   }
 
-  // 1. 使用原生 fetch 下載 Google 試算表 CSV
+  // 1. 下載 CSV
   console.log("📥 正在下載 Google 試算表 CSV...");
   const res = await fetch(GOOGLE_SHEET_CSV_URL);
   if (!res.ok) throw new Error(`無法下載 CSV: ${res.statusText}`);
   const csvText = await res.text();
-  const rows = [];
 
-  const bufferStream = new stream.PassThrough();
-  bufferStream.end(Buffer.from(csvText));
-
-  await new Promise((resolve, reject) => {
-    bufferStream
-      .pipe(csv())
-      .on('data', (data) => rows.push(data))
-      .on('end', resolve)
-      .on('error', reject);
-  });
-
+  // 2. 原生解析 CSV
+  const rows = parseCSV(csvText);
   console.log(`📊 成功自試算表讀取 ${rows.length} 筆店家紀錄。`);
 
-  // 2. 讀取 Firestore 現有資料庫（做快取檢查，避免重複呼叫 API 扣款）
+  // 3. 讀取現有快取
   const existingSnapshot = await db.collection('restaurants').get();
   const existingMap = new Map();
   existingSnapshot.forEach(doc => {
@@ -126,7 +155,7 @@ async function syncData() {
     const city = (row.city || row.City || row['城市'] || 'davao').trim().toLowerCase();
     const safeDocId = `${city}_${rawName.replace(/[^a-zA-Z0-9\u4e00-\u9fa5]/g, '_')}`;
 
-    // 檢查快取（已有圖片與營業時間則跳過 API 請求）
+    // 快取檢查
     const cachedData = existingMap.get(safeDocId);
     let images = [];
     let openingHours = null;
@@ -144,7 +173,6 @@ async function syncData() {
       await sleep(250);
     }
 
-    // 構建 Firestore 物件
     const restaurantDoc = {
       name: rawName,
       name_en: (row.name_en || row.Name_en || row['英文名稱'] || rawName).trim(),
@@ -160,7 +188,6 @@ async function syncData() {
       updatedAt: admin.firestore.FieldValue.serverTimestamp()
     };
 
-    // 寫入 Firestore
     await db.collection('restaurants').doc(safeDocId).set(restaurantDoc, { merge: true });
     count++;
   }
