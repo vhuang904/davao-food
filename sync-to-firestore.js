@@ -16,7 +16,7 @@ const GOOGLE_MAPS_API_KEY = process.env.GOOGLE_MAPS_API_KEY;
 const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
 /**
- * 原生簡易 CSV 解析
+ * 簡易原生 CSV 解析
  */
 function parseCSV(text) {
   const lines = text.split(/\r?\n/).filter(line => line.trim() !== '');
@@ -57,48 +57,50 @@ function parseCSV(text) {
 }
 
 /**
- * 智慧清洗搜尋字串，避免過多冗餘字眼導致 Places API 找不到
+ * 乾淨搜尋詞產生器（去除所有括號雜訊）
  */
-function buildSearchQueries(name, address, city) {
+function buildCleanQueries(name, city) {
   const queries = [];
   
-  // 移除店名中的括號內容作為基礎搜尋詞
+  // 1. 去除括號及其內部文字，例如 "Jollibee (SM City Davao)" -> "Jollibee"
   const cleanName = name.replace(/\([^)]*\)/g, '').trim();
+  
+  // 2. 城市名稱標準化
+  const cityNameMap = {
+    'davao': 'Davao City',
+    'manila': 'Manila',
+    'cebu': 'Cebu City'
+  };
+  const properCity = cityNameMap[city.toLowerCase()] || city;
 
-  // 策略 1：完整店名 + 城市（命中率最高）
-  queries.push(`${name} ${city}`.trim());
-
-  // 策略 2：去除括號的乾淨店名 + 城市
-  if (cleanName && cleanName !== name) {
-    queries.push(`${cleanName} ${city}`.trim());
+  // 策略 A：括號內的商場/分店名 + 乾淨店名
+  const matchParen = name.match(/\(([^)]+)\)/);
+  if (matchParen && matchParen[1]) {
+    queries.push(`${cleanName} ${matchParen[1]} ${properCity}`.trim());
   }
 
-  // 策略 3：乾淨店名 + 簡要路名（若地址有提供）
-  if (address) {
-    const shortAddress = address.split(',')[0].trim();
-    queries.push(`${cleanName} ${shortAddress} ${city}`.trim());
-  }
+  // 策略 B：乾淨店名 + 城市
+  queries.push(`${cleanName} ${properCity}`.trim());
 
-  // 策略 4：僅店名保底
-  queries.push(cleanName || name);
+  // 策略 C：原始店名（若無括號時有效）
+  queries.push(`${name} ${properCity}`.trim());
 
-  return [...new Set(queries)];
+  return [...new Set(queries.filter(q => q.length > 0))];
 }
 
 /**
- * 兩階段查詢 Google Places API
+ * 兩階段精準查詢 + 完整除錯日誌
  */
 async function fetchPlaceData(name, address, city) {
   if (!GOOGLE_MAPS_API_KEY) {
-    console.warn("⚠️ 尚未配置 GOOGLE_MAPS_API_KEY，略過檢索。");
+    console.warn("⚠️ 缺少 GOOGLE_MAPS_API_KEY");
     return { images: [], openingHours: null };
   }
 
-  const candidateQueries = buildSearchQueries(name, address, city);
+  const queries = buildCleanQueries(name, city);
   let placeId = null;
 
-  // 嘗試候選搜尋詞直到找到店家
-  for (const query of candidateQueries) {
+  for (const query of queries) {
     try {
       const searchUrl = 'https://places.googleapis.com/v1/places:searchText';
       const searchRes = await fetch(searchUrl, {
@@ -112,22 +114,29 @@ async function fetchPlaceData(name, address, city) {
       });
 
       const searchData = await searchRes.json();
+
+      // 若 Google API 報錯，直接印出真實原因（金鑰無效/配額問題/權限未開）
+      if (searchData.error) {
+        console.error(`   🚨 Google API 回傳錯誤: [${searchData.error.status}] ${searchData.error.message}`);
+        return { images: [], openingHours: null };
+      }
+
       if (searchData.places && searchData.places.length > 0) {
         placeId = searchData.places[0].id;
-        console.log(`   🎯 搜尋成功: "${query}" ➔ Place ID: ${placeId}`);
+        console.log(`   🎯 找到店家: "${query}" ➔ Place ID: ${placeId}`);
         break;
       }
     } catch (e) {
-      // 忽略單次網路錯誤，繼續下一個詞
+      console.warn(`   ⚠️ 網路請求異常: ${e.message}`);
     }
   }
 
   if (!placeId) {
-    console.log(`   ℹ️ Places 未查找到店家: "${name} (${city})"`);
+    console.log(`   ℹ️ Places 未查找到: [${name}] (城市: ${city})`);
     return { images: [], openingHours: null };
   }
 
-  // 階段二：透過 Place ID 取得完整的營業時間與照片
+  // 階段二：取得完整營業時段
   try {
     const detailsUrl = `https://places.googleapis.com/v1/places/${placeId}`;
     const detailsRes = await fetch(detailsUrl, {
@@ -141,7 +150,6 @@ async function fetchPlaceData(name, address, city) {
 
     const place = await detailsRes.json();
 
-    // 1. 照片處理（最多 5 張）
     const images = [];
     if (place.photos && Array.isArray(place.photos)) {
       for (let i = 0; i < Math.min(place.photos.length, 5); i++) {
@@ -151,7 +159,6 @@ async function fetchPlaceData(name, address, city) {
       }
     }
 
-    // 2. 營業時間處理
     let hoursObj = place.regularOpeningHours || place.currentOpeningHours || null;
     let openingHours = null;
 
@@ -210,7 +217,6 @@ async function syncData() {
     let images = [];
     let openingHours = null;
 
-    // 快取檢查：必須包含有效的營業時間時段
     const hasValidHours = cachedData && cachedData.openingHours && 
                           cachedData.openingHours.weekdayDescriptions && 
                           cachedData.openingHours.weekdayDescriptions.length > 0;
@@ -248,7 +254,7 @@ async function syncData() {
     count++;
   }
 
-  console.log(`🎉 成功同步 ${count} 間店家（營業時間與照片已更新）！`);
+  console.log(`🎉 成功同步 ${count} 間店家！`);
 }
 
 syncData().catch(err => {
