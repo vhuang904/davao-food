@@ -186,7 +186,7 @@
         <!-- 頂部即時搜尋框 -->
         <div class="search-container" id="search-container">
             <i class="fa-solid fa-magnifying-glass search-icon"></i>
-            <input type="text" class="search-input" id="search-input" placeholder="搜尋餐廳名、菜系、地標（如 Jollibee, 拉麵, BGC）..." oninput="handleSearchInput(this.value)">
+            <input type="text" class="search-input" id="search-input" placeholder="搜尋燒肉、火鍋、Jollibee、商圈或菜名..." oninput="handleSearchInput(this.value)">
             <button class="search-clear-btn" id="search-clear-btn" onclick="clearSearch()" title="清除">✕</button>
         </div>
 
@@ -333,7 +333,7 @@
                 todayHours: '今日營業時間',
                 viewWeekly: '查看一週',
                 hideWeekly: '收合',
-                searchPlaceholder: '搜尋餐廳名、菜系、地標（如 Jollibee, 拉麵, BGC）...',
+                searchPlaceholder: '搜尋燒肉、火鍋、Jollibee、商圈或菜名...',
                 searchResultText: '找到 {count} 間符合「{keyword}」的餐廳',
                 clearSearch: '清除搜尋',
                 cities: { all: '全部城市', davao: '達沃', manila: '馬尼拉', cebu: '宿霧' },
@@ -387,7 +387,7 @@
                 todayHours: 'Today',
                 viewWeekly: 'Weekly Hours',
                 hideWeekly: 'Hide',
-                searchPlaceholder: 'Search by name, cuisine, landmark (e.g. Jollibee, Ramen, BGC)...',
+                searchPlaceholder: 'Search BBQ, Hotpot, Jollibee, landmark or dish...',
                 searchResultText: 'Found {count} spots matching "{keyword}"',
                 clearSearch: 'Clear',
                 cities: { all: 'All Cities', davao: 'Davao', manila: 'Manila', cebu: 'Cebu' },
@@ -441,7 +441,7 @@
                 todayHours: 'Ngayong Araw',
                 viewWeekly: 'Lahat ng Oras',
                 hideWeekly: 'Itago',
-                searchPlaceholder: 'Maghanap ng kainan, pagkain, lugar (hal. Jollibee, BGC)...',
+                searchPlaceholder: 'Maghanap ng BBQ, kainan, lugar...',
                 searchResultText: 'Nahanap ang {count} kainan para sa "{keyword}"',
                 clearSearch: 'Linisin',
                 cities: { all: 'Lahat ng Lungsod', davao: 'Davao', manila: 'Manila', cebu: 'Cebu' },
@@ -474,6 +474,36 @@
 
         let itemRatings = JSON.parse(localStorage.getItem('ph_item_ratings')) || {};
         let resComments = JSON.parse(localStorage.getItem('ph_res_comments')) || {};
+
+        // ==================== 智慧同義詞對照庫 (Synonym Knowledge Base) ====================
+        const SYNONYM_MAP = {
+            '燒肉': ['bbq', 'barbecue', 'grill', 'yakiniku', 'samgyupsal', 'korean bbq', '烤肉', 'japanese_korean', 'bbq_seafood'],
+            '烤肉': ['bbq', 'barbecue', 'grill', 'yakiniku', 'samgyupsal', 'korean bbq', '燒肉', 'japanese_korean', 'bbq_seafood'],
+            'bbq': ['燒肉', '烤肉', 'grill', 'barbecue', 'yakiniku', 'samgyupsal', 'japanese_korean', 'bbq_seafood'],
+            '火鍋': ['hotpot', 'hot pot', 'shabu', 'sukiyaki', 'tong yang', 'buffet', '吃到飽'],
+            'hotpot': ['火鍋', 'shabu', 'sukiyaki', 'buffet', 'tong yang'],
+            '海鮮': ['seafood', 'crab', 'shrimp', 'tuna', 'fish', 'lobster', 'prawn', 'kinilaw', 'bbq_seafood'],
+            'seafood': ['海鮮', 'crab', 'shrimp', 'tuna', 'fish', 'bbq_seafood'],
+            '生魚片': ['sashimi', 'raw tuna', 'kinilaw', 'tuna', 'japanese'],
+            'sashimi': ['生魚片', '刺身', 'kinilaw', 'japanese'],
+            '拉麵': ['ramen', 'noodle', 'noodles', 'japanese'],
+            'ramen': ['拉麵', 'noodles', 'japanese'],
+            '壽司': ['sushi', 'maki', 'roll', 'japanese'],
+            'sushi': ['壽司', 'maki', 'japanese'],
+            '咖啡': ['coffee', 'cafe', 'latte', 'espresso', 'tea', 'coffee_drinks'],
+            'coffee': ['咖啡', 'cafe', 'tea', 'coffee_drinks'],
+            '奶茶': ['milk tea', 'boba', 'bubble tea', 'tea', 'coffee_drinks'],
+            '炸雞': ['fried chicken', 'chicken', 'jollibee', 'kfc', 'fast_food'],
+            'chicken': ['炸雞', 'chicken joy', 'jollibee', 'fast_food'],
+            '漢堡': ['burger', 'burgers', 'hamburger', 'fast_food'],
+            'burger': ['漢堡', 'fast_food'],
+            '吃到飽': ['buffet', 'unlimited', 'eat all you can', 'vikings', 'tong yang'],
+            'buffet': ['吃到飽', 'unlimited', 'vikings', 'tong yang'],
+            '烤乳豬': ['lechon', 'crispy pork', 'filipino'],
+            'lechon': ['烤乳豬', 'filipino'],
+            '中餐': ['chinese', 'dim sum', 'dumpling', '點心', '小籠包', 'chinese'],
+            '日韓': ['japanese', 'korean', 'japanese_korean', '燒肉', '拉麵', '壽司']
+        };
 
         // 名稱正規化
         function normalizeRestaurantName(name) {
@@ -539,7 +569,7 @@
             filterNewsType(currentNewsSubFilter);
         }
 
-        // ==================== 即時搜尋框互動邏輯 ====================
+        // 即時搜尋框互動邏輯
         window.handleSearchInput = function(val) {
             currentSearchQuery = val.trim();
             const clearBtn = document.getElementById('search-clear-btn');
@@ -831,17 +861,34 @@
                 return matchesCity && matchesCat;
             });
 
-            // 2. 即時關鍵字搜尋過濾（店名、英文名、地址、描述、菜系）
+            // 2. 智慧同義詞即時搜尋演算法
             if (currentSearchQuery) {
-                const q = currentSearchQuery.toLowerCase();
+                const rawQuery = currentSearchQuery.toLowerCase();
+                
+                // 收集同義詞候選群
+                const searchKeywords = new Set([rawQuery]);
+                Object.keys(SYNONYM_MAP).forEach(key => {
+                    if (rawQuery.includes(key) || key.includes(rawQuery)) {
+                        SYNONYM_MAP[key].forEach(syn => searchKeywords.add(syn.toLowerCase()));
+                    }
+                });
+
                 filtered = filtered.filter(item => {
                     const name = (item.name || '').toLowerCase();
                     const nameEn = (item.name_en || '').toLowerCase();
                     const address = (item.address || '').toLowerCase();
                     const desc = (item.description || item.description_zh || '').toLowerCase();
-                    const cat = (langData.cats[item.categoryKey] || item.categoryKey || '').toLowerCase();
+                    const catKey = (item.categoryKey || '').toLowerCase();
+                    const catName = (langData.cats[item.categoryKey] || '').toLowerCase();
 
-                    return name.includes(q) || nameEn.includes(q) || address.includes(q) || desc.includes(q) || cat.includes(q);
+                    // 合併所有可供檢索的文字欄位
+                    const searchableText = `${name} ${nameEn} ${address} ${desc} ${catKey} ${catName}`;
+
+                    // 只要符合原始字詞或任何擴展同義詞，即視為命中
+                    for (const kw of searchKeywords) {
+                        if (searchableText.includes(kw)) return true;
+                    }
+                    return false;
                 });
 
                 if (searchInfoEl) {
