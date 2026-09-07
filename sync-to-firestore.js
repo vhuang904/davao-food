@@ -13,11 +13,10 @@ const db = admin.firestore();
 const GOOGLE_SHEET_CSV_URL = process.env.GOOGLE_SHEET_CSV_URL;
 const GOOGLE_MAPS_API_KEY = process.env.GOOGLE_MAPS_API_KEY;
 
-// 延遲工具函式
 const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
 /**
- * 簡易原生 CSV 解析器（免裝任何第三方套件）
+ * 簡易原生 CSV 解析器
  */
 function parseCSV(text) {
   const lines = text.split(/\r?\n/).filter(line => line.trim() !== '');
@@ -58,39 +57,51 @@ function parseCSV(text) {
 }
 
 /**
- * 呼叫 Google Places API (New) 搜尋店家
+ * 標準兩階段查詢：搜尋 Place ID ➔ 抓取完整詳情（確保取得照片與完整時段）
  */
 async function fetchPlaceData(name, address, city) {
   if (!GOOGLE_MAPS_API_KEY) {
-    console.warn("⚠️ 尚未配置 GOOGLE_MAPS_API_KEY，略過 Google Places 資料檢索。");
+    console.warn("⚠️ 尚未配置 GOOGLE_MAPS_API_KEY，略過檢索。");
     return { images: [], openingHours: null };
   }
 
   const query = `${name} ${address || ''} ${city || ''}`.trim();
-  const url = 'https://places.googleapis.com/v1/places:searchText';
-
+  
   try {
-    const res = await fetch(url, {
+    // 步驟 1：用 Text Search 取得店家的 place_id
+    const searchUrl = 'https://places.googleapis.com/v1/places:searchText';
+    const searchRes = await fetch(searchUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'X-Goog-Api-Key': GOOGLE_MAPS_API_KEY,
-        // 請求完整照片與營業時間
-        'X-Goog-FieldMask': 'places.id,places.displayName,places.photos,places.regularOpeningHours'
+        'X-Goog-FieldMask': 'places.id'
       },
       body: JSON.stringify({ textQuery: query })
     });
 
-    const data = await res.json();
-    const places = data.places;
-    if (!places || places.length === 0) {
-      console.log(`   ℹ️ Google Places 未查找到店家: "${query}"`);
+    const searchData = await searchRes.json();
+    if (!searchData.places || searchData.places.length === 0) {
+      console.log(`   ℹ️ Places 未查找到店家: "${query}"`);
       return { images: [], openingHours: null };
     }
 
-    const place = places[0];
+    const placeId = searchData.places[0].id;
 
-    // 1. 照片（最多 5 張）
+    // 步驟 2：拿 Place ID 抓取包含 regularOpeningHours 的詳情
+    const detailsUrl = `https://places.googleapis.com/v1/places/${placeId}`;
+    const detailsRes = await fetch(detailsUrl, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Goog-Api-Key': GOOGLE_MAPS_API_KEY,
+        'X-Goog-FieldMask': 'photos,regularOpeningHours,currentOpeningHours'
+      }
+    });
+
+    const place = await detailsRes.json();
+
+    // 抓取照片（最多 5 張）
     const images = [];
     if (place.photos && Array.isArray(place.photos)) {
       for (let i = 0; i < Math.min(place.photos.length, 5); i++) {
@@ -100,14 +111,19 @@ async function fetchPlaceData(name, address, city) {
       }
     }
 
-    // 2. 營業時間結構
+    // 抓取營業時間（優先取 regularOpeningHours，備援 currentOpeningHours）
+    let hoursObj = place.regularOpeningHours || place.currentOpeningHours || null;
     let openingHours = null;
-    if (place.regularOpeningHours) {
+
+    if (hoursObj) {
       openingHours = {
-        openNow: place.regularOpeningHours.openNow || false,
-        weekdayDescriptions: place.regularOpeningHours.weekdayDescriptions || [],
-        periods: place.regularOpeningHours.periods || []
+        openNow: hoursObj.openNow ?? null,
+        weekdayDescriptions: hoursObj.weekdayDescriptions || [],
+        periods: hoursObj.periods || []
       };
+      console.log(`   ✅ 成功抓取 [${name}] 營業時間！週時段數: ${openingHours.weekdayDescriptions.length}`);
+    } else {
+      console.log(`   ⚠️ Google 上該店家未登記營業時間: [${name}]`);
     }
 
     return { images, openingHours };
@@ -128,24 +144,21 @@ async function syncData() {
     throw new Error("❌ 缺少環境變數 GOOGLE_SHEET_CSV_URL！");
   }
 
-  // 1. 下載 CSV
   console.log("📥 正在下載 Google 試算表 CSV...");
   const res = await fetch(GOOGLE_SHEET_CSV_URL);
   if (!res.ok) throw new Error(`無法下載 CSV: ${res.statusText}`);
   const csvText = await res.text();
 
-  // 2. 解析 CSV
   const rows = parseCSV(csvText);
   console.log(`📊 成功自試算表讀取 ${rows.length} 筆店家紀錄。`);
 
-  // 3. 讀取現有資料庫快取
   const existingSnapshot = await db.collection('restaurants').get();
   const existingMap = new Map();
   existingSnapshot.forEach(doc => {
     existingMap.set(doc.id, doc.data());
   });
 
-  console.log(`🔍 開始處理資料並比對 Google Places 影像與營業時間...`);
+  console.log(`🔍 開始處理店家資料並檢索營業時間與影像...`);
 
   let count = 0;
   for (const row of rows) {
@@ -159,25 +172,23 @@ async function syncData() {
     let images = [];
     let openingHours = null;
 
-    // 【關鍵修復點】：必須同時有照片且營業時間裡有每週時段資料 (periods/weekdayDescriptions)，才算完整快取
-    const hasCompleteHours = cachedData && cachedData.openingHours && 
-                             cachedData.openingHours.periods && 
-                             cachedData.openingHours.periods.length > 0;
+    // 快取檢查：必須包含完整的營業時間清單才算有效快取
+    const hasValidHours = cachedData && cachedData.openingHours && 
+                          cachedData.openingHours.weekdayDescriptions && 
+                          cachedData.openingHours.weekdayDescriptions.length > 0;
 
-    if (cachedData && cachedData.images && cachedData.images.length > 0 && hasCompleteHours) {
+    if (cachedData && cachedData.images && cachedData.images.length > 0 && hasValidHours) {
       images = cachedData.images;
       openingHours = cachedData.openingHours;
     } else {
-      // 缺營業時間者，立即向 Places API 重新檢索補齊
       const address = (row.address || row.Address || row['地址'] || '').trim();
-      console.log(`   🔎 正在為 [${rawName}] 補齊最新營業時間與照片...`);
+      console.log(`   🔎 檢索店家詳情: ${rawName} (${city})...`);
       const placeData = await fetchPlaceData(rawName, address, city);
       
-      // 如果這次查到了照片就用新的，否則沿用舊照片
       images = (placeData.images && placeData.images.length > 0) ? placeData.images : (cachedData?.images || []);
       openingHours = placeData.openingHours;
 
-      await sleep(250);
+      await sleep(350);
     }
 
     const restaurantDoc = {
@@ -199,10 +210,10 @@ async function syncData() {
     count++;
   }
 
-  console.log(`🎉 恭喜！全數 ${count} 間餐廳資料已順利更新（已全面補齊營業時間資料）！`);
+  console.log(`🎉 成功同步 ${count} 間店家（已整合營業時間資料）！`);
 }
 
 syncData().catch(err => {
-  console.error("❌ 同步失敗，錯誤訊息：", err);
+  console.error("❌ 同步失敗：", err);
   process.exit(1);
 });
