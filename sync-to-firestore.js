@@ -16,7 +16,7 @@ const GOOGLE_MAPS_API_KEY = process.env.GOOGLE_MAPS_API_KEY;
 const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
 /**
- * 簡易原生 CSV 解析器
+ * 原生簡易 CSV 解析
  */
 function parseCSV(text) {
   const lines = text.split(/\r?\n/).filter(line => line.trim() !== '');
@@ -57,7 +57,36 @@ function parseCSV(text) {
 }
 
 /**
- * 標準兩階段查詢：搜尋 Place ID ➔ 抓取完整詳情（確保取得照片與完整時段）
+ * 智慧清洗搜尋字串，避免過多冗餘字眼導致 Places API 找不到
+ */
+function buildSearchQueries(name, address, city) {
+  const queries = [];
+  
+  // 移除店名中的括號內容作為基礎搜尋詞
+  const cleanName = name.replace(/\([^)]*\)/g, '').trim();
+
+  // 策略 1：完整店名 + 城市（命中率最高）
+  queries.push(`${name} ${city}`.trim());
+
+  // 策略 2：去除括號的乾淨店名 + 城市
+  if (cleanName && cleanName !== name) {
+    queries.push(`${cleanName} ${city}`.trim());
+  }
+
+  // 策略 3：乾淨店名 + 簡要路名（若地址有提供）
+  if (address) {
+    const shortAddress = address.split(',')[0].trim();
+    queries.push(`${cleanName} ${shortAddress} ${city}`.trim());
+  }
+
+  // 策略 4：僅店名保底
+  queries.push(cleanName || name);
+
+  return [...new Set(queries)];
+}
+
+/**
+ * 兩階段查詢 Google Places API
  */
 async function fetchPlaceData(name, address, city) {
   if (!GOOGLE_MAPS_API_KEY) {
@@ -65,30 +94,41 @@ async function fetchPlaceData(name, address, city) {
     return { images: [], openingHours: null };
   }
 
-  const query = `${name} ${address || ''} ${city || ''}`.trim();
-  
-  try {
-    // 步驟 1：用 Text Search 取得店家的 place_id
-    const searchUrl = 'https://places.googleapis.com/v1/places:searchText';
-    const searchRes = await fetch(searchUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-Goog-Api-Key': GOOGLE_MAPS_API_KEY,
-        'X-Goog-FieldMask': 'places.id'
-      },
-      body: JSON.stringify({ textQuery: query })
-    });
+  const candidateQueries = buildSearchQueries(name, address, city);
+  let placeId = null;
 
-    const searchData = await searchRes.json();
-    if (!searchData.places || searchData.places.length === 0) {
-      console.log(`   ℹ️ Places 未查找到店家: "${query}"`);
-      return { images: [], openingHours: null };
+  // 嘗試候選搜尋詞直到找到店家
+  for (const query of candidateQueries) {
+    try {
+      const searchUrl = 'https://places.googleapis.com/v1/places:searchText';
+      const searchRes = await fetch(searchUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Goog-Api-Key': GOOGLE_MAPS_API_KEY,
+          'X-Goog-FieldMask': 'places.id,places.displayName'
+        },
+        body: JSON.stringify({ textQuery: query })
+      });
+
+      const searchData = await searchRes.json();
+      if (searchData.places && searchData.places.length > 0) {
+        placeId = searchData.places[0].id;
+        console.log(`   🎯 搜尋成功: "${query}" ➔ Place ID: ${placeId}`);
+        break;
+      }
+    } catch (e) {
+      // 忽略單次網路錯誤，繼續下一個詞
     }
+  }
 
-    const placeId = searchData.places[0].id;
+  if (!placeId) {
+    console.log(`   ℹ️ Places 未查找到店家: "${name} (${city})"`);
+    return { images: [], openingHours: null };
+  }
 
-    // 步驟 2：拿 Place ID 抓取包含 regularOpeningHours 的詳情
+  // 階段二：透過 Place ID 取得完整的營業時間與照片
+  try {
     const detailsUrl = `https://places.googleapis.com/v1/places/${placeId}`;
     const detailsRes = await fetch(detailsUrl, {
       method: 'GET',
@@ -101,7 +141,7 @@ async function fetchPlaceData(name, address, city) {
 
     const place = await detailsRes.json();
 
-    // 抓取照片（最多 5 張）
+    // 1. 照片處理（最多 5 張）
     const images = [];
     if (place.photos && Array.isArray(place.photos)) {
       for (let i = 0; i < Math.min(place.photos.length, 5); i++) {
@@ -111,7 +151,7 @@ async function fetchPlaceData(name, address, city) {
       }
     }
 
-    // 抓取營業時間（優先取 regularOpeningHours，備援 currentOpeningHours）
+    // 2. 營業時間處理
     let hoursObj = place.regularOpeningHours || place.currentOpeningHours || null;
     let openingHours = null;
 
@@ -122,14 +162,12 @@ async function fetchPlaceData(name, address, city) {
         periods: hoursObj.periods || []
       };
       console.log(`   ✅ 成功抓取 [${name}] 營業時間！週時段數: ${openingHours.weekdayDescriptions.length}`);
-    } else {
-      console.log(`   ⚠️ Google 上該店家未登記營業時間: [${name}]`);
     }
 
     return { images, openingHours };
 
   } catch (error) {
-    console.warn(`   ⚠️ 抓取 Places API 失敗 [${name}]:`, error.message);
+    console.warn(`   ⚠️ 抓取 Place Details 失敗 [${name}]:`, error.message);
     return { images: [], openingHours: null };
   }
 }
@@ -172,7 +210,7 @@ async function syncData() {
     let images = [];
     let openingHours = null;
 
-    // 快取檢查：必須包含完整的營業時間清單才算有效快取
+    // 快取檢查：必須包含有效的營業時間時段
     const hasValidHours = cachedData && cachedData.openingHours && 
                           cachedData.openingHours.weekdayDescriptions && 
                           cachedData.openingHours.weekdayDescriptions.length > 0;
@@ -182,7 +220,7 @@ async function syncData() {
       openingHours = cachedData.openingHours;
     } else {
       const address = (row.address || row.Address || row['地址'] || '').trim();
-      console.log(`   🔎 檢索店家詳情: ${rawName} (${city})...`);
+      console.log(`   🔎 檢索店家: ${rawName} (${city})...`);
       const placeData = await fetchPlaceData(rawName, address, city);
       
       images = (placeData.images && placeData.images.length > 0) ? placeData.images : (cachedData?.images || []);
@@ -210,7 +248,7 @@ async function syncData() {
     count++;
   }
 
-  console.log(`🎉 成功同步 ${count} 間店家（已整合營業時間資料）！`);
+  console.log(`🎉 成功同步 ${count} 間店家（營業時間與照片已更新）！`);
 }
 
 syncData().catch(err => {
