@@ -1,0 +1,28 @@
+name: Weekly Auto-Discover Restaurants
+
+on:
+  schedule:
+    # 每週日 UTC 時間 18:00（即菲律賓/台灣時間週日凌晨 02:00）
+    - cron: '0 18 * * 0'
+  workflow_dispatch: # 支援手動一鍵測試
+
+jobs:
+  discover:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 18
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Install Firebase Admin
+        run: npm install firebase-admin
+
+      - name: Run Auto-Discovery Script
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          GOOGLE_MAPS_API_KEY: ${{ secrets.GOOGLE_MAPS_API_KEY }}
+        run: node auto-discover-restaurants.js
