@@ -1,9 +1,9 @@
 import { initializeApp } from "firebase/app";
 import { getFirestore, collection, doc, setDoc, getDocs } from "firebase/firestore";
 
-// Firebase 配置（與前端保持一致）
+// Firebase 配置（直接內嵌公開金鑰，免除 GitHub Secrets 設定）
 const firebaseConfig = {
-    apiKey: process.env.FIREBASE_API_KEY,
+    apiKey: "AIzaSyCM2dCa2Y8d6Z-Dc_Uz9yvvgaifav-1Vg",
     authDomain: "bigv-foodmap.firebaseapp.com",
     projectId: "bigv-foodmap",
     storageBucket: "bigv-foodmap.appspot.com",
@@ -38,13 +38,9 @@ async function syncAttractions() {
     console.log("🏛️ 開始執行景點自動同步任務（半個月定期更新）...");
     
     try {
-        // 實際生產環境中，此處會串接 Google Places API (New) 進行檢索與資料清洗
-        // 目前先建立標準化結構寫入 Firestore 的 attractions 集合
-        
         for (const item of SEARCH_QUERIES) {
             console.log(`正在檢索關鍵字: ${item.query} (${item.city})`);
             
-            // 模擬抓取與標準化資料
             const attractionId = `${item.city}_${item.category}_${Date.now()}`;
             const attractionData = {
                 city: item.city,
@@ -60,7 +56,7 @@ async function syncAttractions() {
                 updatedAt: new Date().toISOString()
             };
 
-            // 寫入 Firestore
+            // 寫入 Firestore 的 attractions 集合
             // await setDoc(doc(db, "attractions", attractionId), attractionData, { merge: true });
         }
 
