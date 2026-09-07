@@ -21,6 +21,4 @@ jobs:
         run: npm install firebase
 
       - name: Run Attraction Sync Script
-        env:
-          FIREBASE_API_KEY: ${{ secrets.FIREBASE_API_KEY }}
         run: node sync-attractions.js
