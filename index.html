@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #fdfbf7; color: #333; padding-bottom: 40px; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #fdfbf7; color: #333; padding-bottom: 50px; }
         
         /* 頂部 Header */
         header { background: #EA580C; color: white; padding: 12px 16px 0 16px; box-shadow: 0 4px 10px rgba(0,0,0,0.08); position: sticky; top: 0; z-index: 100; }
@@ -97,17 +97,22 @@
         
         #loading { text-align: center; padding: 40px; color: #a8a29e; }
 
-        /* 討論區塊 */
-        .card-forum-box { background: #faf8f5; border-radius: 10px; padding: 12px; margin-top: 14px; border: 1px dashed #e7e2d7; }
-        .rating-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
-        .rating-score { font-size: 0.85rem; font-weight: bold; color: #d97706; }
-        .star-picker { display: flex; gap: 4px; cursor: pointer; }
-        .star-picker span { font-size: 1.1rem; color: #d1d5db; transition: color 0.15s; }
+        /* ==================== 重新重構：精簡乾淨的用戶評分區 ==================== */
+        .card-forum-box { background: #faf8f5; border-radius: 12px; padding: 10px 14px; margin-top: 14px; border: 1px solid #ede5d8; }
+        .rating-header { display: flex; justify-content: space-between; align-items: center; min-height: 28px; }
+        .rating-left { display: flex; align-items: baseline; gap: 6px; }
+        .rating-label { font-size: 0.82rem; font-weight: bold; color: #78716c; }
+        .rating-score-num { font-size: 0.95rem; font-weight: 800; color: #ea580c; }
+        .rating-count-hint { font-size: 0.72rem; color: #a8a29e; }
+        
+        .star-picker { display: flex; gap: 3px; cursor: pointer; }
+        .star-picker span { font-size: 1.15rem; color: #e2dcd2; transition: color 0.15s; line-height: 1; }
         .star-picker span.active { color: #f59e0b; }
         
-        .btn-toggle-forum { background: none; border: none; color: #ea580c; font-size: 0.82rem; font-weight: bold; cursor: pointer; padding: 6px 0; width: 100%; text-align: left; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #f0eae1; margin-top: 8px; }
+        .btn-toggle-forum { background: none; border: none; color: #57534e; font-size: 0.8rem; font-weight: 600; cursor: pointer; padding: 8px 0 2px 0; width: 100%; text-align: left; display: flex; justify-content: space-between; align-items: center; border-top: 1px dashed #e7dfd3; margin-top: 8px; }
+        .btn-toggle-forum:hover { color: #ea580c; }
 
-        .forum-content { display: none; margin-top: 10px; padding-top: 10px; border-top: 1px solid #f0eae1; }
+        .forum-content { display: none; margin-top: 10px; padding-top: 10px; border-top: 1px solid #ede5d8; }
         .forum-content.show { display: block; }
 
         .mini-comment-form { margin-bottom: 12px; background: #ffffff; padding: 10px; border-radius: 8px; border: 1px solid #eee8dd; }
@@ -124,10 +129,10 @@
         .review-text { margin-top: 4px; color: #44403c; line-height: 1.35; }
 
         /* 質感圓形懸浮 AI 管家按鈕 */
-        .chat-fab { position: fixed; bottom: 24px; right: 20px; width: 56px; height: 56px; border-radius: 28px; background: linear-gradient(135deg, #ea580c 0%, #f97316 100%); color: white; border: none; box-shadow: 0 6px 20px rgba(234, 88, 12, 0.45); font-size: 1.5rem; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 1000; transition: transform 0.2s, box-shadow 0.2s; }
+        .chat-fab { position: fixed; bottom: 24px; right: 20px; width: 54px; height: 54px; border-radius: 27px; background: linear-gradient(135deg, #ea580c 0%, #f97316 100%); color: white; border: none; box-shadow: 0 6px 20px rgba(234, 88, 12, 0.45); font-size: 1.4rem; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 1000; transition: transform 0.2s, box-shadow 0.2s; }
         .chat-fab:active { transform: scale(0.92); }
 
-        .chat-modal { display: none; position: fixed; bottom: 90px; right: 20px; width: 350px; max-width: calc(100vw - 32px); height: 500px; max-height: calc(100vh - 110px); background: #ffffff; border-radius: 20px; box-shadow: 0 16px 40px rgba(0,0,0,0.18); border: 1px solid #f0e6d8; flex-direction: column; z-index: 1000; overflow: hidden; }
+        .chat-modal { display: none; position: fixed; bottom: 88px; right: 20px; width: 350px; max-width: calc(100vw - 32px); height: 500px; max-height: calc(100vh - 110px); background: #ffffff; border-radius: 20px; box-shadow: 0 16px 40px rgba(0,0,0,0.18); border: 1px solid #f0e6d8; flex-direction: column; z-index: 1000; overflow: hidden; }
         .chat-modal.show { display: flex; }
 
         .chat-header { background: #EA580C; color: white; padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; }
@@ -296,11 +301,11 @@
                 rateSuccess: '感謝評分！您的評分已成功記錄。',
                 commentSuccess: '留言發表成功！',
                 emptyCommentAlert: '請輸入暱稱與留言內容！',
-                toggleForumText: '💬 用戶評分與討論',
+                toggleForumText: '用戶評分與討論',
                 localScoreLabel: '用戶評分',
                 postBtnText: '發表對此餐廳的評語',
                 slideHint: '👈 左右滑動看多圖',
-                ratingsCountText: '則評分',
+                ratingsCountText: '則',
                 openStatus: '🟢 營業中',
                 closedStatus: '🔴 已打烊',
                 noHoursInfo: '營業時間請洽店家',
@@ -347,7 +352,7 @@
                 rateSuccess: 'Thank you! Your rating has been recorded.',
                 commentSuccess: 'Review posted successfully!',
                 emptyCommentAlert: 'Please enter both nickname and comment!',
-                toggleForumText: '💬 User Reviews & Tips',
+                toggleForumText: 'User Reviews & Tips',
                 localScoreLabel: 'User Rating',
                 postBtnText: 'Submit Review for this spot',
                 slideHint: '👈 Swipe to view more photos',
@@ -398,11 +403,11 @@
                 rateSuccess: 'Salamat! Na-itala na ang iyong rating.',
                 commentSuccess: 'Na-ipost na ang komento!',
                 emptyCommentAlert: 'Mangyaring ilagay ang pangalan at komento!',
-                toggleForumText: '💬 Komento ng Gumagamit at Tips',
+                toggleForumText: 'Komento ng Gumagamit at Tips',
                 localScoreLabel: 'Rating ng Gumagamit',
                 postBtnText: 'I-post ang Komento',
                 slideHint: '👈 I-swipe para sa iba pang litrato',
-                ratingsCountText: 'mga review',
+                ratingsCountText: 'reviews',
                 openStatus: '🟢 Bukas Ngayon',
                 closedStatus: '🔴 Sarado',
                 noHoursInfo: 'Oras ay maaaring magbago',
@@ -847,10 +852,14 @@
                             <div class="info-item"><span>📞</span> <span>${item.phone || langData.noPhone}</span></div>
                             ${hoursDisplayHtml}
 
-                            <!-- 下方社群專區：統一標示為「用戶評分」 -->
+                            <!-- 重新優化排版：整齊俐落的「用戶評分」區塊 -->
                             <div class="card-forum-box">
                                 <div class="rating-header">
-                                    <span class="rating-score">💬 ${langData.localScoreLabel}: ${localAvgRating} / 5.0 (${count} ${langData.ratingsCountText})</span>
+                                    <div class="rating-left">
+                                        <span class="rating-label">${langData.localScoreLabel}</span>
+                                        <span class="rating-score-num">${localAvgRating}</span>
+                                        <span class="rating-count-hint">(${count}${langData.ratingsCountText})</span>
+                                    </div>
                                     <div class="star-picker" title="Rate">
                                         ${[1, 2, 3, 4, 5].map(s => `
                                             <span class="${s <= userScore ? 'active' : ''}" onclick="rateRestaurant('${resKey}', ${s})">★</span>
@@ -859,8 +868,8 @@
                                 </div>
 
                                 <button class="btn-toggle-forum" onclick="toggleRestaurantForum('${resKey}')">
-                                    <span>${langData.toggleForumText} (${commentsList.length})</span>
-                                    <span style="font-size:0.75rem;">▼</span>
+                                    <span>💬 ${langData.toggleForumText} (${commentsList.length})</span>
+                                    <span style="font-size:0.75rem; color:#a8a29e;">▼</span>
                                 </button>
 
                                 <div class="forum-content" id="forum-${resKey}">
