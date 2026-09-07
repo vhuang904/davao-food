@@ -12,7 +12,7 @@ const db = admin.firestore();
 const GOOGLE_MAPS_API_KEY = process.env.GOOGLE_MAPS_API_KEY;
 const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
-// 各城市核心商圈探測錨點（已整合最新地標）
+// 各城市核心商圈探測錨點
 const CITY_ANCHORS = {
   davao: [
     { name: "SM Lanang Premier", lat: 7.0988, lng: 125.6315 },
@@ -64,7 +64,7 @@ async function searchNearbyAnchor(lat, lng) {
         locationRestriction: {
           circle: {
             center: { latitude: lat, longitude: lng },
-            radius: 1200.0 // 探測半徑 1.2 公里
+            radius: 1200.0
           }
         }
       })
@@ -92,7 +92,6 @@ async function discover() {
     throw new Error("❌ 缺少 GOOGLE_MAPS_API_KEY！");
   }
 
-  // 1. 讀取現有資料庫，建立除重清單
   const existingSnapshot = await db.collection('restaurants').get();
   const existingNames = new Set();
   const existingIds = new Set();
@@ -108,11 +107,10 @@ async function discover() {
 
   let totalNewAdded = 0;
 
-  // 2. 按城市進行商圈巡邏
   for (const [city, anchors] of Object.entries(CITY_ANCHORS)) {
     console.log(`\n🏙️ 正在巡邏城市: 【${city.toUpperCase()}】...`);
     let cityAddedCount = 0;
-    const MAX_PER_CITY = 3; // 每個城市每週最多探索入庫 3 家精選店
+    const MAX_PER_CITY = 3;
 
     for (const anchor of anchors) {
       if (cityAddedCount >= MAX_PER_CITY) break;
@@ -121,7 +119,6 @@ async function discover() {
       const candidates = await searchNearbyAnchor(anchor.lat, anchor.lng);
       await sleep(400);
 
-      // 篩選：評分 4.5 以上、評價數 >= 50、且尚未在資料庫中的名店
       for (const place of candidates) {
         if (cityAddedCount >= MAX_PER_CITY) break;
 
@@ -131,20 +128,18 @@ async function discover() {
         const rating = place.rating || 0;
         const reviewCount = place.userRatingCount || 0;
 
-        // 品質門檻
+        // 品質門檻：評分至少 4.5，且評價數 >= 50
         if (rating < 4.5 || reviewCount < 50) continue;
 
-        // 除重檢查
         const lowerName = rawName.toLowerCase();
         const safeDocId = `${city}_${rawName.replace(/[^a-zA-Z0-9\u4e00-\u9fa5]/g, '_')}`;
 
         if (existingIds.has(safeDocId) || existingNames.has(lowerName)) {
-          continue; // 已收錄，略過
+          continue;
         }
 
         console.log(`   ✨ 發掘全新優質名店: "${rawName}" (⭐ ${rating} / ${reviewCount} 則評價)`);
 
-        // 照片處理（最多 5 張）
         const images = [];
         if (place.photos && Array.isArray(place.photos)) {
           for (let i = 0; i < Math.min(place.photos.length, 5); i++) {
@@ -154,7 +149,6 @@ async function discover() {
           }
         }
 
-        // 營業時間處理
         const hoursObj = place.regularOpeningHours || place.currentOpeningHours || null;
         let openingHours = null;
         if (hoursObj) {
@@ -168,7 +162,6 @@ async function discover() {
         const categoryKey = guessCategory(place.types || [], rawName);
         const encodedSearch = encodeURIComponent(`${rawName} ${city}`);
 
-        // 組裝文件寫入 Firestore
         const newDoc = {
           name: rawName,
           name_en: rawName,
@@ -181,6 +174,8 @@ async function discover() {
           foodpandaUrl: `https://www.foodpanda.ph/restaurants?search=${encodedSearch}`,
           images: images,
           openingHours: openingHours,
+          googleRating: rating,
+          googleReviewCount: reviewCount,
           isAutoDiscovered: true,
           createdAt: admin.firestore.FieldValue.serverTimestamp(),
           updatedAt: admin.firestore.FieldValue.serverTimestamp()
