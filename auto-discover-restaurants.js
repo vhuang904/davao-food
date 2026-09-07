@@ -121,7 +121,7 @@ async function discover() {
       const candidates = await searchNearbyAnchor(anchor.lat, anchor.lng);
       await sleep(400);
 
-      // 篩選：評分 4.2 以上、評價數 >= 20、且尚未在資料庫中的名店
+      // 篩選：評分 4.5 以上、評價數 >= 50、且尚未在資料庫中的名店
       for (const place of candidates) {
         if (cityAddedCount >= MAX_PER_CITY) break;
 
@@ -132,7 +132,7 @@ async function discover() {
         const reviewCount = place.userRatingCount || 0;
 
         // 品質門檻
-        if (rating < 4.2 || reviewCount < 20) continue;
+        if (rating < 4.5 || reviewCount < 50) continue;
 
         // 除重檢查
         const lowerName = rawName.toLowerCase();
