@@ -21,10 +21,10 @@
             padding-bottom: 60px;
         }
 
+        /* 頂部固定 Header 容器（主體與二級列統一收合，杜絕跑版） */
         header {
             background: #EA580C;
             color: white;
-            padding: 12px 16px 0 16px;
             position: sticky;
             top: 0;
             z-index: 100;
@@ -35,6 +35,7 @@
             max-width: 600px;
             margin: 0 auto;
             width: 100%;
+            padding: 12px 16px 0 16px;
         }
 
         .header-top {
@@ -91,6 +92,7 @@
             background: white;
         }
 
+        /* 搜尋框 */
         .search-container {
             position: relative;
             margin-bottom: 10px;
@@ -105,7 +107,7 @@
             color: #292524;
             border: 1px solid #fed7aa;
             border-radius: 22px;
-            padding: 8px 36px 8px 36px;
+            padding: 8px 36px;
             font-size: 0.85rem;
             outline: none;
             box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
@@ -142,10 +144,7 @@
             line-height: 1;
         }
 
-        .search-clear-btn:active {
-            background: #d6d3d1;
-        }
-
+        /* 三欄式主導覽 Tab（緊鎖在 Header 橘色底內） */
         .main-tabs {
             display: flex;
             border-top: 1px solid rgba(255, 255, 255, 0.2);
@@ -172,17 +171,22 @@
             border-bottom: 3px solid white;
         }
 
+        /* 二級篩選 Bar（置於 Header 底端一體化，橫向滑動） */
+        .sub-nav-wrapper {
+            background: #ffffff;
+            border-bottom: 1px solid #f1ece1;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+        }
+
         .category-bar,
         .sub-filter-bar {
             display: none;
             gap: 8px;
             overflow-x: auto;
             padding: 10px 16px;
-            background: #ffffff;
             margin: 0 auto;
-            border-bottom: 1px solid #f1ece1;
-            width: 100%;
             max-width: 600px;
+            -webkit-overflow-scrolling: touch;
         }
 
         .category-bar::-webkit-scrollbar,
@@ -209,6 +213,7 @@
             font-weight: bold;
         }
 
+        /* 內容容器 */
         .container {
             max-width: 600px;
             margin: 0 auto;
@@ -238,6 +243,7 @@
             justify-content: space-between;
         }
 
+        /* 卡片設計 */
         .card {
             background: white;
             border-radius: 14px;
@@ -462,6 +468,7 @@
             color: #a8a29e;
         }
 
+        /* 用戶評分與留言區 */
         .card-forum-box {
             background: #faf8f5;
             border-radius: 12px;
@@ -633,6 +640,7 @@
             line-height: 1.35;
         }
 
+        /* 3D AI 浮動按鈕與視窗 */
         .chat-fab {
             position: fixed;
             bottom: 24px;
@@ -812,6 +820,7 @@
 </head>
 <body>
 
+    <!-- 頂部 Header 與導覽整體容器 -->
     <header>
         <div class="header-inner">
             <div class="header-top">
@@ -833,37 +842,47 @@
                 </select>
             </div>
 
+            <!-- 即時搜尋框 -->
             <div class="search-container" id="search-container">
                 <i class="fa-solid fa-magnifying-glass search-icon"></i>
-                <input type="text" class="search-input" id="search-input" placeholder="搜尋燒肉、火鍋、景點、演唱會..." oninput="handleSearchInput(this.value)">
+                <input type="text" class="search-input" id="search-input" placeholder="搜尋燒肉、火鍋、景點、演唱會、賭場..." oninput="handleSearchInput(this.value)">
                 <button class="search-clear-btn" id="search-clear-btn" onclick="clearSearch()" title="清除">✕</button>
             </div>
 
+            <!-- 三欄式主導覽 Tab 切換（與 Header 底線咬合） -->
             <div class="main-tabs">
                 <button class="main-tab-btn active" id="tab-btn-map" onclick="switchMainTab('map')">🗺️ 美食地圖</button>
                 <button class="main-tab-btn" id="tab-btn-attraction" onclick="switchMainTab('attraction')">🏛️ 景點導覽</button>
                 <button class="main-tab-btn" id="tab-btn-news" onclick="switchMainTab('news')">📰 城市動態</button>
             </div>
         </div>
+
+        <!-- 二級篩選列包覆區（緊貼在 Header 最下方，確保排版穩定不跳動） -->
+        <div class="sub-nav-wrapper">
+            <!-- 美食分類列 -->
+            <div class="category-bar" id="category-bar"></div>
+
+            <!-- 景點二級分類 Bar（新增 🎰 賭場娛樂） -->
+            <div class="sub-filter-bar" id="attraction-filter-bar">
+                <button class="cat-chip active" id="att-sub-all" onclick="filterAttractionCat('all')">全部景點</button>
+                <button class="cat-chip" id="att-sub-shopping" onclick="filterAttractionCat('shopping')">🛒 購物商場</button>
+                <button class="cat-chip" id="att-sub-casino" onclick="filterAttractionCat('casino')">🎰 賭場娛樂</button>
+                <button class="cat-chip" id="att-sub-history" onclick="filterAttractionCat('history')">🏛️ 歷史文化</button>
+                <button class="cat-chip" id="att-sub-nature" onclick="filterAttractionCat('nature')">🌳 自然海灘</button>
+            </div>
+
+            <!-- 城市動態二級篩選 Bar -->
+            <div class="sub-filter-bar" id="news-filter-bar">
+                <button class="cat-chip active" id="news-sub-all" onclick="filterNewsType('all')">全部動態</button>
+                <button class="cat-chip" id="news-sub-promo" onclick="filterNewsType('promo')">🔥 限時優惠</button>
+                <button class="cat-chip" id="news-sub-new" onclick="filterNewsType('new')">✨ 新開餐廳</button>
+                <button class="cat-chip" id="news-sub-event" onclick="filterNewsType('event')">🎵 演唱會與活動</button>
+                <button class="cat-chip" id="news-sub-movie" onclick="filterNewsType('movie')">🎬 電影與娛樂</button>
+            </div>
+        </div>
     </header>
 
-    <div class="category-bar" id="category-bar"></div>
-
-    <div class="sub-filter-bar" id="attraction-filter-bar">
-        <button class="cat-chip active" id="att-sub-all" onclick="filterAttractionCat('all')">全部景點</button>
-        <button class="cat-chip" id="att-sub-history" onclick="filterAttractionCat('history')">🏛️ 歷史文化</button>
-        <button class="cat-chip" id="att-sub-nature" onclick="filterAttractionCat('nature')">🌳 自然海灘</button>
-        <button class="cat-chip" id="att-sub-shopping" onclick="filterAttractionCat('shopping')">🛒 購物商場</button>
-    </div>
-
-    <div class="sub-filter-bar" id="news-filter-bar">
-        <button class="cat-chip active" id="news-sub-all" onclick="filterNewsType('all')">全部動態</button>
-        <button class="cat-chip" id="news-sub-promo" onclick="filterNewsType('promo')">🔥 限時優惠</button>
-        <button class="cat-chip" id="news-sub-new" onclick="filterNewsType('new')">✨ 新開餐廳</button>
-        <button class="cat-chip" id="news-sub-event" onclick="filterNewsType('event')">🎵 演唱會與活動</button>
-        <button class="cat-chip" id="news-sub-movie" onclick="filterNewsType('movie')">🎬 電影與娛樂</button>
-    </div>
-
+    <!-- 美食地圖 Tab 內容 -->
     <div id="main-tab-map" class="tab-content active">
         <div class="container">
             <div id="search-results-info" class="search-results-info" style="display:none;"></div>
@@ -872,22 +891,26 @@
         </div>
     </div>
 
+    <!-- 景點導覽 Tab 內容 -->
     <div id="main-tab-attraction" class="tab-content">
         <div class="container">
             <div id="attraction-list" class="grid-layout">載入景點導覽中...</div>
         </div>
     </div>
 
+    <!-- 城市動態 Tab 內容 -->
     <div id="main-tab-news" class="tab-content">
         <div class="container">
             <div id="news-list" class="grid-layout">載入城市動態中...</div>
         </div>
     </div>
 
+    <!-- 3D 角色懸浮按鈕 -->
     <button class="chat-fab" id="chat-fab" onclick="toggleChat()" title="大V旅遊窩管家">
         <img src="ai-avatar.png" alt="AI 管家" onerror="this.src='ai-avatar.jpg'">
     </button>
 
+    <!-- AI 旅遊窩管家對話窗 -->
     <div class="chat-modal" id="chat-modal">
         <div class="chat-header">
             <div class="chat-header-info">
@@ -903,7 +926,7 @@
         </div>
         <div class="chat-messages" id="chat-messages">
             <div class="chat-bubble bot" id="chat-welcome-msg">
-                嗨！我是大V旅遊窩管家 👋 歡迎來到菲律賓！有任何餐廳推薦、必去景點、演唱會活動或外送疑問，隨時問我喔！
+                嗨！我是大V旅遊窩管家 👋 歡迎來到菲律賓！有任何餐廳推薦、大型百貨商場、頂級賭場、必去景點或活動疑問，隨時問我喔！
             </div>
         </div>
         <div class="chat-input-area">
@@ -914,6 +937,7 @@
         </div>
     </div>
 
+    <!-- 引入 Firebase SDK 與業務邏輯 -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
@@ -933,6 +957,7 @@
 
         const AI_WORKER_URL = "https://food-ai-assistant.vhuang904.workers.dev";
 
+        // 分類專屬備援圖庫池
         const categoryImagePools = {
             chinese: [
                 "https://images.unsplash.com/photo-1563245372-f21724e3856d?w=800&auto=format&fit=crop",
@@ -962,6 +987,14 @@
                 "https://images.unsplash.com/photo-1518684079-3c830dcef090?w=800&auto=format&fit=crop",
                 "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&auto=format&fit=crop"
             ],
+            shopping: [
+                "https://images.unsplash.com/photo-1519567241046-7f570eee3ce6?w=800&auto=format&fit=crop",
+                "https://images.unsplash.com/photo-1567449303078-57ad995bd302?w=800&auto=format&fit=crop"
+            ],
+            casino: [
+                "https://images.unsplash.com/photo-1518609878373-06d740f60d8b?w=800&auto=format&fit=crop",
+                "https://images.unsplash.com/photo-1511193311914-0346f16efe90?w=800&auto=format&fit=crop"
+            ],
             event: [
                 "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=800&auto=format&fit=crop",
                 "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=800&auto=format&fit=crop"
@@ -972,6 +1005,7 @@
             ]
         };
 
+        // 多語系字典（包含購物商場與賭場娛樂）
         const i18n = {
             'zh-TW': {
                 title: '📍 大V的旅遊窩',
@@ -979,9 +1013,10 @@
                 tabAttraction: '🏛️ 景點導覽',
                 tabNews: '📰 城市動態',
                 attSubAll: '全部景點',
+                attSubShopping: '🛒 購物商場',
+                attSubCasino: '🎰 賭場娛樂',
                 attSubHistory: '🏛️ 歷史文化',
                 attSubNature: '🌳 自然海灘',
-                attSubShopping: '🛒 購物商場',
                 newsSubAll: '全部動態',
                 newsSubPromo: '🔥 限時優惠',
                 newsSubNew: '✨ 新開餐廳',
@@ -993,7 +1028,7 @@
                 shareSuccess: '已複製連結！',
                 loading: '載入最新資料中...',
                 noData: '目前沒有找到對應的資料',
-                noAttractionData: '目前沒有此類別的景點資料',
+                noAttractionData: '目前沒有此類別的景點或商場資料',
                 noNewsData: '目前沒有此類別的活動或促銷資訊',
                 call: '撥打電話',
                 map: '導航地圖',
@@ -1012,7 +1047,7 @@
                 openStatus: '🟢 營業中',
                 closedStatus: '🔴 已打烊',
                 eliteChoice: '🌟 大V精選',
-                searchPlaceholder: '搜尋燒肉、火鍋、景點、演唱會...',
+                searchPlaceholder: '搜尋燒肉、火鍋、景點、演唱會、賭場...',
                 searchResultText: '找到 {count} 筆符合「{keyword}」的結果',
                 clearSearch: '清除',
                 cities: { all: '全部城市', davao: '達沃', manila: '馬尼拉', cebu: '宿霧', boracay: '長灘島', palawan: '巴拉望', bohol: '薄荷島' },
@@ -1026,7 +1061,7 @@
                     filipino: '菲律賓餐'
                 },
                 chatHeader: '大V旅遊窩管家',
-                chatWelcome: '嗨！我是大V旅遊窩管家 👋 歡迎來到菲律賓！有任何餐廳推薦、必去景點、演唱會活動或外送疑問，隨時問我喔！',
+                chatWelcome: '嗨！我是大V旅遊窩管家 👋 歡迎來到菲律賓！有任何餐廳推薦、大型百貨商場、頂級賭場、必去景點或活動疑問，隨時問我喔！',
                 chatPlaceholder: '問點什麼吧...',
                 chatThinking: '管家正在思考中... ⏳',
                 chatError: '連線異常，請稍候再試。'
@@ -1037,9 +1072,10 @@
                 tabAttraction: '🏛️ Attractions',
                 tabNews: '📰 City News & Events',
                 attSubAll: 'All',
+                attSubShopping: '🛒 Shopping Malls',
+                attSubCasino: '🎰 Casinos & Resorts',
                 attSubHistory: '🏛️ History',
                 attSubNature: '🌳 Nature & Beach',
-                attSubShopping: '🛒 Shopping',
                 newsSubAll: 'All Updates',
                 newsSubPromo: '🔥 Deals',
                 newsSubNew: '✨ New Spots',
@@ -1051,7 +1087,7 @@
                 shareSuccess: 'Link copied!',
                 loading: 'Loading...',
                 noData: 'No items found',
-                noAttractionData: 'No attractions found.',
+                noAttractionData: 'No attractions or malls found.',
                 noNewsData: 'No news or events found.',
                 call: 'Call',
                 map: 'Map',
@@ -1070,7 +1106,7 @@
                 openStatus: '🟢 Open',
                 closedStatus: '🔴 Closed',
                 eliteChoice: '🌟 Big V Choice',
-                searchPlaceholder: 'Search BBQ, Attraction, Concert...',
+                searchPlaceholder: 'Search BBQ, Malls, Casino, Concert...',
                 searchResultText: 'Found {count} results',
                 clearSearch: 'Clear',
                 cities: { all: 'All Cities', davao: 'Davao', manila: 'Manila', cebu: 'Cebu', boracay: 'Boracay', palawan: 'Palawan', bohol: 'Bohol' },
@@ -1095,9 +1131,10 @@
                 tabAttraction: '🏛️ Mga Atraksyon',
                 tabNews: '📰 Balita at Kaganapan',
                 attSubAll: 'Lahat',
+                attSubShopping: '🛒 Pamimili',
+                attSubCasino: '🎰 Casino',
                 attSubHistory: '🏛️ Kasaysayan',
                 attSubNature: '🌳 Kalikasan',
-                attSubShopping: '🛒 Pamimili',
                 newsSubAll: 'Lahat',
                 newsSubPromo: '🔥 Mga Promo',
                 newsSubNew: '✨ Bagong Bukas',
@@ -1109,7 +1146,7 @@
                 shareSuccess: 'Na-kopyang link!',
                 loading: 'Kina-karga...',
                 noData: 'Walang nahanap',
-                noAttractionData: 'Walang nahanap na atraksyon.',
+                noAttractionData: 'Walang nahanap na atraksyon o mall.',
                 noNewsData: 'Walang nahanap na balita.',
                 call: 'Tawagan',
                 map: 'Mapa',
@@ -1128,7 +1165,7 @@
                 openStatus: '🟢 Bukas',
                 closedStatus: '🔴 Sarado',
                 eliteChoice: '🌟 Pinili ni Big V',
-                searchPlaceholder: 'Maghanap...',
+                searchPlaceholder: 'Maghanap ng Mall, Casino...',
                 searchResultText: 'Nahanap ang {count}',
                 clearSearch: 'Linisin',
                 cities: { all: 'Lahat', davao: 'Davao', manila: 'Manila', cebu: 'Cebu', boracay: 'Boracay', palawan: 'Palawan', bohol: 'Bohol' },
@@ -1163,6 +1200,7 @@
         let itemRatings = JSON.parse(localStorage.getItem('ph_item_ratings')) || {};
         let resComments = JSON.parse(localStorage.getItem('ph_res_comments')) || {};
 
+        // 完整同義詞搜尋對應表（增加賭場、商場關鍵字）
         const SYNONYM_MAP = {
             '燒肉': ['bbq', 'barbecue', 'grill', 'yakiniku', 'samgyupsal', '烤肉', 'japanese_korean', 'bbq_seafood'],
             '烤肉': ['bbq', 'barbecue', 'grill', 'yakiniku', 'samgyupsal', '燒肉', 'japanese_korean', 'bbq_seafood'],
@@ -1178,7 +1216,11 @@
             '炸雞': ['fried chicken', 'chicken', 'jollibee', 'kfc', 'fast_food'],
             'chicken': ['炸雞', 'chicken joy', 'jollibee', 'fast_food'],
             '演唱會': ['concert', 'event', 'music', 'show', 'live'],
-            '電影': ['movie', 'cinema', 'film', 'imax']
+            '電影': ['movie', 'cinema', 'film', 'imax'],
+            '商場': ['mall', 'sm', 'shopping', 'ayala', 'abreeza', 'center'],
+            '百貨': ['mall', 'sm', 'shopping', 'department', 'abreeza'],
+            '賭場': ['casino', 'okada', 'solaire', 'nustar', 'resort', 'entertainment city', 'filipino'],
+            'casino': ['賭場', 'okada', 'solaire', 'nustar', 'resort', 'entertainment city']
         };
 
         function normalizeName(name) {
@@ -1199,34 +1241,35 @@
             return Array.from(uniqueMap.values());
         }
 
+        // 資料讀取（支援 Firestore 即時資料與完整備援）
         async function fetchData() {
             try {
+                // 1. 抓取餐廳
                 const resSnap = await getDocs(collection(db, "restaurants"));
                 const rawRes = [];
                 resSnap.forEach(doc => rawRes.push(doc.data()));
                 allRestaurants = deduplicate(rawRes);
 
+                // 2. 抓取景點、商場與賭場
                 try {
                     const attSnap = await getDocs(collection(db, "attractions"));
+                    const rawAtt = [];
+                    attSnap.forEach(doc => rawAtt.push(doc.data()));
+                    allAttractions = deduplicate(rawAtt);
+                } catch (e) {
                     allAttractions = [];
-                    attSnap.forEach(doc => allAttractions.push(doc.data()));
-                } catch (e) { allAttractions = []; }
-
-                if (allAttractions.length === 0) {
-                    allAttractions = [
-                        { city: 'davao', category: 'nature', name: 'Eden Nature Park & Resort', address: 'Toril, Davao City', phone: '+82 82 295 1020', googleRating: 4.6, googleReviewCount: 1420, description: '位於達沃市山區的超人氣生態度假村，擁有涼爽氣候與森林步道。' },
-                        { city: 'manila', category: 'history', name: 'Intramuros (Walled City)', address: 'Manila, Metro Manila', phone: '+63 2 8527 3155', googleRating: 4.7, googleReviewCount: 18500, description: '馬尼拉著名的西班牙殖民時期歷史古城。' },
-                        { city: 'cebu', category: 'shopping', name: 'Ayala Center Cebu', address: 'Cebu Business Park, Cebu City', phone: '+63 32 888 3777', googleRating: 4.8, googleReviewCount: 25000, description: '宿霧極具代表性與休閒氛圍的頂級購物中心。' },
-                        { city: 'boracay', category: 'nature', name: 'Boracay White Beach', address: 'Boracay Island, Malay', phone: '', googleRating: 4.9, googleReviewCount: 42000, description: '世界聞名的絕美白色沙灘與湛藍海水。' }
-                    ];
                 }
 
+                // 3. 抓取城市動態
                 try {
                     const newsSnap = await getDocs(collection(db, "news"));
                     allNews = [];
                     newsSnap.forEach(doc => allNews.push(doc.data()));
-                } catch (e) { allNews = []; }
+                } catch (e) {
+                    allNews = [];
+                }
 
+                // 動態備用資料（防止 Firestore 剛建立時完全空白）
                 if (allNews.length === 0) {
                     allNews = [
                         { city: 'manila', type: 'event', brand: 'TicketWorld', title: 'Ed Sheeran Mathematics Tour in Manila', tag: '🎵 演唱會與活動', validity: '2026/09/25 演出', description: '西洋流行天王 Ed Sheeran 降臨馬尼拉開唱，帶來震撼金曲合輯！', location: 'SMDC Festival Grounds, Manila', url: 'https://ticketworld.com.ph' },
@@ -1288,7 +1331,7 @@
 
         window.filterAttractionCat = function(cat) {
             currentAttractionCat = cat;
-            ['all', 'history', 'nature', 'shopping'].forEach(c => {
+            ['all', 'shopping', 'casino', 'history', 'nature'].forEach(c => {
                 const btn = document.getElementById('att-sub-' + c);
                 if (btn) btn.classList.toggle('active', c === cat);
             });
@@ -1348,9 +1391,10 @@
             document.getElementById('search-input').placeholder = langData.searchPlaceholder;
 
             document.getElementById('att-sub-all').innerText = langData.attSubAll;
+            document.getElementById('att-sub-shopping').innerText = langData.attSubShopping;
+            document.getElementById('att-sub-casino').innerText = langData.attSubCasino;
             document.getElementById('att-sub-history').innerText = langData.attSubHistory;
             document.getElementById('att-sub-nature').innerText = langData.attSubNature;
-            document.getElementById('att-sub-shopping').innerText = langData.attSubShopping;
 
             document.getElementById('news-sub-all').innerText = langData.newsSubAll;
             document.getElementById('news-sub-promo').innerText = langData.newsSubPromo;
@@ -1448,6 +1492,7 @@
             return false;
         }
 
+        // 渲染美食地圖
         function renderList() {
             const listEl = document.getElementById('restaurant-list');
             document.getElementById('loading').style.display = 'none';
@@ -1565,6 +1610,7 @@
             }).join('');
         }
 
+        // 渲染景點、購物商場與賭場
         function renderAttractionList() {
             const listEl = document.getElementById('attraction-list');
             const langData = i18n[currentLang];
@@ -1584,9 +1630,30 @@
 
             listEl.innerHTML = filtered.map((item, idx) => {
                 const key = 'att_' + (item.city || 'davao') + '_' + idx;
-                const images = item.images || getImageArray(item.name, 'attraction');
+                const poolKey = (item.category === 'casino' || item.category === 'shopping') ? item.category : 'attraction';
+                const images = item.images || getImageArray(item.name, poolKey);
                 const name = item.name || 'Attraction';
-                const desc = item.description_zh || item.description || langData.noDesc;
+                const desc = typeof item.description === 'string' ? item.description : (typeof item.description_zh === 'string' ? item.description_zh : langData.noDesc);
+                
+                // 動態判斷 Badge 標籤類型
+                let catBadgeText = '🏛️ 景點';
+                let catBadgeStyle = 'background:#fdf4ff; color:#a21caf;';
+                if (item.category === 'shopping') {
+                    catBadgeText = '🛒 購物商場';
+                    catBadgeStyle = 'background:#fef3c7; color:#b45309;';
+                } else if (item.category === 'casino') {
+                    catBadgeText = '🎰 賭場娛樂';
+                    catBadgeStyle = 'background:#fee2e2; color:#b91c1c;';
+                } else if (item.category === 'nature') {
+                    catBadgeText = '🌳 自然海灘';
+                    catBadgeStyle = 'background:#ecfdf5; color:#047857;';
+                }
+
+                const hasGoogle = (item.googleRating !== undefined && item.googleRating !== null);
+                let googleBadge = '';
+                if (hasGoogle) {
+                    googleBadge = `<span class="badge badge-google-rating"><i class="fa-solid fa-star" style="color:#eab308;"></i> Google ${Number(item.googleRating).toFixed(1)} (${item.googleReviewCount || 0}則)</span>`;
+                }
 
                 return `
                     <div class="card">
@@ -1602,7 +1669,8 @@
                         <div class="card-body">
                             <div class="badge-group">
                                 <span class="badge badge-city">${langData.cities[item.city || 'davao']}</span>
-                                <span class="badge" style="background:#fdf4ff; color:#a21caf;">🏛️ 景點</span>
+                                <span class="badge" style="${catBadgeStyle}">${catBadgeText}</span>
+                                ${googleBadge}
                             </div>
                             <div class="card-title">${name}</div>
                             <div class="card-desc">${desc}</div>
@@ -1618,6 +1686,7 @@
             }).join('');
         }
 
+        // 渲染城市動態（防禦 [object Object] 錯誤）
         function renderNewsList() {
             const listEl = document.getElementById('news-list');
             const langData = i18n[currentLang];
@@ -1638,7 +1707,16 @@
             listEl.innerHTML = filtered.map((item, idx) => {
                 const title = item.title || 'Event News';
                 const tag = item.tag || '🔥 動態';
-                const validity = item.validity || '本週最新';
+                
+                // 防錯處理：確保 validity 絕對不會渲染出 [object Object]
+                let validityText = '';
+                if (typeof item.validity === 'string' && item.validity) {
+                    validityText = item.validity;
+                } else if (item.validity && typeof item.validity === 'object') {
+                    validityText = item.validity.text || item.validity.end || '近期有效';
+                }
+
+                // 防錯處理：確保 description 提取字串
                 const desc = typeof item.description === 'string' ? item.description : (typeof item.description_zh === 'string' ? item.description_zh : (item.description?.zh || langData.noDesc));
                 const location = item.location || 'Philippines';
                 const img = item.imageUrl || (item.type === 'movie' ? categoryImagePools.movie[0] : (item.type === 'event' ? categoryImagePools.event[0] : (item.type === 'new' ? categoryImagePools.chinese[0] : categoryImagePools.filipino[0])));
@@ -1654,7 +1732,7 @@
                                 <span class="badge badge-city">${langData.cities[item.city] || 'Philippines'}</span>
                                 ${item.brand ? `<span class="badge badge-brand">${item.brand}</span>` : ''}
                                 <span class="badge badge-promo">${tag}</span>
-                                ${validity ? `<span class="badge badge-expiry">⏰ ${validity}</span>` : ''}
+                                ${validityText ? `<span class="badge badge-expiry">⏰ ${validityText}</span>` : ''}
                             </div>
                             <div class="card-title" style="font-size:1.1rem;">${titleHtml}</div>
                             <div class="card-desc" style="color:#44403c;">${desc}</div>
@@ -1665,6 +1743,7 @@
             }).join('');
         }
 
+        // 3D AI 管家互動邏輯
         window.toggleChat = function() {
             const modal = document.getElementById('chat-modal');
             modal.classList.toggle('show');
@@ -1697,7 +1776,12 @@
                 const res = await fetch(AI_WORKER_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ message: msg, lang: currentLang, currentCity: activeCity, restaurantsContext: `餐廳: ${resContext} | 景點: ${attContext}` })
+                    body: JSON.stringify({
+                        message: msg,
+                        lang: currentLang,
+                        currentCity: activeCity,
+                        restaurantsContext: `餐廳: ${resContext} | 景點/商場/賭場: ${attContext}`
+                    })
                 });
                 const data = await res.json();
                 const loadEl = document.getElementById(loadId);
