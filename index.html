@@ -11,11 +11,11 @@
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #fdfbf7; color: #333; padding-bottom: 50px; }
         
-        /* 頂部 Header 保持滿版 */
+        /* 頂部 Header */
         header { background: #EA580C; color: white; padding: 12px 16px 0 16px; box-shadow: 0 4px 10px rgba(0,0,0,0.08); position: sticky; top: 0; z-index: 100; }
         .header-inner { max-width: 1200px; margin: 0 auto; }
         .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-        .header-top h1 { font-size: 1.25rem; font-weight: bold; letter-spacing: 0.5px; }
+        .header-top h1 { font-size: 1.2rem; font-weight: bold; letter-spacing: 0.5px; }
         
         .btn-share { background: rgba(255, 255, 255, 0.2); color: white; border: 1px solid rgba(255, 255, 255, 0.4); padding: 4px 12px; border-radius: 6px; font-size: 0.82rem; font-weight: bold; cursor: pointer; outline: none; }
         .btn-share:active { background: rgba(255, 255, 255, 0.35); }
@@ -25,37 +25,33 @@
         .app-select option { color: #333; background: white; }
 
         /* 即時搜尋框容器 */
-        .search-container { position: relative; margin-bottom: 10px; display: flex; align-items: center; max-width: 600px; }
+        .search-container { position: relative; margin-bottom: 10px; display: flex; align-items: center; }
         .search-input { width: 100%; background: #ffffff; color: #292524; border: 1px solid #fed7aa; border-radius: 22px; padding: 8px 36px 8px 36px; font-size: 0.88rem; outline: none; box-shadow: 0 2px 6px rgba(0,0,0,0.06); transition: all 0.2s; }
         .search-input:focus { border-color: #ea580c; box-shadow: 0 2px 10px rgba(234, 88, 12, 0.2); }
         .search-icon { position: absolute; left: 12px; color: #ea580c; font-size: 0.85rem; pointer-events: none; }
         .search-clear-btn { position: absolute; right: 10px; background: #e7e5e4; border: none; width: 20px; height: 20px; border-radius: 50%; color: #78716c; font-size: 0.72rem; cursor: pointer; display: none; align-items: center; justify-content: center; line-height: 1; }
         .search-clear-btn:active { background: #d6d3d1; }
 
-        /* 三欄式主導覽 Tab 切換 */
-        .main-tabs { display: flex; border-top: 1px solid rgba(255,255,255,0.2); max-width: 600px; }
-        .main-tab-btn { flex: 1; text-align: center; padding: 10px 4px; font-weight: bold; font-size: 0.88rem; color: rgba(255,255,255,0.75); border: none; background: none; cursor: pointer; border-bottom: 3px solid transparent; white-space: nowrap; }
+        /* 三欄式主導覽 Tab 切換（正確包在橘色 Header 內） */
+        .main-tabs { display: flex; border-top: 1px solid rgba(255,255,255,0.2); width: 100%; }
+        .main-tab-btn { flex: 1; text-align: center; padding: 10px 4px; font-weight: bold; font-size: 0.85rem; color: rgba(255,255,255,0.75); border: none; background: none; cursor: pointer; border-bottom: 3px solid transparent; white-space: nowrap; }
         .main-tab-btn.active { color: white; border-bottom: 3px solid white; }
 
-        /* 分類列與二級篩選 Bar */
-        .category-bar, .sub-filter-bar { display: none; gap: 8px; overflow-x: auto; padding: 10px 0; background: #ffffff; border-bottom: 1px solid #f1ece1; }
-        .category-bar::-webkit-scrollbar, .sub-filter-bar::-webkit-scrollbar { display: none; }
-        .cat-chip { padding: 6px 14px; border-radius: 18px; font-size: 0.85rem; background: #f5f2eb; color: #666; white-space: nowrap; border: none; cursor: pointer; transition: all 0.2s; }
+        /* 分類列與二級篩選 Bar（改為獨立的白色區塊，不與 Header 衝突） */
+        .sub-bar-container { background: #ffffff; border-bottom: 1px solid #f1ece1; padding: 0 16px; }
+        .sub-bar-inner { max-width: 1200px; margin: 0 auto; display: flex; gap: 8px; overflow-x: auto; padding: 10px 0; }
+        .sub-bar-inner::-webkit-scrollbar { display: none; }
+        .cat-chip { padding: 6px 14px; border-radius: 18px; font-size: 0.85rem; background: #f5f2eb; color: #666; white-space: nowrap; border: none; cursor: pointer; transition: all 0.2s; flex-shrink: 0; }
         .cat-chip.active { background: #EA580C; color: white; font-weight: bold; }
 
-        /* 響應式容器與電腦版網格排版 (Responsive Grid) */
+        /* 響應式容器與網格排版 */
         .container { max-width: 1200px; margin: 0 auto; padding: 20px 16px; }
         .tab-content { display: none; }
         .tab-content.active { display: block; }
 
-        /* 電腦版自動網格：手機 1 欄、平板 2 欄、電腦 3 欄 */
         .grid-layout { display: grid; grid-template-columns: 1fr; gap: 20px; }
-        @media (min-width: 768px) {
-            .grid-layout { grid-template-columns: repeat(2, 1fr); }
-        }
-        @media (min-width: 1024px) {
-            .grid-layout { grid-template-columns: repeat(3, 1fr); }
-        }
+        @media (min-width: 768px) { .grid-layout { grid-template-columns: repeat(2, 1fr); } }
+        @media (min-width: 1024px) { .grid-layout { grid-template-columns: repeat(3, 1fr); } }
 
         .search-results-info { font-size: 0.85rem; color: #78716c; margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; grid-column: 1 / -1; }
 
@@ -72,7 +68,7 @@
         .carousel-dots { position: absolute; bottom: 8px; left: 0; right: 0; display: flex; justify-content: center; gap: 5px; z-index: 10; pointer-events: none; }
         .dot { width: 6px; height: 6px; border-radius: 50%; background: rgba(255, 255, 255, 0.5); }
         .dot.active { background: #ffffff; width: 14px; border-radius: 4px; }
-        .photo-tag { position: absolute; top: 8px; right: 8px; background: rgba(0, 0, 0, 0.6); color: white; font-size: 0.7rem; padding: 3px 8px; border-radius: 6px; z-index: 10; backdrop-blur: 2px; }
+        .photo-tag { position: absolute; top: 8px; right: 8px; background: rgba(0, 0, 0, 0.6); color: white; font-size: 0.7rem; padding: 3px 8px; border-radius: 6px; z-index: 10; }
 
         .card-body { padding: 16px; display: flex; flex-direction: column; flex: 1; }
         
@@ -83,7 +79,6 @@
         .badge-brand { background: #fefce8; color: #a16207; border-color: #fef08a; }
         .badge-expiry { background: #f0fdf4; color: #15803d; border-color: #bbf7d0; font-weight: bold; }
 
-        /* 營業狀態與評分徽章 */
         .badge-open { background: #ecfdf5; color: #047857; border-color: #a7f3d0; font-weight: bold; }
         .badge-closed { background: #fef2f2; color: #b91c1c; border-color: #fecaca; font-weight: bold; }
         .badge-google-rating { background: #fef3c7; color: #92400e; border-color: #fde68a; font-weight: bold; gap: 4px; }
@@ -102,7 +97,7 @@
         
         #loading { text-align: center; padding: 40px; color: #a8a29e; grid-column: 1 / -1; }
 
-        /* 用戶評分與留言區 */
+        /* 評論區 */
         .card-forum-box { background: #faf8f5; border-radius: 12px; padding: 10px 14px; margin-top: 12px; border: 1px solid #ede5d8; }
         .rating-header { display: flex; justify-content: space-between; align-items: center; min-height: 28px; }
         .rating-left { display: flex; align-items: baseline; gap: 6px; }
@@ -115,8 +110,6 @@
         .star-picker span.active { color: #f59e0b; }
         
         .btn-toggle-forum { background: none; border: none; color: #57534e; font-size: 0.78rem; font-weight: 600; cursor: pointer; padding: 8px 0 2px 0; width: 100%; text-align: left; display: flex; justify-content: space-between; align-items: center; border-top: 1px dashed #e7dfd3; margin-top: 8px; }
-        .btn-toggle-forum:hover { color: #ea580c; }
-
         .forum-content { display: none; margin-top: 10px; padding-top: 10px; border-top: 1px solid #ede5d8; }
         .forum-content.show { display: block; }
 
@@ -126,37 +119,28 @@
         .mini-select { width: 85px; padding: 5px 4px; border-radius: 6px; border: 1px solid #e7e5e4; font-size: 0.75rem; outline: none; }
         .mini-textarea { width: 100%; padding: 6px 8px; border-radius: 6px; border: 1px solid #e7e5e4; font-size: 0.78rem; outline: none; resize: vertical; min-height: 45px; margin-bottom: 6px; }
         .btn-mini-post { width: 100%; background: #EA580C; color: white; padding: 6px; border-radius: 6px; font-weight: bold; border: none; cursor: pointer; font-size: 0.78rem; }
-
         .review-item { font-size: 0.8rem; color: #57534e; padding: 6px 0; border-bottom: 1px solid #f5f2eb; }
-        .review-item:last-child { border-bottom: none; }
         .review-user { font-weight: bold; color: #1c1917; }
         .review-time { font-size: 0.7rem; color: #a8a29e; float: right; }
         .review-text { margin-top: 3px; color: #44403c; line-height: 1.35; }
 
-        /* 3D 角色頭像懸浮 AI 管家按鈕 */
-        .chat-fab { position: fixed; bottom: 24px; right: 20px; width: 56px; height: 56px; border-radius: 50%; background: #ffffff; border: 2px solid #ea580c; box-shadow: 0 6px 20px rgba(234, 88, 12, 0.45); overflow: hidden; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 1000; transition: transform 0.2s, box-shadow 0.2s; }
-        .chat-fab:active { transform: scale(0.92); }
+        /* AI 聊天按鈕 */
+        .chat-fab { position: fixed; bottom: 24px; right: 20px; width: 56px; height: 56px; border-radius: 50%; background: #ffffff; border: 2px solid #ea580c; box-shadow: 0 6px 20px rgba(234, 88, 12, 0.45); overflow: hidden; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 1000; }
         .chat-fab img { width: 100%; height: 100%; object-fit: cover; }
-
         .chat-modal { display: none; position: fixed; bottom: 92px; right: 20px; width: 350px; max-width: calc(100vw - 32px); height: 500px; max-height: calc(100vh - 110px); background: #ffffff; border-radius: 20px; box-shadow: 0 16px 40px rgba(0,0,0,0.18); border: 1px solid #f0e6d8; flex-direction: column; z-index: 1000; overflow: hidden; }
         .chat-modal.show { display: flex; }
-
         .chat-header { background: #EA580C; color: white; padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; }
         .chat-header-info { display: flex; align-items: center; gap: 8px; }
         .chat-avatar-small { width: 34px; height: 34px; border-radius: 50%; overflow: hidden; border: 1.5px solid white; background: white; flex-shrink: 0; }
         .chat-avatar-small img { width: 100%; height: 100%; object-fit: cover; }
-        .chat-header-info h3 { font-size: 0.95rem; font-weight: bold; margin: 0; }
-        .chat-header-info span { font-size: 0.72rem; color: #fed7aa; display: block; }
         .btn-close-chat { background: rgba(255,255,255,0.2); border: none; color: white; width: 26px; height: 26px; border-radius: 50%; font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-
         .chat-messages { flex: 1; padding: 14px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; background: #fdfbf7; font-size: 0.85rem; }
         .chat-bubble { max-width: 82%; padding: 10px 14px; border-radius: 16px; line-height: 1.45; word-break: break-word; }
-        .chat-bubble.bot { background: #ffffff; border: 1px solid #e7e2d7; align-self: flex-start; color: #292524; border-top-left-radius: 4px; }
-        .chat-bubble.user { background: #EA580C; color: white; align-self: flex-end; border-top-right-radius: 4px; }
-
+        .chat-bubble.bot { background: #ffffff; border: 1px solid #e7e2d7; align-self: flex-start; color: #292524; }
+        .chat-bubble.user { background: #EA580C; color: white; align-self: flex-end; }
         .chat-input-area { display: flex; border-top: 1px solid #efe8dc; padding: 10px 12px; background: #ffffff; gap: 8px; align-items: center; }
         .chat-input { flex: 1; border: 1px solid #e2d9cd; border-radius: 20px; padding: 9px 14px; font-size: 0.85rem; outline: none; background: #faf8f5; }
-        .btn-send-chat { background: #EA580C; color: white; border: none; width: 36px; height: 36px; border-radius: 50%; font-weight: bold; font-size: 0.9rem; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .btn-send-chat { background: #EA580C; color: white; border: none; width: 36px; height: 36px; border-radius: 50%; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; }
     </style>
 </head>
 <body>
@@ -174,6 +158,9 @@
                     <option value="davao">達沃 (Davao)</option>
                     <option value="manila">馬尼拉 (Manila)</option>
                     <option value="cebu">宿霧 (Cebu)</option>
+                    <option value="boracay">長灘島 (Boracay)</option>
+                    <option value="palawan">巴拉望 (Palawan)</option>
+                    <option value="bohol">薄荷島 (Bohol)</option>
                 </select>
                 <select class="app-select" id="lang-select" onchange="changeLanguage(this.value)">
                     <option value="zh-TW">繁體中文</option>
@@ -189,34 +176,37 @@
                 <button class="search-clear-btn" id="search-clear-btn" onclick="clearSearch()" title="清除">✕</button>
             </div>
 
-            <!-- 三欄式主導覽 Tab 切換 -->
+            <!-- 三欄式主導覽 Tab 切換（正確在橘色 Header 內） -->
             <div class="main-tabs">
                 <button class="main-tab-btn active" id="tab-btn-map" onclick="switchMainTab('map')">🗺️ 美食地圖</button>
                 <button class="main-tab-btn" id="tab-btn-attraction" onclick="switchMainTab('attraction')">🏛️ 景點導覽</button>
                 <button class="main-tab-btn" id="tab-btn-news" onclick="switchMainTab('news')">📰 城市動態</button>
             </div>
-            
-            <!-- 美食分類列 -->
-            <div class="category-bar" id="category-bar"></div>
-
-            <!-- 景點二級分類 Bar -->
-            <div class="sub-filter-bar" id="attraction-filter-bar">
-                <button class="cat-chip active" id="att-sub-all" onclick="filterAttractionCat('all')">全部景點</button>
-                <button class="cat-chip" id="att-sub-history" onclick="filterAttractionCat('history')">🏛️ 歷史文化</button>
-                <button class="cat-chip" id="att-sub-nature" onclick="filterAttractionCat('nature')">🌳 自然海灘</button>
-                <button class="cat-chip" id="att-sub-shopping" onclick="filterAttractionCat('shopping')">🛒 購物商場</button>
-            </div>
-
-            <!-- 城市動態二級篩選 Bar -->
-            <div class="sub-filter-bar" id="news-filter-bar">
-                <button class="cat-chip active" id="news-sub-all" onclick="filterNewsType('all')">全部動態</button>
-                <button class="cat-chip" id="news-sub-promo" onclick="filterNewsType('promo')">🔥 限時優惠</button>
-                <button class="cat-chip" id="news-sub-new" onclick="filterNewsType('new')">✨ 新開餐廳</button>
-                <button class="cat-chip" id="news-sub-event" onclick="filterNewsType('event')">🎵 演唱會與活動</button>
-                <button class="cat-chip" id="news-sub-movie" onclick="filterNewsType('movie')">🎬 電影與娛樂</button>
-            </div>
         </div>
     </header>
+
+    <!-- 獨立的白色二級分類篩選列（位於 Header 下方） -->
+    <div class="sub-bar-container">
+        <!-- 美食分類列 -->
+        <div class="sub-bar-inner category-bar" id="category-bar"></div>
+
+        <!-- 景點二級分類 Bar -->
+        <div class="sub-bar-inner sub-filter-bar" id="attraction-filter-bar" style="display:none;">
+            <button class="cat-chip active" id="att-sub-all" onclick="filterAttractionCat('all')">全部景點</button>
+            <button class="cat-chip" id="att-sub-history" onclick="filterAttractionCat('history')">🏛️ 歷史文化</button>
+            <button class="cat-chip" id="att-sub-nature" onclick="filterAttractionCat('nature')">🌳 自然海灘</button>
+            <button class="cat-chip" id="att-sub-shopping" onclick="filterAttractionCat('shopping')">🛒 購物商場</button>
+        </div>
+
+        <!-- 城市動態二級篩選 Bar -->
+        <div class="sub-bar-inner sub-filter-bar" id="news-filter-bar" style="display:none;">
+            <button class="cat-chip active" id="news-sub-all" onclick="filterNewsType('all')">全部動態</button>
+            <button class="cat-chip" id="news-sub-promo" onclick="filterNewsType('promo')">🔥 限時優惠</button>
+            <button class="cat-chip" id="news-sub-new" onclick="filterNewsType('new')">✨ 新開餐廳</button>
+            <button class="cat-chip" id="news-sub-event" onclick="filterNewsType('event')">🎵 演唱會與活動</button>
+            <button class="cat-chip" id="news-sub-movie" onclick="filterNewsType('movie')">🎬 電影與娛樂</button>
+        </div>
+    </div>
 
     <!-- 美食地圖 Tab 內容 -->
     <div id="main-tab-map" class="tab-content active">
@@ -266,7 +256,7 @@
             </div>
         </div>
         <div class="chat-input-area">
-            <input type="text" id="chat-input" class="chat-input" placeholder="問點什麼吧（例：達沃有什麼推薦景點？）..." onkeypress="handleChatKeyPress(event)">
+            <input type="text" id="chat-input" class="chat-input" placeholder="問點什麼吧..." onkeypress="handleChatKeyPress(event)">
             <button class="btn-send-chat" id="chat-send-btn" onclick="sendChatMessage()">
                 <i class="fa-solid fa-paper-plane" style="font-size:0.85rem;"></i>
             </button>
@@ -974,7 +964,7 @@
             }).join('');
         }
 
-        // 渲染城市動態（修復文字與演唱會/電影資訊呈現）
+        // 渲染城市動態
         function renderNewsList() {
             const listEl = document.getElementById('news-list');
             const langData = i18n[currentLang];
