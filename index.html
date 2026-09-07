@@ -8,99 +8,806 @@
     <meta name="theme-color" content="#EA580C">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #fdfbf7; color: #333; padding-bottom: 50px; }
-        
-        /* 頂部固定 Header */
-        header { background: #EA580C; color: white; padding: 12px 16px 0 16px; box-shadow: 0 4px 10px rgba(0,0,0,0.08); position: sticky; top: 0; z-index: 100; }
-        .header-inner { max-width: 600px; margin: 0 auto; width: 100%; }
-        
-        .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-        .header-top h1 { font-size: 1.15rem; font-weight: bold; letter-spacing: 0.5px; }
-        
-        .btn-share { background: rgba(255, 255, 255, 0.2); color: white; border: 1px solid rgba(255, 255, 255, 0.4); padding: 4px 10px; border-radius: 6px; font-size: 0.8rem; font-weight: bold; cursor: pointer; outline: none; }
-        .btn-share:active { background: rgba(255, 255, 255, 0.35); }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
 
-        .controls-row { display: flex; gap: 8px; align-items: center; margin-bottom: 10px; }
-        .app-select { flex: 1; background: rgba(255, 255, 255, 0.18); color: white; border: 1px solid rgba(255, 255, 255, 0.4); padding: 6px 10px; border-radius: 6px; font-size: 0.82rem; outline: none; cursor: pointer; text-overflow: ellipsis; }
-        .app-select option { color: #333; background: white; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: #fdfbf7;
+            color: #333;
+            padding-bottom: 60px;
+        }
 
-        /* 即時搜尋框 */
-        .search-container { position: relative; margin-bottom: 10px; display: flex; align-items: center; width: 100%; }
-        .search-input { width: 100%; background: #ffffff; color: #292524; border: 1px solid #fed7aa; border-radius: 22px; padding: 8px 36px 8px 36px; font-size: 0.85rem; outline: none; box-shadow: 0 2px 6px rgba(0,0,0,0.06); transition: all 0.2s; }
-        .search-input:focus { border-color: #ea580c; box-shadow: 0 2px 10px rgba(234, 88, 12, 0.2); }
-        .search-icon { position: absolute; left: 12px; color: #ea580c; font-size: 0.85rem; pointer-events: none; }
-        .search-clear-btn { position: absolute; right: 10px; background: #e7e5e4; border: none; width: 20px; height: 20px; border-radius: 50%; color: #78716c; font-size: 0.72rem; cursor: pointer; display: none; align-items: center; justify-content: center; line-height: 1; }
+        header {
+            background: #EA580C;
+            color: white;
+            padding: 12px 16px 0 16px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+        }
 
-        /* 三欄式主導覽 Tab 切換（絕對鎖定在 Header 底部，絕不跑版） */
-        .main-tabs { display: flex; border-top: 1px solid rgba(255,255,255,0.2); width: 100%; margin-top: 6px; }
-        .main-tab-btn { flex: 1; text-align: center; padding: 10px 4px; font-weight: bold; font-size: 0.85rem; color: rgba(255,255,255,0.75); border: none; background: none; cursor: pointer; border-bottom: 3px solid transparent; white-space: nowrap; }
-        .main-tab-btn.active { color: white; border-bottom: 3px solid white; }
+        .header-inner {
+            max-width: 600px;
+            margin: 0 auto;
+            width: 100%;
+        }
 
-        /* 分類列與二級篩選 Bar */
-        .category-bar, .sub-filter-bar { display: none; gap: 8px; overflow-x: auto; padding: 10px 16px; background: #ffffff; margin: 0 auto; border-bottom: 1px solid #f1ece1; width: 100vw; max-width: 600px; }
-        .category-bar::-webkit-scrollbar, .sub-filter-bar::-webkit-scrollbar { display: none; }
-        .cat-chip { padding: 6px 14px; border-radius: 18px; font-size: 0.85rem; background: #f5f2eb; color: #666; white-space: nowrap; border: none; cursor: pointer; transition: all 0.2s; flex-shrink: 0; }
-        .cat-chip.active { background: #EA580C; color: white; font-weight: bold; }
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
 
-        /* 內容容器與卡片設計 */
-        .container { max-width: 600px; margin: 0 auto; padding: 16px; }
-        .tab-content { display: none; }
-        .tab-content.active { display: block; }
-        .grid-layout { display: flex; flex-direction: column; gap: 20px; }
-        .search-results-info { font-size: 0.8rem; color: #78716c; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; }
+        .header-top h1 {
+            font-size: 1.15rem;
+            font-weight: bold;
+            letter-spacing: 0.5px;
+        }
 
-        .card { background: white; border-radius: 14px; overflow: hidden; box-shadow: 0 4px 14px rgba(0,0,0,0.05); border: 1px solid #f0eae1; display: flex; flex-direction: column; }
-        .carousel-container { position: relative; width: 100%; height: 210px; min-height: 210px; background: #f7f5f0; overflow: hidden; flex-shrink: 0; }
-        .carousel-track { display: flex; width: 100%; height: 210px; overflow-x: auto; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; }
-        .carousel-track::-webkit-scrollbar { display: none; }
-        .carousel-slide { flex: 0 0 100%; width: 100%; height: 210px; scroll-snap-align: start; position: relative; }
-        .carousel-slide img { width: 100%; height: 210px; object-fit: cover; display: block; }
-        .carousel-dots { position: absolute; bottom: 8px; left: 0; right: 0; display: flex; justify-content: center; gap: 5px; z-index: 10; pointer-events: none; }
-        .dot { width: 6px; height: 6px; border-radius: 50%; background: rgba(255, 255, 255, 0.5); }
-        .dot.active { background: #ffffff; width: 14px; border-radius: 4px; }
-        .photo-tag { position: absolute; top: 8px; right: 8px; background: rgba(0, 0, 0, 0.6); color: white; font-size: 0.7rem; padding: 3px 8px; border-radius: 6px; z-index: 10; }
+        .btn-share {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            cursor: pointer;
+            outline: none;
+        }
 
-        .card-body { padding: 16px; display: flex; flex-direction: column; flex: 1; }
-        .badge-group { display: flex; gap: 6px; margin-bottom: 10px; flex-wrap: wrap; align-items: center; }
-        .badge { display: inline-flex; align-items: center; background: #fff7ed; color: #c2410c; font-size: 0.75rem; padding: 3px 8px; border-radius: 6px; font-weight: 600; border: 1px solid #ffedd5; }
-        .badge-city { background: #f0f9ff; color: #0369a1; border-color: #e0f2fe; }
-        .badge-promo { background: #fef2f2; color: #dc2626; border-color: #fecaca; }
-        .badge-brand { background: #fefce8; color: #a16207; border-color: #fef08a; }
-        .badge-expiry { background: #f0fdf4; color: #15803d; border-color: #bbf7d0; font-weight: bold; }
-        .badge-google-rating { background: #fef3c7; color: #92400e; border-color: #fde68a; font-weight: bold; gap: 4px; }
-        .badge-elite-choice { background: #fff1f2; color: #e11d48; border-color: #fecdd3; font-weight: bold; gap: 4px; }
+        .btn-share:active {
+            background: rgba(255, 255, 255, 0.35);
+        }
 
-        .card-title { font-size: 1.2rem; font-weight: 800; margin-bottom: 6px; color: #1c1917; line-height: 1.35; }
-        .card-desc { font-size: 0.88rem; color: #57534e; line-height: 1.5; margin-bottom: 12px; }
-        .info-item { font-size: 0.85rem; color: #78716c; margin-bottom: 6px; display: flex; align-items: flex-start; gap: 8px; line-height: 1.4; }
+        .controls-row {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            margin-bottom: 10px;
+        }
 
-        .btn-group { display: flex; gap: 6px; margin-top: 14px; flex-wrap: wrap; }
-        .btn { flex: 1; min-width: calc(50% - 3px); padding: 10px 6px; border-radius: 8px; font-size: 0.82rem; font-weight: bold; text-align: center; text-decoration: none; border: none; cursor: pointer; }
-        .btn-primary { background: #EA580C; color: white; }
-        .btn-secondary { background: #f5f2eb; color: #44403c; }
-        .btn-grab { background: #00B14F; color: white; }
-        .btn-foodpanda { background: #D70F64; color: white; }
-        
-        #loading { text-align: center; padding: 40px; color: #a8a29e; }
+        .app-select {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.18);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-size: 0.82rem;
+            outline: none;
+            cursor: pointer;
+            text-overflow: ellipsis;
+        }
 
-        /* 3D AI 管家懸浮按鈕 */
-        .chat-fab { position: fixed; bottom: 24px; right: 20px; width: 56px; height: 56px; border-radius: 50%; background: #ffffff; border: 2px solid #ea580c; box-shadow: 0 6px 20px rgba(234, 88, 12, 0.45); overflow: hidden; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 1000; }
-        .chat-fab img { width: 100%; height: 100%; object-fit: cover; }
-        .chat-modal { display: none; position: fixed; bottom: 92px; right: 20px; width: 350px; max-width: calc(100vw - 32px); height: 500px; max-height: calc(100vh - 110px); background: #ffffff; border-radius: 20px; box-shadow: 0 16px 40px rgba(0,0,0,0.18); border: 1px solid #f0e6d8; flex-direction: column; z-index: 1000; overflow: hidden; }
-        .chat-modal.show { display: flex; }
-        .chat-header { background: #EA580C; color: white; padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; }
-        .chat-header-info { display: flex; align-items: center; gap: 8px; }
-        .chat-avatar-small { width: 34px; height: 34px; border-radius: 50%; overflow: hidden; border: 1.5px solid white; background: white; flex-shrink: 0; }
-        .chat-avatar-small img { width: 100%; height: 100%; object-fit: cover; }
-        .btn-close-chat { background: rgba(255,255,255,0.2); border: none; color: white; width: 26px; height: 26px; border-radius: 50%; font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-        .chat-messages { flex: 1; padding: 14px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; background: #fdfbf7; font-size: 0.85rem; }
-        .chat-bubble { max-width: 82%; padding: 10px 14px; border-radius: 16px; line-height: 1.45; word-break: break-word; }
-        .chat-bubble.bot { background: #ffffff; border: 1px solid #e7e2d7; align-self: flex-start; color: #292524; border-top-left-radius: 4px; }
-        .chat-bubble.user { background: #EA580C; color: white; align-self: flex-end; border-top-right-radius: 4px; }
-        .chat-input-area { display: flex; border-top: 1px solid #efe8dc; padding: 10px 12px; background: #ffffff; gap: 8px; align-items: center; }
-        .chat-input { flex: 1; border: 1px solid #e2d9cd; border-radius: 20px; padding: 9px 14px; font-size: 0.85rem; outline: none; background: #faf8f5; }
-        .btn-send-chat { background: #EA580C; color: white; border: none; width: 36px; height: 36px; border-radius: 50%; font-weight: bold; font-size: 0.9rem; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .app-select option {
+            color: #333;
+            background: white;
+        }
+
+        .search-container {
+            position: relative;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            width: 100%;
+        }
+
+        .search-input {
+            width: 100%;
+            background: #ffffff;
+            color: #292524;
+            border: 1px solid #fed7aa;
+            border-radius: 22px;
+            padding: 8px 36px 8px 36px;
+            font-size: 0.85rem;
+            outline: none;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+            transition: all 0.2s;
+        }
+
+        .search-input:focus {
+            border-color: #ea580c;
+            box-shadow: 0 2px 10px rgba(234, 88, 12, 0.2);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 12px;
+            color: #ea580c;
+            font-size: 0.85rem;
+            pointer-events: none;
+        }
+
+        .search-clear-btn {
+            position: absolute;
+            right: 10px;
+            background: #e7e5e4;
+            border: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            color: #78716c;
+            font-size: 0.72rem;
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            line-height: 1;
+        }
+
+        .search-clear-btn:active {
+            background: #d6d3d1;
+        }
+
+        .main-tabs {
+            display: flex;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            width: 100%;
+            margin-top: 6px;
+        }
+
+        .main-tab-btn {
+            flex: 1;
+            text-align: center;
+            padding: 10px 4px;
+            font-weight: bold;
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.75);
+            border: none;
+            background: none;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            white-space: nowrap;
+        }
+
+        .main-tab-btn.active {
+            color: white;
+            border-bottom: 3px solid white;
+        }
+
+        .category-bar,
+        .sub-filter-bar {
+            display: none;
+            gap: 8px;
+            overflow-x: auto;
+            padding: 10px 16px;
+            background: #ffffff;
+            margin: 0 auto;
+            border-bottom: 1px solid #f1ece1;
+            width: 100%;
+            max-width: 600px;
+        }
+
+        .category-bar::-webkit-scrollbar,
+        .sub-filter-bar::-webkit-scrollbar {
+            display: none;
+        }
+
+        .cat-chip {
+            padding: 6px 14px;
+            border-radius: 18px;
+            font-size: 0.85rem;
+            background: #f5f2eb;
+            color: #666;
+            white-space: nowrap;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+
+        .cat-chip.active {
+            background: #EA580C;
+            color: white;
+            font-weight: bold;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 16px;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .grid-layout {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .search-results-info {
+            font-size: 0.8rem;
+            color: #78716c;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .card {
+            background: white;
+            border-radius: 14px;
+            overflow: hidden;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
+            border: 1px solid #f0eae1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .carousel-container {
+            position: relative;
+            width: 100%;
+            height: 210px;
+            min-height: 210px;
+            background: #f7f5f0;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .carousel-track {
+            display: flex;
+            width: 100%;
+            height: 210px;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .carousel-track::-webkit-scrollbar {
+            display: none;
+        }
+
+        .carousel-slide {
+            flex: 0 0 100%;
+            width: 100%;
+            height: 210px;
+            scroll-snap-align: start;
+            position: relative;
+        }
+
+        .carousel-slide img {
+            width: 100%;
+            height: 210px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .carousel-dots {
+            position: absolute;
+            bottom: 8px;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+            z-index: 10;
+            pointer-events: none;
+        }
+
+        .dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.5);
+        }
+
+        .dot.active {
+            background: #ffffff;
+            width: 14px;
+            border-radius: 4px;
+        }
+
+        .photo-tag {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: rgba(0, 0, 0, 0.6);
+            color: white;
+            font-size: 0.7rem;
+            padding: 3px 8px;
+            border-radius: 6px;
+            z-index: 10;
+        }
+
+        .card-body {
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+        }
+
+        .badge-group {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            background: #fff7ed;
+            color: #c2410c;
+            font-size: 0.75rem;
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-weight: 600;
+            border: 1px solid #ffedd5;
+        }
+
+        .badge-city {
+            background: #f0f9ff;
+            color: #0369a1;
+            border-color: #e0f2fe;
+        }
+
+        .badge-promo {
+            background: #fef2f2;
+            color: #dc2626;
+            border-color: #fecaca;
+        }
+
+        .badge-brand {
+            background: #fefce8;
+            color: #a16207;
+            border-color: #fef08a;
+        }
+
+        .badge-expiry {
+            background: #f0fdf4;
+            color: #15803d;
+            border-color: #bbf7d0;
+            font-weight: bold;
+        }
+
+        .badge-google-rating {
+            background: #fef3c7;
+            color: #92400e;
+            border-color: #fde68a;
+            font-weight: bold;
+            gap: 4px;
+        }
+
+        .badge-elite-choice {
+            background: #fff1f2;
+            color: #e11d48;
+            border-color: #fecdd3;
+            font-weight: bold;
+            gap: 4px;
+        }
+
+        .card-title {
+            font-size: 1.2rem;
+            font-weight: 800;
+            margin-bottom: 6px;
+            color: #1c1917;
+            line-height: 1.35;
+        }
+
+        .card-desc {
+            font-size: 0.88rem;
+            color: #57534e;
+            line-height: 1.5;
+            margin-bottom: 12px;
+        }
+
+        .info-item {
+            font-size: 0.85rem;
+            color: #78716c;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            line-height: 1.4;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 6px;
+            margin-top: 14px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            flex: 1;
+            min-width: calc(50% - 3px);
+            padding: 10px 6px;
+            border-radius: 8px;
+            font-size: 0.82rem;
+            font-weight: bold;
+            text-align: center;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background: #EA580C;
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #f5f2eb;
+            color: #44403c;
+        }
+
+        .btn-grab {
+            background: #00B14F;
+            color: white;
+        }
+
+        .btn-foodpanda {
+            background: #D70F64;
+            color: white;
+        }
+
+        #loading {
+            text-align: center;
+            padding: 40px;
+            color: #a8a29e;
+        }
+
+        .card-forum-box {
+            background: #faf8f5;
+            border-radius: 12px;
+            padding: 10px 14px;
+            margin-top: 14px;
+            border: 1px solid #ede5d8;
+        }
+
+        .rating-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            min-height: 28px;
+        }
+
+        .rating-left {
+            display: flex;
+            align-items: baseline;
+            gap: 6px;
+        }
+
+        .rating-label {
+            font-size: 0.82rem;
+            font-weight: bold;
+            color: #78716c;
+        }
+
+        .rating-score-num {
+            font-size: 0.95rem;
+            font-weight: 800;
+            color: #ea580c;
+        }
+
+        .rating-count-hint {
+            font-size: 0.72rem;
+            color: #a8a29e;
+        }
+
+        .star-picker {
+            display: flex;
+            gap: 3px;
+            cursor: pointer;
+        }
+
+        .star-picker span {
+            font-size: 1.15rem;
+            color: #e2dcd2;
+            transition: color 0.15s;
+            line-height: 1;
+        }
+
+        .star-picker span.active {
+            color: #f59e0b;
+        }
+
+        .btn-toggle-forum {
+            background: none;
+            border: none;
+            color: #57534e;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            padding: 8px 0 2px 0;
+            width: 100%;
+            text-align: left;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px dashed #e7dfd3;
+            margin-top: 8px;
+        }
+
+        .btn-toggle-forum:hover {
+            color: #ea580c;
+        }
+
+        .forum-content {
+            display: none;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid #ede5d8;
+        }
+
+        .forum-content.show {
+            display: block;
+        }
+
+        .mini-comment-form {
+            margin-bottom: 12px;
+            background: #ffffff;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #eee8dd;
+        }
+
+        .mini-form-row {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 6px;
+        }
+
+        .mini-input {
+            flex: 1;
+            padding: 6px 8px;
+            border-radius: 6px;
+            border: 1px solid #e7e5e4;
+            font-size: 0.8rem;
+            outline: none;
+        }
+
+        .mini-select {
+            width: 90px;
+            padding: 6px 4px;
+            border-radius: 6px;
+            border: 1px solid #e7e5e4;
+            font-size: 0.78rem;
+            outline: none;
+        }
+
+        .mini-textarea {
+            width: 100%;
+            padding: 6px 8px;
+            border-radius: 6px;
+            border: 1px solid #e7e5e4;
+            font-size: 0.8rem;
+            outline: none;
+            resize: vertical;
+            min-height: 50px;
+            margin-bottom: 6px;
+        }
+
+        .btn-mini-post {
+            width: 100%;
+            background: #EA580C;
+            color: white;
+            padding: 6px;
+            border-radius: 6px;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+
+        .review-item {
+            font-size: 0.82rem;
+            color: #57534e;
+            padding: 8px 0;
+            border-bottom: 1px solid #f5f2eb;
+        }
+
+        .review-item:last-child {
+            border-bottom: none;
+        }
+
+        .review-user {
+            font-weight: bold;
+            color: #1c1917;
+        }
+
+        .review-time {
+            font-size: 0.72rem;
+            color: #a8a29e;
+            float: right;
+        }
+
+        .review-text {
+            margin-top: 4px;
+            color: #44403c;
+            line-height: 1.35;
+        }
+
+        .chat-fab {
+            position: fixed;
+            bottom: 24px;
+            right: 20px;
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: #ffffff;
+            border: 2px solid #ea580c;
+            box-shadow: 0 6px 20px rgba(234, 88, 12, 0.45);
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 1000;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .chat-fab:active {
+            transform: scale(0.92);
+        }
+
+        .chat-fab img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .chat-modal {
+            display: none;
+            position: fixed;
+            bottom: 92px;
+            right: 20px;
+            width: 350px;
+            max-width: calc(100vw - 32px);
+            height: 500px;
+            max-height: calc(100vh - 110px);
+            background: #ffffff;
+            border-radius: 20px;
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.18);
+            border: 1px solid #f0e6d8;
+            flex-direction: column;
+            z-index: 1000;
+            overflow: hidden;
+        }
+
+        .chat-modal.show {
+            display: flex;
+        }
+
+        .chat-header {
+            background: #EA580C;
+            color: white;
+            padding: 14px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chat-header-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .chat-avatar-small {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 1.5px solid white;
+            background: white;
+            flex-shrink: 0;
+        }
+
+        .chat-avatar-small img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .chat-header-info h3 {
+            font-size: 0.95rem;
+            font-weight: bold;
+            margin: 0;
+        }
+
+        .chat-header-info span {
+            font-size: 0.72rem;
+            color: #fed7aa;
+            display: block;
+        }
+
+        .btn-close-chat {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            font-size: 1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 14px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            background: #fdfbf7;
+            font-size: 0.85rem;
+        }
+
+        .chat-bubble {
+            max-width: 82%;
+            padding: 10px 14px;
+            border-radius: 16px;
+            line-height: 1.45;
+            word-break: break-word;
+        }
+
+        .chat-bubble.bot {
+            background: #ffffff;
+            border: 1px solid #e7e2d7;
+            align-self: flex-start;
+            color: #292524;
+            border-top-left-radius: 4px;
+        }
+
+        .chat-bubble.user {
+            background: #EA580C;
+            color: white;
+            align-self: flex-end;
+            border-top-right-radius: 4px;
+        }
+
+        .chat-input-area {
+            display: flex;
+            border-top: 1px solid #efe8dc;
+            padding: 10px 12px;
+            background: #ffffff;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .chat-input {
+            flex: 1;
+            border: 1px solid #e2d9cd;
+            border-radius: 20px;
+            padding: 9px 14px;
+            font-size: 0.85rem;
+            outline: none;
+            background: #faf8f5;
+        }
+
+        .btn-send-chat {
+            background: #EA580C;
+            color: white;
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            font-weight: bold;
+            font-size: 0.9rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
     </style>
 </head>
 <body>
@@ -126,14 +833,12 @@
                 </select>
             </div>
 
-            <!-- 即時搜尋框 -->
             <div class="search-container" id="search-container">
                 <i class="fa-solid fa-magnifying-glass search-icon"></i>
                 <input type="text" class="search-input" id="search-input" placeholder="搜尋燒肉、火鍋、景點、演唱會..." oninput="handleSearchInput(this.value)">
                 <button class="search-clear-btn" id="search-clear-btn" onclick="clearSearch()" title="清除">✕</button>
             </div>
 
-            <!-- 三欄式主導覽 Tab 切換 -->
             <div class="main-tabs">
                 <button class="main-tab-btn active" id="tab-btn-map" onclick="switchMainTab('map')">🗺️ 美食地圖</button>
                 <button class="main-tab-btn" id="tab-btn-attraction" onclick="switchMainTab('attraction')">🏛️ 景點導覽</button>
@@ -142,10 +847,8 @@
         </div>
     </header>
 
-    <!-- 美食分類列 -->
     <div class="category-bar" id="category-bar"></div>
 
-    <!-- 景點二級分類 Bar -->
     <div class="sub-filter-bar" id="attraction-filter-bar">
         <button class="cat-chip active" id="att-sub-all" onclick="filterAttractionCat('all')">全部景點</button>
         <button class="cat-chip" id="att-sub-history" onclick="filterAttractionCat('history')">🏛️ 歷史文化</button>
@@ -153,7 +856,6 @@
         <button class="cat-chip" id="att-sub-shopping" onclick="filterAttractionCat('shopping')">🛒 購物商場</button>
     </div>
 
-    <!-- 城市動態二級篩選 Bar -->
     <div class="sub-filter-bar" id="news-filter-bar">
         <button class="cat-chip active" id="news-sub-all" onclick="filterNewsType('all')">全部動態</button>
         <button class="cat-chip" id="news-sub-promo" onclick="filterNewsType('promo')">🔥 限時優惠</button>
@@ -162,7 +864,6 @@
         <button class="cat-chip" id="news-sub-movie" onclick="filterNewsType('movie')">🎬 電影與娛樂</button>
     </div>
 
-    <!-- 美食地圖 Tab 內容 -->
     <div id="main-tab-map" class="tab-content active">
         <div class="container">
             <div id="search-results-info" class="search-results-info" style="display:none;"></div>
@@ -171,26 +872,22 @@
         </div>
     </div>
 
-    <!-- 景點導覽 Tab 內容 -->
     <div id="main-tab-attraction" class="tab-content">
         <div class="container">
             <div id="attraction-list" class="grid-layout">載入景點導覽中...</div>
         </div>
     </div>
 
-    <!-- 城市動態 Tab 內容 -->
     <div id="main-tab-news" class="tab-content">
         <div class="container">
             <div id="news-list" class="grid-layout">載入城市動態中...</div>
         </div>
     </div>
 
-    <!-- 3D 角色頭像懸浮 AI 管家按鈕 -->
     <button class="chat-fab" id="chat-fab" onclick="toggleChat()" title="大V旅遊窩管家">
         <img src="ai-avatar.png" alt="AI 管家" onerror="this.src='ai-avatar.jpg'">
     </button>
 
-    <!-- AI 旅遊窩管家彈窗 -->
     <div class="chat-modal" id="chat-modal">
         <div class="chat-header">
             <div class="chat-header-info">
@@ -217,7 +914,6 @@
         </div>
     </div>
 
-    <!-- 引入 Firebase SDK 與主程式 -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
@@ -496,7 +1192,9 @@
                 const normName = normalizeName(item.name_en || item.name || '');
                 const city = (item.city || 'davao').toLowerCase();
                 const key = `${city}_${normName}`;
-                if (!uniqueMap.has(key)) uniqueMap.set(key, item);
+                if (!uniqueMap.has(key)) {
+                    uniqueMap.set(key, item);
+                }
             });
             return Array.from(uniqueMap.values());
         }
@@ -514,12 +1212,12 @@
                     attSnap.forEach(doc => allAttractions.push(doc.data()));
                 } catch (e) { allAttractions = []; }
 
-                // 若 Firestore 無景點，提供強固的預設景點（涵蓋各分類）
                 if (allAttractions.length === 0) {
                     allAttractions = [
                         { city: 'davao', category: 'nature', name: 'Eden Nature Park & Resort', address: 'Toril, Davao City', phone: '+82 82 295 1020', googleRating: 4.6, googleReviewCount: 1420, description: '位於達沃市山區的超人氣生態度假村，擁有涼爽氣候與森林步道。' },
                         { city: 'manila', category: 'history', name: 'Intramuros (Walled City)', address: 'Manila, Metro Manila', phone: '+63 2 8527 3155', googleRating: 4.7, googleReviewCount: 18500, description: '馬尼拉著名的西班牙殖民時期歷史古城。' },
-                        { city: 'cebu', category: 'shopping', name: 'Ayala Center Cebu', address: 'Cebu Business Park', phone: '+63 32 888 3777', googleRating: 4.8, googleReviewCount: 25000, description: '宿霧極具代表性與休閒氛圍的頂級購物中心。' }
+                        { city: 'cebu', category: 'shopping', name: 'Ayala Center Cebu', address: 'Cebu Business Park, Cebu City', phone: '+63 32 888 3777', googleRating: 4.8, googleReviewCount: 25000, description: '宿霧極具代表性與休閒氛圍的頂級購物中心。' },
+                        { city: 'boracay', category: 'nature', name: 'Boracay White Beach', address: 'Boracay Island, Malay', phone: '', googleRating: 4.9, googleReviewCount: 42000, description: '世界聞名的絕美白色沙灘與湛藍海水。' }
                     ];
                 }
 
@@ -529,7 +1227,6 @@
                     newsSnap.forEach(doc => allNews.push(doc.data()));
                 } catch (e) { allNews = []; }
 
-                // 若 Firestore 無動態，提供涵蓋 promo、new、event、movie 的完整預設資料
                 if (allNews.length === 0) {
                     allNews = [
                         { city: 'manila', type: 'event', brand: 'TicketWorld', title: 'Ed Sheeran Mathematics Tour in Manila', tag: '🎵 演唱會與活動', validity: '2026/09/25 演出', description: '西洋流行天王 Ed Sheeran 降臨馬尼拉開唱，帶來震撼金曲合輯！', location: 'SMDC Festival Grounds, Manila', url: 'https://ticketworld.com.ph' },
@@ -567,14 +1264,17 @@
             localStorage.setItem('ph_app_tab', tab);
 
             ['map', 'attraction', 'news'].forEach(t => {
-                document.getElementById('tab-btn-' + t).classList.toggle('active', t === tab);
-                document.getElementById('main-tab-' + t).classList.toggle('active', t === tab);
+                const b = document.getElementById('tab-btn-' + t);
+                const v = document.getElementById('main-tab-' + t);
+                if (b) b.classList.toggle('active', t === tab);
+                if (v) v.classList.toggle('active', t === tab);
             });
 
             document.getElementById('category-bar').style.display = (tab === 'map') ? 'flex' : 'none';
             document.getElementById('attraction-filter-bar').style.display = (tab === 'attraction') ? 'flex' : 'none';
             document.getElementById('news-filter-bar').style.display = (tab === 'news') ? 'flex' : 'none';
 
+            if (tab === 'map') renderList();
             if (tab === 'attraction') renderAttractionList();
             if (tab === 'news') renderNewsList();
         };
@@ -700,7 +1400,7 @@
             if (!user || !text) { alert(lang.emptyCommentAlert); return; }
 
             const now = new Date();
-            const timeStr = (now.getMonth()+1) + '/' + now.getDate() + ' ' + String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
+            const timeStr = (now.getMonth() + 1) + '/' + now.getDate() + ' ' + String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0');
 
             if (!resComments[key]) resComments[key] = [];
             resComments[key].unshift({ user, rating, text, time: timeStr });
@@ -711,7 +1411,8 @@
             document.getElementById('input-text-' + key).value = '';
             renderList();
             renderAttractionList();
-            document.getElementById('forum-' + key).classList.add('show');
+            const forum = document.getElementById('forum-' + key);
+            if (forum) forum.classList.add('show');
         };
 
         function getImageArray(name, poolKey) {
@@ -736,7 +1437,9 @@
             const query = q.toLowerCase();
             const keywords = new Set([query]);
             Object.keys(SYNONYM_MAP).forEach(k => {
-                if (query.includes(k) || k.includes(query)) SYNONYM_MAP[k].forEach(s => keywords.add(s.toLowerCase()));
+                if (query.includes(k) || k.includes(query)) {
+                    SYNONYM_MAP[k].forEach(s => keywords.add(s.toLowerCase()));
+                }
             });
             const text = `${item.name || ''} ${item.name_en || ''} ${item.address || ''} ${item.description || ''} ${item.title || ''}`.toLowerCase();
             for (const kw of keywords) {
@@ -745,7 +1448,6 @@
             return false;
         }
 
-        // 渲染美食
         function renderList() {
             const listEl = document.getElementById('restaurant-list');
             document.getElementById('loading').style.display = 'none';
@@ -778,13 +1480,13 @@
 
                 const ratingData = itemRatings[key] || { scores: [], userRated: null };
                 const count = ratingData.scores.length;
-                const avg = count > 0 ? (ratingData.scores.reduce((a,b)=>a+b,0)/count).toFixed(1) : 0;
+                const avg = count > 0 ? (ratingData.scores.reduce((a, b) => a + b, 0) / count).toFixed(1) : 0;
                 const userScore = ratingData.userRated || 0;
 
                 const hasGoogle = (item.googleRating !== undefined && item.googleRating !== null);
                 let badge = '';
                 if (hasGoogle) {
-                    badge = `<span class="badge badge-google-rating"><i class="fa-solid fa-star" style="color:#eab308;"></i> Google ${Number(item.googleRating).toFixed(1)} (${item.googleReviewCount||0}則)</span>`;
+                    badge = `<span class="badge badge-google-rating"><i class="fa-solid fa-star" style="color:#eab308;"></i> Google ${Number(item.googleRating).toFixed(1)} (${item.googleReviewCount || 0}則)</span>`;
                 } else if (count >= 10 && Number(avg) >= 4.8) {
                     badge = `<span class="badge badge-elite-choice"><i class="fa-solid fa-award"></i> ${langData.eliteChoice} (${count}則)</span>`;
                 }
@@ -823,7 +1525,7 @@
                                         <span class="rating-count-hint">(${count})</span>
                                     </div>
                                     <div class="star-picker">
-                                        ${[1,2,3,4,5].map(s => `<span class="${s <= userScore ? 'active' : ''}" onclick="rateRestaurant('${key}', ${s})">★</span>`).join('')}
+                                        ${[1, 2, 3, 4, 5].map(s => `<span class="${s <= userScore ? 'active' : ''}" onclick="rateRestaurant('${key}', ${s})">★</span>`).join('')}
                                     </div>
                                 </div>
                                 <button class="btn-toggle-forum" onclick="toggleRestaurantForum('${key}')">
@@ -863,7 +1565,6 @@
             }).join('');
         }
 
-        // 渲染景點（確保所有分類皆能正常顯示）
         function renderAttractionList() {
             const listEl = document.getElementById('attraction-list');
             const langData = i18n[currentLang];
@@ -917,14 +1618,12 @@
             }).join('');
         }
 
-        // 渲染城市動態（全面修復各類別篩選與文字對應，絕不空白）
         function renderNewsList() {
             const listEl = document.getElementById('news-list');
             const langData = i18n[currentLang];
 
             let filtered = (allNews || []).filter(item => {
                 const matchC = (currentCity === 'all') || (item.city === 'all') || (item.city === currentCity);
-                // 確保動態分類（promo, new, event, movie）與篩選按鈕完全吻合
                 const matchS = (currentNewsSubFilter === 'all') || (item.type === currentNewsSubFilter);
                 return matchC && matchS;
             });
@@ -966,7 +1665,6 @@
             }).join('');
         }
 
-        // AI 聊天
         window.toggleChat = function() {
             const modal = document.getElementById('chat-modal');
             modal.classList.toggle('show');
