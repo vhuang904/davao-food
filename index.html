@@ -221,7 +221,7 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // Cloudflare Worker API 網址
+        // 綁定 Cloudflare Worker API 網址
         const AI_WORKER_URL = "https://food-ai-assistant.vhuang904.workers.dev";
 
         const categoryImagePools = {
@@ -650,59 +650,57 @@
             });
         }
 
-        // 智慧計算當前營業狀態與今日時間
+        // ==================== 寬鬆相容版營業狀態解析 ====================
         function parseOpeningStatus(openingHours) {
-            if (!openingHours || !openingHours.periods || openingHours.periods.length === 0) {
-                return {
-                    hasData: false,
-                    isOpen: null,
-                    todayText: null,
-                    weeklyList: openingHours ? (openingHours.weekdayDescriptions || []) : []
-                };
+            if (!openingHours) {
+                return { hasData: false, isOpen: null, todayText: null, weeklyList: [] };
+            }
+
+            const weekdayList = openingHours.weekdayDescriptions || [];
+            const periods = openingHours.periods || [];
+
+            // 若既無時段描述，又無 periods，且 openNow 為 null/undefined
+            if (weekdayList.length === 0 && periods.length === 0 && (openingHours.openNow === undefined || openingHours.openNow === null)) {
+                return { hasData: false, isOpen: null, todayText: null, weeklyList: [] };
             }
 
             const now = new Date();
-            const currentDay = now.getDay(); // 0 = Sunday, 1 = Monday, ...
+            const currentDay = now.getDay(); // 0 = 週日, 1 = 週一...
             const currentMinutes = now.getHours() * 60 + now.getMinutes();
 
-            let isOpen = false;
-            let todayPeriodStr = "";
+            let isOpen = (openingHours.openNow !== undefined && openingHours.openNow !== null) 
+                         ? openingHours.openNow 
+                         : false;
 
-            // 比對當前時段
-            for (const period of openingHours.periods) {
-                if (!period.open) continue;
+            // 若有詳細 periods，用當前時間精確計算
+            if (periods.length > 0) {
+                for (const period of periods) {
+                    if (!period.open) continue;
+                    const openDay = period.open.day;
+                    const openMin = (period.open.hour || 0) * 60 + (period.open.minute || 0);
 
-                const openDay = period.open.day;
-                const openMin = (period.open.hour || 0) * 60 + (period.open.minute || 0);
+                    if (period.close) {
+                        const closeDay = period.close.day;
+                        const closeMin = (period.close.hour || 0) * 60 + (period.close.minute || 0);
 
-                if (period.close) {
-                    const closeDay = period.close.day;
-                    const closeMin = (period.close.hour || 0) * 60 + (period.close.minute || 0);
-
-                    // 同一天營業
-                    if (openDay === closeDay && openDay === currentDay) {
-                        if (currentMinutes >= openMin && currentMinutes < closeMin) {
+                        if (openDay === closeDay && openDay === currentDay) {
+                            if (currentMinutes >= openMin && currentMinutes < closeMin) isOpen = true;
+                        } else if (openDay === currentDay && currentMinutes >= openMin) {
+                            isOpen = true;
+                        } else if (closeDay === currentDay && currentMinutes < closeMin) {
                             isOpen = true;
                         }
+                    } else {
+                        if (openDay === currentDay) isOpen = true;
                     }
-                    // 跨夜營業 (例如 18:00 到隔天 02:00)
-                    else if (openDay === currentDay && currentMinutes >= openMin) {
-                        isOpen = true;
-                    } else if (closeDay === currentDay && currentMinutes < closeMin) {
-                        isOpen = true;
-                    }
-                } else {
-                    // 24 小時營業
-                    if (openDay === currentDay) isOpen = true;
                 }
             }
 
-            // 取得今日描述字串
-            const weekdayList = openingHours.weekdayDescriptions || [];
-            // Google API 通常週一排在 index 0 或週日排在 index 6
+            // 取得今日時間文字
+            let todayPeriodStr = "";
             const todayIndex = (currentDay === 0) ? 6 : (currentDay - 1);
-            if (weekdayList.length > todayIndex) {
-                const fullText = weekdayList[todayIndex];
+            if (weekdayList.length > 0) {
+                const fullText = weekdayList[todayIndex] || weekdayList[0];
                 const parts = fullText.split(': ');
                 todayPeriodStr = parts.length > 1 ? parts.slice(1).join(': ') : fullText;
             }
@@ -710,7 +708,7 @@
             return {
                 hasData: true,
                 isOpen: isOpen,
-                todayText: todayPeriodStr,
+                todayText: todayPeriodStr || (isOpen ? "營業中" : "已打烊"),
                 weeklyList: weekdayList,
                 todayDayIndex: todayIndex
             };
@@ -790,11 +788,9 @@
                     hoursDisplayHtml = `
                         <div class="info-item">
                             <span>⏰ ${langData.todayHours}: <strong>${hoursInfo.todayText || '營業中'}</strong></span>
-                            <span class="hours-dropdown" id="hours-btn-${resKey}" onclick="toggleWeeklyHours('${resKey}')">[${langData.viewWeekly}]</span>
+                            ${hoursInfo.weeklyList.length > 0 ? `<span class="hours-dropdown" id="hours-btn-${resKey}" onclick="toggleWeeklyHours('${resKey}')">[${langData.viewWeekly}]</span>` : ''}
                         </div>
-                        <div class="weekly-hours-box" id="hours-box-${resKey}">
-                            ${weeklyHtml}
-                        </div>
+                        ${hoursInfo.weeklyList.length > 0 ? `<div class="weekly-hours-box" id="hours-box-${resKey}">${weeklyHtml}</div>` : ''}
                     `;
                 } else {
                     hoursDisplayHtml = `<div class="info-item">⏰ ${langData.noHoursInfo}</div>`;
