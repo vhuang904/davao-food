@@ -1,6 +1,6 @@
 const admin = require('firebase-admin');
 
-// 1. 初始化 Firebase Admin
+// 1. 初始化 Firebase Admin SDK
 const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
 if (!admin.apps.length) {
   admin.initializeApp({
@@ -12,17 +12,21 @@ const db = admin.firestore();
 const GOOGLE_MAPS_API_KEY = process.env.GOOGLE_MAPS_API_KEY;
 const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
-// 各城市重點核心商圈探測錨點（精準鎖定人氣餐飲聚集地）
+// 各城市核心商圈探測錨點（已整合最新地標）
 const CITY_ANCHORS = {
   davao: [
     { name: "SM Lanang Premier", lat: 7.0988, lng: 125.6315 },
     { name: "Abreeza Mall", lat: 7.0917, lng: 125.6105 },
     { name: "SM City Davao (Ecoland)", lat: 7.0494, lng: 125.5898 },
-    { name: "Rizal St / Poblacion", lat: 7.0707, lng: 125.6087 }
+    { name: "Rizal St / Poblacion", lat: 7.0707, lng: 125.6087 },
+    { name: "Matina Town Square (MTS)", lat: 7.0601, lng: 125.5976 },
+    { name: "Davao Global Township (DGT)", lat: 7.0542, lng: 125.5855 }
   ],
   manila: [
     { name: "BGC Taguig", lat: 14.5507, lng: 121.0494 },
-    { name: "Makati Greenbelt", lat: 14.5524, lng: 121.0207 }
+    { name: "Makati Greenbelt", lat: 14.5524, lng: 121.0207 },
+    { name: "SM Mall of Asia (MOA)", lat: 14.5353, lng: 120.9825 },
+    { name: "Rockwell Center Makati", lat: 14.5658, lng: 121.0366 }
   ],
   cebu: [
     { name: "Cebu IT Park", lat: 10.3297, lng: 123.9066 },
@@ -108,7 +112,7 @@ async function discover() {
   for (const [city, anchors] of Object.entries(CITY_ANCHORS)) {
     console.log(`\n🏙️ 正在巡邏城市: 【${city.toUpperCase()}】...`);
     let cityAddedCount = 0;
-    const MAX_PER_CITY = 3; // 每個城市每週最多探索入庫 3 家精選店，兼顧品質與額度
+    const MAX_PER_CITY = 3; // 每個城市每週最多探索入庫 3 家精選店
 
     for (const anchor of anchors) {
       if (cityAddedCount >= MAX_PER_CITY) break;
@@ -140,7 +144,7 @@ async function discover() {
 
         console.log(`   ✨ 發掘全新優質名店: "${rawName}" (⭐ ${rating} / ${reviewCount} 則評價)`);
 
-        // 整理照片
+        // 照片處理（最多 5 張）
         const images = [];
         if (place.photos && Array.isArray(place.photos)) {
           for (let i = 0; i < Math.min(place.photos.length, 5); i++) {
@@ -150,7 +154,7 @@ async function discover() {
           }
         }
 
-        // 整理營業時間
+        // 營業時間處理
         const hoursObj = place.regularOpeningHours || place.currentOpeningHours || null;
         let openingHours = null;
         if (hoursObj) {
@@ -184,7 +188,6 @@ async function discover() {
 
         await db.collection('restaurants').doc(safeDocId).set(newDoc, { merge: true });
 
-        // 加入已收錄集合，避免本輪巡邏同品牌重複出現
         existingIds.add(safeDocId);
         existingNames.add(lowerName);
 
