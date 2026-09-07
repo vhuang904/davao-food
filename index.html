@@ -60,17 +60,27 @@
 
         .card-body { padding: 16px; }
         
-        .badge-group { display: flex; gap: 6px; margin-bottom: 8px; flex-wrap: wrap; }
+        .badge-group { display: flex; gap: 6px; margin-bottom: 8px; flex-wrap: wrap; align-items: center; }
         .badge { display: inline-block; background: #fff7ed; color: #c2410c; font-size: 0.75rem; padding: 3px 8px; border-radius: 4px; font-weight: 600; border: 1px solid #ffedd5; }
         .badge-city { background: #f0f9ff; color: #0369a1; border-color: #e0f2fe; }
         .badge-promo { background: #fef2f2; color: #dc2626; border-color: #fecaca; }
         .badge-brand { background: #fefce8; color: #a16207; border-color: #fef08a; }
         .badge-expiry { background: #f0fdf4; color: #15803d; border-color: #bbf7d0; font-weight: bold; }
 
+        /* 營業狀態徽章 */
+        .badge-open { background: #ecfdf5; color: #047857; border-color: #a7f3d0; font-weight: bold; }
+        .badge-closed { background: #fef2f2; color: #b91c1c; border-color: #fecaca; font-weight: bold; }
+
         .card-title { font-size: 1.2rem; font-weight: bold; margin-bottom: 6px; color: #1c1917; }
         .card-desc { font-size: 0.88rem; color: #57534e; line-height: 1.5; margin-bottom: 12px; }
-        .info-item { font-size: 0.85rem; color: #78716c; margin-bottom: 4px; display: flex; align-items: center; gap: 6px; }
+        .info-item { font-size: 0.85rem; color: #78716c; margin-bottom: 5px; display: flex; align-items: flex-start; gap: 6px; }
         
+        /* 營業時間可展開區塊 */
+        .hours-dropdown { cursor: pointer; color: #ea580c; font-weight: 600; text-decoration: underline; font-size: 0.8rem; margin-left: 4px; }
+        .weekly-hours-box { display: none; background: #faf8f5; border: 1px solid #eee8dd; border-radius: 8px; padding: 8px 12px; margin-top: 6px; font-size: 0.8rem; color: #57534e; line-height: 1.6; }
+        .weekly-hours-box.show { display: block; }
+        .weekly-hours-box div.today { font-weight: bold; color: #ea580c; }
+
         .btn-group { display: flex; gap: 6px; margin-top: 14px; flex-wrap: wrap; }
         .btn { flex: 1; min-width: calc(50% - 3px); padding: 9px 6px; border-radius: 8px; font-size: 0.82rem; font-weight: bold; text-align: center; text-decoration: none; border: none; cursor: pointer; }
         .btn-primary { background: #EA580C; color: white; }
@@ -211,7 +221,7 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // 綁定你的 Cloudflare Worker API 網址
+        // Cloudflare Worker API 網址
         const AI_WORKER_URL = "https://food-ai-assistant.vhuang904.workers.dev";
 
         const categoryImagePools = {
@@ -287,6 +297,12 @@
                 postBtnText: '發表對此餐廳的評語',
                 slideHint: '👈 左右滑動看多圖',
                 ratingsCountText: '則評分',
+                openStatus: '🟢 營業中',
+                closedStatus: '🔴 已打烊',
+                noHoursInfo: '營業時間請洽店家',
+                todayHours: '今日營業時間',
+                viewWeekly: '查看一週',
+                hideWeekly: '收合',
                 cities: { all: '全部城市', davao: '達沃', manila: '馬尼拉', cebu: '宿霧' },
                 cats: {
                     all: '全部',
@@ -331,6 +347,12 @@
                 postBtnText: 'Submit Review for this spot',
                 slideHint: '👈 Swipe to view more photos',
                 ratingsCountText: 'reviews',
+                openStatus: '🟢 Open Now',
+                closedStatus: '🔴 Closed',
+                noHoursInfo: 'Hours may vary',
+                todayHours: 'Today',
+                viewWeekly: 'Weekly Hours',
+                hideWeekly: 'Hide',
                 cities: { all: 'All Cities', davao: 'Davao', manila: 'Manila', cebu: 'Cebu' },
                 cats: {
                     all: 'All',
@@ -375,6 +397,12 @@
                 postBtnText: 'I-post ang Komento',
                 slideHint: '👈 I-swipe para sa iba pang litrato',
                 ratingsCountText: 'mga review',
+                openStatus: '🟢 Bukas Ngayon',
+                closedStatus: '🔴 Sarado',
+                noHoursInfo: 'Oras ay maaaring magbago',
+                todayHours: 'Ngayong Araw',
+                viewWeekly: 'Lahat ng Oras',
+                hideWeekly: 'Itago',
                 cities: { all: 'Lahat ng Lungsod', davao: 'Davao', manila: 'Manila', cebu: 'Cebu' },
                 cats: {
                     all: 'Lahat',
@@ -512,7 +540,6 @@
             document.getElementById('news-sub-promo').innerText = langData.newsSubPromo;
             document.getElementById('news-sub-new').innerText = langData.newsSubNew;
 
-            // AI 客服介面多語言即時切換
             document.getElementById('chat-header-title').innerText = langData.chatHeader;
             document.getElementById('chat-welcome-msg').innerText = langData.chatWelcome;
             document.getElementById('chat-input').placeholder = langData.chatPlaceholder;
@@ -550,6 +577,16 @@
         window.toggleRestaurantForum = function(resKey) {
             const el = document.getElementById('forum-' + resKey);
             if (el) el.classList.toggle('show');
+        }
+
+        window.toggleWeeklyHours = function(resKey) {
+            const box = document.getElementById('hours-box-' + resKey);
+            const btn = document.getElementById('hours-btn-' + resKey);
+            const langData = i18n[currentLang];
+            if (box) {
+                const isShown = box.classList.toggle('show');
+                if (btn) btn.innerText = isShown ? `[${langData.hideWeekly}]` : `[${langData.viewWeekly}]`;
+            }
         }
 
         window.postResComment = function(resKey) {
@@ -613,6 +650,72 @@
             });
         }
 
+        // 智慧計算當前營業狀態與今日時間
+        function parseOpeningStatus(openingHours) {
+            if (!openingHours || !openingHours.periods || openingHours.periods.length === 0) {
+                return {
+                    hasData: false,
+                    isOpen: null,
+                    todayText: null,
+                    weeklyList: openingHours ? (openingHours.weekdayDescriptions || []) : []
+                };
+            }
+
+            const now = new Date();
+            const currentDay = now.getDay(); // 0 = Sunday, 1 = Monday, ...
+            const currentMinutes = now.getHours() * 60 + now.getMinutes();
+
+            let isOpen = false;
+            let todayPeriodStr = "";
+
+            // 比對當前時段
+            for (const period of openingHours.periods) {
+                if (!period.open) continue;
+
+                const openDay = period.open.day;
+                const openMin = (period.open.hour || 0) * 60 + (period.open.minute || 0);
+
+                if (period.close) {
+                    const closeDay = period.close.day;
+                    const closeMin = (period.close.hour || 0) * 60 + (period.close.minute || 0);
+
+                    // 同一天營業
+                    if (openDay === closeDay && openDay === currentDay) {
+                        if (currentMinutes >= openMin && currentMinutes < closeMin) {
+                            isOpen = true;
+                        }
+                    }
+                    // 跨夜營業 (例如 18:00 到隔天 02:00)
+                    else if (openDay === currentDay && currentMinutes >= openMin) {
+                        isOpen = true;
+                    } else if (closeDay === currentDay && currentMinutes < closeMin) {
+                        isOpen = true;
+                    }
+                } else {
+                    // 24 小時營業
+                    if (openDay === currentDay) isOpen = true;
+                }
+            }
+
+            // 取得今日描述字串
+            const weekdayList = openingHours.weekdayDescriptions || [];
+            // Google API 通常週一排在 index 0 或週日排在 index 6
+            const todayIndex = (currentDay === 0) ? 6 : (currentDay - 1);
+            if (weekdayList.length > todayIndex) {
+                const fullText = weekdayList[todayIndex];
+                const parts = fullText.split(': ');
+                todayPeriodStr = parts.length > 1 ? parts.slice(1).join(': ') : fullText;
+            }
+
+            return {
+                hasData: true,
+                isOpen: isOpen,
+                todayText: todayPeriodStr,
+                weeklyList: weekdayList,
+                todayDayIndex: todayIndex
+            };
+        }
+
         function renderList() {
             const listEl = document.getElementById('restaurant-list');
             const loadingEl = document.getElementById('loading');
@@ -630,7 +733,7 @@
                 return;
             }
 
-            // 方案 A：一律以英文原名 A 到 Z 排序
+            // 方案 A：一律以英文原名 A 到 Z 自然排序
             filtered.sort((a, b) => {
                 const nameA = (a.name_en || a.name || '').trim().toLowerCase();
                 const nameB = (b.name_en || b.name || '').trim().toLowerCase();
@@ -669,6 +772,34 @@
                     displayDesc = item.description;
                 }
 
+                // 營業時間動態解析
+                const hoursInfo = parseOpeningStatus(item.openingHours);
+                let openStatusBadge = '';
+                let hoursDisplayHtml = '';
+
+                if (hoursInfo.hasData) {
+                    openStatusBadge = hoursInfo.isOpen 
+                        ? `<span class="badge badge-open">${langData.openStatus}</span>` 
+                        : `<span class="badge badge-closed">${langData.closedStatus}</span>`;
+                    
+                    const weeklyHtml = hoursInfo.weeklyList.map((line, wIdx) => {
+                        const isToday = (wIdx === hoursInfo.todayDayIndex);
+                        return `<div class="${isToday ? 'today' : ''}">${line}</div>`;
+                    }).join('');
+
+                    hoursDisplayHtml = `
+                        <div class="info-item">
+                            <span>⏰ ${langData.todayHours}: <strong>${hoursInfo.todayText || '營業中'}</strong></span>
+                            <span class="hours-dropdown" id="hours-btn-${resKey}" onclick="toggleWeeklyHours('${resKey}')">[${langData.viewWeekly}]</span>
+                        </div>
+                        <div class="weekly-hours-box" id="hours-box-${resKey}">
+                            ${weeklyHtml}
+                        </div>
+                    `;
+                } else {
+                    hoursDisplayHtml = `<div class="info-item">⏰ ${langData.noHoursInfo}</div>`;
+                }
+
                 var carouselSlides = imageList.map(function(imgUrl) {
                     return '<div class="carousel-slide"><img src="' + imgUrl + '" alt="Restaurant" loading="lazy"></div>';
                 }).join('');
@@ -696,11 +827,13 @@
                             <div class="badge-group">
                                 <span class="badge badge-city">${langData.cities[item.city || 'davao']}</span>
                                 <span class="badge">${langData.cats[catKey] || catKey}</span>
+                                ${openStatusBadge}
                             </div>
                             <div class="card-title">${displayName}</div>
                             <div class="card-desc">${displayDesc}</div>
                             <div class="info-item">📍 ${item.address || ''}</div>
                             <div class="info-item">📞 ${item.phone || langData.noPhone}</div>
+                            ${hoursDisplayHtml}
 
                             <div class="card-forum-box">
                                 <div class="rating-header">
@@ -838,7 +971,7 @@
             }).join('');
         }
 
-        // ==================== AI 客服視窗互動邏輯（整合自建資料庫） ====================
+        // ==================== AI 客服視窗互動邏輯 ====================
         window.toggleChat = function() {
             const modal = document.getElementById('chat-modal');
             modal.classList.toggle('show');
@@ -859,17 +992,17 @@
             const messagesEl = document.getElementById('chat-messages');
             const langData = i18n[currentLang];
 
-            // 1. 顯示使用者發送的文字
             messagesEl.innerHTML += `<div class="chat-bubble user">${msg}</div>`;
             inputEl.value = '';
             messagesEl.scrollTop = messagesEl.scrollHeight;
 
-            // 2. 顯示「思考中...」狀態
             const loadingId = "loading-" + Date.now();
             messagesEl.innerHTML += `<div class="chat-bubble bot" id="${loadingId}">${langData.chatThinking}</div>`;
             messagesEl.scrollTop = messagesEl.scrollHeight;
 
-            // 3. 提取自建餐廳資料，並將分類轉為易於語意檢索的中文標籤
+            // 即時精準獲取當前選單中的城市
+            const activeCity = document.getElementById('city-select').value || currentCity;
+
             const catMap = {
                 'bbq_seafood': '海鮮燒烤、火烤兩吃、BBQ、烤肉',
                 'japanese_korean': '日韓料理、韓式烤肉、日式鍋物',
@@ -880,14 +1013,14 @@
             };
 
             const relevantRestaurants = (allRestaurants || []).filter(item => {
-                return currentCity === 'all' || item.city === currentCity;
+                return activeCity === 'all' || item.city === activeCity;
             }).slice(0, 80);
 
             const restaurantsContext = relevantRestaurants.map((item, idx) => {
                 const deliveryOptions = [];
                 if (item.grabUrl) deliveryOptions.push("GrabFood");
                 if (item.foodpandaUrl) deliveryOptions.push("Foodpanda");
-                const deliveryText = deliveryOptions.length > 0 ? `外送支援: ${deliveryOptions.join(', ')}` : "無配合外送";
+                const deliveryText = deliveryOptions.length > 0 ? `外送支援: ${deliveryOptions.join(', ')}` : "無外送";
 
                 const catDesc = catMap[item.categoryKey] || item.categoryKey || '精選美食';
                 const localizedName = (item.names && item.names[currentLang]) ? item.names[currentLang] : (item.name || '未知');
@@ -901,7 +1034,7 @@
                     body: JSON.stringify({ 
                         message: msg, 
                         lang: currentLang,
-                        currentCity: currentCity,
+                        currentCity: activeCity,
                         restaurantsContext: restaurantsContext
                     })
                 });
