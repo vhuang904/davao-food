@@ -11,49 +11,59 @@
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #fdfbf7; color: #333; padding-bottom: 50px; }
         
-        /* 頂部 Header */
+        /* 頂部 Header 保持滿版 */
         header { background: #EA580C; color: white; padding: 12px 16px 0 16px; box-shadow: 0 4px 10px rgba(0,0,0,0.08); position: sticky; top: 0; z-index: 100; }
+        .header-inner { max-width: 1200px; margin: 0 auto; }
         .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-        .header-top h1 { font-size: 1.15rem; font-weight: bold; letter-spacing: 0.5px; }
+        .header-top h1 { font-size: 1.25rem; font-weight: bold; letter-spacing: 0.5px; }
         
-        .btn-share { background: rgba(255, 255, 255, 0.2); color: white; border: 1px solid rgba(255, 255, 255, 0.4); padding: 4px 10px; border-radius: 6px; font-size: 0.8rem; font-weight: bold; cursor: pointer; outline: none; }
+        .btn-share { background: rgba(255, 255, 255, 0.2); color: white; border: 1px solid rgba(255, 255, 255, 0.4); padding: 4px 12px; border-radius: 6px; font-size: 0.82rem; font-weight: bold; cursor: pointer; outline: none; }
         .btn-share:active { background: rgba(255, 255, 255, 0.35); }
 
         .controls-row { display: flex; gap: 8px; align-items: center; margin-bottom: 10px; }
-        .app-select { flex: 1; background: rgba(255, 255, 255, 0.18); color: white; border: 1px solid rgba(255, 255, 255, 0.4); padding: 6px 10px; border-radius: 6px; font-size: 0.82rem; outline: none; cursor: pointer; text-overflow: ellipsis; }
+        .app-select { flex: 1; max-width: 250px; background: rgba(255, 255, 255, 0.18); color: white; border: 1px solid rgba(255, 255, 255, 0.4); padding: 6px 10px; border-radius: 6px; font-size: 0.85rem; outline: none; cursor: pointer; text-overflow: ellipsis; }
         .app-select option { color: #333; background: white; }
 
         /* 即時搜尋框容器 */
-        .search-container { position: relative; margin-bottom: 10px; display: flex; align-items: center; }
-        .search-input { width: 100%; background: #ffffff; color: #292524; border: 1px solid #fed7aa; border-radius: 22px; padding: 8px 36px 8px 36px; font-size: 0.85rem; outline: none; box-shadow: 0 2px 6px rgba(0,0,0,0.06); transition: all 0.2s; }
+        .search-container { position: relative; margin-bottom: 10px; display: flex; align-items: center; max-width: 600px; }
+        .search-input { width: 100%; background: #ffffff; color: #292524; border: 1px solid #fed7aa; border-radius: 22px; padding: 8px 36px 8px 36px; font-size: 0.88rem; outline: none; box-shadow: 0 2px 6px rgba(0,0,0,0.06); transition: all 0.2s; }
         .search-input:focus { border-color: #ea580c; box-shadow: 0 2px 10px rgba(234, 88, 12, 0.2); }
         .search-icon { position: absolute; left: 12px; color: #ea580c; font-size: 0.85rem; pointer-events: none; }
         .search-clear-btn { position: absolute; right: 10px; background: #e7e5e4; border: none; width: 20px; height: 20px; border-radius: 50%; color: #78716c; font-size: 0.72rem; cursor: pointer; display: none; align-items: center; justify-content: center; line-height: 1; }
         .search-clear-btn:active { background: #d6d3d1; }
 
         /* 三欄式主導覽 Tab 切換 */
-        .main-tabs { display: flex; border-top: 1px solid rgba(255,255,255,0.2); }
-        .main-tab-btn { flex: 1; text-align: center; padding: 10px 4px; font-weight: bold; font-size: 0.85rem; color: rgba(255,255,255,0.75); border: none; background: none; cursor: pointer; border-bottom: 3px solid transparent; white-space: nowrap; }
+        .main-tabs { display: flex; border-top: 1px solid rgba(255,255,255,0.2); max-width: 600px; }
+        .main-tab-btn { flex: 1; text-align: center; padding: 10px 4px; font-weight: bold; font-size: 0.88rem; color: rgba(255,255,255,0.75); border: none; background: none; cursor: pointer; border-bottom: 3px solid transparent; white-space: nowrap; }
         .main-tab-btn.active { color: white; border-bottom: 3px solid white; }
 
         /* 分類列與二級篩選 Bar */
-        .category-bar, .sub-filter-bar { display: none; gap: 8px; overflow-x: auto; padding: 10px 16px; background: #ffffff; margin: 0 -16px; border-bottom: 1px solid #f1ece1; }
+        .category-bar, .sub-filter-bar { display: none; gap: 8px; overflow-x: auto; padding: 10px 0; background: #ffffff; border-bottom: 1px solid #f1ece1; }
         .category-bar::-webkit-scrollbar, .sub-filter-bar::-webkit-scrollbar { display: none; }
         .cat-chip { padding: 6px 14px; border-radius: 18px; font-size: 0.85rem; background: #f5f2eb; color: #666; white-space: nowrap; border: none; cursor: pointer; transition: all 0.2s; }
         .cat-chip.active { background: #EA580C; color: white; font-weight: bold; }
 
-        /* 卡片與容器 */
-        .container { max-width: 600px; margin: 0 auto; padding: 16px; }
+        /* 響應式容器與電腦版網格排版 (Responsive Grid) */
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px 16px; }
         .tab-content { display: none; }
         .tab-content.active { display: block; }
 
-        .search-results-info { font-size: 0.8rem; color: #78716c; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; }
+        /* 電腦版自動網格：手機 1 欄、平板 2 欄、電腦 3 欄 */
+        .grid-layout { display: grid; grid-template-columns: 1fr; gap: 20px; }
+        @media (min-width: 768px) {
+            .grid-layout { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (min-width: 1024px) {
+            .grid-layout { grid-template-columns: repeat(3, 1fr); }
+        }
 
-        .card { background: white; border-radius: 14px; overflow: hidden; margin-bottom: 20px; box-shadow: 0 4px 14px rgba(0,0,0,0.05); border: 1px solid #f0eae1; }
-        .card > img { width: 100%; height: 200px; object-fit: cover; background: #f7f5f0; display: block; }
+        .search-results-info { font-size: 0.85rem; color: #78716c; margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; grid-column: 1 / -1; }
+
+        /* 卡片設計 */
+        .card { background: white; border-radius: 14px; overflow: hidden; box-shadow: 0 4px 14px rgba(0,0,0,0.05); border: 1px solid #f0eae1; display: flex; flex-direction: column; height: 100%; }
 
         /* 多圖輪播容器 */
-        .carousel-container { position: relative; width: 100%; height: 210px; background: #f7f5f0; overflow: hidden; }
+        .carousel-container { position: relative; width: 100%; height: 210px; background: #f7f5f0; overflow: hidden; flex-shrink: 0; }
         .carousel-track { display: flex; width: 100%; height: 100%; overflow-x: auto; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; }
         .carousel-track::-webkit-scrollbar { display: none; }
         .carousel-slide { flex: 0 0 100%; width: 100%; height: 100%; scroll-snap-align: start; position: relative; }
@@ -64,7 +74,7 @@
         .dot.active { background: #ffffff; width: 14px; border-radius: 4px; }
         .photo-tag { position: absolute; top: 8px; right: 8px; background: rgba(0, 0, 0, 0.6); color: white; font-size: 0.7rem; padding: 3px 8px; border-radius: 6px; z-index: 10; backdrop-blur: 2px; }
 
-        .card-body { padding: 16px; }
+        .card-body { padding: 16px; display: flex; flex-direction: column; flex: 1; }
         
         .badge-group { display: flex; gap: 6px; margin-bottom: 10px; flex-wrap: wrap; align-items: center; }
         .badge { display: inline-flex; align-items: center; background: #fff7ed; color: #c2410c; font-size: 0.75rem; padding: 3px 8px; border-radius: 6px; font-weight: 600; border: 1px solid #ffedd5; }
@@ -73,66 +83,55 @@
         .badge-brand { background: #fefce8; color: #a16207; border-color: #fef08a; }
         .badge-expiry { background: #f0fdf4; color: #15803d; border-color: #bbf7d0; font-weight: bold; }
 
-        /* 營業狀態徽章 */
+        /* 營業狀態與評分徽章 */
         .badge-open { background: #ecfdf5; color: #047857; border-color: #a7f3d0; font-weight: bold; }
         .badge-closed { background: #fef2f2; color: #b91c1c; border-color: #fecaca; font-weight: bold; }
-
-        /* Google 權威真實評分與大V精選徽章 */
         .badge-google-rating { background: #fef3c7; color: #92400e; border-color: #fde68a; font-weight: bold; gap: 4px; }
         .badge-elite-choice { background: #fff1f2; color: #e11d48; border-color: #fecdd3; font-weight: bold; gap: 4px; }
 
-        .card-title { font-size: 1.25rem; font-weight: 800; margin-bottom: 6px; color: #1c1917; line-height: 1.35; }
-        .card-desc { font-size: 0.88rem; color: #57534e; line-height: 1.5; margin-bottom: 12px; }
-        .info-item { font-size: 0.85rem; color: #78716c; margin-bottom: 6px; display: flex; align-items: flex-start; gap: 8px; line-height: 1.4; }
-        
-        /* 營業時間自適應排版 */
-        .hours-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; width: 100%; }
-        .hours-text { flex: 1; word-break: break-word; }
-        .hours-dropdown { white-space: nowrap; color: #ea580c; font-weight: bold; cursor: pointer; text-decoration: underline; font-size: 0.8rem; shrink: 0; padding-top: 1px; }
-        
-        .weekly-hours-box { display: none; background: #faf8f5; border: 1px solid #eee8dd; border-radius: 8px; padding: 10px 12px; margin-top: 8px; font-size: 0.8rem; color: #57534e; line-height: 1.6; }
-        .weekly-hours-box.show { display: block; }
-        .weekly-hours-box div.today { font-weight: bold; color: #ea580c; }
+        .card-title { font-size: 1.15rem; font-weight: 800; margin-bottom: 6px; color: #1c1917; line-height: 1.35; }
+        .card-desc { font-size: 0.85rem; color: #57534e; line-height: 1.5; margin-bottom: 12px; flex: 1; }
+        .info-item { font-size: 0.82rem; color: #78716c; margin-bottom: 6px; display: flex; align-items: flex-start; gap: 8px; line-height: 1.4; }
 
-        .btn-group { display: flex; gap: 6px; margin-top: 14px; flex-wrap: wrap; }
-        .btn { flex: 1; min-width: calc(50% - 3px); padding: 10px 6px; border-radius: 8px; font-size: 0.82rem; font-weight: bold; text-align: center; text-decoration: none; border: none; cursor: pointer; }
+        .btn-group { display: flex; gap: 6px; margin-top: auto; padding-top: 10px; flex-wrap: wrap; }
+        .btn { flex: 1; min-width: calc(50% - 3px); padding: 9px 6px; border-radius: 8px; font-size: 0.8rem; font-weight: bold; text-align: center; text-decoration: none; border: none; cursor: pointer; }
         .btn-primary { background: #EA580C; color: white; }
         .btn-secondary { background: #f5f2eb; color: #44403c; }
         .btn-grab { background: #00B14F; color: white; }
         .btn-foodpanda { background: #D70F64; color: white; }
         
-        #loading { text-align: center; padding: 40px; color: #a8a29e; }
+        #loading { text-align: center; padding: 40px; color: #a8a29e; grid-column: 1 / -1; }
 
-        /* 用戶評分區塊 */
-        .card-forum-box { background: #faf8f5; border-radius: 12px; padding: 10px 14px; margin-top: 14px; border: 1px solid #ede5d8; }
+        /* 用戶評分與留言區 */
+        .card-forum-box { background: #faf8f5; border-radius: 12px; padding: 10px 14px; margin-top: 12px; border: 1px solid #ede5d8; }
         .rating-header { display: flex; justify-content: space-between; align-items: center; min-height: 28px; }
         .rating-left { display: flex; align-items: baseline; gap: 6px; }
-        .rating-label { font-size: 0.82rem; font-weight: bold; color: #78716c; }
-        .rating-score-num { font-size: 0.95rem; font-weight: 800; color: #ea580c; }
-        .rating-count-hint { font-size: 0.72rem; color: #a8a29e; }
+        .rating-label { font-size: 0.8rem; font-weight: bold; color: #78716c; }
+        .rating-score-num { font-size: 0.9rem; font-weight: 800; color: #ea580c; }
+        .rating-count-hint { font-size: 0.7rem; color: #a8a29e; }
         
         .star-picker { display: flex; gap: 3px; cursor: pointer; }
-        .star-picker span { font-size: 1.15rem; color: #e2dcd2; transition: color 0.15s; line-height: 1; }
+        .star-picker span { font-size: 1.1rem; color: #e2dcd2; transition: color 0.15s; line-height: 1; }
         .star-picker span.active { color: #f59e0b; }
         
-        .btn-toggle-forum { background: none; border: none; color: #57534e; font-size: 0.8rem; font-weight: 600; cursor: pointer; padding: 8px 0 2px 0; width: 100%; text-align: left; display: flex; justify-content: space-between; align-items: center; border-top: 1px dashed #e7dfd3; margin-top: 8px; }
+        .btn-toggle-forum { background: none; border: none; color: #57534e; font-size: 0.78rem; font-weight: 600; cursor: pointer; padding: 8px 0 2px 0; width: 100%; text-align: left; display: flex; justify-content: space-between; align-items: center; border-top: 1px dashed #e7dfd3; margin-top: 8px; }
         .btn-toggle-forum:hover { color: #ea580c; }
 
         .forum-content { display: none; margin-top: 10px; padding-top: 10px; border-top: 1px solid #ede5d8; }
         .forum-content.show { display: block; }
 
-        .mini-comment-form { margin-bottom: 12px; background: #ffffff; padding: 10px; border-radius: 8px; border: 1px solid #eee8dd; }
+        .mini-comment-form { margin-bottom: 10px; background: #ffffff; padding: 10px; border-radius: 8px; border: 1px solid #eee8dd; }
         .mini-form-row { display: flex; gap: 6px; margin-bottom: 6px; }
-        .mini-input { flex: 1; padding: 6px 8px; border-radius: 6px; border: 1px solid #e7e5e4; font-size: 0.8rem; outline: none; }
-        .mini-select { width: 90px; padding: 6px 4px; border-radius: 6px; border: 1px solid #e7e5e4; font-size: 0.78rem; outline: none; }
-        .mini-textarea { width: 100%; padding: 6px 8px; border-radius: 6px; border: 1px solid #e7e5e4; font-size: 0.8rem; outline: none; resize: vertical; min-height: 50px; margin-bottom: 6px; }
-        .btn-mini-post { width: 100%; background: #EA580C; color: white; padding: 6px; border-radius: 6px; font-weight: bold; border: none; cursor: pointer; font-size: 0.8rem; }
+        .mini-input { flex: 1; padding: 5px 8px; border-radius: 6px; border: 1px solid #e7e5e4; font-size: 0.78rem; outline: none; }
+        .mini-select { width: 85px; padding: 5px 4px; border-radius: 6px; border: 1px solid #e7e5e4; font-size: 0.75rem; outline: none; }
+        .mini-textarea { width: 100%; padding: 6px 8px; border-radius: 6px; border: 1px solid #e7e5e4; font-size: 0.78rem; outline: none; resize: vertical; min-height: 45px; margin-bottom: 6px; }
+        .btn-mini-post { width: 100%; background: #EA580C; color: white; padding: 6px; border-radius: 6px; font-weight: bold; border: none; cursor: pointer; font-size: 0.78rem; }
 
-        .review-item { font-size: 0.82rem; color: #57534e; padding: 8px 0; border-bottom: 1px solid #f5f2eb; }
+        .review-item { font-size: 0.8rem; color: #57534e; padding: 6px 0; border-bottom: 1px solid #f5f2eb; }
         .review-item:last-child { border-bottom: none; }
         .review-user { font-weight: bold; color: #1c1917; }
-        .review-time { font-size: 0.72rem; color: #a8a29e; float: right; }
-        .review-text { margin-top: 4px; color: #44403c; line-height: 1.35; }
+        .review-time { font-size: 0.7rem; color: #a8a29e; float: right; }
+        .review-text { margin-top: 3px; color: #44403c; line-height: 1.35; }
 
         /* 3D 角色頭像懸浮 AI 管家按鈕 */
         .chat-fab { position: fixed; bottom: 24px; right: 20px; width: 56px; height: 56px; border-radius: 50%; background: #ffffff; border: 2px solid #ea580c; box-shadow: 0 6px 20px rgba(234, 88, 12, 0.45); overflow: hidden; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 1000; transition: transform 0.2s, box-shadow 0.2s; }
@@ -163,57 +162,59 @@
 <body>
 
     <header>
-        <div class="header-top">
-            <h1 id="app-title">📍 大V的旅遊窩</h1>
-            <button class="btn-share" id="share-btn" onclick="shareApp()">📤 分享</button>
-        </div>
-        
-        <div class="controls-row">
-            <select class="app-select" id="city-select" onchange="changeCity(this.value)">
-                <option value="all">全部城市 (All Cities)</option>
-                <option value="davao">達沃 (Davao)</option>
-                <option value="manila">馬尼拉 (Manila)</option>
-                <option value="cebu">宿霧 (Cebu)</option>
-            </select>
-            <select class="app-select" id="lang-select" onchange="changeLanguage(this.value)">
-                <option value="zh-TW">繁體中文</option>
-                <option value="en">English</option>
-                <option value="tl">Tagalog</option>
-            </select>
-        </div>
+        <div class="header-inner">
+            <div class="header-top">
+                <h1 id="app-title">📍 大V的旅遊窩</h1>
+                <button class="btn-share" id="share-btn" onclick="shareApp()">📤 分享</button>
+            </div>
+            
+            <div class="controls-row">
+                <select class="app-select" id="city-select" onchange="changeCity(this.value)">
+                    <option value="all">全部城市 (All Cities)</option>
+                    <option value="davao">達沃 (Davao)</option>
+                    <option value="manila">馬尼拉 (Manila)</option>
+                    <option value="cebu">宿霧 (Cebu)</option>
+                </select>
+                <select class="app-select" id="lang-select" onchange="changeLanguage(this.value)">
+                    <option value="zh-TW">繁體中文</option>
+                    <option value="en">English</option>
+                    <option value="tl">Tagalog</option>
+                </select>
+            </div>
 
-        <!-- 即時搜尋框 -->
-        <div class="search-container" id="search-container">
-            <i class="fa-solid fa-magnifying-glass search-icon"></i>
-            <input type="text" class="search-input" id="search-input" placeholder="搜尋燒肉、火鍋、景點、演唱會..." oninput="handleSearchInput(this.value)">
-            <button class="search-clear-btn" id="search-clear-btn" onclick="clearSearch()" title="清除">✕</button>
-        </div>
+            <!-- 即時搜尋框 -->
+            <div class="search-container" id="search-container">
+                <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                <input type="text" class="search-input" id="search-input" placeholder="搜尋燒肉、火鍋、景點、演唱會..." oninput="handleSearchInput(this.value)">
+                <button class="search-clear-btn" id="search-clear-btn" onclick="clearSearch()" title="清除">✕</button>
+            </div>
 
-        <!-- 三欄式主導覽 Tab 切換 -->
-        <div class="main-tabs">
-            <button class="main-tab-btn active" id="tab-btn-map" onclick="switchMainTab('map')">🗺️ 美食地圖</button>
-            <button class="main-tab-btn" id="tab-btn-attraction" onclick="switchMainTab('attraction')">🏛️ 景點導覽</button>
-            <button class="main-tab-btn" id="tab-btn-news" onclick="switchMainTab('news')">📰 城市動態</button>
-        </div>
-        
-        <!-- 美食分類列 -->
-        <div class="category-bar" id="category-bar"></div>
+            <!-- 三欄式主導覽 Tab 切換 -->
+            <div class="main-tabs">
+                <button class="main-tab-btn active" id="tab-btn-map" onclick="switchMainTab('map')">🗺️ 美食地圖</button>
+                <button class="main-tab-btn" id="tab-btn-attraction" onclick="switchMainTab('attraction')">🏛️ 景點導覽</button>
+                <button class="main-tab-btn" id="tab-btn-news" onclick="switchMainTab('news')">📰 城市動態</button>
+            </div>
+            
+            <!-- 美食分類列 -->
+            <div class="category-bar" id="category-bar"></div>
 
-        <!-- 景點二級分類 Bar -->
-        <div class="sub-filter-bar" id="attraction-filter-bar">
-            <button class="cat-chip active" id="att-sub-all" onclick="filterAttractionCat('all')">全部景點</button>
-            <button class="cat-chip" id="att-sub-history" onclick="filterAttractionCat('history')">🏛️ 歷史文化</button>
-            <button class="cat-chip" id="att-sub-nature" onclick="filterAttractionCat('nature')">🌳 自然海灘</button>
-            <button class="cat-chip" id="att-sub-shopping" onclick="filterAttractionCat('shopping')">🛒 購物商場</button>
-        </div>
+            <!-- 景點二級分類 Bar -->
+            <div class="sub-filter-bar" id="attraction-filter-bar">
+                <button class="cat-chip active" id="att-sub-all" onclick="filterAttractionCat('all')">全部景點</button>
+                <button class="cat-chip" id="att-sub-history" onclick="filterAttractionCat('history')">🏛️ 歷史文化</button>
+                <button class="cat-chip" id="att-sub-nature" onclick="filterAttractionCat('nature')">🌳 自然海灘</button>
+                <button class="cat-chip" id="att-sub-shopping" onclick="filterAttractionCat('shopping')">🛒 購物商場</button>
+            </div>
 
-        <!-- 城市動態二級篩選 Bar -->
-        <div class="sub-filter-bar" id="news-filter-bar">
-            <button class="cat-chip active" id="news-sub-all" onclick="filterNewsType('all')">全部動態</button>
-            <button class="cat-chip" id="news-sub-promo" onclick="filterNewsType('promo')">🔥 限時優惠</button>
-            <button class="cat-chip" id="news-sub-new" onclick="filterNewsType('new')">✨ 新開餐廳</button>
-            <button class="cat-chip" id="news-sub-event" onclick="filterNewsType('event')">🎵 演唱會與活動</button>
-            <button class="cat-chip" id="news-sub-movie" onclick="filterNewsType('movie')">🎬 電影與娛樂</button>
+            <!-- 城市動態二級篩選 Bar -->
+            <div class="sub-filter-bar" id="news-filter-bar">
+                <button class="cat-chip active" id="news-sub-all" onclick="filterNewsType('all')">全部動態</button>
+                <button class="cat-chip" id="news-sub-promo" onclick="filterNewsType('promo')">🔥 限時優惠</button>
+                <button class="cat-chip" id="news-sub-new" onclick="filterNewsType('new')">✨ 新開餐廳</button>
+                <button class="cat-chip" id="news-sub-event" onclick="filterNewsType('event')">🎵 演唱會與活動</button>
+                <button class="cat-chip" id="news-sub-movie" onclick="filterNewsType('movie')">🎬 電影與娛樂</button>
+            </div>
         </div>
     </header>
 
@@ -222,27 +223,27 @@
         <div class="container">
             <div id="search-results-info" class="search-results-info" style="display:none;"></div>
             <div id="loading">載入最新美食與旅遊清單中...</div>
-            <div id="restaurant-list"></div>
+            <div id="restaurant-list" class="grid-layout"></div>
         </div>
     </div>
 
     <!-- 景點導覽 Tab 內容 -->
     <div id="main-tab-attraction" class="tab-content">
         <div class="container">
-            <div id="attraction-list">載入景點導覽中...</div>
+            <div id="attraction-list" class="grid-layout">載入景點導覽中...</div>
         </div>
     </div>
 
     <!-- 城市動態 Tab 內容 -->
     <div id="main-tab-news" class="tab-content">
         <div class="container">
-            <div id="news-list">載入城市動態中...</div>
+            <div id="news-list" class="grid-layout">載入城市動態中...</div>
         </div>
     </div>
 
     <!-- 3D 角色頭像懸浮 AI 管家按鈕 -->
     <button class="chat-fab" id="chat-fab" onclick="toggleChat()" title="大V旅遊窩管家">
-        <img src="ai-avatar.png" alt="AI 管家" onerror="this.src='https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop'">
+        <img src="ai-avatar.png" alt="AI 管家" onerror="this.src='ai-avatar.jpg'">
     </button>
 
     <!-- AI 旅遊窩管家彈窗 -->
@@ -250,7 +251,7 @@
         <div class="chat-header">
             <div class="chat-header-info">
                 <div class="chat-avatar-small">
-                    <img src="ai-avatar.png" alt="AI" onerror="this.src='https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop'">
+                    <img src="ai-avatar.png" alt="AI" onerror="this.src='ai-avatar.jpg'">
                 </div>
                 <div>
                     <h3 id="chat-header-title">大V旅遊窩管家</h3>
@@ -295,13 +296,11 @@
         const categoryImagePools = {
             chinese: [
                 "https://images.unsplash.com/photo-1563245372-f21724e3856d?w=800&auto=format&fit=crop",
-                "https://images.unsplash.com/photo-1541696432-82c6da8ce7bf?w=800&auto=format&fit=crop",
-                "https://images.unsplash.com/photo-1525755662778-989d0524087e?w=800&auto=format&fit=crop"
+                "https://images.unsplash.com/photo-1541696432-82c6da8ce7bf?w=800&auto=format&fit=crop"
             ],
             japanese_korean: [
                 "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=800&auto=format&fit=crop",
-                "https://images.unsplash.com/photo-1579871494447-9811cf80d66c?w=800&auto=format&fit=crop",
-                "https://images.unsplash.com/photo-1553621042-f6e147245754?w=800&auto=format&fit=crop"
+                "https://images.unsplash.com/photo-1579871494447-9811cf80d66c?w=800&auto=format&fit=crop"
             ],
             fast_food: [
                 "https://images.unsplash.com/photo-1550547660-d9450f859349?w=800&auto=format&fit=crop",
@@ -321,8 +320,15 @@
             ],
             attraction: [
                 "https://images.unsplash.com/photo-1518684079-3c830dcef090?w=800&auto=format&fit=crop",
-                "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&auto=format&fit=crop",
-                "https://images.unsplash.com/photo-1569263979104-865ab9cd8d5c?w=800&auto=format&fit=crop"
+                "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&auto=format&fit=crop"
+            ],
+            event: [
+                "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=800&auto=format&fit=crop",
+                "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=800&auto=format&fit=crop"
+            ],
+            movie: [
+                "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=800&auto=format&fit=crop",
+                "https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=800&auto=format&fit=crop"
             ]
         };
 
@@ -344,8 +350,8 @@
                 shareBtn: '📤 分享',
                 shareTitle: '大V的旅遊窩',
                 shareText: '推薦給你這個菲律賓美食旅遊指南與最新活動動態！',
-                shareSuccess: '已複製地圖連結！可以貼上傳給朋友囉。',
-                loading: '載入最新美食旅遊清單中...',
+                shareSuccess: '已複製連結！',
+                loading: '載入最新資料中...',
                 noData: '目前沒有找到對應的資料',
                 noAttractionData: '目前沒有此類別的景點資料',
                 noNewsData: '目前沒有此類別的活動或促銷資訊',
@@ -355,25 +361,21 @@
                 foodpanda: '🌸 Foodpanda',
                 noPhone: '無電話資訊',
                 noDesc: '暫無詳細介紹資訊。',
-                rateSuccess: '感謝評分！您的評分已成功記錄。',
+                rateSuccess: '感謝評分！',
                 commentSuccess: '留言發表成功！',
                 emptyCommentAlert: '請輸入暱稱與留言內容！',
                 toggleForumText: '用戶評分與討論',
                 localScoreLabel: '用戶評分',
                 postBtnText: '發表評語',
-                slideHint: '👈 左右滑動看多圖',
+                slideHint: '👈 左右滑動',
                 ratingsCountText: '則',
-                openStatus: '🟢 營業中 / 開放中',
-                closedStatus: '🔴 已打烊 / 休息中',
-                noHoursInfo: '開放時間請洽現場',
-                todayHours: '今日時間',
-                viewWeekly: '查看一週',
-                hideWeekly: '收合',
+                openStatus: '🟢 營業中',
+                closedStatus: '🔴 已打烊',
                 eliteChoice: '🌟 大V精選',
-                searchPlaceholder: '搜尋燒肉、火鍋、景點、演唱會、Jollibee...',
+                searchPlaceholder: '搜尋燒肉、火鍋、景點、演唱會...',
                 searchResultText: '找到 {count} 筆符合「{keyword}」的結果',
-                clearSearch: '清除搜尋',
-                cities: { all: '全部城市', davao: '達沃', manila: '馬尼拉', cebu: '宿霧' },
+                clearSearch: '清除',
+                cities: { all: '全部城市', davao: '達沃', manila: '馬尼拉', cebu: '宿霧', boracay: '長灘島', palawan: '巴拉望', bohol: '薄荷島' },
                 cats: {
                     all: '全部',
                     chinese: '中餐',
@@ -385,8 +387,7 @@
                 },
                 chatHeader: '大V旅遊窩管家',
                 chatWelcome: '嗨！我是大V旅遊窩管家 👋 歡迎來到菲律賓！有任何餐廳推薦、必去景點、演唱會活動或外送疑問，隨時問我喔！',
-                chatPlaceholder: '問點什麼吧（例：達沃有什麼推薦景點？）...',
-                chatSend: '發送',
+                chatPlaceholder: '問點什麼吧...',
                 chatThinking: '管家正在思考中... ⏳',
                 chatError: '連線異常，請稍候再試。'
             },
@@ -403,40 +404,36 @@
                 newsSubPromo: '🔥 Deals',
                 newsSubNew: '✨ New Spots',
                 newsSubEvent: '🎵 Concerts & Events',
-                newsSubMovie: '🎬 Movies & Entertainment',
+                newsSubMovie: '🎬 Movies',
                 shareBtn: '📤 Share',
                 shareTitle: "Big V's Travel Nest",
-                shareText: 'Check out this awesome Philippines travel guide, restaurants & events!',
-                shareSuccess: 'Link copied to clipboard!',
-                loading: 'Loading travel guides...',
+                shareText: 'Check out this awesome Philippines travel guide & events!',
+                shareSuccess: 'Link copied!',
+                loading: 'Loading...',
                 noData: 'No items found',
-                noAttractionData: 'No attractions found for this category.',
+                noAttractionData: 'No attractions found.',
                 noNewsData: 'No news or events found.',
                 call: 'Call',
                 map: 'Map',
                 grab: '🟢 GrabFood',
                 foodpanda: '🌸 Foodpanda',
-                noPhone: 'No Phone Info',
+                noPhone: 'No Phone',
                 noDesc: 'No description available.',
-                rateSuccess: 'Thank you! Your rating has been recorded.',
-                commentSuccess: 'Review posted successfully!',
-                emptyCommentAlert: 'Please enter both nickname and comment!',
-                toggleForumText: 'User Reviews & Tips',
+                rateSuccess: 'Thank you!',
+                commentSuccess: 'Review posted!',
+                emptyCommentAlert: 'Please enter nickname and comment!',
+                toggleForumText: 'User Reviews',
                 localScoreLabel: 'User Rating',
-                postBtnText: 'Submit Review',
-                slideHint: '👈 Swipe to view more photos',
+                postBtnText: 'Submit',
+                slideHint: '👈 Swipe',
                 ratingsCountText: 'reviews',
-                openStatus: '🟢 Open Now',
+                openStatus: '🟢 Open',
                 closedStatus: '🔴 Closed',
-                noHoursInfo: 'Hours may vary',
-                todayHours: 'Today',
-                viewWeekly: 'Weekly Hours',
-                hideWeekly: 'Hide',
                 eliteChoice: '🌟 Big V Choice',
-                searchPlaceholder: 'Search BBQ, Hotpot, Attraction, Concert...',
-                searchResultText: 'Found {count} results matching "{keyword}"',
+                searchPlaceholder: 'Search BBQ, Attraction, Concert...',
+                searchResultText: 'Found {count} results',
                 clearSearch: 'Clear',
-                cities: { all: 'All Cities', davao: 'Davao', manila: 'Manila', cebu: 'Cebu' },
+                cities: { all: 'All Cities', davao: 'Davao', manila: 'Manila', cebu: 'Cebu', boracay: 'Boracay', palawan: 'Palawan', bohol: 'Bohol' },
                 cats: {
                     all: 'All',
                     chinese: 'Chinese',
@@ -447,11 +444,10 @@
                     filipino: 'Filipino'
                 },
                 chatHeader: "Big V's AI Concierge",
-                chatWelcome: 'Hi! I am your Travel Nest Concierge 👋 Ask me anything about local attractions, restaurants, concerts or delivery!',
+                chatWelcome: 'Hi! I am your Travel Nest Concierge 👋 Ask me anything!',
                 chatPlaceholder: 'Ask a question...',
-                chatSend: 'Send',
                 chatThinking: 'Thinking... ⏳',
-                chatError: 'Connection error, please try again later.'
+                chatError: 'Connection error.'
             },
             'tl': {
                 title: '📍 Tahanan ng Paglalakbay ni Big V',
@@ -460,61 +456,56 @@
                 tabNews: '📰 Balita at Kaganapan',
                 attSubAll: 'Lahat',
                 attSubHistory: '🏛️ Kasaysayan',
-                attSubNature: '🌳 Kalikasan at Beach',
+                attSubNature: '🌳 Kalikasan',
                 attSubShopping: '🛒 Pamimili',
                 newsSubAll: 'Lahat',
                 newsSubPromo: '🔥 Mga Promo',
                 newsSubNew: '✨ Bagong Bukas',
-                newsSubEvent: '🎵 Konsiyerto at Events',
-                newsSubMovie: '🎬 Sine at Libangan',
+                newsSubEvent: '🎵 Konsiyerto',
+                newsSubMovie: '🎬 Sine',
                 shareBtn: '📤 Ibahagi',
                 shareTitle: 'Tahanan ng Paglalakbay ni Big V',
-                shareText: 'Subukan ang gabay sa paglilibot at kainan sa Pilipinas!',
+                shareText: 'Subukan ang gabay sa Pilipinas!',
                 shareSuccess: 'Na-kopyang link!',
-                loading: 'Kina-karga ang mga gabay...',
+                loading: 'Kina-karga...',
                 noData: 'Walang nahanap',
                 noAttractionData: 'Walang nahanap na atraksyon.',
-                noNewsData: 'Walang nahanap na balita o kaganapan.',
+                noNewsData: 'Walang nahanap na balita.',
                 call: 'Tawagan',
                 map: 'Mapa',
                 grab: '🟢 GrabFood',
                 foodpanda: '🌸 Foodpanda',
                 noPhone: 'Walang Telepono',
                 noDesc: 'Walang paglalarawan.',
-                rateSuccess: 'Salamat! Na-itala na ang iyong rating.',
-                commentSuccess: 'Na-ipost na ang komento!',
-                emptyCommentAlert: 'Mangyaring ilagay ang pangalan at komento!',
-                toggleForumText: 'Komento ng Gumagamit at Tips',
-                localScoreLabel: 'Rating ng Gumagamit',
+                rateSuccess: 'Salamat!',
+                commentSuccess: 'Na-ipost na!',
+                emptyCommentAlert: 'Ilagay ang pangalan at komento!',
+                toggleForumText: 'Komento',
+                localScoreLabel: 'Rating',
                 postBtnText: 'I-post',
-                slideHint: '👈 I-swipe para sa iba pang litrato',
+                slideHint: '👈 I-swipe',
                 ratingsCountText: 'reviews',
-                openStatus: '🟢 Bukas Ngayon',
+                openStatus: '🟢 Bukas',
                 closedStatus: '🔴 Sarado',
-                noHoursInfo: 'Oras ay maaaring magbago',
-                todayHours: 'Ngayong Araw',
-                viewWeekly: 'Lahat ng Oras',
-                hideWeekly: 'Itago',
                 eliteChoice: '🌟 Pinili ni Big V',
-                searchPlaceholder: 'Maghanap ng BBQ, Atraksyon, Konsiyerto...',
-                searchResultText: 'Nahanap ang {count} para sa "{keyword}"',
+                searchPlaceholder: 'Maghanap...',
+                searchResultText: 'Nahanap ang {count}',
                 clearSearch: 'Linisin',
-                cities: { all: 'Lahat ng Lungsod', davao: 'Davao', manila: 'Manila', cebu: 'Cebu' },
+                cities: { all: 'Lahat', davao: 'Davao', manila: 'Manila', cebu: 'Cebu', boracay: 'Boracay', palawan: 'Palawan', bohol: 'Bohol' },
                 cats: {
                     all: 'Lahat',
                     chinese: 'Chinese',
-                    japanese_korean: 'Hapon / Koreano',
+                    japanese_korean: 'Hapon/Koreano',
                     fast_food: 'Fast Food',
-                    bbq_seafood: 'Inihaw at Seafood',
-                    coffee_drinks: 'Kape at Inumin',
+                    bbq_seafood: 'Inihaw',
+                    coffee_drinks: 'Kape',
                     filipino: 'Filipino'
                 },
-                chatHeader: 'AI Katulong ni Big V',
-                chatWelcome: 'Kamusta! Ako ang iyong Travel Nest Concierge 👋 Magtanong ng anuman tungkol sa mga pasyalan, kainan, o konsiyerto!',
+                chatHeader: 'AI Katulong',
+                chatWelcome: 'Kamusta! Magtanong ng anuman!',
                 chatPlaceholder: 'Magtanong dito...',
-                chatSend: 'Ipadala',
                 chatThinking: 'Nag-iisip... ⏳',
-                chatError: 'Nagkaroon ng problema sa koneksyon.'
+                chatError: 'May problema sa koneksyon.'
             }
         };
 
@@ -532,68 +523,37 @@
         let itemRatings = JSON.parse(localStorage.getItem('ph_item_ratings')) || {};
         let resComments = JSON.parse(localStorage.getItem('ph_res_comments')) || {};
 
-        // 智慧同義詞對照庫
         const SYNONYM_MAP = {
-            '燒肉': ['bbq', 'barbecue', 'grill', 'yakiniku', 'samgyupsal', 'korean bbq', '烤肉', 'japanese_korean', 'bbq_seafood'],
-            '烤肉': ['bbq', 'barbecue', 'grill', 'yakiniku', 'samgyupsal', 'korean bbq', '燒肉', 'japanese_korean', 'bbq_seafood'],
+            '燒肉': ['bbq', 'barbecue', 'grill', 'yakiniku', 'samgyupsal', '烤肉', 'japanese_korean', 'bbq_seafood'],
+            '烤肉': ['bbq', 'barbecue', 'grill', 'yakiniku', 'samgyupsal', '燒肉', 'japanese_korean', 'bbq_seafood'],
             'bbq': ['燒肉', '烤肉', 'grill', 'barbecue', 'yakiniku', 'samgyupsal', 'japanese_korean', 'bbq_seafood'],
-            '火鍋': ['hotpot', 'hot pot', 'shabu', 'sukiyaki', 'tong yang', 'buffet', '吃到飽'],
-            'hotpot': ['火鍋', 'shabu', 'sukiyaki', 'buffet', 'tong yang'],
-            '海鮮': ['seafood', 'crab', 'shrimp', 'tuna', 'fish', 'lobster', 'prawn', 'kinilaw', 'bbq_seafood'],
+            '火鍋': ['hotpot', 'hot pot', 'shabu', 'sukiyaki', 'buffet', '吃到飽'],
+            'hotpot': ['火鍋', 'shabu', 'sukiyaki', 'buffet'],
+            '海鮮': ['seafood', 'crab', 'shrimp', 'tuna', 'fish', 'lobster', 'prawn', 'bbq_seafood'],
             'seafood': ['海鮮', 'crab', 'shrimp', 'tuna', 'fish', 'bbq_seafood'],
             '生魚片': ['sashimi', 'raw tuna', 'kinilaw', 'tuna', 'japanese'],
             'sashimi': ['生魚片', '刺身', 'kinilaw', 'japanese'],
-            '拉麵': ['ramen', 'noodle', 'noodles', 'japanese'],
-            'ramen': ['拉麵', 'noodles', 'japanese'],
-            '壽司': ['sushi', 'maki', 'roll', 'japanese'],
-            'sushi': ['壽司', 'maki', 'japanese'],
             '咖啡': ['coffee', 'cafe', 'latte', 'espresso', 'tea', 'coffee_drinks'],
             'coffee': ['咖啡', 'cafe', 'tea', 'coffee_drinks'],
-            '奶茶': ['milk tea', 'boba', 'bubble tea', 'tea', 'coffee_drinks'],
             '炸雞': ['fried chicken', 'chicken', 'jollibee', 'kfc', 'fast_food'],
             'chicken': ['炸雞', 'chicken joy', 'jollibee', 'fast_food'],
-            '漢堡': ['burger', 'burgers', 'hamburger', 'fast_food'],
-            'burger': ['漢堡', 'fast_food'],
-            '吃到飽': ['buffet', 'unlimited', 'eat all you can', 'vikings', 'tong yang'],
-            'buffet': ['吃到飽', 'unlimited', 'vikings', 'tong yang'],
-            '烤乳豬': ['lechon', 'crispy pork', 'filipino'],
-            'lechon': ['烤乳豬', 'filipino'],
-            '景點': ['attraction', 'tourist', 'park', 'museum', 'history', 'beach', 'mall', 'history', 'nature', 'shopping'],
             '演唱會': ['concert', 'event', 'music', 'show', 'live'],
             '電影': ['movie', 'cinema', 'film', 'imax']
         };
 
-        function normalizeRestaurantName(name) {
+        function normalizeName(name) {
             if (!name) return '';
-            return name.toLowerCase()
-                       .replace(/\([^)]*\)/g, '')
-                       .replace(/restaurant|cafe|bistro|grill|express/g, '')
-                       .replace(/[^a-z0-9\u4e00-\u9fa5]/g, '')
-                       .trim();
+            return name.toLowerCase().replace(/\([^)]*\)/g, '').replace(/[^a-z0-9\u4e00-\u9fa5]/g, '').trim();
         }
 
-        function deduplicateRestaurants(list) {
+        function deduplicate(list) {
             const uniqueMap = new Map();
             list.forEach(item => {
-                const normName = normalizeRestaurantName(item.name_en || item.name || '');
+                const normName = normalizeName(item.name_en || item.name || '');
                 const city = (item.city || 'davao').toLowerCase();
-                const dedupKey = `${city}_${normName}`;
-
-                if (!uniqueMap.has(dedupKey)) {
-                    uniqueMap.set(dedupKey, item);
-                } else {
-                    const existing = uniqueMap.get(dedupKey);
-                    const score = (r) => {
-                        let s = 0;
-                        if (r.googleRating !== undefined && r.googleRating !== null) s += 50;
-                        if (r.googleReviewCount) s += 20;
-                        if (r.openingHours && r.openingHours.weekdayDescriptions && r.openingHours.weekdayDescriptions.length > 0) s += 20;
-                        if (r.images && r.images.length > 0) s += r.images.length * 2;
-                        return s;
-                    };
-                    if (score(item) > score(existing)) {
-                        uniqueMap.set(dedupKey, item);
-                    }
+                const key = `${city}_${normName}`;
+                if (!uniqueMap.has(key)) {
+                    uniqueMap.set(key, item);
                 }
             });
             return Array.from(uniqueMap.values());
@@ -601,67 +561,57 @@
 
         async function fetchData() {
             try {
-                // 1. 讀取餐廳資料
-                const resSnapshot = await getDocs(collection(db, "restaurants"));
-                const rawRestaurants = [];
-                resSnapshot.forEach((doc) => { rawRestaurants.push(doc.data()); });
-                allRestaurants = deduplicateRestaurants(rawRestaurants);
+                const resSnap = await getDocs(collection(db, "restaurants"));
+                const rawRes = [];
+                resSnap.forEach(doc => rawRes.push(doc.data()));
+                allRestaurants = deduplicate(rawRes);
 
-                // 2. 讀取景點資料
                 try {
-                    const attSnapshot = await getDocs(collection(db, "attractions"));
+                    const attSnap = await getDocs(collection(db, "attractions"));
                     allAttractions = [];
-                    attSnapshot.forEach((doc) => { allAttractions.push(doc.data()); });
+                    attSnap.forEach(doc => allAttractions.push(doc.data()));
                 } catch (e) { allAttractions = []; }
 
                 if (allAttractions.length === 0) {
                     allAttractions = [
-                        { city: 'davao', category: 'nature', name: 'Eden Nature Park & Resort', name_en: 'Eden Nature Park', address: 'Toril, Davao City', phone: '+82 82 295 1020', googleRating: 4.6, googleReviewCount: 1420, description: '位於達沃市山區的超人氣生態度假村，擁有涼爽氣候與豐富的森林步道。', description_zh: '位於達沃市山區的超人氣生態度假村，擁有涼爽氣候與豐富的森林步道。' },
-                        { city: 'davao', category: 'history', name: 'Dajao Museo Dabawenyo', name_en: 'Museo Dabawenyo', address: 'Corazon Aquino St, Davao City', phone: '+82 82 222 6727', googleRating: 4.4, googleReviewCount: 310, description: '展示達沃在地原住民文化與歷史文物的重要博物館。', description_zh: '展示達沃在地原住民文化與歷史文物的重要博物館。' },
-                        { city: 'manila', category: 'history', name: 'Intramuros (Walled City)', name_en: 'Intramuros Manila', address: 'Manila, Metro Manila', phone: '+63 2 8527 3155', googleRating: 4.7, googleReviewCount: 18500, description: '馬尼拉著名的西班牙殖民時期歷史古城，充滿古蹟與聖地牙哥堡。', description_zh: '馬尼拉著名的西班牙殖民時期歷史古城，充滿古蹟與聖地牙哥堡。' },
-                        { city: 'manila', category: 'shopping', name: 'SM Mall of Asia (MOA)', name_en: 'SM Mall of Asia', address: 'Pasay, Metro Manila', phone: '+63 2 8556 0680', googleRating: 4.8, googleReviewCount: 95000, description: '世界級的巨大海濱購物中心，擁有無敵夕陽海景與巨型摩天輪。', description_zh: '世界級的巨大海濱購物中心，擁有無敵夕陽海景與巨型摩天輪。' },
-                        { city: 'cebu', category: 'nature', name: 'Kawasan Falls', name_en: 'Kawasan Falls Badian', address: 'Badian, Cebu', phone: '', googleRating: 4.6, googleReviewCount: 8400, description: '宿霧知名的絕美三層瀑布，湛藍清澈的溪水是溯溪與游泳的天堂。', description_zh: '宿霧知名的絕美三層瀑布，湛藍清澈的溪水是溯溪與游泳的天堂。' }
+                        { city: 'davao', category: 'nature', name: 'Eden Nature Park & Resort', address: 'Toril, Davao City', phone: '+82 82 295 1020', googleRating: 4.6, googleReviewCount: 1420, description: '位於達沃市山區的超人氣生態度假村，擁有涼爽氣候與森林步道。' },
+                        { city: 'manila', category: 'history', name: 'Intramuros (Walled City)', address: 'Manila, Metro Manila', phone: '+63 2 8527 3155', googleRating: 4.7, googleReviewCount: 18500, description: '馬尼拉著名的西班牙殖民時期歷史古城。' },
+                        { city: 'boracay', category: 'nature', name: 'Boracay White Beach', address: 'Boracay Island, Malay', phone: '', googleRating: 4.9, googleReviewCount: 42000, description: '世界聞名的絕美白色沙灘與湛藍海水。' }
                     ];
                 }
 
-                // 3. 讀取新聞與活動資料
                 try {
-                    const newsSnapshot = await getDocs(collection(db, "news"));
+                    const newsSnap = await getDocs(collection(db, "news"));
                     allNews = [];
-                    newsSnapshot.forEach((doc) => { allNews.push(doc.data()); });
+                    newsSnap.forEach(doc => allNews.push(doc.data()));
                 } catch (e) { allNews = []; }
 
                 if (allNews.length === 0) {
                     allNews = [
-                        { city: 'manila', type: 'event', brand: 'TicketWorld', title: 'Ed Sheeran Mathematics Tour in Manila', tag: '🎵 演唱會與活動', validity: '2026/09/25 演出', description: '西洋流行天王 Ed Sheeran 降臨馬尼拉開唱，帶來震撼的全場金曲合輯！', location: 'SMDC Festival Grounds, Manila', url: 'https://ticketworld.com.ph' },
-                        { city: 'all', type: 'promo', brand: 'GrabFood', title: 'September 50% OFF Weekend Promo', tag: '🔥 限時優惠', validity: '9月底截止', description: '九月週末全菲律賓 GrabFood 外送精選指定餐廳滿額享 5 折優惠！', location: 'Manila, Davao, Cebu', url: 'https://grab.com' },
+                        { city: 'manila', type: 'event', brand: 'TicketWorld', title: 'Ed Sheeran Mathematics Tour in Manila', tag: '🎵 演唱會與活動', validity: '2026/09/25 演出', description: '西洋流行天王 Ed Sheeran 降臨馬尼拉開唱，帶來震撼金曲合輯！', location: 'SMDC Festival Grounds, Manila', url: 'https://ticketworld.com.ph' },
+                        { city: 'all', type: 'promo', brand: 'GrabFood', title: 'September 50% OFF Weekend Promo', tag: '🔥 限時優惠', validity: '9月底截止', description: '週末全菲律賓 GrabFood 外送精選指定餐廳滿額享 5 折優惠！', location: 'Manila, Davao, Cebu', url: 'https://grab.com' },
                         { city: 'cebu', type: 'movie', brand: 'SM Cinema', title: 'Marvel Studios New Blockbuster Premiere', tag: '🎬 電影與娛樂', validity: '本週上映', description: '漫威最新強檔鉅獻於全菲 IMAX 影城同步盛大上映。', location: 'SM City Cebu Cinema', url: 'https://smcinema.com' }
                     ];
                 }
-
-            } catch (error) {
-                console.error("讀取 Firebase 資料失敗：", error);
+            } catch (err) {
+                console.error("讀取 Firebase 失敗:", err);
             }
             renderUI();
             switchMainTab(currentMainTab);
         }
 
-        // 搜尋與 Tab 切換
         window.handleSearchInput = function(val) {
             currentSearchQuery = val.trim();
-            const clearBtn = document.getElementById('search-clear-btn');
-            if (clearBtn) clearBtn.style.display = currentSearchQuery ? 'flex' : 'none';
+            document.getElementById('search-clear-btn').style.display = currentSearchQuery ? 'flex' : 'none';
             renderList();
             renderAttractionList();
             renderNewsList();
         };
 
         window.clearSearch = function() {
-            const input = document.getElementById('search-input');
-            if (input) input.value = '';
+            document.getElementById('search-input').value = '';
             currentSearchQuery = '';
-            const clearBtn = document.getElementById('search-clear-btn');
-            if (clearBtn) clearBtn.style.display = 'none';
+            document.getElementById('search-clear-btn').style.display = 'none';
             renderList();
             renderAttractionList();
             renderNewsList();
@@ -671,29 +621,25 @@
             currentMainTab = tab;
             localStorage.setItem('ph_app_tab', tab);
 
-            document.getElementById('tab-btn-map').classList.toggle('active', tab === 'map');
-            document.getElementById('tab-btn-attraction').classList.toggle('active', tab === 'attraction');
-            document.getElementById('tab-btn-news').classList.toggle('active', tab === 'news');
+            ['map', 'attraction', 'news'].forEach(t => {
+                document.getElementById('tab-btn-' + t).classList.toggle('active', t === tab);
+                document.getElementById('main-tab-' + t).classList.toggle('active', t === tab);
+            });
 
-            document.getElementById('main-tab-map').classList.toggle('active', tab === 'map');
-            document.getElementById('main-tab-attraction').classList.toggle('active', tab === 'attraction');
-            document.getElementById('main-tab-news').classList.toggle('active', tab === 'news');
-            
             document.getElementById('category-bar').style.display = (tab === 'map') ? 'flex' : 'none';
             document.getElementById('attraction-filter-bar').style.display = (tab === 'attraction') ? 'flex' : 'none';
             document.getElementById('news-filter-bar').style.display = (tab === 'news') ? 'flex' : 'none';
-            document.getElementById('search-container').style.display = 'flex';
 
             if (tab === 'attraction') renderAttractionList();
             if (tab === 'news') renderNewsList();
-        }
+        };
 
         window.filterCategory = function(catKey) {
             currentCategoryKey = catKey;
             localStorage.setItem('ph_app_cat', catKey);
             renderCategoryBar();
             renderList();
-        }
+        };
 
         window.filterAttractionCat = function(cat) {
             currentAttractionCat = cat;
@@ -702,7 +648,7 @@
                 if (btn) btn.classList.toggle('active', c === cat);
             });
             renderAttractionList();
-        }
+        };
 
         window.filterNewsType = function(subType) {
             currentNewsSubFilter = subType;
@@ -711,13 +657,13 @@
                 if (btn) btn.classList.toggle('active', s === subType);
             });
             renderNewsList();
-        }
+        };
 
         window.changeLanguage = function(lang) {
             currentLang = lang;
             localStorage.setItem('ph_app_lang', lang);
             renderUI();
-        }
+        };
 
         window.changeCity = function(city) {
             currentCity = city;
@@ -725,24 +671,23 @@
             renderList();
             renderAttractionList();
             renderNewsList();
-        }
+        };
 
         window.shareApp = function() {
             const langData = i18n[currentLang];
-            const shareUrl = window.location.href;
             if (navigator.share) {
-                navigator.share({ title: langData.shareTitle, text: langData.shareText, url: shareUrl }).catch(() => {});
+                navigator.share({ title: langData.shareTitle, text: langData.shareText, url: window.location.href }).catch(() => {});
             } else {
-                navigator.clipboard.writeText(shareUrl).then(() => { alert(langData.shareSuccess); }).catch(() => {});
+                navigator.clipboard.writeText(window.location.href).then(() => alert(langData.shareSuccess));
             }
-        }
+        };
 
         function getInitialLanguage() {
-            const savedLang = localStorage.getItem('ph_app_lang');
-            if (savedLang && i18n[savedLang]) return savedLang;
-            const browserLang = (navigator.language || '').toLowerCase();
-            if (browserLang.startsWith('zh')) return 'zh-TW';
-            if (browserLang.startsWith('tl') || browserLang.startsWith('fil')) return 'tl';
+            const saved = localStorage.getItem('ph_app_lang');
+            if (saved && i18n[saved]) return saved;
+            const bl = (navigator.language || '').toLowerCase();
+            if (bl.startsWith('zh')) return 'zh-TW';
+            if (bl.startsWith('tl') || bl.startsWith('fil')) return 'tl';
             return 'en';
         }
 
@@ -755,7 +700,6 @@
             document.getElementById('tab-btn-attraction').innerText = langData.tabAttraction;
             document.getElementById('tab-btn-news').innerText = langData.tabNews;
             document.getElementById('share-btn').innerText = langData.shareBtn;
-
             document.getElementById('search-input').placeholder = langData.searchPlaceholder;
 
             document.getElementById('att-sub-all').innerText = langData.attSubAll;
@@ -783,278 +727,192 @@
             const bar = document.getElementById('category-bar');
             const cats = i18n[currentLang].cats;
             const keys = ['all', 'chinese', 'japanese_korean', 'fast_food', 'bbq_seafood', 'coffee_drinks', 'filipino'];
-            bar.innerHTML = keys.map(key => `
-                <button class="cat-chip ${key === currentCategoryKey ? 'active' : ''}" onclick="filterCategory('${key}')">
-                    ${cats[key]}
-                </button>
+            bar.innerHTML = keys.map(k => `
+                <button class="cat-chip ${k === currentCategoryKey ? 'active' : ''}" onclick="filterCategory('${k}')">${cats[k]}</button>
             `).join('');
         }
 
-        window.rateRestaurant = function(resKey, score) {
-            if (!itemRatings[resKey]) {
-                itemRatings[resKey] = { scores: [], userRated: null };
-            }
-            itemRatings[resKey].scores.push(score);
-            itemRatings[resKey].userRated = score;
+        window.rateRestaurant = function(key, score) {
+            if (!itemRatings[key]) itemRatings[key] = { scores: [], userRated: null };
+            itemRatings[key].scores.push(score);
+            itemRatings[key].userRated = score;
             localStorage.setItem('ph_item_ratings', JSON.stringify(itemRatings));
             alert(i18n[currentLang].rateSuccess);
             renderList();
             renderAttractionList();
-        }
+        };
 
-        window.toggleRestaurantForum = function(resKey) {
-            const el = document.getElementById('forum-' + resKey);
+        window.toggleRestaurantForum = function(key) {
+            const el = document.getElementById('forum-' + key);
             if (el) el.classList.toggle('show');
-        }
+        };
 
-        window.toggleWeeklyHours = function(resKey) {
-            const box = document.getElementById('hours-box-' + resKey);
-            const btn = document.getElementById('hours-btn-' + resKey);
-            const langData = i18n[currentLang];
-            if (box) {
-                const isShown = box.classList.toggle('show');
-                if (btn) btn.innerText = isShown ? `[${langData.hideWeekly}]` : `[${langData.viewWeekly}]`;
-            }
-        }
-
-        window.postResComment = function(resKey) {
-            const user = document.getElementById('input-user-' + resKey).value.trim();
-            const rating = parseInt(document.getElementById('select-rating-' + resKey).value);
-            const text = document.getElementById('input-text-' + resKey).value.trim();
-            const langData = i18n[currentLang];
-
-            if (!user || !text) {
-                alert(langData.emptyCommentAlert);
-                return;
-            }
+        window.postResComment = function(key) {
+            const user = document.getElementById('input-user-' + key).value.trim();
+            const rating = parseInt(document.getElementById('select-rating-' + key).value);
+            const text = document.getElementById('input-text-' + key).value.trim();
+            const lang = i18n[currentLang];
+            if (!user || !text) { alert(lang.emptyCommentAlert); return; }
 
             const now = new Date();
             const timeStr = (now.getMonth()+1) + '/' + now.getDate() + ' ' + String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
 
-            if (!resComments[resKey]) resComments[resKey] = [];
-            resComments[resKey].unshift({ user: user, rating: rating, text: text, time: timeStr });
+            if (!resComments[key]) resComments[key] = [];
+            resComments[key].unshift({ user, rating, text, time: timeStr });
 
-            window.rateRestaurant(resKey, rating);
+            window.rateRestaurant(key, rating);
             localStorage.setItem('ph_res_comments', JSON.stringify(resComments));
-            alert(langData.commentSuccess);
-            
-            document.getElementById('input-text-' + resKey).value = '';
+            alert(lang.commentSuccess);
+            document.getElementById('input-text-' + key).value = '';
             renderList();
             renderAttractionList();
-            const el = document.getElementById('forum-' + resKey);
-            if (el) el.classList.add('show');
-        }
+            document.getElementById('forum-' + key).classList.add('show');
+        };
 
-        function getUniqueRestaurantImageArray(name, catKey) {
-            const pool = categoryImagePools[catKey] || categoryImagePools.attraction;
+        function getImageArray(name, poolKey) {
+            const pool = categoryImagePools[poolKey] || categoryImagePools.attraction;
             let hash = 0;
             const str = name || 'default';
-            for (let i = 0; i < str.length; i++) {
-                hash = str.charCodeAt(i) + ((hash << 5) - hash);
-            }
-            const startIndex = Math.abs(hash) % pool.length;
-            const images = [];
-            for (let i = 0; i < 4; i++) {
-                images.push(pool[(startIndex + i) % pool.length]);
-            }
-            return images;
+            for (let i = 0; i < str.length; i++) hash = str.charCodeAt(i) + ((hash << 5) - hash);
+            const start = Math.abs(hash) % pool.length;
+            const res = [];
+            for (let i = 0; i < 3; i++) res.push(pool[(start + i) % pool.length]);
+            return res;
         }
 
-        window.handleCarouselScroll = function(el, resKey) {
-            const scrollLeft = el.scrollLeft;
-            const width = el.clientWidth;
-            const index = Math.round(scrollLeft / width);
-            const dots = document.querySelectorAll('#dots-' + resKey + ' .dot');
-            dots.forEach((dot, idx) => {
-                dot.classList.toggle('active', idx === index);
-            });
-        }
+        window.handleCarouselScroll = function(el, key) {
+            const idx = Math.round(el.scrollLeft / el.clientWidth);
+            const dots = document.querySelectorAll('#dots-' + key + ' .dot');
+            dots.forEach((d, i) => d.classList.toggle('active', i === idx));
+        };
 
-        function parseOpeningStatus(openingHours) {
-            if (!openingHours) return { hasData: false, isOpen: null, todayText: null, weeklyList: [] };
-            const weekdayList = openingHours.weekdayDescriptions || [];
-            const periods = openingHours.periods || [];
-            if (weekdayList.length === 0 && periods.length === 0 && (openingHours.openNow === undefined || openingHours.openNow === null)) {
-                return { hasData: false, isOpen: null, todayText: null, weeklyList: [] };
-            }
-            const now = new Date();
-            const currentDay = now.getDay();
-            const currentMinutes = now.getHours() * 60 + now.getMinutes();
-            let isOpen = (openingHours.openNow !== undefined && openingHours.openNow !== null) ? openingHours.openNow : false;
-            let todayPeriodStr = "";
-            const todayIndex = (currentDay === 0) ? 6 : (currentDay - 1);
-            if (weekdayList.length > 0) {
-                const fullText = weekdayList[todayIndex] || weekdayList[0];
-                const parts = fullText.split(': ');
-                todayPeriodStr = parts.length > 1 ? parts.slice(1).join(': ') : fullText;
-            }
-            return { hasData: true, isOpen: isOpen, todayText: todayPeriodStr || "營業中", weeklyList: weekdayList, todayDayIndex: todayIndex };
-        }
-
-        // 智慧同義詞過濾判定
-        function matchQuery(item, query, langData) {
-            if (!query) return true;
-            const q = query.toLowerCase();
-            const searchKeywords = new Set([q]);
-            Object.keys(SYNONYM_MAP).forEach(key => {
-                if (q.includes(key) || key.includes(q)) {
-                    SYNONYM_MAP[key].forEach(syn => searchKeywords.add(syn.toLowerCase()));
+        function matchQuery(item, q) {
+            if (!q) return true;
+            const query = q.toLowerCase();
+            const keywords = new Set([query]);
+            Object.keys(SYNONYM_MAP).forEach(k => {
+                if (query.includes(k) || k.includes(query)) {
+                    SYNONYM_MAP[k].forEach(s => keywords.add(s.toLowerCase()));
                 }
             });
-
-            const name = (item.name || '').toLowerCase();
-            const nameEn = (item.name_en || '').toLowerCase();
-            const address = (item.address || '').toLowerCase();
-            const desc = (item.description || item.description_zh || '').toLowerCase();
-            const catKey = (item.categoryKey || item.category || '').toLowerCase();
-            const searchableText = `${name} ${nameEn} ${address} ${desc} ${catKey}`;
-
-            for (const kw of searchKeywords) {
-                if (searchableText.includes(kw)) return true;
+            const text = `${item.name || ''} ${item.name_en || ''} ${item.address || ''} ${item.description || ''} ${item.title || ''}`.toLowerCase();
+            for (const kw of keywords) {
+                if (text.includes(kw)) return true;
             }
             return false;
         }
 
-        // 渲染餐廳清單
+        // 渲染美食
         function renderList() {
             const listEl = document.getElementById('restaurant-list');
-            const loadingEl = document.getElementById('loading');
-            const searchInfoEl = document.getElementById('search-results-info');
-            if (loadingEl) loadingEl.style.display = 'none';
+            document.getElementById('loading').style.display = 'none';
             const langData = i18n[currentLang];
 
             let filtered = (allRestaurants || []).filter(item => {
-                const matchesCity = (currentCity === 'all') || (item.city === currentCity);
-                const matchesCat = (currentCategoryKey === 'all') || ((item.categoryKey || 'filipino') === currentCategoryKey);
-                return matchesCity && matchesCat;
+                const matchC = (currentCity === 'all') || (item.city === currentCity);
+                const matchK = (currentCategoryKey === 'all') || ((item.categoryKey || 'filipino') === currentCategoryKey);
+                return matchC && matchK;
             });
 
+            const searchInfo = document.getElementById('search-results-info');
             if (currentSearchQuery) {
-                filtered = filtered.filter(item => matchQuery(item, currentSearchQuery, langData));
-                if (searchInfoEl) {
-                    searchInfoEl.style.display = 'flex';
-                    searchInfoEl.innerHTML = `
-                        <span>${langData.searchResultText.replace('{count}', filtered.length).replace('{keyword}', currentSearchQuery)}</span>
-                        <a href="javascript:void(0)" onclick="clearSearch()" style="color:#ea580c; text-decoration:underline;">${langData.clearSearch}</a>
-                    `;
-                }
+                filtered = filtered.filter(item => matchQuery(item, currentSearchQuery));
+                searchInfo.style.display = 'flex';
+                searchInfo.innerHTML = `<span>${langData.searchResultText.replace('{count}', filtered.length).replace('{keyword}', currentSearchQuery)}</span><a href="javascript:void(0)" onclick="clearSearch()" style="color:#ea580c; text-decoration:underline;">${langData.clearSearch}</a>`;
             } else {
-                if (searchInfoEl) searchInfoEl.style.display = 'none';
+                searchInfo.style.display = 'none';
             }
 
-            if (!filtered || filtered.length === 0) {
-                listEl.innerHTML = `<p style="text-align:center; color:#a8a29e; padding: 40px;">${langData.noData}</p>`;
+            if (filtered.length === 0) {
+                listEl.innerHTML = `<p style="text-align:center; color:#a8a29e; padding: 40px; grid-column: 1/-1;">${langData.noData}</p>`;
                 return;
             }
 
-            filtered.sort((a, b) => {
-                const nameA = (a.name_en || a.name || '').trim().toLowerCase();
-                const nameB = (b.name_en || b.name || '').trim().toLowerCase();
-                return nameA.localeCompare(nameB, 'en', { numeric: true, sensitivity: 'base' });
-            });
-
             listEl.innerHTML = filtered.map((item, idx) => {
                 const catKey = item.categoryKey || 'filipino';
-                const resKey = (item.city || 'davao') + '_' + (item.name || idx).replace(/[^a-zA-Z0-9]/g, '');
-                const imageList = (item.images && Array.isArray(item.images) && item.images.length > 0) ? item.images : getUniqueRestaurantImageArray(item.name, catKey);
+                const key = 'res_' + (item.city || 'davao') + '_' + idx;
+                const images = item.images || getImageArray(item.name, catKey);
 
-                const ratingData = itemRatings[resKey] || { scores: [], userRated: null };
-                const totalScores = ratingData.scores;
-                const localScoreCount = totalScores.length;
-                const localAvgRating = localScoreCount > 0 ? (totalScores.reduce((a, b) => a + b, 0) / localScoreCount).toFixed(1) : 0;
+                const ratingData = itemRatings[key] || { scores: [], userRated: null };
+                const count = ratingData.scores.length;
+                const avg = count > 0 ? (ratingData.scores.reduce((a,b)=>a+b,0)/count).toFixed(1) : 0;
                 const userScore = ratingData.userRated || 0;
 
-                const hasGoogleRating = (item.googleRating !== undefined && item.googleRating !== null);
-                const realGoogleRating = hasGoogleRating ? Number(item.googleRating).toFixed(1) : null;
-                const realReviewCount = item.googleReviewCount ? `${item.googleReviewCount}則` : '';
-
-                let ratingBadgeHtml = '';
-                if (hasGoogleRating) {
-                    ratingBadgeHtml = `<span class="badge badge-google-rating"><i class="fa-solid fa-star" style="color:#eab308;"></i> Google ${realGoogleRating} (${realReviewCount})</span>`;
-                } else if (localScoreCount >= 10 && Number(localAvgRating) >= 4.8) {
-                    ratingBadgeHtml = `<span class="badge badge-elite-choice"><i class="fa-solid fa-award"></i> ${langData.eliteChoice} (${localScoreCount}則)</span>`;
+                const hasGoogle = (item.googleRating !== undefined && item.googleRating !== null);
+                let badge = '';
+                if (hasGoogle) {
+                    badge = `<span class="badge badge-google-rating"><i class="fa-solid fa-star" style="color:#eab308;"></i> Google ${Number(item.googleRating).toFixed(1)} (${item.googleReviewCount||0}則)</span>`;
+                } else if (count >= 10 && Number(avg) >= 4.8) {
+                    badge = `<span class="badge badge-elite-choice"><i class="fa-solid fa-award"></i> ${langData.eliteChoice} (${count}則)</span>`;
                 }
 
-                const commentsList = resComments[resKey] || [];
-                let displayName = item.names && item.names[currentLang] ? item.names[currentLang] : (currentLang !== 'zh-TW' && item.name_en ? item.name_en : (item.name || 'Unknown'));
-                let displayDesc = item.descriptions && item.descriptions[currentLang] ? item.descriptions[currentLang] : (item.description || langData.noDesc);
-
-                const hoursInfo = parseOpeningStatus(item.openingHours);
-                let openStatusBadge = hoursInfo.hasData ? (hoursInfo.isOpen ? `<span class="badge badge-open">${langData.openStatus}</span>` : `<span class="badge badge-closed">${langData.closedStatus}</span>`) : '';
-
-                var grabBtnHtml = item.grabUrl ? `<a class="btn btn-grab" href="${item.grabUrl}" target="_blank">${langData.grab}</a>` : '';
-                var foodpandaBtnHtml = item.foodpandaUrl ? `<a class="btn btn-foodpanda" href="${item.foodpandaUrl}" target="_blank">${langData.foodpanda}</a>` : '';
+                const comments = resComments[key] || [];
+                const name = item.names?.[currentLang] || item.name || 'Unknown';
+                const desc = item.descriptions?.[currentLang] || item.description || langData.noDesc;
 
                 return `
                     <div class="card">
                         <div class="carousel-container">
-                            <span class="photo-tag">${langData.slideHint} (${imageList.length})</span>
-                            <div class="carousel-track" onscroll="handleCarouselScroll(this, '${resKey}')">
-                                ${imageList.map(img => `<div class="carousel-slide"><img src="${img}" alt="Food" loading="lazy"></div>`).join('')}
+                            <span class="photo-tag">${langData.slideHint}</span>
+                            <div class="carousel-track" onscroll="handleCarouselScroll(this, '${key}')">
+                                ${images.map(img => `<div class="carousel-slide"><img src="${img}" alt="Food" loading="lazy"></div>`).join('')}
                             </div>
-                            <div class="carousel-dots" id="dots-${resKey}">
-                                ${imageList.map((_, i) => `<div class="dot ${i === 0 ? 'active' : ''}"></div>`).join('')}
+                            <div class="carousel-dots" id="dots-${key}">
+                                ${images.map((_, i) => `<div class="dot ${i === 0 ? 'active' : ''}"></div>`).join('')}
                             </div>
                         </div>
                         <div class="card-body">
                             <div class="badge-group">
                                 <span class="badge badge-city">${langData.cities[item.city || 'davao']}</span>
                                 <span class="badge">${langData.cats[catKey] || catKey}</span>
-                                ${openStatusBadge}
-                                ${ratingBadgeHtml}
+                                ${badge}
                             </div>
-                            <div class="card-title">${displayName}</div>
-                            <div class="card-desc">${displayDesc}</div>
+                            <div class="card-title">${name}</div>
+                            <div class="card-desc">${desc}</div>
                             <div class="info-item"><span>📍</span> <span>${item.address || ''}</span></div>
                             <div class="info-item"><span>📞</span> <span>${item.phone || langData.noPhone}</span></div>
 
-                            <!-- 評分與留言區 -->
                             <div class="card-forum-box">
                                 <div class="rating-header">
                                     <div class="rating-left">
                                         <span class="rating-label">${langData.localScoreLabel}</span>
-                                        <span class="rating-score-num">${localAvgRating}</span>
-                                        <span class="rating-count-hint">(${localScoreCount} ${langData.ratingsCountText})</span>
+                                        <span class="rating-score-num">${avg}</span>
+                                        <span class="rating-count-hint">(${count})</span>
                                     </div>
                                     <div class="star-picker">
-                                        ${[1, 2, 3, 4, 5].map(s => `<span class="${s <= userScore ? 'active' : ''}" onclick="rateRestaurant('${resKey}', ${s})">★</span>`).join('')}
+                                        ${[1,2,3,4,5].map(s => `<span class="${s <= userScore ? 'active' : ''}" onclick="rateRestaurant('${key}', ${s})">★</span>`).join('')}
                                     </div>
                                 </div>
-                                <button class="btn-toggle-forum" onclick="toggleRestaurantForum('${resKey}')">
-                                    <span>💬 ${langData.toggleForumText} (${commentsList.length})</span>
-                                    <span style="font-size:0.75rem; color:#a8a29e;">▼</span>
+                                <button class="btn-toggle-forum" onclick="toggleRestaurantForum('${key}')">
+                                    <span>💬 ${langData.toggleForumText} (${comments.length})</span><span>▼</span>
                                 </button>
-                                <div class="forum-content" id="forum-${resKey}">
+                                <div class="forum-content" id="forum-${key}">
                                     <div class="mini-comment-form">
                                         <div class="mini-form-row">
-                                            <input type="text" id="input-user-${resKey}" class="mini-input" placeholder="Nickname" maxlength="15">
-                                            <select id="select-rating-${resKey}" class="mini-select">
-                                                <option value="5">⭐⭐⭐⭐⭐</option>
-                                                <option value="4">⭐⭐⭐⭐</option>
-                                                <option value="3">⭐⭐⭐</option>
-                                                <option value="2">⭐⭐</option>
-                                                <option value="1">⭐</option>
+                                            <input type="text" id="input-user-${key}" class="mini-input" placeholder="Nickname" maxlength="15">
+                                            <select id="select-rating-${key}" class="mini-select">
+                                                <option value="5">⭐⭐⭐⭐⭐</option><option value="4">⭐⭐⭐⭐</option><option value="3">⭐⭐⭐</option><option value="2">⭐⭐</option><option value="1">⭐</option>
                                             </select>
                                         </div>
-                                        <textarea id="input-text-${resKey}" class="mini-textarea" placeholder="Share tips..."></textarea>
-                                        <button class="btn-mini-post" onclick="postResComment('${resKey}')">${langData.postBtnText}</button>
+                                        <textarea id="input-text-${key}" class="mini-textarea" placeholder="Tips..."></textarea>
+                                        <button class="btn-mini-post" onclick="postResComment('${key}')">${langData.postBtnText}</button>
                                     </div>
-                                    <div class="reviews-list">
-                                        ${commentsList.length > 0 ? commentsList.map(c => `
+                                    <div>
+                                        ${comments.length > 0 ? comments.map(c => `
                                             <div class="review-item">
                                                 <div><span class="review-user">👤 ${c.user}</span> <span style="color:#f59e0b;">${'⭐'.repeat(c.rating)}</span><span class="review-time">${c.time}</span></div>
                                                 <div class="review-text">${c.text}</div>
                                             </div>
-                                        `).join('') : `<div class="review-item" style="color:#a8a29e; text-align:center;">No reviews yet.</div>`}
+                                        `).join('') : '<div style="color:#a8a29e; font-size:0.78rem; text-align:center;">No reviews.</div>'}
                                     </div>
                                 </div>
                             </div>
 
                             <div class="btn-group">
                                 <a class="btn btn-primary" href="tel:${item.phone}">${langData.call}</a>
-                                <a class="btn btn-secondary" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(displayName + ' ' + (item.address || ''))}" target="_blank">${langData.map}</a>
-                                ${grabBtnHtml}
-                                ${foodpandaBtnHtml}
+                                <a class="btn btn-secondary" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(name + ' ' + (item.address || ''))}" target="_blank">${langData.map}</a>
+                                ${item.grabUrl ? `<a class="btn btn-grab" href="${item.grabUrl}" target="_blank">${langData.grab}</a>` : ''}
+                                ${item.foodpandaUrl ? `<a class="btn btn-foodpanda" href="${item.foodpandaUrl}" target="_blank">${langData.foodpanda}</a>` : ''}
                             </div>
                         </div>
                     </div>
@@ -1062,105 +920,53 @@
             }).join('');
         }
 
-        // 渲染景點導覽清單
+        // 渲染景點
         function renderAttractionList() {
             const listEl = document.getElementById('attraction-list');
             const langData = i18n[currentLang];
 
             let filtered = (allAttractions || []).filter(item => {
-                const matchesCity = (currentCity === 'all') || (item.city === currentCity);
-                const matchesCat = (currentAttractionCat === 'all') || (item.category === currentAttractionCat);
-                return matchesCity && matchesCat;
+                const matchC = (currentCity === 'all') || (item.city === currentCity);
+                const matchCat = (currentAttractionCat === 'all') || (item.category === currentAttractionCat);
+                return matchC && matchCat;
             });
 
-            if (currentSearchQuery) {
-                filtered = filtered.filter(item => matchQuery(item, currentSearchQuery, langData));
-            }
+            if (currentSearchQuery) filtered = filtered.filter(item => matchQuery(item, currentSearchQuery));
 
-            if (!filtered || filtered.length === 0) {
-                listEl.innerHTML = `<p style="text-align:center; color:#a8a29e; padding: 40px;">${langData.noAttractionData}</p>`;
+            if (filtered.length === 0) {
+                listEl.innerHTML = `<p style="text-align:center; color:#a8a29e; padding: 40px; grid-column: 1/-1;">${langData.noAttractionData}</p>`;
                 return;
             }
 
             listEl.innerHTML = filtered.map((item, idx) => {
-                const resKey = 'att_' + (item.city || 'davao') + '_' + (item.name || idx).replace(/[^a-zA-Z0-9]/g, '');
-                const imageList = (item.images && item.images.length > 0) ? item.images : getUniqueRestaurantImageArray(item.name, 'attraction');
-
-                const ratingData = itemRatings[resKey] || { scores: [], userRated: null };
-                const totalScores = ratingData.scores;
-                const localScoreCount = totalScores.length;
-                const localAvgRating = localScoreCount > 0 ? (totalScores.reduce((a, b) => a + b, 0) / localScoreCount).toFixed(1) : 0;
-                const userScore = ratingData.userRated || 0;
-
-                const hasGoogleRating = (item.googleRating !== undefined && item.googleRating !== null);
-                let ratingBadgeHtml = hasGoogleRating ? `<span class="badge badge-google-rating"><i class="fa-solid fa-star" style="color:#eab308;"></i> Google ${Number(item.googleRating).toFixed(1)} (${item.googleReviewCount || 0}則)</span>` : '';
-
-                const commentsList = resComments[resKey] || [];
-                const displayName = item.name || 'Attraction';
-                const displayDesc = item.description_zh || item.description || langData.noDesc;
+                const key = 'att_' + (item.city || 'davao') + '_' + idx;
+                const images = item.images || getImageArray(item.name, 'attraction');
+                const name = item.name || 'Attraction';
+                const desc = item.description_zh || item.description || langData.noDesc;
 
                 return `
                     <div class="card">
                         <div class="carousel-container">
-                            <span class="photo-tag">${langData.slideHint} (${imageList.length})</span>
-                            <div class="carousel-track" onscroll="handleCarouselScroll(this, '${resKey}')">
-                                ${imageList.map(img => `<div class="carousel-slide"><img src="${img}" alt="Attraction" loading="lazy"></div>`).join('')}
+                            <span class="photo-tag">${langData.slideHint}</span>
+                            <div class="carousel-track" onscroll="handleCarouselScroll(this, '${key}')">
+                                ${images.map(img => `<div class="carousel-slide"><img src="${img}" alt="Attraction" loading="lazy"></div>`).join('')}
                             </div>
-                            <div class="carousel-dots" id="dots-${resKey}">
-                                ${imageList.map((_, i) => `<div class="dot ${i === 0 ? 'active' : ''}"></div>`).join('')}
+                            <div class="carousel-dots" id="dots-${key}">
+                                ${images.map((_, i) => `<div class="dot ${i === 0 ? 'active' : ''}"></div>`).join('')}
                             </div>
                         </div>
                         <div class="card-body">
                             <div class="badge-group">
                                 <span class="badge badge-city">${langData.cities[item.city || 'davao']}</span>
-                                <span class="badge" style="background:#fdf4ff; color:#a21caf; border-color:#f5d0fe;">🏛️ 景點導覽</span>
-                                ${ratingBadgeHtml}
+                                <span class="badge" style="background:#fdf4ff; color:#a21caf;">🏛️ 景點</span>
                             </div>
-                            <div class="card-title">${displayName}</div>
-                            <div class="card-desc">${displayDesc}</div>
+                            <div class="card-title">${name}</div>
+                            <div class="card-desc">${desc}</div>
                             <div class="info-item"><span>📍</span> <span>${item.address || ''}</span></div>
                             <div class="info-item"><span>📞</span> <span>${item.phone || langData.noPhone}</span></div>
-
-                            <div class="card-forum-box">
-                                <div class="rating-header">
-                                    <div class="rating-left">
-                                        <span class="rating-label">${langData.localScoreLabel}</span>
-                                        <span class="rating-score-num">${localAvgRating}</span>
-                                        <span class="rating-count-hint">(${localScoreCount} ${langData.ratingsCountText})</span>
-                                    </div>
-                                    <div class="star-picker">
-                                        ${[1, 2, 3, 4, 5].map(s => `<span class="${s <= userScore ? 'active' : ''}" onclick="rateRestaurant('${resKey}', ${s})">★</span>`).join('')}
-                                    </div>
-                                </div>
-                                <button class="btn-toggle-forum" onclick="toggleRestaurantForum('${resKey}')">
-                                    <span>💬 ${langData.toggleForumText} (${commentsList.length})</span>
-                                    <span style="font-size:0.75rem; color:#a8a29e;">▼</span>
-                                </button>
-                                <div class="forum-content" id="forum-${resKey}">
-                                    <div class="mini-comment-form">
-                                        <div class="mini-form-row">
-                                            <input type="text" id="input-user-${resKey}" class="mini-input" placeholder="Nickname" maxlength="15">
-                                            <select id="select-rating-${resKey}" class="mini-select">
-                                                <option value="5">⭐⭐⭐⭐⭐</option><option value="4">⭐⭐⭐⭐</option><option value="3">⭐⭐⭐</option><option value="2">⭐⭐</option><option value="1">⭐</option>
-                                            </select>
-                                        </div>
-                                        <textarea id="input-text-${resKey}" class="mini-textarea" placeholder="Share travel tips..."></textarea>
-                                        <button class="btn-mini-post" onclick="postResComment('${resKey}')">${langData.postBtnText}</button>
-                                    </div>
-                                    <div class="reviews-list">
-                                        ${commentsList.length > 0 ? commentsList.map(c => `
-                                            <div class="review-item">
-                                                <div><span class="review-user">👤 ${c.user}</span> <span style="color:#f59e0b;">${'⭐'.repeat(c.rating)}</span><span class="review-time">${c.time}</span></div>
-                                                <div class="review-text">${c.text}</div>
-                                            </div>
-                                        `).join('') : `<div class="review-item" style="color:#a8a29e; text-align:center;">No reviews yet.</div>`}
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="btn-group">
+                            <div class="btn-group" style="margin-top:auto;">
                                 <a class="btn btn-primary" href="tel:${item.phone || ''}">${langData.call}</a>
-                                <a class="btn btn-secondary" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(displayName + ' ' + (item.address || ''))}" target="_blank">${langData.map}</a>
+                                <a class="btn btn-secondary" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(name + ' ' + (item.address || ''))}" target="_blank">${langData.map}</a>
                             </div>
                         </div>
                     </div>
@@ -1168,52 +974,55 @@
             }).join('');
         }
 
-        // 渲染城市動態清單
+        // 渲染城市動態（修復文字與演唱會/電影資訊呈現）
         function renderNewsList() {
-            const newsEl = document.getElementById('news-list');
+            const listEl = document.getElementById('news-list');
             const langData = i18n[currentLang];
 
-            const filteredNews = (allNews || []).filter(item => {
-                const matchesCity = (currentCity === 'all') || (item.city === 'all') || (item.city === currentCity);
-                let matchesSub = true;
-                if (currentNewsSubFilter !== 'all') {
-                    matchesSub = (item.type === currentNewsSubFilter);
-                }
-                return matchesCity && matchesSub;
+            let filtered = (allNews || []).filter(item => {
+                const matchC = (currentCity === 'all') || (item.city === 'all') || (item.city === currentCity);
+                const matchS = (currentNewsSubFilter === 'all') || (item.type === currentNewsSubFilter);
+                return matchC && matchS;
             });
 
-            if (!filteredNews || filteredNews.length === 0) {
-                newsEl.innerHTML = `<p style="text-align:center; color:#a8a29e; padding: 40px;">${langData.noNewsData}</p>`;
+            if (currentSearchQuery) filtered = filtered.filter(item => matchQuery(item, currentSearchQuery));
+
+            if (filtered.length === 0) {
+                listEl.innerHTML = `<p style="text-align:center; color:#a8a29e; padding: 40px; grid-column: 1/-1;">${langData.noNewsData}</p>`;
                 return;
             }
 
-            newsEl.innerHTML = filteredNews.map(item => {
-                const titleText = item.title || 'Event News';
-                const tagText = item.tag || '🔥 Promo';
-                const validityText = item.validity || '';
-                const descText = item.description || item.description_zh || '';
-                const titleHtml = item.url ? `<a href="${item.url}" target="_blank" style="color: #1c1917; text-decoration: none; border-bottom: 2px solid #EA580C;">${titleText} 🔗</a>` : titleText;
+            listEl.innerHTML = filtered.map((item, idx) => {
+                const title = item.title || 'Event News';
+                const tag = item.tag || '🔥 動態';
+                const validity = item.validity || '';
+                const desc = item.description || item.description_zh || langData.noDesc;
+                const location = item.location || 'Philippines';
+                const img = item.imageUrl || (item.type === 'movie' ? categoryImagePools.movie[0] : (item.type === 'event' ? categoryImagePools.event[0] : categoryImagePools.filipino[0]));
+                const titleHtml = item.url ? `<a href="${item.url}" target="_blank" style="color:#1c1917; text-decoration:none; border-bottom:2px solid #EA580C;">${title} 🔗</a>` : title;
 
                 return `
                     <div class="card">
-                        <img src="${item.imageUrl || 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=800&auto=format&fit=crop'}" alt="Event" loading="lazy">
+                        <div style="width:100%; height:200px; background:#f7f5f0; flex-shrink:0;">
+                            <img src="${img}" alt="News" style="width:100%; height:100%; object-fit:cover; display:block;" loading="lazy">
+                        </div>
                         <div class="card-body">
                             <div class="badge-group">
                                 <span class="badge badge-city">${langData.cities[item.city] || 'Philippines'}</span>
                                 ${item.brand ? `<span class="badge badge-brand">${item.brand}</span>` : ''}
-                                <span class="badge badge-promo">${tagText}</span>
-                                ${validityText ? `<span class="badge badge-expiry">⏰ ${validityText}</span>` : ''}
+                                <span class="badge badge-promo">${tag}</span>
+                                ${validity ? `<span class="badge badge-expiry">⏰ ${validity}</span>` : ''}
                             </div>
-                            <div class="card-title" style="font-size:1.1rem; margin-top:4px;">${titleHtml}</div>
-                            <div class="card-desc" style="color:#44403c; margin-top:8px;">${descText}</div>
-                            <div class="info-item"><span>📍</span> <span>${item.location || ''}</span></div>
+                            <div class="card-title" style="font-size:1.1rem;">${titleHtml}</div>
+                            <div class="card-desc" style="color:#44403c;">${desc}</div>
+                            <div class="info-item" style="margin-top:auto;"><span>📍</span> <span>${location}</span></div>
                         </div>
                     </div>
                 `;
             }).join('');
         }
 
-        // AI 管家聊天互動
+        // AI 聊天
         window.toggleChat = function() {
             const modal = document.getElementById('chat-modal');
             modal.classList.toggle('show');
@@ -1223,46 +1032,39 @@
         window.handleChatKeyPress = function(e) { if (e.key === 'Enter') sendChatMessage(); };
 
         window.sendChatMessage = async function() {
-            const inputEl = document.getElementById('chat-input');
-            const msg = inputEl.value.trim();
+            const input = document.getElementById('chat-input');
+            const msg = input.value.trim();
             if (!msg) return;
 
-            const messagesEl = document.getElementById('chat-messages');
+            const messages = document.getElementById('chat-messages');
             const langData = i18n[currentLang];
 
-            messagesEl.innerHTML += `<div class="chat-bubble user">${msg}</div>`;
-            inputEl.value = '';
-            messagesEl.scrollTop = messagesEl.scrollHeight;
+            messages.innerHTML += `<div class="chat-bubble user">${msg}</div>`;
+            input.value = '';
+            messages.scrollTop = messages.scrollHeight;
 
-            const loadingId = "loading-" + Date.now();
-            messagesEl.innerHTML += `<div class="chat-bubble bot" id="${loadingId}">${langData.chatThinking}</div>`;
-            messagesEl.scrollTop = messagesEl.scrollHeight;
+            const loadId = 'load-' + Date.now();
+            messages.innerHTML += `<div class="chat-bubble bot" id="${loadId}">${langData.chatThinking}</div>`;
+            messages.scrollTop = messages.scrollHeight;
 
             const activeCity = document.getElementById('city-select').value || currentCity;
-            const relevantRestaurants = (allRestaurants || []).filter(i => activeCity === 'all' || i.city === activeCity).slice(0, 50);
-            const relevantAttractions = (allAttractions || []).filter(i => activeCity === 'all' || i.city === activeCity).slice(0, 20);
-
-            const contextText = [
-                "【餐廳清單】",
-                ...relevantRestaurants.map(r => `${r.name} (${r.city}, ${r.categoryKey || 'food'})`),
-                "【景點清單】",
-                ...relevantAttractions.map(a => `${a.name} (${a.city}, ${a.category})`)
-            ].join('\n');
+            const resContext = (allRestaurants || []).filter(i => activeCity === 'all' || i.city === activeCity).slice(0, 30).map(r => r.name).join(', ');
+            const attContext = (allAttractions || []).filter(i => activeCity === 'all' || i.city === activeCity).slice(0, 20).map(a => a.name).join(', ');
 
             try {
-                const response = await fetch(AI_WORKER_URL, {
+                const res = await fetch(AI_WORKER_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ message: msg, lang: currentLang, currentCity: activeCity, restaurantsContext: contextText })
+                    body: JSON.stringify({ message: msg, lang: currentLang, currentCity: activeCity, restaurantsContext: `餐廳: ${resContext} | 景點: ${attContext}` })
                 });
-                const data = await response.json();
-                const loadingEl = document.getElementById(loadingId);
-                if (loadingEl) loadingEl.innerText = data.reply;
+                const data = await res.json();
+                const loadEl = document.getElementById(loadId);
+                if (loadEl) loadEl.innerText = data.reply;
             } catch (err) {
-                const loadingEl = document.getElementById(loadingId);
-                if (loadingEl) loadingEl.innerText = langData.chatError;
+                const loadEl = document.getElementById(loadId);
+                if (loadEl) loadEl.innerText = langData.chatError;
             }
-            messagesEl.scrollTop = messagesEl.scrollHeight;
+            messages.scrollTop = messages.scrollHeight;
         };
 
         fetchData();
