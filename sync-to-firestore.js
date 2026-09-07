@@ -11,16 +11,16 @@ if (!admin.apps.length) {
 }
 const db = admin.firestore();
 
-// 2. Google Sheets 發布之 CSV 網址與 Maps API 金鑰
+// 2. 取得環境變數
 const GOOGLE_SHEET_CSV_URL = process.env.GOOGLE_SHEET_CSV_URL;
 const GOOGLE_MAPS_API_KEY = process.env.GOOGLE_MAPS_API_KEY;
 
-// 延遲工具函式
+// 延遲工具函式，避免請求過於密集
 const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
 /**
- * 呼叫 Google Places API (New) 搜尋店家並抓取照片與營業時間
- * 改用 Node 18 原生 fetch
+ * 呼叫 Google Places API (New) 搜尋店家
+ * 使用 Node 18 原生 fetch，不依賴 axios
  */
 async function fetchPlaceData(name, address, city) {
   if (!GOOGLE_MAPS_API_KEY) {
@@ -51,7 +51,7 @@ async function fetchPlaceData(name, address, city) {
 
     const place = places[0];
 
-    // 1. 抓取照片（最多 5 張）
+    // 1. 抓取門市/菜色照片（最多 5 張）
     const images = [];
     if (place.photos && Array.isArray(place.photos)) {
       for (let i = 0; i < Math.min(place.photos.length, 5); i++) {
@@ -61,7 +61,7 @@ async function fetchPlaceData(name, address, city) {
       }
     }
 
-    // 2. 抓取營業時間結構
+    // 2. 抓取營業時間資料
     let openingHours = null;
     if (place.regularOpeningHours) {
       openingHours = {
@@ -89,7 +89,7 @@ async function syncData() {
     throw new Error("❌ 缺少環境變數 GOOGLE_SHEET_CSV_URL！");
   }
 
-  // 1. 從 Google Sheets 下載最新 CSV 內容（使用原生 fetch）
+  // 1. 使用原生 fetch 下載 Google 試算表 CSV
   console.log("📥 正在下載 Google 試算表 CSV...");
   const res = await fetch(GOOGLE_SHEET_CSV_URL);
   if (!res.ok) throw new Error(`無法下載 CSV: ${res.statusText}`);
@@ -126,7 +126,7 @@ async function syncData() {
     const city = (row.city || row.City || row['城市'] || 'davao').trim().toLowerCase();
     const safeDocId = `${city}_${rawName.replace(/[^a-zA-Z0-9\u4e00-\u9fa5]/g, '_')}`;
 
-    // 檢查快取
+    // 檢查快取（已有圖片與營業時間則跳過 API 請求）
     const cachedData = existingMap.get(safeDocId);
     let images = [];
     let openingHours = null;
