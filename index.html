@@ -296,8 +296,8 @@
                 rateSuccess: '感謝評分！您的評分已成功記錄。',
                 commentSuccess: '留言發表成功！',
                 emptyCommentAlert: '請輸入暱稱與留言內容！',
-                toggleForumText: '💬 大V用戶評分與討論',
-                localScoreLabel: '大V評分',
+                toggleForumText: '💬 用戶評分與討論',
+                localScoreLabel: '用戶評分',
                 postBtnText: '發表對此餐廳的評語',
                 slideHint: '👈 左右滑動看多圖',
                 ratingsCountText: '則評分',
@@ -347,8 +347,8 @@
                 rateSuccess: 'Thank you! Your rating has been recorded.',
                 commentSuccess: 'Review posted successfully!',
                 emptyCommentAlert: 'Please enter both nickname and comment!',
-                toggleForumText: '💬 Big V Reviews & Tips',
-                localScoreLabel: 'Big V Rating',
+                toggleForumText: '💬 User Reviews & Tips',
+                localScoreLabel: 'User Rating',
                 postBtnText: 'Submit Review for this spot',
                 slideHint: '👈 Swipe to view more photos',
                 ratingsCountText: 'reviews',
@@ -398,8 +398,8 @@
                 rateSuccess: 'Salamat! Na-itala na ang iyong rating.',
                 commentSuccess: 'Na-ipost na ang komento!',
                 emptyCommentAlert: 'Mangyaring ilagay ang pangalan at komento!',
-                toggleForumText: '💬 Big V Komento at Tips',
-                localScoreLabel: 'Big V Rating',
+                toggleForumText: '💬 Komento ng Gumagamit at Tips',
+                localScoreLabel: 'Rating ng Gumagamit',
                 postBtnText: 'I-post ang Komento',
                 slideHint: '👈 I-swipe para sa iba pang litrato',
                 ratingsCountText: 'mga review',
@@ -748,7 +748,7 @@
                     ? item.images
                     : getUniqueRestaurantImageArray(item ? item.name : '', catKey);
 
-                // ==================== 評分簡化邏輯：頂部只留 Google 權威標籤 ====================
+                // 評分邏輯：頂部只放 Google 權威標籤
                 const ratingData = itemRatings[resKey] || { scores: [5], userRated: null };
                 const totalScores = ratingData.scores;
                 const localAvgRating = (totalScores.reduce((a, b) => a + b, 0) / totalScores.length).toFixed(1);
@@ -847,7 +847,7 @@
                             <div class="info-item"><span>📞</span> <span>${item.phone || langData.noPhone}</span></div>
                             ${hoursDisplayHtml}
 
-                            <!-- 下方社群專區：明確標註為大V用戶評分 -->
+                            <!-- 下方社群專區：統一標示為「用戶評分」 -->
                             <div class="card-forum-box">
                                 <div class="rating-header">
                                     <span class="rating-score">💬 ${langData.localScoreLabel}: ${localAvgRating} / 5.0 (${count} ${langData.ratingsCountText})</span>
