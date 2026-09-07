@@ -23,6 +23,14 @@
         .app-select { flex: 1; background: rgba(255, 255, 255, 0.18); color: white; border: 1px solid rgba(255, 255, 255, 0.4); padding: 6px 10px; border-radius: 6px; font-size: 0.82rem; outline: none; cursor: pointer; text-overflow: ellipsis; }
         .app-select option { color: #333; background: white; }
 
+        /* 即時搜尋框容器 */
+        .search-container { position: relative; margin-bottom: 10px; display: flex; align-items: center; }
+        .search-input { width: 100%; background: #ffffff; color: #292524; border: 1px solid #fed7aa; border-radius: 22px; padding: 8px 36px 8px 36px; font-size: 0.85rem; outline: none; box-shadow: 0 2px 6px rgba(0,0,0,0.06); transition: all 0.2s; }
+        .search-input:focus { border-color: #ea580c; box-shadow: 0 2px 10px rgba(234, 88, 12, 0.2); }
+        .search-icon { position: absolute; left: 12px; color: #ea580c; font-size: 0.85rem; pointer-events: none; }
+        .search-clear-btn { position: absolute; right: 10px; background: #e7e5e4; border: none; width: 20px; height: 20px; border-radius: 50%; color: #78716c; font-size: 0.72rem; cursor: pointer; display: none; align-items: center; justify-content: center; line-height: 1; }
+        .search-clear-btn:active { background: #d6d3d1; }
+
         /* 主導覽 Tab 切換 */
         .main-tabs { display: flex; border-top: 1px solid rgba(255,255,255,0.2); }
         .main-tab-btn { flex: 1; text-align: center; padding: 10px; font-weight: bold; font-size: 0.92rem; color: rgba(255,255,255,0.75); border: none; background: none; cursor: pointer; border-bottom: 3px solid transparent; }
@@ -43,6 +51,8 @@
         .container { max-width: 600px; margin: 0 auto; padding: 16px; }
         .tab-content { display: none; }
         .tab-content.active { display: block; }
+
+        .search-results-info { font-size: 0.8rem; color: #78716c; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; }
 
         .card { background: white; border-radius: 14px; overflow: hidden; margin-bottom: 20px; box-shadow: 0 4px 14px rgba(0,0,0,0.05); border: 1px solid #f0eae1; }
         .card > img { width: 100%; height: 200px; object-fit: cover; background: #f7f5f0; display: block; }
@@ -158,6 +168,7 @@
             <h1 id="app-title">📍 大V的美食地圖</h1>
             <button class="btn-share" id="share-btn" onclick="shareApp()">📤 分享</button>
         </div>
+        
         <div class="controls-row">
             <select class="app-select" id="city-select" onchange="changeCity(this.value)">
                 <option value="all">全部城市 (All Cities)</option>
@@ -171,6 +182,14 @@
                 <option value="tl">Tagalog</option>
             </select>
         </div>
+
+        <!-- 頂部即時搜尋框 -->
+        <div class="search-container" id="search-container">
+            <i class="fa-solid fa-magnifying-glass search-icon"></i>
+            <input type="text" class="search-input" id="search-input" placeholder="搜尋餐廳名、菜系、地標（如 Jollibee, 拉麵, BGC）..." oninput="handleSearchInput(this.value)">
+            <button class="search-clear-btn" id="search-clear-btn" onclick="clearSearch()" title="清除">✕</button>
+        </div>
+
         <div class="main-tabs">
             <button class="main-tab-btn active" id="tab-btn-map" onclick="switchMainTab('map')">🗺️ 美食地圖</button>
             <button class="main-tab-btn" id="tab-btn-news" onclick="switchMainTab('news')">📰 美食新聞與促銷</button>
@@ -187,6 +206,8 @@
 
     <div id="main-tab-map" class="tab-content active">
         <div class="container">
+            <!-- 搜尋狀態列 -->
+            <div id="search-results-info" class="search-results-info" style="display:none;"></div>
             <div id="loading">載入最新美食清單中...</div>
             <div id="restaurant-list"></div>
         </div>
@@ -312,6 +333,9 @@
                 todayHours: '今日營業時間',
                 viewWeekly: '查看一週',
                 hideWeekly: '收合',
+                searchPlaceholder: '搜尋餐廳名、菜系、地標（如 Jollibee, 拉麵, BGC）...',
+                searchResultText: '找到 {count} 間符合「{keyword}」的餐廳',
+                clearSearch: '清除搜尋',
                 cities: { all: '全部城市', davao: '達沃', manila: '馬尼拉', cebu: '宿霧' },
                 cats: {
                     all: '全部',
@@ -363,6 +387,9 @@
                 todayHours: 'Today',
                 viewWeekly: 'Weekly Hours',
                 hideWeekly: 'Hide',
+                searchPlaceholder: 'Search by name, cuisine, landmark (e.g. Jollibee, Ramen, BGC)...',
+                searchResultText: 'Found {count} spots matching "{keyword}"',
+                clearSearch: 'Clear',
                 cities: { all: 'All Cities', davao: 'Davao', manila: 'Manila', cebu: 'Cebu' },
                 cats: {
                     all: 'All',
@@ -414,6 +441,9 @@
                 todayHours: 'Ngayong Araw',
                 viewWeekly: 'Lahat ng Oras',
                 hideWeekly: 'Itago',
+                searchPlaceholder: 'Maghanap ng kainan, pagkain, lugar (hal. Jollibee, BGC)...',
+                searchResultText: 'Nahanap ang {count} kainan para sa "{keyword}"',
+                clearSearch: 'Linisin',
                 cities: { all: 'Lahat ng Lungsod', davao: 'Davao', manila: 'Manila', cebu: 'Cebu' },
                 cats: {
                     all: 'Lahat',
@@ -438,19 +468,20 @@
         let currentCategoryKey = localStorage.getItem('ph_app_cat') || 'all';
         let currentMainTab = localStorage.getItem('ph_app_tab') || 'map';
         let currentNewsSubFilter = localStorage.getItem('ph_app_news_sub') || 'all';
+        let currentSearchQuery = '';
         let allRestaurants = [];
         let allNews = [];
 
         let itemRatings = JSON.parse(localStorage.getItem('ph_item_ratings')) || {};
         let resComments = JSON.parse(localStorage.getItem('ph_res_comments')) || {};
 
-        // ==================== 核心標準化與去重函式 ====================
+        // 名稱正規化
         function normalizeRestaurantName(name) {
             if (!name) return '';
             return name.toLowerCase()
-                       .replace(/\([^)]*\)/g, '')   // 移除括號內的備註分店，如 (Greenbelt)
-                       .replace(/restaurant|cafe|bistro|grill|express/g, '') // 移除常見通用後綴
-                       .replace(/[^a-z0-9\u4e00-\u9fa5]/g, '') // 只保留純英數字與中文字元
+                       .replace(/\([^)]*\)/g, '')
+                       .replace(/restaurant|cafe|bistro|grill|express/g, '')
+                       .replace(/[^a-z0-9\u4e00-\u9fa5]/g, '')
                        .trim();
         }
 
@@ -467,8 +498,6 @@
                     uniqueMap.set(dedupKey, item);
                 } else {
                     const existing = uniqueMap.get(dedupKey);
-
-                    // 權重計分：有真實 Google 評分 +50 分，有營業時間 +20 分，照片多 +10 分
                     const score = (r) => {
                         let s = 0;
                         if (r.googleRating !== undefined && r.googleRating !== null) s += 50;
@@ -478,7 +507,6 @@
                         return s;
                     };
 
-                    // 只要新進這筆的 Google 數據或完整度更高，就替換掉舊的那筆
                     if (score(item) > score(existing)) {
                         uniqueMap.set(dedupKey, item);
                     }
@@ -496,7 +524,6 @@
                     rawRestaurants.push(doc.data());
                 });
 
-                // 執行智慧去重，以 Google 數據優先
                 allRestaurants = deduplicateRestaurants(rawRestaurants);
 
                 const newsSnapshot = await getDocs(collection(db, "news"));
@@ -512,6 +539,25 @@
             filterNewsType(currentNewsSubFilter);
         }
 
+        // ==================== 即時搜尋框互動邏輯 ====================
+        window.handleSearchInput = function(val) {
+            currentSearchQuery = val.trim();
+            const clearBtn = document.getElementById('search-clear-btn');
+            if (clearBtn) {
+                clearBtn.style.display = currentSearchQuery ? 'flex' : 'none';
+            }
+            renderList();
+        };
+
+        window.clearSearch = function() {
+            const input = document.getElementById('search-input');
+            if (input) input.value = '';
+            currentSearchQuery = '';
+            const clearBtn = document.getElementById('search-clear-btn');
+            if (clearBtn) clearBtn.style.display = 'none';
+            renderList();
+        };
+
         window.switchMainTab = function(tab) {
             currentMainTab = tab;
             localStorage.setItem('ph_app_tab', tab);
@@ -522,6 +568,7 @@
             document.getElementById('main-tab-news').classList.toggle('active', tab === 'news');
             
             document.getElementById('category-bar').style.display = (tab === 'map') ? 'flex' : 'none';
+            document.getElementById('search-container').style.display = (tab === 'map') ? 'flex' : 'none';
             document.getElementById('news-filter-bar').style.display = (tab === 'news') ? 'flex' : 'none';
 
             if (tab === 'news') renderNewsList();
@@ -593,6 +640,8 @@
             document.getElementById('tab-btn-map').innerText = langData.tabMap;
             document.getElementById('tab-btn-news').innerText = langData.tabNews;
             document.getElementById('share-btn').innerText = langData.shareBtn;
+
+            document.getElementById('search-input').placeholder = langData.searchPlaceholder;
 
             document.getElementById('news-sub-all').innerText = langData.newsSubAll;
             document.getElementById('news-sub-promo').innerText = langData.newsSubPromo;
@@ -771,14 +820,40 @@
         function renderList() {
             const listEl = document.getElementById('restaurant-list');
             const loadingEl = document.getElementById('loading');
+            const searchInfoEl = document.getElementById('search-results-info');
             if (loadingEl) loadingEl.style.display = 'none';
             const langData = i18n[currentLang];
 
-            const filtered = (allRestaurants || []).filter(item => {
+            // 1. 城市與分類篩選
+            let filtered = (allRestaurants || []).filter(item => {
                 const matchesCity = (currentCity === 'all') || (item.city === currentCity);
                 const matchesCat = (currentCategoryKey === 'all') || ((item.categoryKey || 'filipino') === currentCategoryKey);
                 return matchesCity && matchesCat;
             });
+
+            // 2. 即時關鍵字搜尋過濾（店名、英文名、地址、描述、菜系）
+            if (currentSearchQuery) {
+                const q = currentSearchQuery.toLowerCase();
+                filtered = filtered.filter(item => {
+                    const name = (item.name || '').toLowerCase();
+                    const nameEn = (item.name_en || '').toLowerCase();
+                    const address = (item.address || '').toLowerCase();
+                    const desc = (item.description || item.description_zh || '').toLowerCase();
+                    const cat = (langData.cats[item.categoryKey] || item.categoryKey || '').toLowerCase();
+
+                    return name.includes(q) || nameEn.includes(q) || address.includes(q) || desc.includes(q) || cat.includes(q);
+                });
+
+                if (searchInfoEl) {
+                    searchInfoEl.style.display = 'flex';
+                    searchInfoEl.innerHTML = `
+                        <span>${langData.searchResultText.replace('{count}', filtered.length).replace('{keyword}', currentSearchQuery)}</span>
+                        <a href="javascript:void(0)" onclick="clearSearch()" style="color:#ea580c; text-decoration:underline;">${langData.clearSearch}</a>
+                    `;
+                }
+            } else {
+                if (searchInfoEl) searchInfoEl.style.display = 'none';
+            }
 
             if (!filtered || filtered.length === 0) {
                 listEl.innerHTML = `<p style="text-align:center; color:#a8a29e; padding: 40px;">${langData.noData}</p>`;
