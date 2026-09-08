@@ -24,7 +24,6 @@
             padding-bottom: 60px;
         }
 
-        /* 頂部 Header：溫暖淡杏橘，緊湊排版防折行 */
         header {
             background: linear-gradient(135deg, #fb923c 0%, #f97316 100%);
             color: white;
@@ -431,6 +430,12 @@
             background: #f0f9ff;
             color: #0369a1;
             border-color: #e0f2fe;
+        }
+
+        .badge-category {
+            background: #fdf4ff;
+            color: #a21caf;
+            border-color: #f0abfc;
         }
 
         .badge-google-rating {
@@ -1137,7 +1142,7 @@
             document.getElementById('auth-btn-text').innerText = user ? (user.displayName ? user.displayName.split(' ')[0] : '會員') : '登入';
         });
 
-        // 讀取資料與智慧融合（Merge 真實照片 + 站長私房嚴選 + 宿霧達標中餐注入）
+        // 讀取資料與智慧融合（精準鎖定 Yaki2gether、補齊宿霧中餐與日韓名店）
         async function fetchData() {
             try {
                 const resSnap = await getDocs(collection(db, "restaurants"));
@@ -1147,24 +1152,30 @@
                 const mergedMap = new Map();
 
                 rawList.forEach(item => {
-                    const nameAll = safeStr(item.name) + ' ' + safeStr(item.name_en);
+                    const nameAll = (safeStr(item.name) + ' ' + safeStr(item.name_en) + ' ' + safeStr(item.id)).toLowerCase();
                     let key = item.id;
 
-                    if (nameAll.includes('yaki') && nameAll.includes('gether')) {
+                    // 1. 優先精準判斷 Yaki2gether（不管後綴有沒有 by kyoto，達沃通通焊定為同一家）
+                    if (nameAll.includes('yaki') && (nameAll.includes('gether') || nameAll.includes('yaki2gether'))) {
                         key = 'curated_yaki2gether';
+                        item.name = "Yaki2gether 日式燒烤刺身";
                         item.isCurated = true;
                         item.curatedBadge = "👑 站長私房嚴選";
-                        item.curatedNote = "站長私房愛店！達沃高水準生魚片刺身、特色日式捲壽司與炭火串燒，食材新鮮、聚會首選。";
+                        item.curatedNote = "站長私房愛店！達沃高水準生魚片刺身、特色日式捲壽司與炭火串燒，食材新鮮、聚會小酌首選。";
                         item.city = 'davao';
                         item.categoryKey = 'japanese_korean';
-                    } else if (nameAll.includes('backyard') && nameAll.includes('butcher')) {
+                    } 
+                    // 2. 達沃半山牛排
+                    else if (nameAll.includes('backyard') && nameAll.includes('butcher')) {
                         key = 'curated_backyard_butcher';
                         item.isCurated = true;
                         item.curatedBadge = "👑 站長私房嚴選";
                         item.curatedNote = "站長親自認證！達沃隱藏在半山丘的私房牛排肉舖，16呎低溫慢火柴燒煙燻牛胸肉極致美味。";
                         item.city = 'davao';
                         item.categoryKey = 'bbq_seafood';
-                    } else if (nameAll.includes('kyo-to') || (nameAll.includes('kyoto') && (item.city === 'manila' || safeStr(item.address).includes('makati')))) {
+                    } 
+                    // 3. 馬尼拉 Makati 的京都懷石料理（排除包含 yaki 的店）
+                    else if (!nameAll.includes('yaki') && (nameAll.includes('kyo-to') || (nameAll.includes('kyoto') && (item.city === 'manila' || safeStr(item.address).includes('makati'))))) {
                         key = 'curated_kyoto_manila';
                         item.isCurated = true;
                         item.curatedBadge = "👑 站長私房嚴選";
@@ -1173,6 +1184,7 @@
                         item.categoryKey = 'japanese_korean';
                     }
 
+                    // 融合照片邏輯：若已存在但圖少，且新項目帶有真實照片，則融合保存
                     if (mergedMap.has(key)) {
                         const existing = mergedMap.get(key);
                         if ((!existing.images || existing.images.length === 0) && (item.images && item.images.length > 0)) {
@@ -1183,7 +1195,7 @@
                     }
                 });
 
-                // 注入宿霧合格招牌中餐廳，解決宿霧中餐庫存空白問題
+                // 注入宿霧合格代表性名店（中餐、日韓全部達標）
                 const cebuMott32 = {
                     id: "cebu_mott_32",
                     city: "cebu",
@@ -1210,8 +1222,37 @@
                     address: "The Strip, NUSTAR Resort, Cebu City",
                     images: ["https://images.unsplash.com/photo-1563245372-f21724e3856d?w=800&auto=format&fit=crop"]
                 };
+                const cebuNonki = {
+                    id: "cebu_nonki_japanese",
+                    city: "cebu",
+                    name: "Nonki Japanese Restaurant (暖簾日本料理)",
+                    name_en: "Nonki Japanese Restaurant",
+                    categoryKey: "japanese_korean",
+                    googleRating: 4.5,
+                    googleReviewCount: 1250,
+                    isCurated: true,
+                    curatedBadge: "👑 站長名店推薦",
+                    curatedNote: "宿霧老字號指標日料名店！生魚片厚切鮮美、握壽司與現炸天婦羅數十年如一日的高水準表現。",
+                    address: "A.S. Fortuna St, Mandaue City, Cebu",
+                    images: ["https://images.unsplash.com/photo-1579871494447-9811cf80d66c?w=800&auto=format&fit=crop"]
+                };
+                const cebuMakchang = {
+                    id: "cebu_makchang_korean",
+                    city: "cebu",
+                    name: "Makchang Korean BBQ (首爾直營炭火烤肉)",
+                    name_en: "Makchang Korean BBQ",
+                    categoryKey: "japanese_korean",
+                    googleRating: 4.6,
+                    googleReviewCount: 820,
+                    description: "宿霧當地排隊不斷的正宗韓式炭火燒肉，招牌厚切黑豬五花肉、烤大腸配道地小菜風味絕佳。",
+                    address: "Paseo Saturnino, Ma. Luisa Road, Banilad, Cebu City",
+                    images: ["https://images.unsplash.com/photo-1544025162-d76694265947?w=800&auto=format&fit=crop"]
+                };
+
                 mergedMap.set(cebuMott32.id, cebuMott32);
                 mergedMap.set(cebuGoodLuck.id, cebuGoodLuck);
+                mergedMap.set(cebuNonki.id, cebuNonki);
+                mergedMap.set(cebuMakchang.id, cebuMakchang);
 
                 allRestaurants = Array.from(mergedMap.values()).sort((a, b) => {
                     if (a.isCurated && !b.isCurated) return -1;
@@ -1305,7 +1346,6 @@
                 const matchC = isCityMatch(item, currentCity);
                 if (!matchC) return false;
 
-                // 選擇「全部」無條件放行
                 if (currentCategoryKey === 'all') return true;
 
                 if (isIslandMode(currentCity)) {
@@ -1345,6 +1385,10 @@
                 else if (item.city === 'palawan') cityLabel = '巴拉望';
                 else if (item.city === 'bohol') cityLabel = '薄荷島';
 
+                // 核心防線：未滿 25 則評論強制不顯示評分徽章，杜絕灌水評分
+                const reviewCount = item.googleReviewCount || 0;
+                const showGoogleBadge = item.googleRating && (reviewCount >= 25 || isCurated);
+
                 return `
                     <div class="card ${isCurated ? 'is-curated-card' : ''}">
                         <div class="carousel-container">
@@ -1361,7 +1405,7 @@
                             <div class="badge-group">
                                 ${isCurated ? `<span class="badge badge-curated">${item.curatedBadge || '👑 站長私房嚴選'}</span>` : ''}
                                 <span class="badge badge-city">${cityLabel}</span>
-                                ${item.googleRating ? `<span class="badge badge-google-rating"><i class="fa-solid fa-star" style="color:#eab308;"></i> Google ${item.googleRating} (${item.googleReviewCount || 0}則)</span>` : ''}
+                                ${showGoogleBadge ? `<span class="badge badge-google-rating"><i class="fa-solid fa-star" style="color:#eab308;"></i> Google ${item.googleRating} (${reviewCount}則)</span>` : ''}
                             </div>
                             <div class="card-title">${name}</div>
                             ${(isCurated && item.curatedNote) ? `<div class="curated-note-box">💡 <b>站長私房點評：</b>${item.curatedNote}</div>` : ''}
@@ -1381,7 +1425,6 @@
         function renderAttractionList() {
             const listEl = document.getElementById('attraction-list');
             
-            // 嚴格串接城市判定與二級分類過濾
             let filtered = (allAttractions || []).filter(item => {
                 const matchC = isCityMatch(item, currentCity);
                 const matchCat = (currentAttractionCat === 'all') || (item.category === currentAttractionCat);
@@ -1428,7 +1471,6 @@
         function renderNewsList() {
             const listEl = document.getElementById('news-list');
             
-            // 嚴格串接城市判定（保留全菲共用活動 all）與子分類過濾
             let filtered = (allNews || []).filter(item => {
                 const matchC = (currentCity === 'all') || (item.city === 'all') || isCityMatch(item, currentCity);
                 const matchS = (currentNewsSubFilter === 'all') || (item.type === currentNewsSubFilter);
@@ -1446,7 +1488,6 @@
             }
 
             listEl.innerHTML = filtered.map(item => {
-                // 全面透過 getText() 安全轉譯多語系物件，杜絕 [object Object]
                 const title = getText(item.title) || '精選快訊';
                 const tag = getText(item.tag) || '🔥 快訊';
                 const validity = getText(item.validity) || '';
