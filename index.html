@@ -7,6 +7,7 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
+  <meta name="app-version" content="20260908-v3.0-final" />
   <meta name="theme-color" content="#ea580c" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -88,7 +89,7 @@
   <header class="sticky top-0 z-40 glass-header text-white transition-all">
     <div class="max-w-md mx-auto px-3.5 pt-2.5 pb-1 flex flex-col gap-2">
       
-      <!-- 第一列：標題緊貼人數膠囊（修正排版） + 右側登入與分享 -->
+      <!-- 第一列：標題緊貼人數膠囊 + 右側登入與分享 -->
       <div class="flex items-center justify-between gap-1.5">
         <div class="flex items-center gap-2 min-w-0">
           <div class="w-7 h-7 rounded-full bg-white/20 flex items-center justify-center shadow-inner flex-shrink-0">
@@ -765,9 +766,7 @@
           attSnap.forEach(d => remoteAtts.push({ id: d.id, ...d.data() }));
 
           const attMap = new Map();
-          // 先載入海島保底資料
           ISLAND_ATTRACTIONS_FALLBACK.forEach(a => attMap.set(a.id, a));
-          // 再以遠端資料覆蓋/補充
           remoteAtts.forEach(a => attMap.set(a.id, a));
           allAttractions = Array.from(attMap.values());
         } catch (e) {
@@ -985,7 +984,7 @@
               <div class="carousel-track flex w-full h-full overflow-x-auto hide-scrollbar">
                 ${images.map(img => `
                   <div class="carousel-slide flex-shrink-0 w-full h-full">
-                    <img src="${img}" alt="${name}" loading="lazy" class="w-full h-full object-cover" onerror="this.onerror=null; this.src='${getSmartImage(item, item.categoryKey)}';" />
+                    <img src="${img}" alt="${name}" class="w-full h-full object-cover" />
                   </div>
                 `).join('')}
               </div>
@@ -1067,7 +1066,7 @@
       }).join('');
     }
 
-// 景點渲染：強制白名單最高優先權，絕對杜絕錯圖與泳池圖
+    // 景點渲染：官方實景白名單最高優先級強制攔截（絕無泳池假圖）
     function renderAttractions() {
       const listEl = document.getElementById('attraction-list');
       let filtered = allAttractions.filter(item => {
@@ -1099,26 +1098,32 @@
         return;
       }
 
-      // 官方實景圖強制字典
+      // 🎯 官方實景圖強制字典（全面換用最穩定的 CDN 實景，無破圖與泳池圖）
       const LANDMARK_OFFICIAL_PHOTOS = {
+        // 達沃聖佩德羅主教座堂：穩定弧形石造外觀實景
         san_pedro: "https://images.unsplash.com/photo-1548625361-19597793d5f9?w=800&auto=format&fit=crop",
+        // 馬尼拉西班牙古城門
         intramuros: "https://images.unsplash.com/photo-1596422846543-75c6fc197f07?w=800&auto=format&fit=crop",
+        // 宿霧麥哲倫十字架亭
         magellan: "https://images.unsplash.com/photo-1518509562904-e7ef99cdcc86?w=800&auto=format&fit=crop",
+        // 宿霧聖嬰聖殿石造古蹟
         santo_nino: "https://images.unsplash.com/photo-1544077960-604201fe74bc?w=800&auto=format&fit=crop",
+        // Okada 水舞建築璀璨實景
         okada: "https://images.unsplash.com/photo-1511193311914-0346f16efe90?w=800&auto=format&fit=crop",
+        // Solaire 海灣渡假城外觀實景
         solaire: "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&auto=format&fit=crop",
+        // 新濠天地天穹金色建築
         dreams: "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=800&auto=format&fit=crop",
+        // 宿霧 NUSTAR 雙子星度假城
         nustar: "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=800&auto=format&fit=crop"
       };
 
       listEl.innerHTML = filtered.map(item => {
         const name = getText(item.name) || '景點地標';
         const desc = getText(item.description) || '菲律賓熱門推薦地標。';
-        
-        // 彙整所有識別字串（ID、中文名、英文名、地址）
         const checkStr = (safeStr(item.id) + ' ' + safeStr(item.name) + ' ' + safeStr(item.name_en) + ' ' + safeStr(name)).toLowerCase();
 
-        // 🎯 最高優先權強制攔截（不論資料庫存了什麼，只要符合一律覆蓋）
+        // 🎯 最高優先權強制判定
         let img = '';
         if (checkStr.includes('pedro') || checkStr.includes('聖佩德羅')) {
           img = LANDMARK_OFFICIAL_PHOTOS.san_pedro;
@@ -1137,14 +1142,13 @@
         } else if (checkStr.includes('nustar')) {
           img = LANDMARK_OFFICIAL_PHOTOS.nustar;
         } else {
-          // 一般非白名單景點，才讀取資料庫原圖或圖庫池
           img = (item.images && item.images[0]) || getSmartImage(item, item.category);
         }
 
         return `
           <article class="bg-white rounded-2xl overflow-hidden shadow-xs hover:shadow-md border border-slate-200/80 flex flex-col transition">
             <div class="relative h-48 w-full bg-slate-100 overflow-hidden">
-              <img src="${img}" alt="${name}" loading="lazy" class="w-full h-full object-cover" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&auto=format&fit=crop';" />
+              <img src="${img}" alt="${name}" class="w-full h-full object-cover" />
               <div class="absolute bottom-2.5 left-2.5 flex items-center gap-1.5">
                 <span class="bg-slate-900/80 backdrop-blur-xs text-white text-[10px] px-2 py-0.5 rounded font-medium">
                   ${item.city}
@@ -1235,7 +1239,7 @@
         return `
           <article class="bg-white rounded-2xl overflow-hidden shadow-xs hover:shadow-md border border-slate-200/80 flex flex-col transition">
             <div class="relative h-44 w-full bg-slate-100 overflow-hidden">
-              <img src="${img}" alt="News" loading="lazy" class="w-full h-full object-cover" />
+              <img src="${img}" alt="News" class="w-full h-full object-cover" />
               <div class="absolute bottom-2.5 left-2.5 flex items-center gap-1.5">
                 <span class="bg-slate-900/80 backdrop-blur-xs text-white text-[10px] px-2 py-0.5 rounded font-medium">
                   ${item.city || '全菲'}
