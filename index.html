@@ -21,7 +21,7 @@
             padding-bottom: 60px;
         }
 
-        /* 頂部固定 Header 容器（主體與二級列統一收合，杜絕跑版） */
+        /* 頂部固定 Header 容器 */
         header {
             background: #EA580C;
             color: white;
@@ -87,9 +87,15 @@
             text-overflow: ellipsis;
         }
 
-        .app-select option {
+        .app-select option, .app-select optgroup {
             color: #333;
             background: white;
+        }
+
+        .app-select optgroup {
+            font-weight: bold;
+            background: #f8f6f0;
+            color: #ea580c;
         }
 
         /* 搜尋框 */
@@ -144,7 +150,7 @@
             line-height: 1;
         }
 
-        /* 三欄式主導覽 Tab 切換 */
+        /* 三欄式主導覽 Tab */
         .main-tabs {
             display: flex;
             border-top: 1px solid rgba(255, 255, 255, 0.2);
@@ -171,7 +177,7 @@
             border-bottom: 3px solid white;
         }
 
-        /* 二級篩選 Bar */
+        /* 二級篩選 Bar（置於 Header 底端一體化） */
         .sub-nav-wrapper {
             background: #ffffff;
             border-bottom: 1px solid #f1ece1;
@@ -252,6 +258,13 @@
             border: 1px solid #f0eae1;
             display: flex;
             flex-direction: column;
+            transition: transform 0.2s;
+        }
+
+        /* 站長私房嚴選卡片高光樣式 */
+        .card.is-curated-card {
+            border: 1.5px solid #f59e0b;
+            box-shadow: 0 6px 18px rgba(245, 158, 11, 0.15);
         }
 
         .carousel-container {
@@ -356,6 +369,14 @@
             border: 1px solid #ffedd5;
         }
 
+        .badge-curated {
+            background: #1c1917;
+            color: #fbbf24;
+            border-color: #f59e0b;
+            font-weight: 800;
+            box-shadow: 0 2px 6px rgba(245, 158, 11, 0.2);
+        }
+
         .badge-city {
             background: #f0f9ff;
             color: #0369a1;
@@ -395,6 +416,19 @@
             border-color: #fecdd3;
             font-weight: bold;
             gap: 4px;
+        }
+
+        /* 站長私房點評專屬外觀 */
+        .curated-note-box {
+            background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+            border-left: 3.5px solid #d97706;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 0.82rem;
+            color: #78350f;
+            margin-bottom: 12px;
+            line-height: 1.45;
+            font-weight: 500;
         }
 
         .card-title {
@@ -539,10 +573,6 @@
             align-items: center;
             border-top: 1px dashed #e7dfd3;
             margin-top: 8px;
-        }
-
-        .btn-toggle-forum:hover {
-            color: #ea580c;
         }
 
         .forum-content {
@@ -820,7 +850,7 @@
 </head>
 <body>
 
-    <!-- 頂部 Header 與導覽整體容器 -->
+    <!-- 頂部固定 Header 容器 -->
     <header>
         <div class="header-inner">
             <div class="header-top">
@@ -829,12 +859,27 @@
             </div>
             
             <div class="controls-row">
+                <!-- 北中南原生 optgroup 分組下拉選單（零佔用多餘空間） -->
                 <select class="app-select" id="city-select" onchange="changeCity(this.value)">
-                    <option value="all">全部城市 (All Cities)</option>
-                    <option value="davao">達沃 (Davao)</option>
-                    <option value="manila">馬尼拉 (Manila)</option>
-                    <option value="cebu">宿霧 (Cebu)</option>
+                    <option value="all">🌏 全部地區 (All Regions)</option>
+                    
+                    <optgroup label="📍 北部：呂宋島群 (Luzon)" id="optgroup-luzon">
+                        <option value="manila">馬尼拉 (Manila)</option>
+                        <option value="palawan">巴拉望 (Palawan - 愛妮島/科隆)</option>
+                    </optgroup>
+                    
+                    <optgroup label="🏝️ 中部：米沙鄢海島群 (Visayas)" id="optgroup-visayas">
+                        <option value="cebu">宿霧 (Cebu)</option>
+                        <option value="boracay">長灘島 (Boracay)</option>
+                        <option value="bohol">薄荷島 (Bohol)</option>
+                    </optgroup>
+                    
+                    <optgroup label="🌺 南部：民答那峨群島 (Mindanao)" id="optgroup-mindanao">
+                        <option value="davao">達沃 (Davao)</option>
+                        <option value="samal">薩馬爾島 (Samal Island)</option>
+                    </optgroup>
                 </select>
+
                 <select class="app-select" id="lang-select" onchange="changeLanguage(this.value)">
                     <option value="zh-TW">繁體中文</option>
                     <option value="en">English</option>
@@ -845,11 +890,11 @@
             <!-- 即時搜尋框 -->
             <div class="search-container" id="search-container">
                 <i class="fa-solid fa-magnifying-glass search-icon"></i>
-                <input type="text" class="search-input" id="search-input" placeholder="搜尋燒肉、火鍋、景點、演唱會、商場、賭場..." oninput="handleSearchInput(this.value)">
+                <input type="text" class="search-input" id="search-input" placeholder="搜尋燒肉、火鍋、景點、演唱會、賭場..." oninput="handleSearchInput(this.value)">
                 <button class="search-clear-btn" id="search-clear-btn" onclick="clearSearch()" title="清除">✕</button>
             </div>
 
-            <!-- 三欄式主導覽 Tab 切換（緊密貼合 Header 底線） -->
+            <!-- 三欄式主導覽 Tab 切換 -->
             <div class="main-tabs">
                 <button class="main-tab-btn active" id="tab-btn-map" onclick="switchMainTab('map')">🗺️ 美食地圖</button>
                 <button class="main-tab-btn" id="tab-btn-attraction" onclick="switchMainTab('attraction')">🏛️ 景點導覽</button>
@@ -857,12 +902,12 @@
             </div>
         </div>
 
-        <!-- 二級篩選列包覆區（緊貼在 Header 最下方） -->
+        <!-- 二級篩選 Bar -->
         <div class="sub-nav-wrapper">
             <!-- 美食分類列 -->
             <div class="category-bar" id="category-bar"></div>
 
-            <!-- 景點二級分類 Bar（含 🛒 購物商場 與 🎰 賭場娛樂） -->
+            <!-- 景點二級分類 Bar -->
             <div class="sub-filter-bar" id="attraction-filter-bar">
                 <button class="cat-chip active" id="att-sub-all" onclick="filterAttractionCat('all')">全部景點</button>
                 <button class="cat-chip" id="att-sub-shopping" onclick="filterAttractionCat('shopping')">🛒 購物商場</button>
@@ -926,7 +971,7 @@
         </div>
         <div class="chat-messages" id="chat-messages">
             <div class="chat-bubble bot" id="chat-welcome-msg">
-                嗨！我是大V旅遊窩管家 👋 歡迎來到菲律賓！有任何餐廳推薦、大型百貨商場、頂級賭場、必去景點或活動疑問，隨時問我喔！
+                嗨！我是大V旅遊窩管家 👋 歡迎來到菲律賓！有任何私房私廚、大型商場、頂級賭場或海島跳島疑問，隨時問我喔！
             </div>
         </div>
         <div class="chat-input-area">
@@ -957,76 +1002,55 @@
 
         const AI_WORKER_URL = "https://food-ai-assistant.vhuang904.workers.dev";
 
-        // 分類專屬高解析度備援圖庫池（提供中餐、燒肉、日韓、速食、手搖飲、菲律賓菜、商場、賭場、歷史古蹟）
+        // 分類專屬備援圖庫池
         const categoryImagePools = {
             chinese: [
                 "https://images.unsplash.com/photo-1563245372-f21724e3856d?w=800&auto=format&fit=crop",
-                "https://images.unsplash.com/photo-1541696432-82c6da8ce7bf?w=800&auto=format&fit=crop",
-                "https://images.unsplash.com/photo-1525755662778-989d0524087e?w=800&auto=format&fit=crop"
+                "https://images.unsplash.com/photo-1541696432-82c6da8ce7bf?w=800&auto=format&fit=crop"
             ],
             japanese_korean: [
                 "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=800&auto=format&fit=crop",
-                "https://images.unsplash.com/photo-1579871494447-9811cf80d66c?w=800&auto=format&fit=crop",
-                "https://images.unsplash.com/photo-1617196034796-73dfa7b1fd56?w=800&auto=format&fit=crop"
+                "https://images.unsplash.com/photo-1579871494447-9811cf80d66c?w=800&auto=format&fit=crop"
             ],
             fast_food: [
                 "https://images.unsplash.com/photo-1550547660-d9450f859349?w=800&auto=format&fit=crop",
-                "https://images.unsplash.com/photo-1586190848861-99aa4a171e90?w=800&auto=format&fit=crop",
-                "https://images.unsplash.com/photo-1561758033-d89a9ad46330?w=800&auto=format&fit=crop"
+                "https://images.unsplash.com/photo-1586190848861-99aa4a171e90?w=800&auto=format&fit=crop"
             ],
             bbq_seafood: [
                 "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=800&auto=format&fit=crop",
-                "https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?w=800&auto=format&fit=crop",
-                "https://images.unsplash.com/photo-1544025162-d76694265947?w=800&auto=format&fit=crop"
+                "https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?w=800&auto=format&fit=crop"
             ],
             coffee_drinks: [
                 "https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=800&auto=format&fit=crop",
-                "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=800&auto=format&fit=crop",
-                "https://images.unsplash.com/photo-1517256064527-09c73fc73e38?w=800&auto=format&fit=crop"
+                "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=800&auto=format&fit=crop"
             ],
             filipino: [
                 "https://images.unsplash.com/photo-1541544741938-0af808871cc0?w=800&auto=format&fit=crop",
-                "https://images.unsplash.com/photo-1626777552726-4a6b54c97e46?w=800&auto=format&fit=crop",
-                "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=800&auto=format&fit=crop"
-            ],
-            history: [
-                "https://images.unsplash.com/photo-1548625361-195fe578df93?w=800&auto=format&fit=crop",
-                "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=800&auto=format&fit=crop",
-                "https://images.unsplash.com/photo-1569154941061-e231b4725ef1?w=800&auto=format&fit=crop"
-            ],
-            nature: [
-                "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&auto=format&fit=crop",
-                "https://images.unsplash.com/photo-1518684079-3c830dcef090?w=800&auto=format&fit=crop",
-                "https://images.unsplash.com/photo-1448375240586-882707db888b?w=800&auto=format&fit=crop"
+                "https://images.unsplash.com/photo-1626777552726-4a6b54c97e46?w=800&auto=format&fit=crop"
             ],
             attraction: [
                 "https://images.unsplash.com/photo-1518684079-3c830dcef090?w=800&auto=format&fit=crop",
-                "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&auto=format&fit=crop",
-                "https://images.unsplash.com/photo-1548625361-195fe578df93?w=800&auto=format&fit=crop"
+                "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&auto=format&fit=crop"
             ],
             shopping: [
                 "https://images.unsplash.com/photo-1519567241046-7f570eee3ce6?w=800&auto=format&fit=crop",
-                "https://images.unsplash.com/photo-1567449303078-57ad995bd302?w=800&auto=format&fit=crop",
-                "https://images.unsplash.com/photo-1555529669-e69e7aa0ba9a?w=800&auto=format&fit=crop"
+                "https://images.unsplash.com/photo-1567449303078-57ad995bd302?w=800&auto=format&fit=crop"
             ],
             casino: [
                 "https://images.unsplash.com/photo-1518609878373-06d740f60d8b?w=800&auto=format&fit=crop",
-                "https://images.unsplash.com/photo-1511193311914-0346f16efe90?w=800&auto=format&fit=crop",
-                "https://images.unsplash.com/photo-1596838132731-3301c3fd4317?w=800&auto=format&fit=crop"
+                "https://images.unsplash.com/photo-1511193311914-0346f16efe90?w=800&auto=format&fit=crop"
             ],
             event: [
                 "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=800&auto=format&fit=crop",
-                "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=800&auto=format&fit=crop",
-                "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=800&auto=format&fit=crop"
+                "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=800&auto=format&fit=crop"
             ],
             movie: [
                 "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=800&auto=format&fit=crop",
-                "https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=800&auto=format&fit=crop",
-                "https://images.unsplash.com/photo-1517604931442-7e0c8ed2963c?w=800&auto=format&fit=crop"
+                "https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=800&auto=format&fit=crop"
             ]
         };
 
-        // 多語系字典
+        // 多語系字典（包含北中南分區）
         const i18n = {
             'zh-TW': {
                 title: '📍 大V的旅遊窩',
@@ -1064,14 +1088,30 @@
                 localScoreLabel: '用戶評分',
                 postBtnText: '發表評語',
                 slideHint: '👈 左右滑動',
-                ratingsCountText: '則',
                 openStatus: '🟢 營業中',
                 closedStatus: '🔴 已打烊',
+                curatedBadge: '👑 站長私房嚴選',
                 eliteChoice: '🌟 大V精選',
-                searchPlaceholder: '搜尋燒肉、火鍋、景點、演唱會、商場、賭場...',
+                searchPlaceholder: '搜尋燒肉、火鍋、景點、演唱會、賭場...',
                 searchResultText: '找到 {count} 筆符合「{keyword}」的結果',
                 clearSearch: '清除',
-                cities: { all: '全部城市', davao: '達沃', manila: '馬尼拉', cebu: '宿霧', boracay: '長灘島', palawan: '巴拉望', bohol: '薄荷島' },
+                regions: {
+                    all: '🌏 全部地區 (All Regions)',
+                    luzon: '📍 北部：呂宋島群 (Luzon)',
+                    visayas: '🏝️ 中部：米沙鄢海島群 (Visayas)',
+                    mindanao: '🌺 南部：民答那峨群島 (Mindanao)'
+                },
+                cities: {
+                    all: '全部地區',
+                    manila: '馬尼拉',
+                    palawan: '巴拉望 (愛妮島/科隆)',
+                    cebu: '宿霧',
+                    boracay: '長灘島',
+                    bohol: '薄荷島',
+                    davao: '達沃',
+                    samal: '薩馬爾島',
+                    siargao: '錫亞高島'
+                },
                 cats: {
                     all: '全部',
                     chinese: '中餐',
@@ -1082,7 +1122,7 @@
                     filipino: '菲律賓餐'
                 },
                 chatHeader: '大V旅遊窩管家',
-                chatWelcome: '嗨！我是大V旅遊窩管家 👋 歡迎來到菲律賓！有任何餐廳推薦、大型百貨商場、頂級賭場、必去景點或活動疑問，隨時問我喔！',
+                chatWelcome: '嗨！我是大V旅遊窩管家 👋 歡迎來到菲律賓！有任何私房私廚、大型商場、頂級賭場或海島跳島疑問，隨時問我喔！',
                 chatPlaceholder: '問點什麼吧...',
                 chatThinking: '管家正在思考中... ⏳',
                 chatError: '連線異常，請稍候再試。'
@@ -1123,14 +1163,30 @@
                 localScoreLabel: 'User Rating',
                 postBtnText: 'Submit',
                 slideHint: '👈 Swipe',
-                ratingsCountText: 'reviews',
                 openStatus: '🟢 Open',
                 closedStatus: '🔴 Closed',
+                curatedBadge: "👑 Founder's Choice",
                 eliteChoice: '🌟 Big V Choice',
                 searchPlaceholder: 'Search BBQ, Malls, Casino, Concert...',
                 searchResultText: 'Found {count} results',
                 clearSearch: 'Clear',
-                cities: { all: 'All Cities', davao: 'Davao', manila: 'Manila', cebu: 'Cebu', boracay: 'Boracay', palawan: 'Palawan', bohol: 'Bohol' },
+                regions: {
+                    all: '🌏 All Regions',
+                    luzon: '📍 Northern: Luzon',
+                    visayas: '🏝️ Central: Visayas Islands',
+                    mindanao: '🌺 Southern: Mindanao'
+                },
+                cities: {
+                    all: 'All Regions',
+                    manila: 'Manila',
+                    palawan: 'Palawan (El Nido/Coron)',
+                    cebu: 'Cebu',
+                    boracay: 'Boracay',
+                    bohol: 'Bohol',
+                    davao: 'Davao',
+                    samal: 'Samal Island',
+                    siargao: 'Siargao'
+                },
                 cats: {
                     all: 'All',
                     chinese: 'Chinese',
@@ -1182,14 +1238,30 @@
                 localScoreLabel: 'Rating',
                 postBtnText: 'I-post',
                 slideHint: '👈 I-swipe',
-                ratingsCountText: 'reviews',
                 openStatus: '🟢 Bukas',
                 closedStatus: '🔴 Sarado',
-                eliteChoice: '🌟 Pinili ni Big V',
+                curatedBadge: '👑 Pinili ni Big V',
+                eliteChoice: '🌟 Big V Choice',
                 searchPlaceholder: 'Maghanap ng Mall, Casino...',
                 searchResultText: 'Nahanap ang {count}',
                 clearSearch: 'Linisin',
-                cities: { all: 'Lahat', davao: 'Davao', manila: 'Manila', cebu: 'Cebu', boracay: 'Boracay', palawan: 'Palawan', bohol: 'Bohol' },
+                regions: {
+                    all: '🌏 Lahat ng Rehiyon',
+                    luzon: '📍 Hilaga: Luzon',
+                    visayas: '🏝️ Gitna: Visayas',
+                    mindanao: '🌺 Timog: Mindanao'
+                },
+                cities: {
+                    all: 'Lahat',
+                    manila: 'Manila',
+                    palawan: 'Palawan',
+                    cebu: 'Cebu',
+                    boracay: 'Boracay',
+                    bohol: 'Bohol',
+                    davao: 'Davao',
+                    samal: 'Samal Island',
+                    siargao: 'Siargao'
+                },
                 cats: {
                     all: 'Lahat',
                     chinese: 'Chinese',
@@ -1221,7 +1293,7 @@
         let itemRatings = JSON.parse(localStorage.getItem('ph_item_ratings')) || {};
         let resComments = JSON.parse(localStorage.getItem('ph_res_comments')) || {};
 
-        // 完整同義詞搜尋對應表（涵蓋各品類關鍵字）
+        // 完整同義詞搜尋映射庫
         const SYNONYM_MAP = {
             '燒肉': ['bbq', 'barbecue', 'grill', 'yakiniku', 'samgyupsal', '烤肉', 'japanese_korean', 'bbq_seafood'],
             '烤肉': ['bbq', 'barbecue', 'grill', 'yakiniku', 'samgyupsal', '燒肉', 'japanese_korean', 'bbq_seafood'],
@@ -1232,14 +1304,13 @@
             'seafood': ['海鮮', 'crab', 'shrimp', 'tuna', 'fish', 'bbq_seafood'],
             '生魚片': ['sashimi', 'raw tuna', 'kinilaw', 'tuna', 'japanese'],
             'sashimi': ['生魚片', '刺身', 'kinilaw', 'japanese'],
+            '牛排': ['steak', 'butcher', 'smoked', 'brisket', 'ribeye', 'beef'],
+            'steak': ['牛排', 'butcher', 'smoked', 'brisket'],
             '咖啡': ['coffee', 'cafe', 'latte', 'espresso', 'tea', 'coffee_drinks'],
             'coffee': ['咖啡', 'cafe', 'tea', 'coffee_drinks'],
             '炸雞': ['fried chicken', 'chicken', 'jollibee', 'kfc', 'fast_food'],
-            'chicken': ['炸雞', 'chicken joy', 'jollibee', 'fast_food'],
-            '演唱會': ['concert', 'event', 'music', 'show', 'live'],
-            '電影': ['movie', 'cinema', 'film', 'imax'],
             '商場': ['mall', 'sm', 'shopping', 'ayala', 'abreeza', 'center', 'gaisano'],
-            '百貨': ['mall', 'sm', 'shopping', 'department', 'abreeza', 'gaisano'],
+            '百貨': ['mall', 'sm', 'shopping', 'department', 'abreeza', 'center'],
             '賭場': ['casino', 'okada', 'solaire', 'nustar', 'resort', 'entertainment city', 'filipino'],
             'casino': ['賭場', 'okada', 'solaire', 'nustar', 'resort', 'entertainment city']
         };
@@ -1262,14 +1333,20 @@
             return Array.from(uniqueMap.values());
         }
 
-        // 資料讀取（支援 Firestore 即時資料與安全備援）
+        // 資料讀取（支援站長私房置頂與 Firestore 資料庫）
         async function fetchData() {
             try {
                 // 1. 抓取餐廳
                 const resSnap = await getDocs(collection(db, "restaurants"));
                 const rawRes = [];
                 resSnap.forEach(doc => rawRes.push(doc.data()));
-                allRestaurants = deduplicate(rawRes);
+                
+                // 去重並將站長私房嚴選（isCurated: true）排序在最前方
+                allRestaurants = deduplicate(rawRes).sort((a, b) => {
+                    if (a.isCurated && !b.isCurated) return -1;
+                    if (!a.isCurated && b.isCurated) return 1;
+                    return (b.googleRating || 0) - (a.googleRating || 0);
+                });
 
                 // 2. 抓取景點、商場與賭場
                 try {
@@ -1403,7 +1480,27 @@
         function renderUI() {
             const langData = i18n[currentLang];
             document.getElementById('lang-select').value = currentLang;
-            document.getElementById('city-select').value = currentCity;
+            
+            // 動態更新北中南選單結構與文字
+            const citySelect = document.getElementById('city-select');
+            citySelect.innerHTML = `
+                <option value="all">${langData.regions.all}</option>
+                <optgroup label="${langData.regions.luzon}">
+                    <option value="manila">${langData.cities.manila}</option>
+                    <option value="palawan">${langData.cities.palawan}</option>
+                </optgroup>
+                <optgroup label="${langData.regions.visayas}">
+                    <option value="cebu">${langData.cities.cebu}</option>
+                    <option value="boracay">${langData.cities.boracay}</option>
+                    <option value="bohol">${langData.cities.bohol}</option>
+                </optgroup>
+                <optgroup label="${langData.regions.mindanao}">
+                    <option value="davao">${langData.cities.davao}</option>
+                    <option value="samal">${langData.cities.samal}</option>
+                </optgroup>
+            `;
+            citySelect.value = currentCity;
+
             document.getElementById('app-title').innerText = langData.title;
             document.getElementById('tab-btn-map').innerText = langData.tabMap;
             document.getElementById('tab-btn-attraction').innerText = langData.tabAttraction;
@@ -1480,7 +1577,6 @@
             if (forum) forum.classList.add('show');
         };
 
-        // 智慧型多圖輪播備援演算法（保證回傳 3 張高解析實景圖片）
         function getImageArray(name, poolKey) {
             const pool = categoryImagePools[poolKey] || categoryImagePools.attraction;
             let hash = 0;
@@ -1507,14 +1603,14 @@
                     SYNONYM_MAP[k].forEach(s => keywords.add(s.toLowerCase()));
                 }
             });
-            const text = `${item.name || ''} ${item.name_en || ''} ${item.address || ''} ${item.description || ''} ${item.title || ''}`.toLowerCase();
+            const text = `${item.name || ''} ${item.name_en || ''} ${item.address || ''} ${item.description || ''} ${item.curatedNote || ''} ${item.title || ''}`.toLowerCase();
             for (const kw of keywords) {
                 if (text.includes(kw)) return true;
             }
             return false;
         }
 
-        // 渲染美食地圖（核心防禦：空陣列安全驗證）
+        // 渲染美食地圖（支援置頂與站長私房高光）
         function renderList() {
             const listEl = document.getElementById('restaurant-list');
             document.getElementById('loading').style.display = 'none';
@@ -1543,15 +1639,17 @@
             listEl.innerHTML = filtered.map((item, idx) => {
                 const catKey = item.categoryKey || 'filipino';
                 const key = 'res_' + (item.city || 'davao') + '_' + idx;
-                
-                // 升級防禦：判斷是否為非空陣列，否則啟用高解析備援圖庫
-                const hasValidImages = Array.isArray(item.images) && item.images.length > 0;
-                const images = hasValidImages ? item.images : getImageArray(item.name, catKey);
+                const images = item.images || getImageArray(item.name, catKey);
 
                 const ratingData = itemRatings[key] || { scores: [], userRated: null };
                 const count = ratingData.scores.length;
                 const avg = count > 0 ? (ratingData.scores.reduce((a, b) => a + b, 0) / count).toFixed(1) : 0;
                 const userScore = ratingData.userRated || 0;
+
+                // 站長私房嚴選專屬勳章與點評框
+                const isCurated = !!item.isCurated;
+                const curatedBadgeHtml = isCurated ? `<span class="badge badge-curated"><i class="fa-solid fa-crown"></i> ${langData.curatedBadge}</span>` : '';
+                const curatedNoteHtml = (isCurated && item.curatedNote) ? `<div class="curated-note-box">💡 <b>站長點評：</b>${item.curatedNote}</div>` : '';
 
                 const hasGoogle = (item.googleRating !== undefined && item.googleRating !== null);
                 let badge = '';
@@ -1566,7 +1664,7 @@
                 const desc = item.descriptions?.[currentLang] || item.description || langData.noDesc;
 
                 return `
-                    <div class="card">
+                    <div class="card ${isCurated ? 'is-curated-card' : ''}">
                         <div class="carousel-container">
                             <span class="photo-tag">${langData.slideHint}</span>
                             <div class="carousel-track" onscroll="handleCarouselScroll(this, '${key}')">
@@ -1578,11 +1676,13 @@
                         </div>
                         <div class="card-body">
                             <div class="badge-group">
+                                ${curatedBadgeHtml}
                                 <span class="badge badge-city">${langData.cities[item.city || 'davao']}</span>
                                 <span class="badge">${langData.cats[catKey] || catKey}</span>
                                 ${badge}
                             </div>
                             <div class="card-title">${name}</div>
+                            ${curatedNoteHtml}
                             <div class="card-desc">${desc}</div>
                             <div class="info-item"><span>📍</span> <span>${item.address || ''}</span></div>
                             <div class="info-item"><span>📞</span> <span>${item.phone || langData.noPhone}</span></div>
@@ -1635,7 +1735,7 @@
             }).join('');
         }
 
-        // 渲染景點、購物商場與賭場（核心防禦：空陣列安全驗證）
+        // 渲染景點、知名商場、海島與賭場
         function renderAttractionList() {
             const listEl = document.getElementById('attraction-list');
             const langData = i18n[currentLang];
@@ -1655,16 +1755,11 @@
 
             listEl.innerHTML = filtered.map((item, idx) => {
                 const key = 'att_' + (item.city || 'davao') + '_' + idx;
-                const poolKey = (item.category === 'casino' || item.category === 'shopping' || item.category === 'history' || item.category === 'nature') ? item.category : 'attraction';
-                
-                // 升級防禦：空陣列與圖片安全保護
-                const hasValidImages = Array.isArray(item.images) && item.images.length > 0;
-                const images = hasValidImages ? item.images : getImageArray(item.name, poolKey);
-                
+                const poolKey = (item.category === 'casino' || item.category === 'shopping') ? item.category : 'attraction';
+                const images = item.images || getImageArray(item.name, poolKey);
                 const name = item.name || 'Attraction';
                 const desc = typeof item.description === 'string' ? item.description : (typeof item.description_zh === 'string' ? item.description_zh : langData.noDesc);
                 
-                // 動態判斷 Badge 標籤類型
                 let catBadgeText = '🏛️ 景點';
                 let catBadgeStyle = 'background:#fdf4ff; color:#a21caf;';
                 if (item.category === 'shopping') {
@@ -1673,9 +1768,6 @@
                 } else if (item.category === 'casino') {
                     catBadgeText = '🎰 賭場娛樂';
                     catBadgeStyle = 'background:#fee2e2; color:#b91c1c;';
-                } else if (item.category === 'history') {
-                    catBadgeText = '🏛️ 歷史文化';
-                    catBadgeStyle = 'background:#eff6ff; color:#1d4ed8;';
                 } else if (item.category === 'nature') {
                     catBadgeText = '🌳 自然海灘';
                     catBadgeStyle = 'background:#ecfdf5; color:#047857;';
@@ -1718,7 +1810,7 @@
             }).join('');
         }
 
-        // 渲染城市動態（防禦 [object Object] 錯誤）
+        // 渲染城市動態
         function renderNewsList() {
             const listEl = document.getElementById('news-list');
             const langData = i18n[currentLang];
@@ -1740,7 +1832,6 @@
                 const title = item.title || 'Event News';
                 const tag = item.tag || '🔥 動態';
                 
-                // 防錯處理：確保 validity 絕對不會渲染出 [object Object]
                 let validityText = '';
                 if (typeof item.validity === 'string' && item.validity) {
                     validityText = item.validity;
@@ -1748,7 +1839,6 @@
                     validityText = item.validity.text || item.validity.end || '近期有效';
                 }
 
-                // 防錯處理：確保 description 提取字串
                 const desc = typeof item.description === 'string' ? item.description : (typeof item.description_zh === 'string' ? item.description_zh : (item.description?.zh || langData.noDesc));
                 const location = item.location || 'Philippines';
                 const img = item.imageUrl || (item.type === 'movie' ? categoryImagePools.movie[0] : (item.type === 'event' ? categoryImagePools.event[0] : (item.type === 'new' ? categoryImagePools.chinese[0] : categoryImagePools.filipino[0])));
@@ -1775,7 +1865,7 @@
             }).join('');
         }
 
-        // 3D AI 管家互動邏輯
+        // 3D AI 管家
         window.toggleChat = function() {
             const modal = document.getElementById('chat-modal');
             modal.classList.toggle('show');
