@@ -17,6 +17,9 @@ jobs:
         with:
           node-version: '18'
 
+      - name: Setup Package JSON with ES Module
+        run: echo '{"type":"module"}' > package.json
+
       - name: Install Dependencies
         run: npm install firebase
 
