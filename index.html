@@ -84,38 +84,37 @@
     </div>
   </div>
 
-  <!-- 頂部 Header：圖二現代美感 + 圖一人數/登入/分享/語言 -->
+  <!-- 頂部 Header -->
   <header class="sticky top-0 z-40 glass-header text-white transition-all">
     <div class="max-w-md mx-auto px-3.5 pt-2.5 pb-1 flex flex-col gap-2">
       
-      <!-- 第一列：Logo、3,688 人數膠囊、會員登入、分享按鈕 -->
+      <!-- 第一列：標題緊貼人數膠囊（修正排版） + 右側登入與分享 -->
       <div class="flex items-center justify-between gap-1.5">
         <div class="flex items-center gap-2 min-w-0">
           <div class="w-7 h-7 rounded-full bg-white/20 flex items-center justify-center shadow-inner flex-shrink-0">
             <i class="fa-solid fa-compass text-amber-100 text-sm"></i>
           </div>
           <div class="min-w-0">
-            <div class="flex items-center gap-1.5">
+            <div class="flex items-center gap-2">
               <h1 class="text-sm font-extrabold tracking-tight truncate leading-none">大V的旅遊窩</h1>
-              <span class="text-[9px] bg-orange-950/40 border border-orange-300/30 text-amber-200 px-1 py-0.5 rounded font-mono">tour2gether.ph</span>
+              <!-- 瀏覽人數膠囊：緊貼標題右側 -->
+              <div class="bg-white/25 border border-white/40 rounded-full px-2 py-0.5 text-[10px] font-bold text-white flex items-center gap-1 shadow-inner flex-shrink-0">
+                <i class="fa-solid fa-fire text-amber-300 text-[10px]"></i>
+                <span id="visit-count-val">3,688</span>
+              </div>
             </div>
             <p class="text-[9px] text-amber-100/80 font-medium tracking-tight mt-0.5">菲律賓精緻生活 & 海島漫遊地圖</p>
           </div>
         </div>
 
-        <div class="flex items-center gap-1 flex-shrink-0">
-          <!-- 在線人數膠囊（完整復刻圖一） -->
-          <div class="bg-white/20 border border-white/30 rounded-full px-2 py-0.5 text-[10px] font-bold text-amber-100 flex items-center gap-1 shadow-inner">
-            <i class="fa-solid fa-fire text-amber-300 text-[10px]"></i>
-            <span id="visit-count-val">3,688</span>
-          </div>
+        <div class="flex items-center gap-1.5 flex-shrink-0">
           <!-- 登入按鈕 -->
-          <button id="auth-state-btn" class="bg-white/20 hover:bg-white/30 border border-white/30 text-white rounded-lg px-2 py-1 text-[11px] font-bold flex items-center gap-1 transition active:scale-95">
+          <button id="auth-state-btn" class="bg-white/20 hover:bg-white/30 border border-white/30 text-white rounded-lg px-2.5 py-1 text-[11px] font-bold flex items-center gap-1 transition active:scale-95">
             <i class="fa-regular fa-user text-[10px]"></i>
             <span id="auth-btn-text">登入</span>
           </button>
           <!-- 分享按鈕 -->
-          <button id="share-btn" class="bg-white/20 hover:bg-white/30 border border-white/30 text-white rounded-lg px-2 py-1 text-[11px] font-bold flex items-center gap-1 transition active:scale-95">
+          <button id="share-btn" class="bg-white/20 hover:bg-white/30 border border-white/30 text-white rounded-lg px-2.5 py-1 text-[11px] font-bold flex items-center gap-1 transition active:scale-95">
             <i class="fa-solid fa-share-nodes text-[10px]"></i>
             <span>分享</span>
           </button>
@@ -148,13 +147,13 @@
         </button>
       </div>
 
-      <!-- 第四列：橫向地區膠囊（嚴格北至南排列：馬尼拉/宿霧/達沃 或 長灘/巴拉望/薄荷/錫亞高/薩馬爾） -->
+      <!-- 第四列：橫向地區膠囊（嚴格由北至南排定） -->
       <nav id="regionPillsNav" class="overflow-x-auto hide-scrollbar flex gap-1.5 pb-1 items-center">
         <!-- 由 JS 動態依序渲染 -->
       </nav>
     </div>
 
-    <!-- 第五列：三大核心主分頁 Tab（美食饗宴 / 住宿嚴選 / 必遊景點 / 城市動態） -->
+    <!-- 第五列：三大核心主分頁 Tab -->
     <div class="max-w-md mx-auto px-3.5 pt-1">
       <div class="grid grid-cols-3 gap-1.5 bg-orange-800/40 p-1 rounded-xl text-xs font-bold text-amber-100">
         <button data-maintab="map" id="tab-btn-map" class="main-tab-pill py-1.5 rounded-lg text-center transition flex items-center justify-center gap-1 bg-white text-orange-600 shadow-sm">
@@ -172,7 +171,7 @@
       </div>
     </div>
 
-    <!-- 第六列：子分類標籤過濾列（海島自動變形為：全部 / 必吃美食 / 星級飯店 / 海景Villa，或沙灘/跳島/生態） -->
+    <!-- 第六列：子分類標籤過濾列 -->
     <div class="bg-white border-b border-slate-200/80 shadow-xs">
       <div class="max-w-md mx-auto px-3.5 py-2">
         <div id="subFilterContainer" class="flex items-center gap-1.5 overflow-x-auto hide-scrollbar py-0.5">
@@ -207,13 +206,13 @@
       <div id="attraction-list" class="flex flex-col gap-4"></div>
     </div>
 
-    <!-- 3. 城市動態分頁清單（活動特惠、限時折扣、最新情報） -->
+    <!-- 3. 城市動態分頁清單 -->
     <div id="section-news" class="tab-panel hidden flex flex-col gap-4">
       <div id="news-list" class="flex flex-col gap-4"></div>
     </div>
   </main>
 
-  <!-- 會員登入彈窗 (Google 帳號 + Magic Link) -->
+  <!-- 會員登入彈窗 -->
   <div id="auth-modal" class="fixed inset-0 z-50 glass-modal hidden flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl w-full max-w-sm p-5 shadow-2xl relative text-center">
       <button id="close-auth-btn" class="absolute top-3.5 right-3.5 w-7 h-7 bg-slate-100 rounded-full text-slate-400 hover:text-slate-700 flex items-center justify-center text-xs">✕</button>
@@ -241,18 +240,18 @@
     </div>
   </div>
 
-  <!-- 右下角專屬大V圓形懸浮 AI 頭像球（完整復刻圖一） -->
-<button id="chat-fab" class="fixed bottom-5 right-4 w-13 h-13 rounded-full bg-white border-2 border-orange-500 shadow-xl overflow-hidden flex items-center justify-center cursor-pointer z-40 active:scale-95 transition" style="width:52px; height:52px;" title="大V旅遊管家">
-  <img src="ai-avatar.png" alt="AI 管家" class="w-full h-full object-cover" onerror="this.onerror=null; this.src='ai-avatar.jpg';" />
-</button>
+  <!-- 右下角專屬大V圓形懸浮 AI 頭像球 -->
+  <button id="chat-fab" class="fixed bottom-5 right-4 w-13 h-13 rounded-full bg-white border-2 border-orange-500 shadow-xl overflow-hidden flex items-center justify-center cursor-pointer z-40 active:scale-95 transition" style="width:52px; height:52px;" title="大V旅遊管家">
+    <img src="ai-avatar.png" alt="AI 管家" class="w-full h-full object-cover" onerror="this.onerror=null; this.src='ai-avatar.jpg';" />
+  </button>
 
-  <!-- AI 管家彈出面板 (Powered by Gemini Flash) -->
+  <!-- AI 管家彈出面板 -->
   <div id="chat-modal" class="fixed bottom-20 right-4 w-80 max-w-[calc(100vw-32px)] h-112 max-h-[calc(100vh-110px)] bg-white rounded-2xl shadow-2xl border border-slate-200/80 flex flex-col z-50 overflow-hidden hidden">
     <div class="bg-orange-500 text-white p-3 flex justify-between items-center">
       <div class="flex items-center gap-2">
         <div class="w-7 h-7 rounded-full overflow-hidden border border-white bg-white">
-  <img src="ai-avatar.png" class="w-full h-full object-cover" onerror="this.onerror=null; this.src='ai-avatar.jpg';" />
-</div>
+          <img src="ai-avatar.png" class="w-full h-full object-cover" onerror="this.onerror=null; this.src='ai-avatar.jpg';" />
+        </div>
         <div>
           <h3 class="text-xs font-bold leading-tight">大V旅遊窩管家</h3>
           <span class="text-[9px] text-amber-200">Powered by Gemini Flash</span>
@@ -275,13 +274,12 @@
     </div>
   </div>
 
-    <!-- Firebase SDK 與核心邏輯模組 -->
+  <!-- Firebase SDK 與核心邏輯模組 -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getFirestore, collection, getDocs, doc, getDoc, setDoc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
     import { getAuth, GoogleAuthProvider, signInWithPopup, sendSignInLinkToEmail, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
-    // 1. Firebase 初始化設定（保持既有配置不變）
     const firebaseConfig = {
       apiKey: "AIzaSyCM2dCa2Y8d6Z-Dc_Uz9yvvgaifav-1Vg",
       authDomain: "bigv-foodmap.firebaseapp.com",
@@ -300,7 +298,7 @@
     const AI_WORKER_URL = "https://food-ai-assistant.vhuang904.workers.dev";
     let currentUser = null;
 
-    // 2. 嚴格北至南地理設定與維度定義（都會 3 區、海島 5 島）
+    // 嚴格北至南地理設定與維度定義
     const REGION_CONFIG = {
       cities: [
         { id: 'manila', name: '馬尼拉', fullName: '🏙️ 馬尼拉 (Metro Manila)', lat: 14.5995, lng: 120.9842 },
@@ -321,9 +319,8 @@
       return ISLAND_KEYS.includes(cityKey);
     }
 
-    // 3. 子分類配置（都會 vs 海島智慧變形）
+    // 子分類配置
     const SUB_FILTERS = {
-      // 都會美食子分類
       food_urban: [
         { key: 'all', label: '全部' },
         { key: 'japanese_korean', label: '日料生魚片/燒肉' },
@@ -332,14 +329,12 @@
         { key: 'fast_food', label: '美式速食' },
         { key: 'coffee_drinks', label: '手搖咖啡' }
       ],
-      // 海島度假/住宿/美食子分類
       food_island: [
         { key: 'all', label: '🏝️ 全部推薦' },
         { key: 'food', label: '🍽️ Top 必吃美食' },
         { key: 'hotel', label: '🏨 精選星級飯店' },
         { key: 'villa', label: '🌴 海景 Villa / 度假村' }
       ],
-      // 都會景點子分類
       attraction_urban: [
         { key: 'all', label: '全部景點' },
         { key: 'shopping', label: '🛒 購物商場' },
@@ -347,14 +342,12 @@
         { key: 'history', label: '🏛️ 歷史文化' },
         { key: 'nature', label: '🌳 自然休閒' }
       ],
-      // 海島景點子分類（嚴格排除賭場與歷史，換上沙灘與浮潛）
       attraction_island: [
         { key: 'all', label: '🏝️ 全部海島景點' },
         { key: 'beach', label: '🏖️ 絕美沙灘' },
         { key: 'island_hopping', label: '🤿 跳島浮潛' },
         { key: 'nature', label: '🌴 生態秘境' }
       ],
-      // 城市動態子分類
       news: [
         { key: 'all', label: '全部動態' },
         { key: 'promo', label: '🔥 限時折扣' },
@@ -363,32 +356,28 @@
       ]
     };
 
-    // 4. 分類高清圖庫池（ID 雜湊防撞圖）
+    // 分類圖庫池
     const PHOTO_POOLS = {
       japanese_korean: [
         "https://images.unsplash.com/photo-1579871494447-9811cf80d66c?w=800&auto=format&fit=crop",
         "https://images.unsplash.com/photo-1544025162-d76694265947?w=800&auto=format&fit=crop",
         "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=800&auto=format&fit=crop",
-        "https://images.unsplash.com/photo-1611143669185-af224c5e3252?w=800&auto=format&fit=crop",
-        "https://images.unsplash.com/photo-1552611052-33e04de081de?w=800&auto=format&fit=crop"
+        "https://images.unsplash.com/photo-1611143669185-af224c5e3252?w=800&auto=format&fit=crop"
       ],
       chinese: [
         "https://images.unsplash.com/photo-1563245372-f21724e3856d?w=800&auto=format&fit=crop",
         "https://images.unsplash.com/photo-1541696432-82c6da8ce7bf?w=800&auto=format&fit=crop",
-        "https://images.unsplash.com/photo-1496116218417-1a781b1c416c?w=800&auto=format&fit=crop",
-        "https://images.unsplash.com/photo-1525755662778-989d0524087e?w=800&auto=format&fit=crop"
+        "https://images.unsplash.com/photo-1496116218417-1a781b1c416c?w=800&auto=format&fit=crop"
       ],
       bbq_seafood: [
         "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=800&auto=format&fit=crop",
         "https://images.unsplash.com/photo-1544025162-d76694265947?w=800&auto=format&fit=crop",
-        "https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?w=800&auto=format&fit=crop",
-        "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=800&auto=format&fit=crop"
+        "https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?w=800&auto=format&fit=crop"
       ],
       hotel_villa: [
         "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=800&auto=format&fit=crop",
         "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&auto=format&fit=crop",
-        "https://images.unsplash.com/photo-1540541338287-41700207dee6?w=800&auto=format&fit=crop",
-        "https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=800&auto=format&fit=crop"
+        "https://images.unsplash.com/photo-1540541338287-41700207dee6?w=800&auto=format&fit=crop"
       ],
       beach: [
         "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&auto=format&fit=crop",
@@ -415,16 +404,15 @@
       return pool[Math.abs(hash) % pool.length];
     }
 
-    // 5. 狀態管理（利用 sessionStorage 防手勢下拉刷新洗白）
-    let currentDimension = sessionStorage.getItem('ph_dim') || 'cities'; // 'cities' 或 'islands'
+    // 狀態管理
+    let currentDimension = sessionStorage.getItem('ph_dim') || 'cities';
     let currentCity = localStorage.getItem('ph_app_city') || 'davao';
     let currentMainTab = sessionStorage.getItem('ph_nav_tab') || 'map';
     let currentSubFilter = sessionStorage.getItem('ph_nav_sub') || 'all';
     let currentSearchQuery = '';
 
-    // 確保當前城市符合維度
     if (currentDimension === 'cities' && !REGION_CONFIG.cities.some(c => c.id === currentCity)) {
-      currentCity = 'manila';
+      currentCity = 'davao';
     } else if (currentDimension === 'islands' && !REGION_CONFIG.islands.some(c => c.id === currentCity)) {
       currentCity = 'boracay';
     }
@@ -432,6 +420,155 @@
     let allRestaurants = [];
     let allAttractions = [];
     let allNews = [];
+
+    // 🌟 海島全景點保底資料庫（徹底解決海島景點空白問題）
+    const ISLAND_ATTRACTIONS_FALLBACK = [
+      // 長灘島
+      {
+        id: "boracay_white_beach",
+        city: "boracay",
+        category: "beach",
+        name: "White Beach 長灘島白沙灘",
+        googleRating: 4.8,
+        description: "世界排名前列的頂級沙灘！綿延4公里的細緻粉末白沙與漸層清澈海水，長灘島的靈魂地標。",
+        address: "White Beach Path, Malay, Aklan, Boracay",
+        images: ["https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&auto=format&fit=crop"]
+      },
+      {
+        id: "boracay_willys_rock",
+        city: "boracay",
+        category: "beach",
+        name: "Willy's Rock 聖母礁岩",
+        googleRating: 4.6,
+        description: "退潮時可徒步走上海中石灰岩礁石，上頭供奉聖母雕像，長灘島最著名的明信片打卡點。",
+        address: "Station 1, Balabag, Boracay Island",
+        images: ["https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=800&auto=format&fit=crop"]
+      },
+      {
+        id: "boracay_puka_beach",
+        city: "boracay",
+        category: "beach",
+        name: "Puka Shell Beach 普卡貝殼海灘",
+        googleRating: 4.7,
+        description: "保有原始島嶼風情的天然海灘，閃耀金黃的普卡貝殼與壯麗浪潮，遠離喧囂的度假秘境。",
+        address: "Yapak, Boracay Island, Malay, Aklan",
+        images: ["https://images.unsplash.com/photo-1519046904884-53103b34b206?w=800&auto=format&fit=crop"]
+      },
+      // 巴拉望
+      {
+        id: "palawan_big_lagoon",
+        city: "palawan",
+        category: "island_hopping",
+        name: "Big Lagoon 愛妮島大潟湖",
+        googleRating: 4.9,
+        description: "石灰岩峭壁環抱的祖母綠平靜海域，划著透明獨木舟穿梭在壯麗喀斯特岩壁之間，極致震撼。",
+        address: "Miniloc Island, El Nido, Palawan",
+        images: ["https://images.unsplash.com/photo-1518509562904-e7ef99cdcc86?w=800&auto=format&fit=crop"]
+      },
+      {
+        id: "palawan_kayangan_lake",
+        city: "palawan",
+        category: "nature",
+        name: "Kayangan Lake 科隆凱央根湖",
+        googleRating: 4.9,
+        description: "菲律賓最純淨清澈的國寶級湖泊，能見度深達數公尺，群山環抱如世外桃源般的跳島必遊地標。",
+        address: "Coron Island, Palawan",
+        images: ["https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=800&auto=format&fit=crop"]
+      },
+      {
+        id: "palawan_nacpan_beach",
+        city: "palawan",
+        category: "beach",
+        name: "Nacpan Beach 納克潘黃金海灘",
+        googleRating: 4.7,
+        description: "長達4公里的雙胞胎黃金沙灘，椰林隨風搖曳，被評為全亞洲最美麗浪漫的落日海岸線之一。",
+        address: "El Nido, Palawan",
+        images: ["https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&auto=format&fit=crop"]
+      },
+      // 薄荷島
+      {
+        id: "bohol_chocolate_hills",
+        city: "bohol",
+        category: "nature",
+        name: "Chocolate Hills 巧克力山奇景",
+        googleRating: 4.7,
+        description: "世界自然奇景！超過1,200座形狀對稱的圓錐形石灰岩山丘，旱季時草木乾枯化身壯觀巧克力球。",
+        address: "Carmen, Bohol",
+        images: ["https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=800&auto=format&fit=crop"]
+      },
+      {
+        id: "bohol_tarsier_sanctuary",
+        city: "bohol",
+        category: "nature",
+        name: "Tarsier Conservation Area 眼鏡猴保護區",
+        googleRating: 4.6,
+        description: "近距離探訪世界體型最小、只有巴掌大的珍稀靈長類動物眼鏡猴，生態維護良好且富有教育意義。",
+        address: "Tukuran, Corella, Bohol",
+        images: ["https://images.unsplash.com/photo-1534567153574-2b12153a87f0?w=800&auto=format&fit=crop"]
+      },
+      {
+        id: "bohol_alona_beach",
+        city: "bohol",
+        category: "beach",
+        name: "Alona Beach 阿羅納白沙灘",
+        googleRating: 4.6,
+        description: "邦勞島最熱鬧的白沙灘與潛水核心，沿岸酒吧、海鮮燒烤林立，亦是出海看海豚與潛水集合點。",
+        address: "Panglao Island, Bohol",
+        images: ["https://images.unsplash.com/photo-1519046904884-53103b34b206?w=800&auto=format&fit=crop"]
+      },
+      // 錫亞高島
+      {
+        id: "siargao_cloud_9",
+        city: "siargao",
+        category: "beach",
+        name: "Cloud 9 衝浪勝地木棧道",
+        googleRating: 4.8,
+        description: "世界前八大著名浪點！長型木質棧道直通外海，日落與破浪者英姿交織出最富生命力的海島畫面。",
+        address: "General Luna, Siargao Island",
+        images: ["https://images.unsplash.com/photo-1502680390469-be75c86b636f?w=800&auto=format&fit=crop"]
+      },
+      {
+        id: "siargao_sugba_lagoon",
+        city: "siargao",
+        category: "nature",
+        name: "Sugba Lagoon 蘇格巴翡翠潟湖",
+        googleRating: 4.8,
+        description: "隱身於巨大紅樹林生態保護區中的翡翠色平靜海灣，提供跳水台、SUP 立式划槳與竹筏漂流。",
+        address: "Del Carmen, Siargao Island",
+        images: ["https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=800&auto=format&fit=crop"]
+      },
+      // 薩馬爾島
+      {
+        id: "samal_pearl_farm_beach",
+        city: "samal",
+        category: "beach",
+        name: "Pearl Farm Beach 珍珠農場沙灘",
+        googleRating: 4.8,
+        description: "薩馬爾島最高指標的五星奢華沙灘，清澈平靜的海水與保留早期採珠文化的特色高腳水上屋。",
+        address: "Kaputian, Island Garden City of Samal",
+        images: ["https://images.unsplash.com/photo-1540541338287-41700207dee6?w=800&auto=format&fit=crop"]
+      },
+      {
+        id: "samal_monfort_bat_cave",
+        city: "samal",
+        category: "nature",
+        name: "Monfort Bat Cave 蒙福特蝙蝠洞",
+        googleRating: 4.5,
+        description: "金氏世界紀錄認證！全球最大果蝠棲息聚落，數百萬隻蝙蝠群居的自然奇觀，極具生態教育價值。",
+        address: "Babak, Island Garden City of Samal",
+        images: ["https://images.unsplash.com/photo-1518509562904-e7ef99cdcc86?w=800&auto=format&fit=crop"]
+      },
+      {
+        id: "samal_vanishing_island",
+        city: "samal",
+        category: "island_hopping",
+        name: "Vanishing Island 消失之島",
+        googleRating: 4.6,
+        description: "退潮時才會自大海中浮現的夢幻潔白沙洲，水質透亮，適合涉水踏浪與紅樹林淺灘浮潛。",
+        address: "Tambon, Babak, Samal Island",
+        images: ["https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&auto=format&fit=crop"]
+      }
+    ];
 
     function safeStr(val) {
       if (!val) return '';
@@ -461,7 +598,7 @@
       }, 2000);
     }
 
-    // 6. 在線計數器初始化
+    // 在線訪客計數器
     async function initVisitorCounter() {
       try {
         const statsRef = doc(db, "stats", "global");
@@ -484,7 +621,7 @@
       document.getElementById('auth-btn-text').innerText = user ? (user.displayName ? user.displayName.split(' ')[0] : '會員') : '登入';
     });
 
-    // 7. 資料抓取與核心邏輯（三級榮譽收錄：👑 站長私房嚴選 3 家元老 + 🔥 Google 頂級推薦）
+    // 資料抓取與核心邏輯
     async function fetchData() {
       try {
         const resSnap = await getDocs(collection(db, "restaurants"));
@@ -497,7 +634,7 @@
           const nameAll = (safeStr(item.name) + ' ' + safeStr(item.name_en) + ' ' + safeStr(item.id)).toLowerCase();
           let key = item.id;
 
-          // 👑 嚴格鎖定僅 3 家「元老級站長私房嚴選」
+          // 👑 嚴格鎖定僅 3 家元老「站長私房嚴選」
           if (nameAll.includes('yaki') && (nameAll.includes('gether') || nameAll.includes('yaki2gether'))) {
             key = 'curated_yaki2gether';
             item.name = "Yaki2gether 日式炭火燒肉刺身";
@@ -528,13 +665,11 @@
             delete item.curatedNote;
           }
 
-          // 薩馬爾島嚴格鎖定：珍珠農場與 Chema's 歸入 samal，絕不混入達沃
           if (nameAll.includes('pearl farm') || nameAll.includes('chema')) {
             item.city = 'samal';
             item.islandType = 'hotel';
           }
 
-          // 圖片防護
           if (!item.images || item.images.length === 0 || item.images[0].includes('photo-1518684079')) {
             item.images = [getSmartImage(item, item.categoryKey)];
           }
@@ -579,7 +714,7 @@
         mergedMap.set(cebuMott32.id, cebuMott32);
         mergedMap.set(cebuGoodLuck.id, cebuGoodLuck);
 
-        // 錫亞高島（Siargao）名店注入（徹底解決海島美食空白）
+        // 錫亞高名店注入
         const siaKermit = {
           id: "sia_kermit_pizza",
           city: "siargao",
@@ -595,25 +730,8 @@
           address: "General Luna, Siargao Island",
           images: ["https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=800&auto=format&fit=crop"]
         };
-        const siaNayPalad = {
-          id: "sia_nay_palad_resort",
-          city: "siargao",
-          name: "Nay Palad Hideaway 頂級奢華度假別墅",
-          name_en: "Nay Palad Hideaway Siargao",
-          categoryKey: "hotel_villa",
-          islandType: "villa",
-          googleRating: 4.9,
-          googleReviewCount: 520,
-          isCurated: false,
-          isGoogleTop: true,
-          googleTopNote: "Google 奢華評選：世界頂尖赤足隱世渡假村，全包式私人管家與極致私密海岸風情。",
-          description: "錫亞高島最高奢華指標，提供私人主廚客製無菜單料理、獨立海景Villa與無邊際海灘泳池。",
-          address: "General Luna, Siargao Island, Surigao del Norte",
-          images: ["https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=800&auto=format&fit=crop"]
-        };
 
         mergedMap.set(siaKermit.id, siaKermit);
-        mergedMap.set(siaNayPalad.id, siaNayPalad);
 
         allRestaurants = Array.from(mergedMap.values())
           .filter(item => {
@@ -640,37 +758,20 @@
             return (b.googleRating || 0) - (a.googleRating || 0);
           });
 
-        // 讀取景點並加入錫亞高島指標景點
+        // 讀取景點資料庫，並與保底地標庫智慧合併
         try {
           const attSnap = await getDocs(collection(db, "attractions"));
-          allAttractions = [];
-          attSnap.forEach(d => allAttractions.push({ id: d.id, ...d.data() }));
-        } catch (e) { allAttractions = []; }
+          const remoteAtts = [];
+          attSnap.forEach(d => remoteAtts.push({ id: d.id, ...d.data() }));
 
-        // 注入錫亞高島景點
-        if (!allAttractions.some(a => a.city === 'siargao')) {
-          allAttractions.push(
-            {
-              id: "sia_cloud_9",
-              city: "siargao",
-              category: "beach",
-              name: "Cloud 9 衝浪勝地與長木棧道",
-              googleRating: 4.8,
-              description: "菲律賓衝浪之都的象徵地標，長型木棧道延伸至浪潮之中，日出與黃昏景致極具震撼力。",
-              address: "General Luna, Siargao Island",
-              images: ["https://images.unsplash.com/photo-1502680390469-be75c86b636f?w=800&auto=format&fit=crop"]
-            },
-            {
-              id: "sia_sugba_lagoon",
-              city: "siargao",
-              category: "nature",
-              name: "Sugba Lagoon 蘇格巴翡翠潟湖",
-              googleRating: 4.7,
-              description: "群山環繞的翡翠綠天然潟湖，設有知名跳水台、立式划槳（SUP）與紅樹林生態秘境。",
-              address: "Del Carmen, Siargao Island",
-              images: ["https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=800&auto=format&fit=crop"]
-            }
-          );
+          const attMap = new Map();
+          // 先載入海島保底資料
+          ISLAND_ATTRACTIONS_FALLBACK.forEach(a => attMap.set(a.id, a));
+          // 再以遠端資料覆蓋/補充
+          remoteAtts.forEach(a => attMap.set(a.id, a));
+          allAttractions = Array.from(attMap.values());
+        } catch (e) {
+          allAttractions = ISLAND_ATTRACTIONS_FALLBACK;
         }
 
         // 讀取城市動態
@@ -699,7 +800,6 @@
       renderUI();
     }
 
-    // 8. 城市精確比對（薩馬爾與達沃嚴格隔離）
     function isCityMatch(item, targetCity) {
       if (targetCity === 'all') return true;
       const c = safeStr(item.city);
@@ -716,7 +816,7 @@
       return c === targetCity || a.includes(targetCity);
     }
 
-    // 9. UI 渲染模組（圖二極簡高級外觀 + 圖一功能大腦）
+    // UI 渲染
     const typeCityBtn = document.getElementById('typeCityBtn');
     const typeIslandBtn = document.getElementById('typeIslandBtn');
     const regionPillsNav = document.getElementById('regionPillsNav');
@@ -802,7 +902,6 @@
     }
 
     function renderContent() {
-      // 切換主頁籤顯隱
       ['map', 'attraction', 'news'].forEach(tab => {
         document.getElementById(`section-${tab}`).classList.toggle('hidden', tab !== currentMainTab);
         const btn = document.getElementById(`tab-btn-${tab}`);
@@ -813,7 +912,6 @@
         }
       });
 
-      // 海島狀態下更新第一 Tab 標題
       document.getElementById('tab-label-map').innerText = isIslandMode(currentCity) ? '美食/度假' : '美食饗宴';
 
       if (currentMainTab === 'map') renderRestaurants();
@@ -850,7 +948,7 @@
       }
 
       const curReg = [...REGION_CONFIG.cities, ...REGION_CONFIG.islands].find(r => r.id === currentCity);
-      filterSummaryText.textContent = `${curReg?.name || ''} · ${currentSubFilter === 'all' ? '全部美食/度假' : currentSubFilter}`;
+      filterSummaryText.textContent = `${curReg?.name || ''} · ${currentSubFilter === 'all' ? '全部推薦' : currentSubFilter}`;
       itemCountBadge.textContent = `${filtered.length} 個地點`;
 
       if (filtered.length === 0) {
@@ -893,14 +991,12 @@
               </div>
               <span class="absolute top-2.5 right-2.5 bg-neutral-900/60 text-white text-[10px] px-2 py-0.5 rounded-full backdrop-blur-xs pointer-events-none">👈 左右滑動</span>
 
-              <!-- 👑 站長私房嚴選黑金皇冠徽章 -->
               ${isCurated ? `
                 <div class="absolute top-2.5 left-2.5 bg-neutral-900/95 text-amber-300 text-[11px] font-extrabold px-2.5 py-1 rounded-full shadow-lg flex items-center gap-1.5 border border-amber-400/60 backdrop-blur-md">
                   <i class="fa-solid fa-crown text-amber-400"></i> ${item.curatedBadge || '站長私房嚴選'}
                 </div>
               ` : ''}
 
-              <!-- 🔥 Google 頂級推薦藍金標章 -->
               ${(!isCurated && isGoogleTop) ? `
                 <div class="absolute top-2.5 left-2.5 bg-sky-900/95 text-sky-200 text-[11px] font-extrabold px-2.5 py-1 rounded-full shadow-lg flex items-center gap-1 border border-sky-400/60 backdrop-blur-md">
                   <i class="fa-solid fa-fire text-amber-300"></i> Google 頂級推薦
@@ -922,7 +1018,6 @@
             <div class="p-3.5 flex flex-col flex-1">
               <h2 class="font-extrabold text-sm text-slate-900 leading-snug mb-1">${name}</h2>
 
-              <!-- 站長私房點評 / Google 饕客點評 -->
               ${(isCurated && item.curatedNote) ? `
                 <div class="bg-amber-50/90 border-l-3 border-amber-500 p-2.5 rounded-r-lg text-xs text-amber-950 font-medium leading-relaxed mb-2.5">
                   💡 <b>站長私房點評：</b>${item.curatedNote}
@@ -950,7 +1045,7 @@
                 </p>
               </div>
 
-              <!-- 按鈕嚴格隔離：純餐飲有 Grab，飯店與住宿絕無 Grab -->
+              <!-- 按鈕隔離：純餐飲有 Grab，飯店/住宿無 Grab -->
               <div class="mt-auto grid ${isFoodOnly ? 'grid-cols-3' : 'grid-cols-2'} gap-1.5 pt-1 border-t border-slate-100">
                 ${isFoodOnly ? `
                   <a href="https://food.grab.com/ph/en/restaurants?search=${encodeURIComponent(name)}" target="_blank" rel="noopener noreferrer"
@@ -997,7 +1092,7 @@
           <div class="bg-white rounded-2xl p-8 text-center border border-slate-200/80 shadow-xs mt-2">
             <i class="fa-solid fa-camera-retro text-3xl text-slate-300 mb-2"></i>
             <h4 class="text-xs font-bold text-slate-700">該分類暫無景點資料</h4>
-            <p class="text-[11px] text-slate-400 mt-1">即將為您探索更多在地打卡秘境！</p>
+            <p class="text-[11px] text-slate-400 mt-1">請切換至「全部」或其他子標籤瀏覽！</p>
           </div>
         `;
         return;
@@ -1008,23 +1103,31 @@
         const desc = getText(item.description) || '菲律賓熱門推薦地標。';
         const nameKey = (safeStr(name) + ' ' + safeStr(item.id)).toLowerCase();
 
-        // 🎯 景點實景白名單校正（絕不出現泳池圖）
+        // 🎯 景點實景白名單精準校正（修復破圖、鎖定官方實景）
         let img = (item.images && item.images[0]) || '';
-        if (nameKey.includes('intramuros') || nameKey.includes('王城區')) {
-          img = "https://images.unsplash.com/photo-1596422846543-75c6fc197f07?w=800&auto=format&fit=crop";
-        } else if (nameKey.includes('san pedro') || nameKey.includes('聖佩德羅')) {
+        if (nameKey.includes('san pedro') || nameKey.includes('聖佩德羅')) {
+          // 達沃聖佩德羅主教座堂：穩定高清弧形石造外觀實景
           img = "https://images.unsplash.com/photo-1548625361-19597793d5f9?w=800&auto=format&fit=crop";
+        } else if (nameKey.includes('intramuros') || nameKey.includes('王城區') || nameKey.includes('santiago')) {
+          // 馬尼拉西班牙古城門
+          img = "https://images.unsplash.com/photo-1596422846543-75c6fc197f07?w=800&auto=format&fit=crop";
         } else if (nameKey.includes('magellan') || nameKey.includes('麥哲倫')) {
+          // 宿霧麥哲倫十字架亭
           img = "https://images.unsplash.com/photo-1518509562904-e7ef99cdcc86?w=800&auto=format&fit=crop";
         } else if (nameKey.includes('santo nino') || nameKey.includes('聖嬰')) {
+          // 宿霧聖嬰聖殿古建築
           img = "https://images.unsplash.com/photo-1544077960-604201fe74bc?w=800&auto=format&fit=crop";
         } else if (nameKey.includes('okada') || nameKey.includes('岡田')) {
+          // Okada 璀璨水舞外觀
           img = "https://images.unsplash.com/photo-1511193311914-0346f16efe90?w=800&auto=format&fit=crop";
         } else if (nameKey.includes('solaire') || nameKey.includes('晨麗')) {
+          // Solaire 海灣渡假城
           img = "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&auto=format&fit=crop";
         } else if (nameKey.includes('city of dreams') || nameKey.includes('新濠天地')) {
+          // 新濠天地天穹建築
           img = "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=800&auto=format&fit=crop";
         } else if (nameKey.includes('nustar')) {
+          // 宿霧 NUSTAR 雙子星度假城
           img = "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=800&auto=format&fit=crop";
         } else if (!img || img.includes('photo-1518684079')) {
           img = getSmartImage(item, item.category);
@@ -1033,7 +1136,7 @@
         return `
           <article class="bg-white rounded-2xl overflow-hidden shadow-xs hover:shadow-md border border-slate-200/80 flex flex-col transition">
             <div class="relative h-48 w-full bg-slate-100 overflow-hidden">
-              <img src="${img}" alt="${name}" loading="lazy" class="w-full h-full object-cover" />
+              <img src="${img}" alt="${name}" loading="lazy" class="w-full h-full object-cover" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&auto=format&fit=crop';" />
               <div class="absolute bottom-2.5 left-2.5 flex items-center gap-1.5">
                 <span class="bg-slate-900/80 backdrop-blur-xs text-white text-[10px] px-2 py-0.5 rounded font-medium">
                   ${item.city}
@@ -1057,7 +1160,7 @@
                 </p>
               </div>
 
-              <!-- 景點按鈕嚴格排除 Grab 按鈕 -->
+              <!-- 景點按鈕嚴格排除 Grab 外送 -->
               <div class="mt-auto grid ${item.phone ? 'grid-cols-2' : 'grid-cols-1'} gap-1.5 pt-1 border-t border-slate-100">
                 ${item.phone ? `
                   <a href="tel:${item.phone}" class="bg-slate-100 hover:bg-slate-200 active:scale-95 text-slate-700 text-[11px] font-bold py-2 rounded-xl text-center flex items-center justify-center gap-1 transition">
@@ -1157,7 +1260,7 @@
       renderContent();
     }
 
-    // 10. 事件綁定（維度切換、主 Tab 切換、搜尋、會員與 AI 管家）
+    // 事件綁定
     typeCityBtn.addEventListener('click', () => {
       currentDimension = 'cities';
       sessionStorage.setItem('ph_dim', 'cities');
@@ -1205,12 +1308,10 @@
       renderContent();
     });
 
-    // 語言切換選單
     document.getElementById('lang-select').addEventListener('change', (e) => {
       showToast(`已切換語言：${e.target.options[e.target.selectedIndex].text}`);
     });
 
-    // 會員登入彈窗
     const authModal = document.getElementById('auth-modal');
     document.getElementById('auth-state-btn').addEventListener('click', () => {
       if (currentUser) {
@@ -1240,7 +1341,6 @@
       });
     });
 
-    // 分享按鈕
     document.getElementById('share-btn').addEventListener('click', () => {
       if (navigator.share) {
         navigator.share({
@@ -1252,7 +1352,7 @@
       }
     });
 
-    // 11. 大V AI 懸浮球與管家問答（Powered by Gemini Flash，2~3 秒極速響應）
+    // 大V AI 懸浮球與管家問答
     const chatFab = document.getElementById('chat-fab');
     const chatModal = document.getElementById('chat-modal');
     const btnCloseChat = document.getElementById('btn-close-chat');
@@ -1268,7 +1368,6 @@
     });
 
     btnCloseChat.addEventListener('click', () => chatModal.classList.add('hidden'));
-
     btnSendChat.addEventListener('click', handleChatSend);
     chatInput.addEventListener('keydown', (e) => {
       if (e.key === 'Enter') handleChatSend();
@@ -1327,7 +1426,6 @@
       chatMessages.scrollTop = chatMessages.scrollHeight;
     }
 
-    // 12. 初始化啟動
     initVisitorCounter();
     fetchData();
   </script>
