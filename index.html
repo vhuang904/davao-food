@@ -21,7 +21,7 @@
             padding-bottom: 60px;
         }
 
-        /* 頂部 Header：溫暖柔和淡杏橘漸層，緊湊防折行 */
+        /* 頂部 Header：溫暖淡杏橘漸層，防折行排版 */
         header {
             background: linear-gradient(135deg, #fb923c 0%, #f97316 100%);
             color: white;
@@ -54,7 +54,6 @@
             min-width: 0;
         }
 
-        /* 強制單行、自適應字體大小防折行 */
         .header-top h1 {
             font-size: 1.02rem;
             font-weight: 800;
@@ -64,7 +63,6 @@
             text-overflow: ellipsis;
         }
 
-        /* 緊湊型瀏覽人次膠囊 */
         .visit-counter-badge {
             background: rgba(255, 255, 255, 0.25);
             border: 1px solid rgba(255, 255, 255, 0.45);
@@ -87,7 +85,6 @@
             flex-shrink: 0;
         }
 
-        /* 輕量緊湊按鈕 */
         .btn-header-action {
             background: rgba(255, 255, 255, 0.22);
             color: white;
@@ -238,7 +235,7 @@
 
         .category-bar,
         .sub-filter-bar {
-            display: none;
+            display: flex;
             gap: 8px;
             overflow-x: auto;
             padding: 9px 14px;
@@ -861,7 +858,7 @@
             justify-content: center;
         }
 
-        /* BottomSheet 地區抽屜 */
+        /* BottomSheet 抽屜 */
         .drawer-backdrop {
             display: none;
             position: fixed;
@@ -1122,7 +1119,7 @@
         <div class="sub-nav-wrapper">
             <div class="category-bar" id="category-bar"></div>
 
-            <div class="sub-filter-bar" id="attraction-filter-bar">
+            <div class="sub-filter-bar" id="attraction-filter-bar" style="display:none;">
                 <button class="cat-chip active" id="att-sub-all" onclick="filterAttractionCat('all')">全部景點</button>
                 <button class="cat-chip" id="att-sub-shopping" onclick="filterAttractionCat('shopping')">🛒 購物商場</button>
                 <button class="cat-chip" id="att-sub-casino" onclick="filterAttractionCat('casino')">🎰 賭場娛樂</button>
@@ -1130,7 +1127,7 @@
                 <button class="cat-chip" id="att-sub-nature" onclick="filterAttractionCat('nature')">🌳 自然海灘</button>
             </div>
 
-            <div class="sub-filter-bar" id="news-filter-bar">
+            <div class="sub-filter-bar" id="news-filter-bar" style="display:none;">
                 <button class="cat-chip active" id="news-sub-all" onclick="filterNewsType('all')">全部動態</button>
                 <button class="cat-chip" id="news-sub-event" onclick="filterNewsType('event')">🎵 演唱會與活動</button>
                 <button class="cat-chip" id="news-sub-promo" onclick="filterNewsType('promo')">🔥 限時優惠</button>
@@ -1251,7 +1248,7 @@
         </div>
     </div>
 
-    <!-- Firebase SDK 與邏輯 -->
+    <!-- Firebase SDK 與核心邏輯 -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, collection, getDocs, doc, getDoc, setDoc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
@@ -1275,31 +1272,35 @@
         const AI_WORKER_URL = "https://food-ai-assistant.vhuang904.workers.dev";
         let currentUser = null;
 
-        // ==================== 核心都會生活圈與附屬海島智慧包容映射池 ====================
+        // ==================== 全局字串容錯提取器（解決物件 toLowerCase 崩潰） ====================
+        function safeStr(val) {
+            if (!val) return '';
+            if (typeof val === 'string') return val.toLowerCase();
+            if (typeof val === 'object') {
+                try {
+                    return Object.values(val).map(v => typeof v === 'string' ? v : JSON.stringify(v)).join(' ').toLowerCase();
+                } catch(e) { return ''; }
+            }
+            return String(val).toLowerCase();
+        }
+
+        // ==================== 生活圈與附屬海島智慧包容映射池 ====================
         const REGIONAL_CLUSTER_MAP = {
-            // 達沃生活圈：涵蓋達沃市區行政分區，自動包容後花園「薩馬爾島 (Samal)」
             davao: ['davao', 'talomo', 'matina', 'lanang', 'bajada', 'toril', 'poblacion', 'samal'],
-            // 薩馬爾島獨立過濾
             samal: ['samal'],
-            // 馬尼拉大都會圈：包容 Makati、BGC、Pasay (賭場/MOA)、Parañaque 等 16 衛星都會區
             manila: ['manila', 'makati', 'taguig', 'bgc', 'pasay', 'paranaque', 'parañaque', 'mandaluyong', 'pasig', 'quezon', 'alabang', 'muntinlupa'],
-            // 宿霧生活圈：涵蓋宿霧市區與國際度假村群麥克坦島
             cebu: ['cebu', 'mactan', 'lapu-lapu', 'mandaue'],
-            // 巴拉望跳島圈：涵蓋愛妮島與科隆
             palawan: ['palawan', 'el nido', 'coron', 'puerto princesa'],
-            // 長灘島
             boracay: ['boracay', 'malay', 'aklan'],
-            // 薄荷島
             bohol: ['bohol', 'panglao', 'tagbilaran', 'carmen']
         };
 
-        // 智慧生活圈判斷函式
         function isPlaceInSelectedRegion(item, selectedCity) {
-            if (selectedCity === 'all') return true;
+            if (!selectedCity || selectedCity === 'all') return true;
             
-            const itemCity = (item.city || '').toLowerCase();
-            const itemAddress = (item.address || '').toLowerCase();
-            const itemName = (item.name || '' + (item.name_en || '')).toLowerCase();
+            const itemCity = safeStr(item.city);
+            const itemAddress = safeStr(item.address);
+            const itemName = safeStr(item.names) + ' ' + safeStr(item.name) + ' ' + safeStr(item.name_en);
             
             const cluster = REGIONAL_CLUSTER_MAP[selectedCity];
             if (cluster) {
@@ -1308,7 +1309,7 @@
             return itemCity === selectedCity || itemAddress.includes(selectedCity);
         }
 
-        // 保底金牌站長私房名單（徹底杜絕爬蟲抓漏或覆蓋）
+        // 保底金牌站長私房名單
         const HARDCODED_CURATED_PLACES = [
             {
                 id: "manila_kyoto_kaiseki",
@@ -1748,13 +1749,10 @@
             }
         };
 
-        // ==================== 安全且精準的唯一 ID 去重函式 ====================
-        // 彻底告別名稱清理造成的誤殺問題！
         function deduplicateById(list) {
             const uniqueMap = new Map();
             list.forEach(item => {
-                // 優先使用唯一 ID，若無 ID 則以 城市+英文名稱 組合
-                const uniqueKey = item.id || `${item.city || 'ph'}_${item.name_en || item.name || Math.random()}`;
+                const uniqueKey = item.id || `${item.city || 'ph'}_${safeStr(item.name_en || item.name || Math.random())}`;
                 if (!uniqueMap.has(uniqueKey)) {
                     uniqueMap.set(uniqueKey, item);
                 }
@@ -1768,7 +1766,6 @@
                 const rawRes = [];
                 resSnap.forEach(doc => rawRes.push({ id: doc.id, ...doc.data() }));
 
-                // 結合保底清單並用唯一 ID 去重
                 const combinedList = [...HARDCODED_CURATED_PLACES, ...rawRes];
                 
                 allRestaurants = deduplicateById(combinedList).sort((a, b) => {
@@ -1788,16 +1785,17 @@
                     const newsSnap = await getDocs(collection(db, "news"));
                     allNews = [];
                     newsSnap.forEach(doc => allNews.push({ id: doc.id, ...doc.data() }));
+                    allNews = deduplicateById(allNews);
                 } catch (e) { allNews = []; }
 
                 if (allNews.length === 0 || !allNews.some(n => n.type === 'event')) {
                     allNews = [
-                        { city: 'davao', type: 'event', brand: 'SMX Davao', title: 'Davao Music & Food Festival 2026', tag: '🎵 演唱會與活動', validity: '本週末登場', description: '達沃 SMX 會展中心年度音樂盛事，匯集在地搖滾樂團與知名美食市集攤位。', location: 'SMX Convention Center, SM Lanang, Davao', url: 'https://smtickets.com' },
-                        { city: 'all', type: 'event', brand: 'TicketWorld', title: 'Ed Sheeran + - = ÷ x Mathematics Tour Manila', tag: '🎵 國際巨星巡演', validity: '2026/09/25 演出', description: '西洋流行巨星紅髮艾德降臨馬尼拉！全菲樂迷矚目的年度戶外萬人演唱會盛宴。', location: 'SMDC Festival Grounds, Metro Manila', url: 'https://ticketworld.com.ph' },
-                        { city: 'all', type: 'promo', brand: 'GrabFood', title: 'September 50% OFF Weekend Promo', tag: '🔥 限時優惠', validity: '9月底截止', description: '週末全菲律賓 GrabFood 外送指定餐廳滿額享 5 折超值優惠！', location: '全菲各主要城市適用', url: 'https://grab.com' },
-                        { city: 'davao', type: 'promo', brand: 'SM Lanang', title: 'SM Lanang 3-Day Weekend Sale', tag: '🔥 商場特賣', validity: '本週五至週日', description: 'SM Lanang Premier 全館品牌名店最高享 70% 折扣優惠。', location: 'Lanang, Davao City', url: 'https://smsupermalls.com' },
-                        { city: 'davao', type: 'new', brand: 'Spot.ph', title: 'Davao Waterfront New Seafood Bistro', tag: '✨ 新開餐廳', validity: '全新開幕', description: '達沃海濱最新開幕的高級海鮮餐酒館，主打新鮮炭烤海大蝦與生金槍魚。', location: 'Lanang, Davao City', url: 'https://spot.ph' },
-                        { city: 'cebu', type: 'movie', brand: 'SM Cinema', title: 'Marvel Studios IMAX Blockbuster Premiere', tag: '🎬 電影與娛樂', validity: '熱映中', description: '漫威最新強檔鉅獻於全菲 IMAX 影城同步盛大上映。', location: 'SM City Cebu / SM Lanang Cinema', url: 'https://smcinema.com' }
+                        { id: 'davao_fest_2026', city: 'davao', type: 'event', brand: 'SMX Davao', title: 'Davao Music & Food Festival 2026', tag: '🎵 演唱會與活動', validity: '本週末登場', description: '達沃 SMX 會展中心年度音樂盛事，匯集在地搖滾樂團與知名美食市集攤位。', location: 'SMX Convention Center, SM Lanang, Davao', url: 'https://smtickets.com' },
+                        { id: 'sheeran_manila_2026', city: 'all', type: 'event', brand: 'TicketWorld', title: 'Ed Sheeran + - = ÷ x Mathematics Tour Manila', tag: '🎵 國際巨星巡演', validity: '2026/09/25 演出', description: '西洋流行巨星紅髮艾德降臨馬尼拉！全菲樂迷矚目的年度戶外萬人演唱會盛宴。', location: 'SMDC Festival Grounds, Metro Manila', url: 'https://ticketworld.com.ph' },
+                        { id: 'grab_weekend_promo', city: 'all', type: 'promo', brand: 'GrabFood', title: 'September 50% OFF Weekend Promo', tag: '🔥 限時優惠', validity: '9月底截止', description: '週末全菲律賓 GrabFood 外送指定餐廳滿額享 5 折超值優惠！', location: '全菲各主要城市適用', url: 'https://grab.com' },
+                        { id: 'sm_lanang_sale', city: 'davao', type: 'promo', brand: 'SM Lanang', title: 'SM Lanang 3-Day Weekend Sale', tag: '🔥 商場特賣', validity: '本週五至週日', description: 'SM Lanang Premier 全館品牌名店最高享 70% 折扣優惠。', location: 'Lanang, Davao City', url: 'https://smsupermalls.com' },
+                        { id: 'davao_new_seafood', city: 'davao', type: 'new', brand: 'Spot.ph', title: 'Davao Waterfront New Seafood Bistro', tag: '✨ 新開餐廳', validity: '全新開幕', description: '達沃海濱最新開幕的高級海鮮餐酒館，主打新鮮炭烤海大蝦與生金槍魚。', location: 'Lanang, Davao City', url: 'https://spot.ph' },
+                        { id: 'marvel_imax_cebu', city: 'cebu', type: 'movie', brand: 'SM Cinema', title: 'Marvel Studios IMAX Blockbuster Premiere', tag: '🎬 電影與娛樂', validity: '熱映中', description: '漫威最新強檔鉅獻於全菲 IMAX 影城同步盛大上映。', location: 'SM City Cebu / SM Lanang Cinema', url: 'https://smcinema.com' }
                     ];
                 }
             } catch (err) {
@@ -2040,21 +2038,19 @@
                     SYNONYM_MAP[k].forEach(s => keywords.add(s.toLowerCase()));
                 }
             });
-            const text = `${item.name || ''} ${item.name_en || ''} ${item.address || ''} ${item.description || ''} ${item.curatedNote || ''} ${item.title || ''}`.toLowerCase();
+            const text = safeStr(item.names) + ' ' + safeStr(item.name) + ' ' + safeStr(item.name_en) + ' ' + safeStr(item.address) + ' ' + safeStr(item.description) + ' ' + safeStr(item.curatedNote) + ' ' + safeStr(item.title);
             for (const kw of keywords) {
                 if (text.includes(kw)) return true;
             }
             return false;
         }
 
-        // 渲染美食地圖（使用生活圈包容判定）
         function renderList() {
             const listEl = document.getElementById('restaurant-list');
             document.getElementById('loading').style.display = 'none';
             const langData = i18n[currentLang];
 
             let filtered = (allRestaurants || []).filter(item => {
-                // 使用生活圈判定
                 const matchC = isPlaceInSelectedRegion(item, currentCity);
                 const matchK = (currentCategoryKey === 'all') || ((item.categoryKey || 'filipino') === currentCategoryKey);
                 return matchC && matchK;
@@ -2095,8 +2091,8 @@
                 }
 
                 const comments = resComments[key] || [];
-                const name = item.names?.[currentLang] || item.name || 'Unknown';
-                const desc = item.descriptions?.[currentLang] || item.description || langData.noDesc;
+                const name = (typeof item.names === 'object' && item.names?.[currentLang]) ? item.names[currentLang] : (typeof item.name === 'string' ? item.name : (item.name_en || 'Unknown'));
+                const desc = (typeof item.descriptions === 'object' && item.descriptions?.[currentLang]) ? item.descriptions[currentLang] : (typeof item.description === 'string' ? item.description : langData.noDesc);
 
                 return `
                     <div class="card ${isCurated ? 'is-curated-card' : ''}">
@@ -2116,7 +2112,7 @@
                         <div class="card-body">
                             <div class="badge-group">
                                 ${curatedBadgeHtml}
-                                <span class="badge badge-city">${langData.cities[item.city || 'davao']}</span>
+                                <span class="badge badge-city">${langData.cities[item.city || 'davao'] || item.city}</span>
                                 <span class="badge">${langData.cats[catKey] || catKey}</span>
                                 ${googleBadge}
                             </div>
@@ -2172,7 +2168,6 @@
             }).join('');
         }
 
-        // 渲染景點導覽（使用生活圈包容判定，選達沃即自動包容薩馬爾島珍珠農場）
         function renderAttractionList() {
             const listEl = document.getElementById('attraction-list');
             const langData = i18n[currentLang];
@@ -2194,7 +2189,7 @@
                 const key = 'att_' + (item.id || idx);
                 const poolKey = (item.category === 'casino' || item.category === 'shopping') ? item.category : 'attraction';
                 const images = getImageArray(item, poolKey);
-                const name = item.name || 'Attraction';
+                const name = (typeof item.names === 'object' && item.names?.[currentLang]) ? item.names[currentLang] : (item.name || 'Attraction');
                 const desc = typeof item.description === 'string' ? item.description : (typeof item.description_zh === 'string' ? item.description_zh : langData.noDesc);
                 
                 let catBadgeText = '🏛️ 景點';
@@ -2233,7 +2228,7 @@
                         </div>
                         <div class="card-body">
                             <div class="badge-group">
-                                <span class="badge badge-city">${langData.cities[item.city || 'davao']}</span>
+                                <span class="badge badge-city">${langData.cities[item.city || 'davao'] || item.city}</span>
                                 <span class="badge" style="${catBadgeStyle}">${catBadgeText}</span>
                                 ${googleBadge}
                             </div>
@@ -2251,7 +2246,6 @@
             }).join('');
         }
 
-        // 渲染城市動態
         function renderNewsList() {
             const listEl = document.getElementById('news-list');
             const langData = i18n[currentLang];
@@ -2307,7 +2301,6 @@
             }).join('');
         }
 
-        // 3D AI 管家
         window.toggleChat = function() {
             const modal = document.getElementById('chat-modal');
             modal.classList.toggle('show');
@@ -2357,7 +2350,6 @@
             messages.scrollTop = messages.scrollHeight;
         };
 
-        // 啟動
         initVisitorCounter();
         fetchData();
     </script>
