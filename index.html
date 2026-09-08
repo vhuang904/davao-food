@@ -23,6 +23,8 @@
             background: #fdfbf7;
             color: #333;
             padding-bottom: 60px;
+            /* 防止下拉誤觸整頁 Reload */
+            overscroll-behavior-y: contain;
         }
 
         header {
@@ -299,7 +301,6 @@
             justify-content: space-between;
         }
 
-        /* 卡片與三級榮譽樣式 */
         .card {
             background: white;
             border-radius: 14px;
@@ -311,13 +312,11 @@
             position: relative;
         }
 
-        /* 第三級：👑 站長私房嚴選（黑金尊榮光澤） */
         .card.is-curated-card {
             border: 2px solid #f59e0b;
             box-shadow: 0 8px 24px rgba(245, 158, 11, 0.22);
         }
 
-        /* 第二級：🔥 Google 頂級推薦（極光藍發光邊框） */
         .card.is-google-top-card {
             border: 2px solid #38bdf8;
             box-shadow: 0 8px 22px rgba(56, 189, 248, 0.2);
@@ -522,7 +521,6 @@
             color: white;
         }
 
-        /* 抽屜選單 */
         .drawer-backdrop {
             display: none;
             position: fixed;
@@ -617,7 +615,6 @@
             font-size: 1.05rem;
         }
 
-        /* 登入彈窗 */
         .auth-modal-backdrop {
             display: none;
             position: fixed;
@@ -728,7 +725,6 @@
             cursor: pointer;
         }
 
-        /* 3D AI 懸浮球與完整聊天面板 */
         .chat-fab {
             position: fixed;
             bottom: 20px;
@@ -920,7 +916,7 @@
             
             <div class="controls-row">
                 <button class="city-capsule-btn" id="city-capsule-btn" onclick="openCityDrawer()">
-                    <span id="current-city-label">🌏 全部地區 (All Regions)</span>
+                    <span id="current-city-label">🌺 達沃市 (Davao City)</span>
                     <i class="fa-solid fa-chevron-down" style="font-size:0.75rem; opacity:0.8;"></i>
                 </button>
 
@@ -937,7 +933,6 @@
                 <button class="search-clear-btn" id="search-clear-btn" onclick="clearSearch()" title="清除">✕</button>
             </div>
 
-            <!-- 主分頁標籤（三大都會為 美食餐廳；四大海島為 美食/度假） -->
             <div class="main-tabs">
                 <button class="main-tab-btn active" id="tab-btn-map" onclick="switchMainTab('map')">🍽️ 美食餐廳</button>
                 <button class="main-tab-btn" id="tab-btn-attraction" onclick="switchMainTab('attraction')">🏛️ 景點導覽</button>
@@ -946,7 +941,6 @@
         </div>
 
         <div class="sub-nav-wrapper">
-            <!-- 智慧變形分類 Bar（都會 vs 海島） -->
             <div class="category-bar" id="category-bar"></div>
 
             <div class="sub-filter-bar" id="attraction-filter-bar">
@@ -966,7 +960,6 @@
         </div>
     </header>
 
-    <!-- 美食餐廳 / 海島度假 Tab -->
     <div id="main-tab-map" class="tab-content active">
         <div class="container">
             <div id="search-results-info" class="search-results-info" style="display:none;"></div>
@@ -975,21 +968,18 @@
         </div>
     </div>
 
-    <!-- 景點導覽 Tab -->
     <div id="main-tab-attraction" class="tab-content">
         <div class="container">
             <div id="attraction-list" class="grid-layout">載入景點導覽中...</div>
         </div>
     </div>
 
-    <!-- 城市動態 Tab -->
     <div id="main-tab-news" class="tab-content">
         <div class="container">
             <div id="news-list" class="grid-layout">載入城市動態中...</div>
         </div>
     </div>
 
-    <!-- 兩大陣營抽屜選單 -->
     <div class="drawer-backdrop" id="drawer-backdrop" onclick="closeCityDrawer()"></div>
     <div class="city-drawer" id="city-drawer">
         <div class="drawer-handle"></div>
@@ -1025,7 +1015,6 @@
         </div>
     </div>
 
-    <!-- 登入彈窗 -->
     <div class="auth-modal-backdrop" id="auth-modal">
         <div class="auth-card">
             <button class="btn-close-auth" onclick="closeAuthModal()">✕</button>
@@ -1041,12 +1030,10 @@
         </div>
     </div>
 
-    <!-- 3D AI 懸浮按鈕 -->
     <button class="chat-fab" onclick="toggleChat()" title="大V旅遊窩管家">
         <img src="ai-avatar.png" alt="AI 管家" onerror="this.src='ai-avatar.jpg'">
     </button>
 
-    <!-- AI 對話視窗 -->
     <div class="chat-modal" id="chat-modal">
         <div class="chat-header">
             <div class="chat-header-info">
@@ -1106,11 +1093,12 @@
             palawan: { lat: 11.1800, lng: 119.3900, label: '🏝️ 巴拉望' }
         };
 
-        let currentCity = localStorage.getItem('ph_app_city') || 'all';
-        let currentCategoryKey = 'all';
-        let currentMainTab = 'map';
-        let currentAttractionCat = 'all';
-        let currentNewsSubFilter = 'all';
+        // 記憶狀態恢復：若曾切換過Tab或分類，Reload後依然保留，絕不強跳回美食全部！
+        let currentCity = localStorage.getItem('ph_app_city') || 'davao';
+        let currentCategoryKey = sessionStorage.getItem('ph_nav_cat') || 'all';
+        let currentMainTab = sessionStorage.getItem('ph_nav_tab') || 'map';
+        let currentAttractionCat = sessionStorage.getItem('ph_nav_att_cat') || 'all';
+        let currentNewsSubFilter = sessionStorage.getItem('ph_nav_news_sub') || 'all';
         let currentSearchQuery = '';
 
         let allRestaurants = [];
@@ -1184,7 +1172,7 @@
                 },
                 (err) => {
                     if (!localStorage.getItem('ph_app_city')) {
-                        currentCity = 'all';
+                        currentCity = 'davao';
                         renderUI();
                     }
                 },
@@ -1251,13 +1239,12 @@
                         item.city = 'manila';
                         item.categoryKey = 'japanese_korean';
                     } else {
-                        // 其他海島度假村（如 Pearl Farm、Chema's）全面回歸客觀評分，不濫發皇冠與站長點評
                         item.isCurated = false;
                         delete item.curatedBadge;
                         delete item.curatedNote;
                     }
 
-                    // 薩馬爾島嚴格鎖定：凡是珍珠農場或 Chema's 一律焊定為 samal，不混入達沃
+                    // 薩馬爾島嚴格鎖定：凡是珍珠農場或 Chema's 一律歸為 samal，絕對不混入達沃
                     if (nameAll.includes('pearl farm') || nameAll.includes('chema')) {
                         item.city = 'samal';
                         item.islandType = 'hotel';
@@ -1339,7 +1326,6 @@
                     .map(item => {
                         const r = item.googleRating || 0;
                         const c = item.googleReviewCount || 0;
-                        // 第二級自動晉級：評分 >= 4.6 且 評論數 >= 100
                         if (!item.isCurated && r >= 4.6 && c >= 100) {
                             item.isGoogleTop = true;
                             if (!item.googleTopNote) {
@@ -1356,7 +1342,7 @@
                         return (b.googleRating || 0) - (a.googleRating || 0);
                     });
 
-                // 讀取景點，並注入真實穩定的歷史名勝圖片直鏈
+                // 讀取景點，並嚴格替換真實官方圖照，徹底粉碎杜拜帆船飯店與撲克牌！
                 try {
                     const attSnap = await getDocs(collection(db, "attractions"));
                     allAttractions = [];
@@ -1364,33 +1350,52 @@
                         const item = { id: d.id, ...d.data() };
                         const nameKey = (safeStr(item.name) + ' ' + safeStr(item.id)).toLowerCase();
 
-                        // 替換歷史建築官方原圖（杜絕杜拜帆船飯店與破圖）
-                        if (nameKey.includes('intramuros')) {
+                        // 🎯 核心白名單：直接覆蓋為維基媒體官方公有領域真實原照
+                        if (nameKey.includes('intramuros') || nameKey.includes('王城區')) {
                             item.images = ["https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Fort_Santiago_gate%2C_Intramuros%2C_Manila.jpg/800px-Fort_Santiago_gate%2C_Intramuros%2C_Manila.jpg"];
                             item.category = 'history';
-                        } else if (nameKey.includes('san pedro') || nameKey.includes('cathedral')) {
+                        } else if (nameKey.includes('san pedro') || nameKey.includes('聖佩德羅')) {
                             item.images = ["https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/San_Pedro_Cathedral_Davao_City.jpg/800px-San_Pedro_Cathedral_Davao_City.jpg"];
                             item.category = 'history';
-                        } else if (nameKey.includes('magellan') || nameKey.includes('cross')) {
+                        } else if (nameKey.includes('magellan') || nameKey.includes('麥哲倫')) {
                             item.images = ["https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/Magellan%27s_Cross_Pavilion_Cebu.jpg/800px-Magellan%27s_Cross_Pavilion_Cebu.jpg"];
                             item.category = 'history';
+                        } else if (nameKey.includes('okada') || nameKey.includes('岡田')) {
+                            item.images = ["https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Okada_manila.jpg/800px-Okada_manila.jpg"];
+                            item.category = 'casino';
+                        } else if (nameKey.includes('solaire') || nameKey.includes('晨麗')) {
+                            item.images = ["https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&auto=format&fit=crop"];
+                            item.category = 'casino';
+                        } else if (nameKey.includes('city of dreams') || nameKey.includes('新濠天地')) {
+                            item.images = ["https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=800&auto=format&fit=crop"];
+                            item.category = 'casino';
+                        } else if (nameKey.includes('nustar')) {
+                            item.images = ["https://images.unsplash.com/photo-1541696432-82c6da8ce7bf?w=800&auto=format&fit=crop"];
+                            item.category = 'casino';
                         }
 
                         allAttractions.push(item);
                     });
                 } catch (e) { allAttractions = []; }
 
-                // 讀取動態
+                // 讀取動態：清洗過期與 Foodpanda 資料，保留高品質在地與 Grab 優惠
                 try {
                     const newsSnap = await getDocs(collection(db, "news"));
                     allNews = [];
-                    newsSnap.forEach(d => allNews.push({ id: d.id, ...d.data() }));
+                    newsSnap.forEach(d => {
+                        const nData = d.data();
+                        const checkStr = safeStr(nData.brand) + ' ' + safeStr(nData.title) + ' ' + safeStr(nData.description);
+                        // 徹底排除 foodpanda 殘留
+                        if (!checkStr.includes('foodpanda')) {
+                            allNews.push({ id: d.id, ...nData });
+                        }
+                    });
                 } catch (e) { allNews = []; }
 
                 if (allNews.length === 0) {
                     allNews = [
-                        { city: 'all', type: 'event', brand: 'TicketWorld', title: 'Ed Sheeran Mathematics Tour Manila', tag: '🎵 巨星巡演', validity: '2026/09/25', description: '西洋流行天王 Ed Sheeran 降臨馬尼拉開唱！', location: 'SMDC Festival Grounds, Manila' },
-                        { city: 'all', type: 'promo', brand: 'GrabFood', title: 'Weekend 50% OFF Promo', tag: '🔥 限時優惠', validity: '9月底截止', description: '週末外送精選餐廳享 5 折超值優惠！', location: '全菲各主要城市適用' }
+                        { city: 'all', type: 'promo', brand: 'GrabFood', title: '全菲週末精選美食 50% OFF 折扣狂歡', tag: '🔥 限時優惠', validity: '每週五至週日限定', description: '全菲律賓 GrabFood 外送精選指定知名餐廳，訂單滿額即享 5 折超值折扣與免運優惠！', location: 'Manila, Davao, Cebu 全菲適用' },
+                        { city: 'all', type: 'event', brand: 'TicketWorld', title: 'Ed Sheeran Mathematics Tour Manila', tag: '🎵 巨星巡演', validity: '2026/09/25', description: '西洋流行天王 Ed Sheeran 降臨馬尼拉開唱！', location: 'SMDC Festival Grounds, Manila' }
                     ];
                 }
             } catch (err) {
@@ -1400,7 +1405,6 @@
             autoDetectCityByGPS();
         }
 
-        // 嚴格城市比對：達沃與薩馬爾嚴格隔離，互不混入
         function isCityMatch(item, selectedCity) {
             if (selectedCity === 'all') return true;
             const c = safeStr(item.city);
@@ -1410,7 +1414,6 @@
                 return c === 'samal' || a.includes('samal');
             }
             if (selectedCity === 'davao') {
-                // 排除薩馬爾島，達沃只收達沃本島
                 return (c === 'davao' || a.includes('davao')) && !c.includes('samal') && !a.includes('samal');
             }
             if (selectedCity === 'manila') {
@@ -1450,6 +1453,7 @@
 
         window.filterCategory = function(catKey) {
             currentCategoryKey = catKey;
+            sessionStorage.setItem('ph_nav_cat', catKey); // 即時記憶分類狀態
             renderCategoryBar();
             renderList();
         };
@@ -1505,7 +1509,6 @@
                 const reviewCount = item.googleReviewCount || 0;
                 const showRatingBadge = item.googleRating && (reviewCount >= 25 || isCurated);
 
-                // 卡片外框：3級黑金 > 2級極光藍金 > 1級標準
                 let cardClass = "card";
                 if (isCurated) cardClass += " is-curated-card";
                 else if (isGoogleTop) cardClass += " is-google-top-card";
@@ -1571,12 +1574,12 @@
             listEl.innerHTML = filtered.map(item => {
                 const name = getText(item.name) || '景點地標';
                 const desc = getText(item.description) || '菲律賓熱門推薦地標。';
-                const img = (item.images && item.images[0]) || 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Fort_Santiago_gate%2C_Intramuros%2C_Manila.jpg/800px-Fort_Santiago_gate%2C_Intramuros%2C_Manila.jpg';
+                const img = (item.images && item.images[0]) || 'https://images.unsplash.com/photo-1518684079-3c830dcef090?w=800&auto=format&fit=crop';
 
                 return `
                     <div class="card">
                         <div style="width:100%; height:200px; background:#ece8df; overflow:hidden;">
-                            <img src="${img}" style="width:100%; height:100%; object-fit:cover;" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1518684079-3c830dcef090?w=800&auto=format&fit=crop'">
+                            <img src="${img}" style="width:100%; height:100%; object-fit:cover;" loading="lazy" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1518684079-3c830dcef090?w=800&auto=format&fit=crop';">
                         </div>
                         <div class="card-body">
                             <div class="badge-group">
@@ -1625,8 +1628,8 @@
                     desc = item.brand ? `歡迎蒞臨 ${getText(item.brand)} 享受專屬優惠與在地活動體驗！` : '菲律賓精選優惠活動與在地即時快訊。';
                 }
 
-                // 識別 Grab 來源：若為 Grab 活動，標記綠色 Grab 標籤
-                const brandStr = safeStr(item.brand) + ' ' + safeStr(rawTitle);
+                // 辨識 Grab 來源：自動打上綠色 Grab 標章
+                const brandStr = (safeStr(item.brand) + ' ' + safeStr(rawTitle)).toLowerCase();
                 const isGrabEvent = brandStr.includes('grab');
 
                 let titleHtml = rawTitle;
@@ -1646,7 +1649,7 @@
                 return `
                     <div class="card">
                         <div style="width:100%; height:180px; background:#f7f5f0; overflow:hidden;">
-                            <img src="${img}" style="width:100%; height:100%; object-fit:cover;" loading="lazy">
+                            <img src="${img}" style="width:100%; height:100%; object-fit:cover;" loading="lazy" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=800&auto=format&fit=crop';">
                         </div>
                         <div class="card-body">
                             <div class="badge-group">
@@ -1675,6 +1678,7 @@
         window.selectDrawerCity = (cityKey) => {
             currentCity = cityKey;
             currentCategoryKey = 'all';
+            sessionStorage.setItem('ph_nav_cat', 'all');
             localStorage.setItem('ph_app_city', cityKey);
             localStorage.setItem('ph_user_manual_city', 'true');
             closeCityDrawer();
@@ -1683,6 +1687,7 @@
 
         window.switchMainTab = (tab) => {
             currentMainTab = tab;
+            sessionStorage.setItem('ph_nav_tab', tab); // 記憶當前 Tab
             ['map', 'attraction', 'news'].forEach(t => {
                 document.getElementById('tab-btn-' + t).classList.toggle('active', t === tab);
                 document.getElementById('main-tab-' + t).classList.toggle('active', t === tab);
@@ -1723,7 +1728,6 @@
             switchMainTab(currentMainTab);
         }
 
-        // AI 聊天管家操作
         window.toggleChat = () => {
             const modal = document.getElementById('chat-modal');
             modal.classList.toggle('show');
@@ -1773,6 +1777,7 @@
 
         window.filterAttractionCat = function(cat) {
             currentAttractionCat = cat;
+            sessionStorage.setItem('ph_nav_att_cat', cat); // 記憶景點子分類
             ['all', 'shopping', 'casino', 'history', 'nature'].forEach(c => {
                 const btn = document.getElementById('att-sub-' + c);
                 if (btn) btn.classList.toggle('active', c === cat);
@@ -1782,6 +1787,7 @@
 
         window.filterNewsType = function(subType) {
             currentNewsSubFilter = subType;
+            sessionStorage.setItem('ph_nav_news_sub', subType); // 記憶動態子分類
             ['all', 'event', 'promo', 'new'].forEach(s => {
                 const btn = document.getElementById('news-sub-' + s);
                 if (btn) btn.classList.toggle('active', s === subType);
