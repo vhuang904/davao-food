@@ -25,7 +25,6 @@
             padding-bottom: 60px;
         }
 
-        /* 頂部 Header：溫暖淡杏橘，緊湊單行排版防折行 */
         header {
             background: linear-gradient(135deg, #fb923c 0%, #f97316 100%);
             color: white;
@@ -492,15 +491,20 @@
 
         .btn {
             flex: 1;
-            min-width: calc(50% - 3px);
-            padding: 9px 6px;
+            min-width: calc(33.33% - 4px);
+            padding: 8px 4px;
             border-radius: 8px;
-            font-size: 0.82rem;
+            font-size: 0.8rem;
             font-weight: bold;
             text-align: center;
             text-decoration: none;
             border: none;
             cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            white-space: nowrap;
         }
 
         .btn-primary {
@@ -511,6 +515,11 @@
         .btn-secondary {
             background: #f5f2eb;
             color: #44403c;
+        }
+
+        .btn-grab {
+            background: #00b14f;
+            color: white;
         }
 
         /* 抽屜選單 */
@@ -928,8 +937,9 @@
                 <button class="search-clear-btn" id="search-clear-btn" onclick="clearSearch()" title="清除">✕</button>
             </div>
 
+            <!-- 主分頁標籤（三大都會為 美食餐廳；四大海島為 美食/度假） -->
             <div class="main-tabs">
-                <button class="main-tab-btn active" id="tab-btn-map" onclick="switchMainTab('map')">🗺️ 美食/住宿</button>
+                <button class="main-tab-btn active" id="tab-btn-map" onclick="switchMainTab('map')">🍽️ 美食餐廳</button>
                 <button class="main-tab-btn" id="tab-btn-attraction" onclick="switchMainTab('attraction')">🏛️ 景點導覽</button>
                 <button class="main-tab-btn" id="tab-btn-news" onclick="switchMainTab('news')">📰 城市動態</button>
             </div>
@@ -956,7 +966,7 @@
         </div>
     </header>
 
-    <!-- 美食/住宿 Tab -->
+    <!-- 美食餐廳 / 海島度假 Tab -->
     <div id="main-tab-map" class="tab-content active">
         <div class="container">
             <div id="search-results-info" class="search-results-info" style="display:none;"></div>
@@ -1086,7 +1096,6 @@
         const AI_WORKER_URL = "https://food-ai-assistant.vhuang904.workers.dev";
         let currentUser = null;
 
-        // 城市核心 GPS 座標對照池（用於靜默比對使用者所在城市）
         const CITY_COORDINATES = {
             samal: { lat: 7.0800, lng: 125.7100, label: '🌴 薩馬爾島' },
             davao: { lat: 7.0731, lng: 125.6128, label: '🌺 達沃市區' },
@@ -1097,10 +1106,9 @@
             palawan: { lat: 11.1800, lng: 119.3900, label: '🏝️ 巴拉望' }
         };
 
-        // 預設城市邏輯：若無手動儲存紀錄，預設為 'all'（國外或未知一律為全部地區）
         let currentCity = localStorage.getItem('ph_app_city') || 'all';
         let currentCategoryKey = 'all';
-        let currentMainTab = 'map';
+        let currentMainTab = 'map'; // 嚴格記錄當前所在 Tab，切換城市或定位不跳頁
         let currentAttractionCat = 'all';
         let currentNewsSubFilter = 'all';
         let currentSearchQuery = '';
@@ -1122,7 +1130,7 @@
             return String(val).toLowerCase();
         }
 
-        // 安全提取多語系字典物件或純字串，徹底消滅 [object Object] 與 undefined
+        // 安全提取多語系字典物件或純字串
         function getText(val) {
             if (!val) return '';
             if (typeof val === 'string') return val;
@@ -1132,7 +1140,6 @@
             return String(val);
         }
 
-        // 計算兩點經緯度距離 (公里)
         function getDistanceKm(lat1, lon1, lat2, lon2) {
             const R = 6371;
             const dLat = (lat2 - lat1) * Math.PI / 180;
@@ -1143,10 +1150,8 @@
             return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)));
         }
 
-        // 靜默 GPS 定位偵測（人在菲律賓特定城市半徑 80 公里內切換；人在國外或失敗設為 'all' 全部地區）
         function autoDetectCityByGPS() {
             if (!navigator.geolocation) return;
-            // 如果使用者之前已經手動指定過城市，尊重手動選擇
             if (localStorage.getItem('ph_user_manual_city') === 'true') return;
 
             navigator.geolocation.getCurrentPosition(
@@ -1164,7 +1169,6 @@
                         }
                     }
 
-                    // 距離任一支援城市小於 80 公里，切換至該城市；否則判定為在國外，維持 'all' 全部地區
                     if (nearest && minDist < 80) {
                         if (currentCity !== nearest) {
                             currentCity = nearest;
@@ -1180,7 +1184,6 @@
                     }
                 },
                 (err) => {
-                    // 拒絕或取得失敗，安全預設為全部地區
                     if (!localStorage.getItem('ph_app_city')) {
                         currentCity = 'all';
                         renderUI();
@@ -1190,7 +1193,6 @@
             );
         }
 
-        // 訪客計數器
         async function initVisitorCounter() {
             try {
                 const statsRef = doc(db, "stats", "global");
@@ -1251,7 +1253,6 @@
                         item.categoryKey = 'japanese_korean';
                     }
 
-                    // 照片 Merge 邏輯：有真實照片者優先保留
                     if (mergedMap.has(key)) {
                         const existing = mergedMap.get(key);
                         if ((!existing.images || existing.images.length === 0) && (item.images && item.images.length > 0)) {
@@ -1319,10 +1320,8 @@
                 mergedMap.set(cebuNonki.id, cebuNonki);
                 mergedMap.set(cebuMakchang.id, cebuMakchang);
 
-                // 自動化三級體系評定與排序
                 allRestaurants = Array.from(mergedMap.values())
                     .filter(item => {
-                        // 門檻：Google 評分 >= 4.0 且 評論數 >= 25（或為站長親點）
                         const r = item.googleRating || 0;
                         const c = item.googleReviewCount || 0;
                         return item.isCurated || (r >= 4.0 && c >= 25);
@@ -1330,7 +1329,6 @@
                     .map(item => {
                         const r = item.googleRating || 0;
                         const c = item.googleReviewCount || 0;
-                        // 第二級自動晉級：評分 >= 4.6 且 評論數 >= 100
                         if (!item.isCurated && r >= 4.6 && c >= 100) {
                             item.isGoogleTop = true;
                             if (!item.googleTopNote) {
@@ -1340,7 +1338,6 @@
                         return item;
                     })
                     .sort((a, b) => {
-                        // 排序權重：站長私房 (3級) > Google頂級 (2級) > 評分高低 (1級)
                         if (a.isCurated && !b.isCurated) return -1;
                         if (!a.isCurated && b.isCurated) return 1;
                         if (a.isGoogleTop && !b.isGoogleTop) return -1;
@@ -1348,11 +1345,28 @@
                         return (b.googleRating || 0) - (a.googleRating || 0);
                     });
 
-                // 讀取景點
+                // 讀取景點，並注入歷史文化專屬圖片修補空盒
                 try {
                     const attSnap = await getDocs(collection(db, "attractions"));
                     allAttractions = [];
-                    attSnap.forEach(d => allAttractions.push({ id: d.id, ...d.data() }));
+                    attSnap.forEach(d => {
+                        const item = { id: d.id, ...d.data() };
+                        const nameKey = (safeStr(item.name) + ' ' + safeStr(item.id)).toLowerCase();
+
+                        // 專屬高清晰歷史照片補齊
+                        if (nameKey.includes('intramuros')) {
+                            item.images = ["https://images.unsplash.com/photo-1518684079-3c830dcef090?w=800&auto=format&fit=crop"];
+                            item.category = 'history';
+                        } else if (nameKey.includes('san pedro') || nameKey.includes('cathedral')) {
+                            item.images = ["https://images.unsplash.com/photo-1548625361-19597793d5f9?w=800&auto=format&fit=crop"];
+                            item.category = 'history';
+                        } else if (nameKey.includes('magellan') || nameKey.includes('cross')) {
+                            item.images = ["https://images.unsplash.com/photos/brown-cross-on-white-wall-kD0ApmKkAOc?w=800&auto=format&fit=crop"];
+                            item.category = 'history';
+                        }
+
+                        allAttractions.push(item);
+                    });
                 } catch (e) { allAttractions = []; }
 
                 // 讀取動態
@@ -1476,10 +1490,8 @@
                 else if (item.city === 'bohol') cityLabel = '薄荷島';
 
                 const reviewCount = item.googleReviewCount || 0;
-                // 門檻防線：滿 25 則或站長推薦才顯示 Google 評分徽章
                 const showRatingBadge = item.googleRating && (reviewCount >= 25 || isCurated);
 
-                // 卡片外框樣式：3級黑金 > 2級極光藍金 > 1級標準
                 let cardClass = "card";
                 if (isCurated) cardClass += " is-curated-card";
                 else if (isGoogleTop) cardClass += " is-google-top-card";
@@ -1511,7 +1523,10 @@
                             <div class="card-desc">${desc}</div>
                             <div class="info-item"><span>📍</span> <span>${item.address || '地址收錄中'}</span></div>
                             <div class="info-item"><span>📞</span> <span>${item.phone || '暫無電話'}</span></div>
+
+                            <!-- 保留 Grab 外送、撥打電話與導航地圖 -->
                             <div class="btn-group">
+                                <a class="btn btn-grab" href="https://food.grab.com/ph/en/restaurants?search=${encodeURIComponent(name)}" target="_blank">🛵 Grab外送</a>
                                 <a class="btn btn-primary" href="tel:${item.phone || ''}">撥打電話</a>
                                 <a class="btn btn-secondary" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(name + ' ' + (item.address || ''))}" target="_blank">導航地圖</a>
                             </div>
@@ -1587,10 +1602,19 @@
             }
 
             listEl.innerHTML = filtered.map(item => {
-                const title = getText(item.title) || '精選快訊';
+                // 深度寬鬆提取：避免單一欄位為空導致的空白卡片
+                let title = getText(item.title) || getText(item.headline) || getText(item.name);
+                if (!title) {
+                    title = item.brand ? `${getText(item.brand)} 精選活動` : '精選快訊';
+                }
+
+                let desc = getText(item.description) || getText(item.content) || getText(item.details) || getText(item.summary);
+                if (!desc) {
+                    desc = item.brand ? `歡迎蒞臨 ${getText(item.brand)} 享受專屬優惠與在地活動體驗！` : '菲律賓精選優惠活動與在地即時快訊。';
+                }
+
                 const tag = getText(item.tag) || '🔥 快訊';
                 const validity = getText(item.validity) || '';
-                const desc = getText(item.description) || '';
                 const location = getText(item.location) || '全菲適用';
                 const img = item.imageUrl || 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=800&auto=format&fit=crop';
                 const titleHtml = item.url ? `<a href="${item.url}" target="_blank" style="color:#1c1917; text-decoration:none; border-bottom:2px solid #f97316;">${title} 🔗</a>` : title;
@@ -1608,8 +1632,8 @@
                                 ${validity ? `<span class="badge">⏰ ${validity}</span>` : ''}
                             </div>
                             <div class="card-title" style="font-size:1.05rem;">${titleHtml}</div>
-                            <div class="card-desc">${desc}</div>
-                            <div class="info-item"><span>📍</span> <span>${location}</span></div>
+                            <div class="card-desc" style="color:#44403c; margin-top:4px;">${desc}</div>
+                            <div class="info-item" style="margin-top:6px;"><span>📍</span> <span>${location}</span></div>
                         </div>
                     </div>
                 `;
@@ -1628,13 +1652,13 @@
             currentCity = cityKey;
             currentCategoryKey = 'all';
             localStorage.setItem('ph_app_city', cityKey);
-            localStorage.setItem('ph_user_manual_city', 'true'); // 標記為使用者手動指定，GPS不再強行拉回
+            localStorage.setItem('ph_user_manual_city', 'true');
             closeCityDrawer();
             renderUI();
         };
 
         window.switchMainTab = (tab) => {
-            currentMainTab = tab;
+            currentMainTab = tab; // 鎖定當前 Tab
             ['map', 'attraction', 'news'].forEach(t => {
                 document.getElementById('tab-btn-' + t).classList.toggle('active', t === tab);
                 document.getElementById('main-tab-' + t).classList.toggle('active', t === tab);
@@ -1659,13 +1683,21 @@
                 bohol: '🍫 薄荷島 (Bohol)'
             };
             document.getElementById('current-city-label').innerText = labels[currentCity] || '選擇地區';
+
+            // 都會為「🍽️ 美食餐廳」；四大海島為「🌴 美食/度假」
+            const tabBtnMap = document.getElementById('tab-btn-map');
+            if (isIslandMode(currentCity)) {
+                tabBtnMap.innerText = '🌴 美食/度假';
+            } else {
+                tabBtnMap.innerText = '🍽️ 美食餐廳';
+            }
             
-            // 抽屜高亮同步
             document.querySelectorAll('.city-drawer .drawer-item').forEach(el => el.classList.remove('active'));
             const activeItem = document.getElementById('city-item-' + currentCity);
             if (activeItem) activeItem.classList.add('active');
 
             renderCategoryBar();
+            // 保持在當前 Tab，絕不強跳回美食
             switchMainTab(currentMainTab);
         }
 
