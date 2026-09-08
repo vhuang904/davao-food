@@ -357,7 +357,7 @@
       ]
     };
 
-    // 分類圖庫池
+    // 分類預設圖庫池（已將可能造成誤導的吉隆坡雙子星、大床等全部換為菲律賓實景圖）
     const PHOTO_POOLS = {
       japanese_korean: [
         "https://images.unsplash.com/photo-1579871494447-9811cf80d66c?w=800&auto=format&fit=crop",
@@ -376,14 +376,22 @@
         "https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?w=800&auto=format&fit=crop"
       ],
       hotel_villa: [
-        "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=800&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1540541338287-41700207dee6?w=800&auto=format&fit=crop",
         "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&auto=format&fit=crop",
-        "https://images.unsplash.com/photo-1540541338287-41700207dee6?w=800&auto=format&fit=crop"
+        "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=800&auto=format&fit=crop"
       ],
       beach: [
         "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&auto=format&fit=crop",
         "https://images.unsplash.com/photo-1519046904884-53103b34b206?w=800&auto=format&fit=crop",
         "https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=800&auto=format&fit=crop"
+      ],
+      history: [
+        "https://images.unsplash.com/photo-1518509562904-e7ef99cdcc86?w=800&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1596422846543-75c6fc197f07?w=800&auto=format&fit=crop"
+      ],
+      casino: [
+        "https://images.unsplash.com/photo-1511193311914-0346f16efe90?w=800&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&auto=format&fit=crop"
       ],
       default: [
         "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=800&auto=format&fit=crop",
@@ -422,9 +430,8 @@
     let allAttractions = [];
     let allNews = [];
 
-    // 🌟 海島全景點保底資料庫（徹底解決海島景點空白問題）
+    // 海島全景點保底資料庫
     const ISLAND_ATTRACTIONS_FALLBACK = [
-      // 長灘島
       {
         id: "boracay_white_beach",
         city: "boracay",
@@ -455,7 +462,6 @@
         address: "Yapak, Boracay Island, Malay, Aklan",
         images: ["https://images.unsplash.com/photo-1519046904884-53103b34b206?w=800&auto=format&fit=crop"]
       },
-      // 巴拉望
       {
         id: "palawan_big_lagoon",
         city: "palawan",
@@ -486,7 +492,6 @@
         address: "El Nido, Palawan",
         images: ["https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&auto=format&fit=crop"]
       },
-      // 薄荷島
       {
         id: "bohol_chocolate_hills",
         city: "bohol",
@@ -517,7 +522,6 @@
         address: "Panglao Island, Bohol",
         images: ["https://images.unsplash.com/photo-1519046904884-53103b34b206?w=800&auto=format&fit=crop"]
       },
-      // 錫亞高島
       {
         id: "siargao_cloud_9",
         city: "siargao",
@@ -538,7 +542,6 @@
         address: "Del Carmen, Siargao Island",
         images: ["https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=800&auto=format&fit=crop"]
       },
-      // 薩馬爾島
       {
         id: "samal_pearl_farm_beach",
         city: "samal",
@@ -622,7 +625,7 @@
       document.getElementById('auth-btn-text').innerText = user ? (user.displayName ? user.displayName.split(' ')[0] : '會員') : '登入';
     });
 
-    // 資料抓取與核心邏輯
+    // 資料抓取與核心業務邏輯
     async function fetchData() {
       try {
         const resSnap = await getDocs(collection(db, "restaurants"));
@@ -734,6 +737,7 @@
 
         mergedMap.set(siaKermit.id, siaKermit);
 
+        // 三級榮譽篩選
         allRestaurants = Array.from(mergedMap.values())
           .filter(item => {
             const r = item.googleRating || 0;
@@ -1066,7 +1070,7 @@
       }).join('');
     }
 
-    // 景點渲染：穿透式比對 + 官方永久實景白名單（徹底終結撲克牌、雙子星、大床與破圖）
+    // 景點渲染：穿透式比對 + 官方永久實景白名單
     function renderAttractions() {
       const listEl = document.getElementById('attraction-list');
       let filtered = allAttractions.filter(item => {
@@ -1098,13 +1102,24 @@
         return;
       }
 
+      // 官方實景圖強制字典
+      const LANDMARK_OFFICIAL_PHOTOS = {
+        san_pedro: "https://images.unsplash.com/photo-1548625361-19597793d5f9?auto=format&fit=crop&w=800&q=80",
+        intramuros: "https://images.unsplash.com/photo-1518509562904-e7ef99cdcc86?auto=format&fit=crop&w=800&q=80",
+        magellan: "https://images.unsplash.com/photo-1596422846543-75c6fc197f07?auto=format&fit=crop&w=800&q=80",
+        santo_nino: "https://images.unsplash.com/photo-1544077960-604201fe74bc?auto=format&fit=crop&w=800&q=80",
+        okada: "https://images.unsplash.com/photo-1511193311914-0346f16efe90?auto=format&fit=crop&w=800&q=80",
+        solaire: "https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=800&q=80",
+        dreams: "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=800&q=80",
+        nustar: "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=800&q=80"
+      };
+
       listEl.innerHTML = filtered.map(item => {
-        // 1. 穿透抽取所有文字，避免 [object Object] 盲點
         const rawName = item.name || item.title || item.name_en || '';
         const name = getText(rawName) || item.id || '景點地標';
         const desc = getText(item.description || item.desc) || '菲律賓熱門推薦地標。';
 
-        // 將所有可能欄位全部打平成純文字字串
+        // 打平所有可能欄位以進行比對
         const fullDump = (
           JSON.stringify(item) + ' ' + 
           name + ' ' + 
@@ -1112,35 +1127,24 @@
           (item.address || '')
         ).toLowerCase();
 
-        // 2. 🎯 精準地標實景圖庫（換用高穩定 CDN，無破圖）
         let img = '';
-
         if (fullDump.includes('pedro') || fullDump.includes('聖佩德羅')) {
-          // 達沃聖佩德羅主教座堂：獨特曲面石造大教堂實景（已驗證可用之永久 CDN）
-          img = "https://images.unsplash.com/photo-1548625361-19597793d5f9?auto=format&fit=crop&w=800&q=80";
+          img = LANDMARK_OFFICIAL_PHOTOS.san_pedro;
         } else if (fullDump.includes('intramuros') || fullDump.includes('王城') || fullDump.includes('santiago') || fullDump.includes('聖地牙哥')) {
-          // 馬尼拉西班牙古城：聖地牙哥堡石造古城門實景
-          img = "https://images.unsplash.com/photo-1518509562904-e7ef99cdcc86?auto=format&fit=crop&w=800&q=80";
+          img = LANDMARK_OFFICIAL_PHOTOS.intramuros;
         } else if (fullDump.includes('magellan') || fullDump.includes('麥哲倫')) {
-          // 宿霧麥哲倫十字架：歷史八角涼亭與十字架實景
-          img = "https://images.unsplash.com/photo-1596422846543-75c6fc197f07?auto=format&fit=crop&w=800&q=80";
+          img = LANDMARK_OFFICIAL_PHOTOS.magellan;
         } else if (fullDump.includes('santo') || fullDump.includes('nino') || fullDump.includes('聖嬰')) {
-          // 宿霧聖嬰聖殿：百年石造教堂
-          img = "https://images.unsplash.com/photo-1544077960-604201fe74bc?auto=format&fit=crop&w=800&q=80";
+          img = LANDMARK_OFFICIAL_PHOTOS.santo_nino;
         } else if (fullDump.includes('okada') || fullDump.includes('岡田')) {
-          // Okada Manila：標誌性粉金色建築外觀與音樂噴泉水舞
-          img = "https://images.unsplash.com/photo-1511193311914-0346f16efe90?auto=format&fit=crop&w=800&q=80";
+          img = LANDMARK_OFFICIAL_PHOTOS.okada;
         } else if (fullDump.includes('solaire') || fullDump.includes('晨麗')) {
-          // Solaire Resort：馬尼拉灣畔五星級娛樂城夜景建築
-          img = "https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=800&q=80";
+          img = LANDMARK_OFFICIAL_PHOTOS.solaire;
         } else if (fullDump.includes('dreams') || fullDump.includes('新濠')) {
-          // City of Dreams Manila：新濠天地招牌金黃色天穹「Fortune Egg」建築
-          img = "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=800&q=80";
+          img = LANDMARK_OFFICIAL_PHOTOS.dreams;
         } else if (fullDump.includes('nustar')) {
-          // 宿霧 NUSTAR：雙子星娛樂度假城
-          img = "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=800&q=80";
+          img = LANDMARK_OFFICIAL_PHOTOS.nustar;
         } else {
-          // 其它一般景點
           img = (item.images && item.images[0]) || getSmartImage(item, item.category);
         }
 
@@ -1188,7 +1192,7 @@
         `;
       }).join('');
     }
-    
+
     function renderNews() {
       const listEl = document.getElementById('news-list');
       let filtered = allNews.filter(item => {
