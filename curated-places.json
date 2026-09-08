@@ -1,0 +1,89 @@
+[
+  {
+    "id": "manila_kyoto_kaiseki",
+    "city": "manila",
+    "categoryKey": "japanese_korean",
+    "name": "Kyo-to (Kyoto Japanese Dining)",
+    "name_en": "Kyo-to Dining",
+    "names": {
+      "zh-TW": "Kyo-to 頂級懷石割烹 (Kyoto)",
+      "en": "Kyo-to Japanese Kaiseki",
+      "tl": "Kyo-to Japanese Dining"
+    },
+    "address": "119 C. Palanca St, Legazpi Village, Makati, Metro Manila",
+    "phone": "+63 2 8805 7743",
+    "googleRating": 4.8,
+    "googleReviewCount": 260,
+    "isCurated": true,
+    "curatedBadge": "👑 站長私房嚴選",
+    "curatedNote": "站長私藏！馬尼拉 Makati 極具水準的無菜單懷石割烹料理，食材旬味處理細緻，需提前預約。",
+    "description": "位於馬尼拉金融區的高級預約制正統懷石料理，主廚專注於呈現日本當令食材的極致原味。",
+    "descriptions": {
+      "zh-TW": "位於馬尼拉金融區的高級預約制正統懷石料理，主廚專注於呈現日本當令食材的極致原味，氛圍靜謐雅緻。",
+      "en": "Exclusive Japanese Kaiseki restaurant in Makati offering authentic multi-course seasonal dining with exquisite craft.",
+      "tl": "Eksklusibong Japanese Kaiseki restaurant sa Makati na may tunay na seasonal multi-course dining."
+    },
+    "images": [
+      "https://images.unsplash.com/photo-1579871494447-9811cf80d66c?w=800&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=800&auto=format&fit=crop"
+    ]
+  },
+  {
+    "id": "davao_backyard_butcher",
+    "city": "davao",
+    "categoryKey": "bbq_seafood",
+    "name": "The Backyard Butcher Davao",
+    "name_en": "The Backyard Butcher",
+    "names": {
+      "zh-TW": "The Backyard Butcher (煙燻牛排私房菜)",
+      "en": "The Backyard Butcher Davao",
+      "tl": "The Backyard Butcher Davao"
+    },
+    "address": "GSIS Heights, Matina, Talomo, Davao City, Davao del Sur",
+    "phone": "+63 917 568 2883",
+    "googleRating": 4.6,
+    "googleReviewCount": 185,
+    "isCurated": true,
+    "curatedBadge": "👑 站長私房嚴選",
+    "curatedNote": "站長親自認證！達沃隱藏在半山丘的私房牛排肉舖，16呎低溫慢火柴燒煙燻牛胸肉與精選牛排極致多汁美味。",
+    "description": "達沃老饕私藏的煙燻美式柴烤牛排與精選肉舖，招牌煙燻牛胸肉（Smoked Brisket）與炭烤肋眼鮮嫩多汁。",
+    "descriptions": {
+      "zh-TW": "達沃老饕私藏的煙燻美式柴烤牛排與精選肉舖，招牌煙燻牛胸肉（Smoked Brisket）與炭烤肋眼鮮嫩多汁，香氣濃郁。",
+      "en": "Artisanal steakhouse and smokehouse in Matina, famous for slow-smoked brisket, prime ribeye, and house rubs.",
+      "tl": "Sikat na smokehouse at steakhouse sa Matina, kilala sa malambot na smoked brisket at inihaw na karne."
+    },
+    "images": [
+      "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=800&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1544025162-d76694265947?w=800&auto=format&fit=crop"
+    ]
+  },
+  {
+    "id": "davao_yaki2gether",
+    "city": "davao",
+    "categoryKey": "japanese_korean",
+    "name": "Yaki2gether (Yaki Together)",
+    "name_en": "Yaki2gether Japanese Dining",
+    "names": {
+      "zh-TW": "Yaki2gether 日式燒烤刺身",
+      "en": "Yaki2gether Japanese Dining",
+      "tl": "Yaki2gether Davao"
+    },
+    "address": "Davao City, Davao del Sur",
+    "phone": "+63 82 224 8888",
+    "googleRating": 4.7,
+    "googleReviewCount": 140,
+    "isCurated": true,
+    "curatedBadge": "👑 站長私房嚴選",
+    "curatedNote": "站長私房愛店！達沃高水準生魚片刺身、特色日式捲壽司與炭火燒物，食材新鮮、聚會小酌絕佳首選。",
+    "description": "達沃當地廣受歡迎的高品質日式燒烤與壽司料理，主打新鮮現切生魚片刺身、特色壽司捲與炭烤串燒。",
+    "descriptions": {
+      "zh-TW": "達沃當地廣受歡迎的高品質日式燒烤與壽司料理，主打新鮮現切生魚片刺身、特色壽司捲與炭烤串燒，性價比極高。",
+      "en": "Popular Japanese spot in Davao offering super-fresh sashimi, specialty sushi rolls, and savory charcoal yakitori.",
+      "tl": "Kilalang Japanese restaurant sa Davao na naghahain ng sariwang sashimi, sushi rolls, at masarap na yakitori."
+    },
+    "images": [
+      "https://images.unsplash.com/photo-1579871494447-9811cf80d66c?w=800&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=800&auto=format&fit=crop"
+    ]
+  }
+]
