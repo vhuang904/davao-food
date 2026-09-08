@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <title>大V的旅遊窩</title>
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#F97316">
@@ -1101,6 +1104,16 @@
             return String(val).toLowerCase();
         }
 
+        // 安全提取多語系字典物件或純字串，徹底消滅 [object Object] 與 undefined
+        function getText(val) {
+            if (!val) return '';
+            if (typeof val === 'string') return val;
+            if (typeof val === 'object') {
+                return val['zh-TW'] || val['zh'] || val['en'] || val['tl'] || Object.values(val)[0] || '';
+            }
+            return String(val);
+        }
+
         // 計數器
         async function initVisitorCounter() {
             try {
@@ -1367,46 +1380,100 @@
 
         function renderAttractionList() {
             const listEl = document.getElementById('attraction-list');
-            let filtered = (allAttractions || []).filter(item => isCityMatch(item, currentCity));
+            
+            // 嚴格串接城市判定與二級分類過濾
+            let filtered = (allAttractions || []).filter(item => {
+                const matchC = isCityMatch(item, currentCity);
+                const matchCat = (currentAttractionCat === 'all') || (item.category === currentAttractionCat);
+                return matchC && matchCat;
+            });
+
+            if (currentSearchQuery) {
+                const q = currentSearchQuery.toLowerCase();
+                filtered = filtered.filter(item => (safeStr(getText(item.name)) + ' ' + safeStr(item.address)).includes(q));
+            }
 
             if (filtered.length === 0) {
                 listEl.innerHTML = `<p style="text-align:center; color:#a8a29e; padding: 40px; grid-column: 1/-1;">暫無此類景點資訊。</p>`;
                 return;
             }
 
-            listEl.innerHTML = filtered.map(item => `
-                <div class="card">
-                    <div style="width:100%; height:200px; background:#ece8df; overflow:hidden;">
-                        <img src="${(item.images && item.images[0]) || 'https://images.unsplash.com/photo-1518684079-3c830dcef090?w=800&auto=format&fit=crop'}" style="width:100%; height:100%; object-fit:cover;" loading="lazy">
-                    </div>
-                    <div class="card-body">
-                        <div class="badge-group">
-                            <span class="badge badge-city">${item.city}</span>
-                            ${item.googleRating ? `<span class="badge badge-google-rating">⭐ ${item.googleRating}</span>` : ''}
+            listEl.innerHTML = filtered.map(item => {
+                const name = getText(item.name) || '景點地標';
+                const desc = getText(item.description) || '菲律賓熱門推薦地標。';
+                const img = (item.images && item.images[0]) || 'https://images.unsplash.com/photo-1518684079-3c830dcef090?w=800&auto=format&fit=crop';
+
+                return `
+                    <div class="card">
+                        <div style="width:100%; height:200px; background:#ece8df; overflow:hidden;">
+                            <img src="${img}" style="width:100%; height:100%; object-fit:cover;" loading="lazy">
                         </div>
-                        <div class="card-title">${item.name}</div>
-                        <div class="card-desc">${item.description || '菲律賓熱門推薦地標。'}</div>
-                        <div class="info-item"><span>📍</span> <span>${item.address || ''}</span></div>
+                        <div class="card-body">
+                            <div class="badge-group">
+                                <span class="badge badge-city">${item.city}</span>
+                                ${item.googleRating ? `<span class="badge badge-google-rating">⭐ ${item.googleRating}</span>` : ''}
+                            </div>
+                            <div class="card-title">${name}</div>
+                            <div class="card-desc">${desc}</div>
+                            <div class="info-item"><span>📍</span> <span>${item.address || ''}</span></div>
+                            <div class="btn-group">
+                                <a class="btn btn-secondary" style="flex:1;" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(name + ' ' + (item.address || ''))}" target="_blank">導航地圖</a>
+                            </div>
+                        </div>
                     </div>
-                </div>
-            `).join('');
+                `;
+            }).join('');
         }
 
         function renderNewsList() {
             const listEl = document.getElementById('news-list');
-            listEl.innerHTML = (allNews || []).map(item => `
-                <div class="card">
-                    <div class="card-body">
-                        <div class="badge-group">
-                            <span class="badge badge-promo">${item.tag || '🔥 快訊'}</span>
-                            ${item.validity ? `<span class="badge">⏰ ${item.validity}</span>` : ''}
+            
+            // 嚴格串接城市判定（保留全菲共用活動 all）與子分類過濾
+            let filtered = (allNews || []).filter(item => {
+                const matchC = (currentCity === 'all') || (item.city === 'all') || isCityMatch(item, currentCity);
+                const matchS = (currentNewsSubFilter === 'all') || (item.type === currentNewsSubFilter);
+                return matchC && matchS;
+            });
+
+            if (currentSearchQuery) {
+                const q = currentSearchQuery.toLowerCase();
+                filtered = filtered.filter(item => (safeStr(getText(item.title)) + ' ' + safeStr(getText(item.description))).includes(q));
+            }
+
+            if (filtered.length === 0) {
+                listEl.innerHTML = `<p style="text-align:center; color:#a8a29e; padding: 40px; grid-column: 1/-1;">目前暫無相關城市動態。</p>`;
+                return;
+            }
+
+            listEl.innerHTML = filtered.map(item => {
+                // 全面透過 getText() 安全轉譯多語系物件，杜絕 [object Object]
+                const title = getText(item.title) || '精選快訊';
+                const tag = getText(item.tag) || '🔥 快訊';
+                const validity = getText(item.validity) || '';
+                const desc = getText(item.description) || '';
+                const location = getText(item.location) || '全菲適用';
+                const img = item.imageUrl || 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=800&auto=format&fit=crop';
+                const titleHtml = item.url ? `<a href="${item.url}" target="_blank" style="color:#1c1917; text-decoration:none; border-bottom:2px solid #f97316;">${title} 🔗</a>` : title;
+
+                return `
+                    <div class="card">
+                        <div style="width:100%; height:180px; background:#f7f5f0; overflow:hidden;">
+                            <img src="${img}" style="width:100%; height:100%; object-fit:cover;" loading="lazy">
                         </div>
-                        <div class="card-title">${item.title}</div>
-                        <div class="card-desc">${item.description}</div>
-                        <div class="info-item"><span>📍</span> <span>${item.location || '全菲適用'}</span></div>
+                        <div class="card-body">
+                            <div class="badge-group">
+                                <span class="badge badge-city">${item.city || '全菲'}</span>
+                                ${item.brand ? `<span class="badge">${getText(item.brand)}</span>` : ''}
+                                <span class="badge" style="background:#fef2f2; color:#dc2626;">${tag}</span>
+                                ${validity ? `<span class="badge">⏰ ${validity}</span>` : ''}
+                            </div>
+                            <div class="card-title" style="font-size:1.05rem;">${titleHtml}</div>
+                            <div class="card-desc">${desc}</div>
+                            <div class="info-item"><span>📍</span> <span>${location}</span></div>
+                        </div>
                     </div>
-                </div>
-            `).join('');
+                `;
+            }).join('');
         }
 
         window.openCityDrawer = () => {
@@ -1503,8 +1570,39 @@
             messages.scrollTop = messages.scrollHeight;
         };
 
-        window.handleSearchInput = (v) => { currentSearchQuery = v.trim(); renderList(); };
-        window.clearSearch = () => { document.getElementById('search-input').value = ''; currentSearchQuery = ''; renderList(); };
+        window.filterAttractionCat = function(cat) {
+            currentAttractionCat = cat;
+            ['all', 'shopping', 'casino', 'history', 'nature'].forEach(c => {
+                const btn = document.getElementById('att-sub-' + c);
+                if (btn) btn.classList.toggle('active', c === cat);
+            });
+            renderAttractionList();
+        };
+
+        window.filterNewsType = function(subType) {
+            currentNewsSubFilter = subType;
+            ['all', 'event', 'promo', 'new'].forEach(s => {
+                const btn = document.getElementById('news-sub-' + s);
+                if (btn) btn.classList.toggle('active', s === subType);
+            });
+            renderNewsList();
+        };
+
+        window.handleSearchInput = (v) => { 
+            currentSearchQuery = v.trim(); 
+            renderList(); 
+            renderAttractionList(); 
+            renderNewsList(); 
+        };
+
+        window.clearSearch = () => { 
+            document.getElementById('search-input').value = ''; 
+            currentSearchQuery = ''; 
+            renderList(); 
+            renderAttractionList(); 
+            renderNewsList(); 
+        };
+
         window.openAuthModal = () => document.getElementById('auth-modal').classList.add('show');
         window.closeAuthModal = () => document.getElementById('auth-modal').classList.remove('show');
         window.handleAuthButtonClick = () => { currentUser ? signOut(auth) : openAuthModal(); };
