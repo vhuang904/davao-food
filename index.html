@@ -1102,28 +1102,28 @@
         return;
       }
 
-      // 官方實景圖強制字典（全數換用維基共享與官方地標實景，徹底告別大床、撲克牌與雙子星）
+      // 官方實景圖強制字典（支援 no-referrer，杜絕破圖與假圖）
       const LANDMARK_OFFICIAL_PHOTOS = {
-        // 1. 達沃聖佩德羅主教座堂：真實弧形石造教堂外觀（不再破圖）
-        san_pedro: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6c/San_Pedro_Cathedral_Davao_City.jpg/800px-San_Pedro_Cathedral_Davao_City.jpg",
+        // 1. 達沃聖佩德羅主教座堂：真實弧形石造外觀實景
+        san_pedro: "https://commons.wikimedia.org/wiki/Special:FilePath/San_Pedro_Cathedral_Davao_City.jpg?width=800",
         
-        // 2. 馬尼拉西班牙王城區：聖地牙哥堡著名石造古城門
-        intramuros: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Fort_Santiago_gate%2C_Intramuros%2C_Manila.jpg/800px-Fort_Santiago_gate%2C_Intramuros%2C_Manila.jpg",
+        // 2. 馬尼拉西班牙王城區：聖地牙哥堡古城門實景
+        intramuros: "https://commons.wikimedia.org/wiki/Special:FilePath/Fort_Santiago_gate,_Intramuros,_Manila.jpg?width=800",
         
-        // 3. 宿霧麥哲倫十字架：標誌性八角紅瓦石亭
-        magellan: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Magellan%27s_Cross_Pavilion%2C_Cebu_City.jpg/800px-Magellan%27s_Cross_Pavilion%2C_Cebu_City.jpg",
+        // 3. 宿霧麥哲倫十字架：標誌性八角亭實景
+        magellan: "https://commons.wikimedia.org/wiki/Special:FilePath/Magellan's_Cross_Pavilion,_Cebu_City.jpg?width=800",
         
-        // 4. 宿霧聖嬰聖殿：百年巴洛克石造大教堂外觀
-        santo_nino: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/Basilica_del_Santo_Ni%C3%B1o_Fa%C3%A7ade.jpg/800px-Basilica_del_Santo_Ni%C3%B1o_Fa%C3%A7ade.jpg",
+        // 4. 宿霧聖嬰聖殿：百年石造大教堂外觀實景
+        santo_nino: "https://commons.wikimedia.org/wiki/Special:FilePath/Basilica_del_Santo_Ni%C3%B1o_Fa%C3%A7ade.jpg?width=800",
         
-        // 5. Okada Manila：粉金璀璨外觀與巨型音樂噴泉水舞實景（非撲克牌）
-        okada: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/Okada_Manila_fountain_at_dusk.jpg/800px-Okada_Manila_fountain_at_dusk.jpg",
+        // 5. Okada Manila：粉金璀璨外觀與巨型音樂噴泉水舞實景
+        okada: "https://commons.wikimedia.org/wiki/Special:FilePath/Okada_Manila_fountain_at_dusk.jpg?width=800",
         
         // 6. Solaire Resort：馬尼拉灣畔五星級外觀建築
-        solaire: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/78/Solaire_Resort_%26_Casino_Manila.jpg/800px-Solaire_Resort_%26_Casino_Manila.jpg",
+        solaire: "https://commons.wikimedia.org/wiki/Special:FilePath/Solaire_Resort_%26_Casino_Manila.jpg?width=800",
         
-        // 7. City of Dreams Manila：金黃色天穹「Fortune Egg」招牌建築（非臥室床鋪）
-        dreams: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/67/City_of_Dreams_Manila_Fortune_Egg.jpg/800px-City_of_Dreams_Manila_Fortune_Egg.jpg",
+        // 7. City of Dreams Manila：金黃色天穹「Fortune Egg」招牌建築
+        dreams: "https://commons.wikimedia.org/wiki/Special:FilePath/City_of_Dreams_Manila_Fortune_Egg.jpg?width=800",
         
         // 8. 宿霧 NUSTAR：雙子星度假城外觀
         nustar: "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=800&q=80"
