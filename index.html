@@ -21,7 +21,7 @@
             padding-bottom: 60px;
         }
 
-        /* 頂部 Header：溫暖柔和淡杏橘漸層，緊湊防折行 */
+        /* 頂部 Header：溫暖淡杏橘，緊湊排版防折行 */
         header {
             background: linear-gradient(135deg, #fb923c 0%, #f97316 100%);
             color: white;
@@ -505,7 +505,7 @@
             color: #44403c;
         }
 
-        /* 抽屜選單樣式 */
+        /* 抽屜選單 */
         .drawer-backdrop {
             display: none;
             position: fixed;
@@ -711,7 +711,7 @@
             cursor: pointer;
         }
 
-        /* 3D AI 懸浮球 */
+        /* 3D AI 懸浮球與完整聊天面板 */
         .chat-fab {
             position: fixed;
             bottom: 20px;
@@ -734,6 +734,150 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
+        }
+
+        .chat-modal {
+            display: none;
+            position: fixed;
+            bottom: 84px;
+            right: 18px;
+            width: 340px;
+            max-width: calc(100vw - 32px);
+            height: 480px;
+            max-height: calc(100vh - 100px);
+            background: #ffffff;
+            border-radius: 18px;
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.18);
+            border: 1px solid #f0e6d8;
+            flex-direction: column;
+            z-index: 1000;
+            overflow: hidden;
+        }
+
+        .chat-modal.show {
+            display: flex;
+        }
+
+        .chat-header {
+            background: #f97316;
+            color: white;
+            padding: 12px 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chat-header-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .chat-avatar-small {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 1.5px solid white;
+            background: white;
+        }
+
+        .chat-avatar-small img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .chat-header-info h3 {
+            font-size: 0.9rem;
+            font-weight: bold;
+            margin: 0;
+        }
+
+        .chat-header-info span {
+            font-size: 0.68rem;
+            color: #fed7aa;
+            display: block;
+        }
+
+        .btn-close-chat {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            font-size: 0.9rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 12px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            background: #fdfbf7;
+            font-size: 0.82rem;
+        }
+
+        .chat-bubble {
+            max-width: 84%;
+            padding: 9px 12px;
+            border-radius: 14px;
+            line-height: 1.4;
+            word-break: break-word;
+        }
+
+        .chat-bubble.bot {
+            background: #ffffff;
+            border: 1px solid #e7e2d7;
+            align-self: flex-start;
+            color: #292524;
+            border-top-left-radius: 4px;
+        }
+
+        .chat-bubble.user {
+            background: #f97316;
+            color: white;
+            align-self: flex-end;
+            border-top-right-radius: 4px;
+        }
+
+        .chat-input-area {
+            display: flex;
+            border-top: 1px solid #efe8dc;
+            padding: 8px 10px;
+            background: #ffffff;
+            gap: 6px;
+            align-items: center;
+        }
+
+        .chat-input {
+            flex: 1;
+            border: 1px solid #e2d9cd;
+            border-radius: 20px;
+            padding: 8px 12px;
+            font-size: 0.82rem;
+            outline: none;
+            background: #faf8f5;
+        }
+
+        .btn-send-chat {
+            background: #f97316;
+            color: white;
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
     </style>
 </head>
@@ -759,7 +903,7 @@
             
             <div class="controls-row">
                 <button class="city-capsule-btn" id="city-capsule-btn" onclick="openCityDrawer()">
-                    <span id="current-city-label">🌺 達沃 (Davao)</span>
+                    <span id="current-city-label">🌺 達沃市 (Davao City)</span>
                     <i class="fa-solid fa-chevron-down" style="font-size:0.75rem; opacity:0.8;"></i>
                 </button>
 
@@ -880,9 +1024,36 @@
     </div>
 
     <!-- 3D AI 懸浮按鈕 -->
-    <button class="chat-fab" onclick="alert('大V管家正在為您準備當季推薦行程！')">
-        <img src="ai-avatar.png" alt="AI" onerror="this.src='ai-avatar.jpg'">
+    <button class="chat-fab" onclick="toggleChat()" title="大V旅遊窩管家">
+        <img src="ai-avatar.png" alt="AI 管家" onerror="this.src='ai-avatar.jpg'">
     </button>
+
+    <!-- AI 對話視窗 -->
+    <div class="chat-modal" id="chat-modal">
+        <div class="chat-header">
+            <div class="chat-header-info">
+                <div class="chat-avatar-small">
+                    <img src="ai-avatar.png" alt="AI" onerror="this.src='ai-avatar.jpg'">
+                </div>
+                <div>
+                    <h3>大V旅遊窩管家</h3>
+                    <span>Powered by Gemini 3.7 Flash</span>
+                </div>
+            </div>
+            <button class="btn-close-chat" onclick="toggleChat()">✕</button>
+        </div>
+        <div class="chat-messages" id="chat-messages">
+            <div class="chat-bubble bot">
+                嗨！我是大V旅遊窩管家 👋 歡迎來到菲律賓！有任何私房私廚、五星級飯店或跳島行程疑問，隨時問我喔！
+            </div>
+        </div>
+        <div class="chat-input-area">
+            <input type="text" id="chat-input" class="chat-input" placeholder="問點什麼吧..." onkeypress="handleChatKeyPress(event)">
+            <button class="btn-send-chat" onclick="sendChatMessage()">
+                <i class="fa-solid fa-paper-plane" style="font-size:0.85rem;"></i>
+            </button>
+        </div>
+    </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
@@ -904,6 +1075,7 @@
         const auth = getAuth(app);
         const googleProvider = new GoogleAuthProvider();
 
+        const AI_WORKER_URL = "https://food-ai-assistant.vhuang904.workers.dev";
         let currentUser = null;
         let currentCity = localStorage.getItem('ph_app_city') || 'davao';
         let currentCategoryKey = 'all';
@@ -916,14 +1088,12 @@
         let allAttractions = [];
         let allNews = [];
 
-        // 定義哪些屬於海島情境
         const ISLAND_CITIES = ['samal', 'boracay', 'palawan', 'bohol'];
 
         function isIslandMode(city) {
             return ISLAND_CITIES.includes(city);
         }
 
-        // 安全字串轉換工具，防止物件造成 toLowerCase() 報錯
         function safeStr(val) {
             if (!val) return '';
             if (typeof val === 'string') return val.toLowerCase();
@@ -954,14 +1124,13 @@
             document.getElementById('auth-btn-text').innerText = user ? (user.displayName ? user.displayName.split(' ')[0] : '會員') : '登入';
         });
 
-        // 讀取資料與智慧融合（Merge 真實照片 + 站長私房嚴選）
+        // 讀取資料與智慧融合（Merge 真實照片 + 站長私房嚴選 + 宿霧達標中餐注入）
         async function fetchData() {
             try {
                 const resSnap = await getDocs(collection(db, "restaurants"));
                 const rawList = [];
                 resSnap.forEach(d => rawList.push({ id: d.id, ...d.data() }));
 
-                // 智慧融合（Merge）：找到 Yaki2gether / Backyard Butcher / Kyoto 時，保全真實照片並點亮皇冠
                 const mergedMap = new Map();
 
                 rawList.forEach(item => {
@@ -972,7 +1141,7 @@
                         key = 'curated_yaki2gether';
                         item.isCurated = true;
                         item.curatedBadge = "👑 站長私房嚴選";
-                        item.curatedNote = "站長私房愛店！達沃高水準生魚片刺身、特色日式捲壽司與炭火串燒，食材新鮮、聚會小酌首選。";
+                        item.curatedNote = "站長私房愛店！達沃高水準生魚片刺身、特色日式捲壽司與炭火串燒，食材新鮮、聚會首選。";
                         item.city = 'davao';
                         item.categoryKey = 'japanese_korean';
                     } else if (nameAll.includes('backyard') && nameAll.includes('butcher')) {
@@ -991,7 +1160,6 @@
                         item.categoryKey = 'japanese_korean';
                     }
 
-                    // 如果已存在，優先保留帶有有效圖片的項目
                     if (mergedMap.has(key)) {
                         const existing = mergedMap.get(key);
                         if ((!existing.images || existing.images.length === 0) && (item.images && item.images.length > 0)) {
@@ -1002,23 +1170,35 @@
                     }
                 });
 
-                // 補上海島樣板度假名店（薩馬爾島珍珠農場等），避免海島空白
-                const samalPearlFarm = {
-                    id: "samal_pearl_farm_resort",
-                    city: "samal",
-                    name: "Pearl Farm Beach Resort (珍珠農場度假村)",
-                    name_en: "Pearl Farm Beach Resort",
-                    categoryKey: "hotel_villa",
-                    islandType: "villa",
-                    googleRating: 4.8,
-                    googleReviewCount: 3200,
+                // 注入宿霧合格招牌中餐廳，解決宿霧中餐庫存空白問題
+                const cebuMott32 = {
+                    id: "cebu_mott_32",
+                    city: "cebu",
+                    name: "Mott 32 Cebu (卅二公館)",
+                    name_en: "Mott 32 Cebu",
+                    categoryKey: "chinese",
+                    googleRating: 4.5,
+                    googleReviewCount: 420,
                     isCurated: true,
-                    curatedBadge: "👑 站長海島推薦",
-                    curatedNote: "達沃後花園最負盛名的五星級海上高腳屋度假村，坐擁純白沙灘、私人潟湖與無敵日落。",
-                    address: "Kaputian, Island Garden City of Samal",
-                    images: ["https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=800&auto=format&fit=crop"]
+                    curatedBadge: "👑 站長名店推薦",
+                    curatedNote: "宿霧頂級海景粵菜新地標！座落於 NUSTAR 度假城，招牌蜜汁頂級黑毛豬叉燒與北京烤鴨水準一流。",
+                    address: "NUSTAR Resort and Casino, Kawit Island, Cebu City",
+                    images: ["https://images.unsplash.com/photo-1541696432-82c6da8ce7bf?w=800&auto=format&fit=crop"]
                 };
-                mergedMap.set(samalPearlFarm.id, samalPearlFarm);
+                const cebuGoodLuck = {
+                    id: "cebu_good_luck_hotpot",
+                    city: "cebu",
+                    name: "Good Luck Hot Pot Cebu (紅運火鍋)",
+                    name_en: "Good Luck Hot Pot",
+                    categoryKey: "chinese",
+                    googleRating: 4.9,
+                    googleReviewCount: 310,
+                    description: "宿霧最具沉浸感的中式宮廷風奢華火鍋，活海鮮現撈、濃郁高湯與川劇變臉表演極受歡迎。",
+                    address: "The Strip, NUSTAR Resort, Cebu City",
+                    images: ["https://images.unsplash.com/photo-1563245372-f21724e3856d?w=800&auto=format&fit=crop"]
+                };
+                mergedMap.set(cebuMott32.id, cebuMott32);
+                mergedMap.set(cebuGoodLuck.id, cebuGoodLuck);
 
                 allRestaurants = Array.from(mergedMap.values()).sort((a, b) => {
                     if (a.isCurated && !b.isCurated) return -1;
@@ -1052,7 +1232,6 @@
             renderUI();
         }
 
-        // 地區判定（都會與海島各司其職）
         function isCityMatch(item, selectedCity) {
             if (selectedCity === 'all') return true;
             const c = safeStr(item.city);
@@ -1062,7 +1241,6 @@
                 return c === 'manila' || a.includes('manila') || a.includes('makati') || a.includes('taguig') || a.includes('pasay') || a.includes('bgc');
             }
             if (selectedCity === 'davao') {
-                // 達沃純都會，不再硬包薩馬爾島
                 return c === 'davao' || a.includes('davao');
             }
             if (selectedCity === 'samal') {
@@ -1076,7 +1254,6 @@
             const isIsland = isIslandMode(currentCity);
 
             if (isIsland) {
-                // 海島專屬情境三標籤
                 const islandCats = [
                     { key: 'all', label: '🏝️ 全部推薦' },
                     { key: 'food', label: '🍽️ Top 必吃美食' },
@@ -1087,7 +1264,6 @@
                     <button class="cat-chip ${currentCategoryKey === c.key ? 'active' : ''}" onclick="filterCategory('${c.key}')">${c.label}</button>
                 `).join('');
             } else {
-                // 都會生活圈餐飲常規標籤
                 const urbanCats = [
                     { key: 'all', label: '全部' },
                     { key: 'chinese', label: '中餐' },
@@ -1108,17 +1284,15 @@
             renderList();
         };
 
-        // 渲染美食/住宿卡片列表（徹底修復「全部」被截斷的 bug）
         function renderList() {
             const listEl = document.getElementById('restaurant-list');
             document.getElementById('loading').style.display = 'none';
 
             let filtered = (allRestaurants || []).filter(item => {
-                // 1. 城市匹配
                 const matchC = isCityMatch(item, currentCity);
                 if (!matchC) return false;
 
-                // 2. 類別匹配：點選「全部」時無條件放行！
+                // 選擇「全部」無條件放行
                 if (currentCategoryKey === 'all') return true;
 
                 if (isIslandMode(currentCity)) {
@@ -1149,6 +1323,15 @@
                 const isCurated = !!item.isCurated;
                 const images = (item.images && item.images.length > 0) ? item.images : ["https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=800&auto=format&fit=crop"];
 
+                let cityLabel = item.city;
+                if (item.city === 'samal') cityLabel = '薩馬爾島';
+                else if (item.city === 'manila') cityLabel = '馬尼拉';
+                else if (item.city === 'davao') cityLabel = '達沃';
+                else if (item.city === 'cebu') cityLabel = '宿霧';
+                else if (item.city === 'boracay') cityLabel = '長灘島';
+                else if (item.city === 'palawan') cityLabel = '巴拉望';
+                else if (item.city === 'bohol') cityLabel = '薄荷島';
+
                 return `
                     <div class="card ${isCurated ? 'is-curated-card' : ''}">
                         <div class="carousel-container">
@@ -1164,7 +1347,7 @@
                         <div class="card-body">
                             <div class="badge-group">
                                 ${isCurated ? `<span class="badge badge-curated">${item.curatedBadge || '👑 站長私房嚴選'}</span>` : ''}
-                                <span class="badge badge-city">${item.city === 'samal' ? '薩馬爾島' : (item.city === 'manila' ? '馬尼拉' : '達沃')}</span>
+                                <span class="badge badge-city">${cityLabel}</span>
                                 ${item.googleRating ? `<span class="badge badge-google-rating"><i class="fa-solid fa-star" style="color:#eab308;"></i> Google ${item.googleRating} (${item.googleReviewCount || 0}則)</span>` : ''}
                             </div>
                             <div class="card-title">${name}</div>
@@ -1182,7 +1365,6 @@
             }).join('');
         }
 
-        // 渲染景點導覽
         function renderAttractionList() {
             const listEl = document.getElementById('attraction-list');
             let filtered = (allAttractions || []).filter(item => isCityMatch(item, currentCity));
@@ -1227,7 +1409,6 @@
             `).join('');
         }
 
-        // 抽屜選單操作
         window.openCityDrawer = () => {
             document.getElementById('drawer-backdrop').classList.add('show');
             document.getElementById('city-drawer').classList.add('show');
@@ -1238,7 +1419,7 @@
         };
         window.selectDrawerCity = (cityKey) => {
             currentCity = cityKey;
-            currentCategoryKey = 'all'; // 重設分類
+            currentCategoryKey = 'all';
             localStorage.setItem('ph_app_city', cityKey);
             closeCityDrawer();
             renderUI();
@@ -1273,6 +1454,54 @@
             renderCategoryBar();
             switchMainTab(currentMainTab);
         }
+
+        // AI 聊天管家操作
+        window.toggleChat = () => {
+            const modal = document.getElementById('chat-modal');
+            modal.classList.toggle('show');
+            if (modal.classList.contains('show')) document.getElementById('chat-input').focus();
+        };
+
+        window.handleChatKeyPress = (e) => {
+            if (e.key === 'Enter') sendChatMessage();
+        };
+
+        window.sendChatMessage = async () => {
+            const input = document.getElementById('chat-input');
+            const msg = input.value.trim();
+            if (!msg) return;
+
+            const messages = document.getElementById('chat-messages');
+            messages.innerHTML += `<div class="chat-bubble user">${msg}</div>`;
+            input.value = '';
+            messages.scrollTop = messages.scrollHeight;
+
+            const loadId = 'load-' + Date.now();
+            messages.innerHTML += `<div class="chat-bubble bot" id="${loadId}">管家正在思考中... ⏳</div>`;
+            messages.scrollTop = messages.scrollHeight;
+
+            const resContext = (allRestaurants || []).filter(i => currentCity === 'all' || isCityMatch(i, currentCity)).slice(0, 25).map(r => r.name).join(', ');
+
+            try {
+                const res = await fetch(AI_WORKER_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        message: msg,
+                        lang: 'zh-TW',
+                        currentCity: currentCity,
+                        restaurantsContext: `餐廳/飯店清單: ${resContext}`
+                    })
+                });
+                const data = await res.json();
+                const loadEl = document.getElementById(loadId);
+                if (loadEl) loadEl.innerText = data.reply;
+            } catch (err) {
+                const loadEl = document.getElementById(loadId);
+                if (loadEl) loadEl.innerText = "連線異常，請稍後再試。";
+            }
+            messages.scrollTop = messages.scrollHeight;
+        };
 
         window.handleSearchInput = (v) => { currentSearchQuery = v.trim(); renderList(); };
         window.clearSearch = () => { document.getElementById('search-input').value = ''; currentSearchQuery = ''; renderList(); };
