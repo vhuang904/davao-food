@@ -22,3 +22,6 @@ jobs:
 
       - name: Run Attraction Sync Script
         run: node sync-attractions.js
+
+      - name: Run Islands Database Sync
+        run: node sync-islands.js
