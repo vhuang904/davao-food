@@ -317,7 +317,7 @@
             box-shadow: 0 8px 24px rgba(245, 158, 11, 0.22);
         }
 
-        /* 第二級：🔥 Google 頂級推薦（極光藍金雙色） */
+        /* 第二級：🔥 Google 頂級推薦（極光藍發光邊框） */
         .card.is-google-top-card {
             border: 2px solid #38bdf8;
             box-shadow: 0 8px 22px rgba(56, 189, 248, 0.2);
@@ -1108,7 +1108,7 @@
 
         let currentCity = localStorage.getItem('ph_app_city') || 'all';
         let currentCategoryKey = 'all';
-        let currentMainTab = 'map'; // 嚴格記錄當前所在 Tab，切換城市或定位不跳頁
+        let currentMainTab = 'map';
         let currentAttractionCat = 'all';
         let currentNewsSubFilter = 'all';
         let currentSearchQuery = '';
@@ -1130,7 +1130,6 @@
             return String(val).toLowerCase();
         }
 
-        // 安全提取多語系字典物件或純字串
         function getText(val) {
             if (!val) return '';
             if (typeof val === 'string') return val;
@@ -1228,7 +1227,7 @@
                     const nameAll = (safeStr(item.name) + ' ' + safeStr(item.name_en) + ' ' + safeStr(item.id)).toLowerCase();
                     let key = item.id;
 
-                    // 👑 第三級判定：嚴格鎖定 3 家「元老級站長私房嚴選」
+                    // 👑 第三級判定：嚴格鎖定僅 3 家「元老級站長私房嚴選」
                     if (nameAll.includes('yaki') && (nameAll.includes('gether') || nameAll.includes('yaki2gether'))) {
                         key = 'curated_yaki2gether';
                         item.name = "Yaki2gether 日式燒烤刺身";
@@ -1251,6 +1250,17 @@
                         item.curatedNote = "站長私藏！馬尼拉 Makati 極具水準的無菜單懷石割烹料理，食材旬味處理細緻，需提前預約。";
                         item.city = 'manila';
                         item.categoryKey = 'japanese_korean';
+                    } else {
+                        // 其他海島度假村（如 Pearl Farm、Chema's）全面回歸客觀評分，不濫發皇冠與站長點評
+                        item.isCurated = false;
+                        delete item.curatedBadge;
+                        delete item.curatedNote;
+                    }
+
+                    // 薩馬爾島嚴格鎖定：凡是珍珠農場或 Chema's 一律焊定為 samal，不混入達沃
+                    if (nameAll.includes('pearl farm') || nameAll.includes('chema')) {
+                        item.city = 'samal';
+                        item.islandType = 'hotel';
                     }
 
                     if (mergedMap.has(key)) {
@@ -1263,7 +1273,7 @@
                     }
                 });
 
-                // 補齊宿霧合格代表性名店（依據客觀三級榮譽體系收錄）
+                // 宿霧代表性名店注入
                 const cebuMott32 = {
                     id: "cebu_mott_32",
                     city: "cebu",
@@ -1329,6 +1339,7 @@
                     .map(item => {
                         const r = item.googleRating || 0;
                         const c = item.googleReviewCount || 0;
+                        // 第二級自動晉級：評分 >= 4.6 且 評論數 >= 100
                         if (!item.isCurated && r >= 4.6 && c >= 100) {
                             item.isGoogleTop = true;
                             if (!item.googleTopNote) {
@@ -1345,7 +1356,7 @@
                         return (b.googleRating || 0) - (a.googleRating || 0);
                     });
 
-                // 讀取景點，並注入歷史文化專屬圖片修補空盒
+                // 讀取景點，並注入真實穩定的歷史名勝圖片直鏈
                 try {
                     const attSnap = await getDocs(collection(db, "attractions"));
                     allAttractions = [];
@@ -1353,15 +1364,15 @@
                         const item = { id: d.id, ...d.data() };
                         const nameKey = (safeStr(item.name) + ' ' + safeStr(item.id)).toLowerCase();
 
-                        // 專屬高清晰歷史照片補齊
+                        // 替換歷史建築官方原圖（杜絕杜拜帆船飯店與破圖）
                         if (nameKey.includes('intramuros')) {
-                            item.images = ["https://images.unsplash.com/photo-1518684079-3c830dcef090?w=800&auto=format&fit=crop"];
+                            item.images = ["https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Fort_Santiago_gate%2C_Intramuros%2C_Manila.jpg/800px-Fort_Santiago_gate%2C_Intramuros%2C_Manila.jpg"];
                             item.category = 'history';
                         } else if (nameKey.includes('san pedro') || nameKey.includes('cathedral')) {
-                            item.images = ["https://images.unsplash.com/photo-1548625361-19597793d5f9?w=800&auto=format&fit=crop"];
+                            item.images = ["https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/San_Pedro_Cathedral_Davao_City.jpg/800px-San_Pedro_Cathedral_Davao_City.jpg"];
                             item.category = 'history';
                         } else if (nameKey.includes('magellan') || nameKey.includes('cross')) {
-                            item.images = ["https://images.unsplash.com/photos/brown-cross-on-white-wall-kD0ApmKkAOc?w=800&auto=format&fit=crop"];
+                            item.images = ["https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/Magellan%27s_Cross_Pavilion_Cebu.jpg/800px-Magellan%27s_Cross_Pavilion_Cebu.jpg"];
                             item.category = 'history';
                         }
 
@@ -1389,19 +1400,21 @@
             autoDetectCityByGPS();
         }
 
+        // 嚴格城市比對：達沃與薩馬爾嚴格隔離，互不混入
         function isCityMatch(item, selectedCity) {
             if (selectedCity === 'all') return true;
             const c = safeStr(item.city);
             const a = safeStr(item.address);
 
-            if (selectedCity === 'manila') {
-                return c === 'manila' || a.includes('manila') || a.includes('makati') || a.includes('taguig') || a.includes('pasay') || a.includes('bgc');
-            }
-            if (selectedCity === 'davao') {
-                return c === 'davao' || a.includes('davao');
-            }
             if (selectedCity === 'samal') {
                 return c === 'samal' || a.includes('samal');
+            }
+            if (selectedCity === 'davao') {
+                // 排除薩馬爾島，達沃只收達沃本島
+                return (c === 'davao' || a.includes('davao')) && !c.includes('samal') && !a.includes('samal');
+            }
+            if (selectedCity === 'manila') {
+                return c === 'manila' || a.includes('manila') || a.includes('makati') || a.includes('taguig') || a.includes('pasay') || a.includes('bgc');
             }
             return c === selectedCity || a.includes(selectedCity);
         }
@@ -1492,6 +1505,7 @@
                 const reviewCount = item.googleReviewCount || 0;
                 const showRatingBadge = item.googleRating && (reviewCount >= 25 || isCurated);
 
+                // 卡片外框：3級黑金 > 2級極光藍金 > 1級標準
                 let cardClass = "card";
                 if (isCurated) cardClass += " is-curated-card";
                 else if (isGoogleTop) cardClass += " is-google-top-card";
@@ -1524,7 +1538,6 @@
                             <div class="info-item"><span>📍</span> <span>${item.address || '地址收錄中'}</span></div>
                             <div class="info-item"><span>📞</span> <span>${item.phone || '暫無電話'}</span></div>
 
-                            <!-- 保留 Grab 外送、撥打電話與導航地圖 -->
                             <div class="btn-group">
                                 <a class="btn btn-grab" href="https://food.grab.com/ph/en/restaurants?search=${encodeURIComponent(name)}" target="_blank">🛵 Grab外送</a>
                                 <a class="btn btn-primary" href="tel:${item.phone || ''}">撥打電話</a>
@@ -1558,12 +1571,12 @@
             listEl.innerHTML = filtered.map(item => {
                 const name = getText(item.name) || '景點地標';
                 const desc = getText(item.description) || '菲律賓熱門推薦地標。';
-                const img = (item.images && item.images[0]) || 'https://images.unsplash.com/photo-1518684079-3c830dcef090?w=800&auto=format&fit=crop';
+                const img = (item.images && item.images[0]) || 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Fort_Santiago_gate%2C_Intramuros%2C_Manila.jpg/800px-Fort_Santiago_gate%2C_Intramuros%2C_Manila.jpg';
 
                 return `
                     <div class="card">
                         <div style="width:100%; height:200px; background:#ece8df; overflow:hidden;">
-                            <img src="${img}" style="width:100%; height:100%; object-fit:cover;" loading="lazy">
+                            <img src="${img}" style="width:100%; height:100%; object-fit:cover;" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1518684079-3c830dcef090?w=800&auto=format&fit=crop'">
                         </div>
                         <div class="card-body">
                             <div class="badge-group">
@@ -1602,10 +1615,9 @@
             }
 
             listEl.innerHTML = filtered.map(item => {
-                // 深度寬鬆提取：避免單一欄位為空導致的空白卡片
-                let title = getText(item.title) || getText(item.headline) || getText(item.name);
-                if (!title) {
-                    title = item.brand ? `${getText(item.brand)} 精選活動` : '精選快訊';
+                let rawTitle = getText(item.title) || getText(item.headline) || getText(item.name);
+                if (!rawTitle) {
+                    rawTitle = item.brand ? `${getText(item.brand)} 精選活動` : '精選快訊';
                 }
 
                 let desc = getText(item.description) || getText(item.content) || getText(item.details) || getText(item.summary);
@@ -1613,11 +1625,23 @@
                     desc = item.brand ? `歡迎蒞臨 ${getText(item.brand)} 享受專屬優惠與在地活動體驗！` : '菲律賓精選優惠活動與在地即時快訊。';
                 }
 
-                const tag = getText(item.tag) || '🔥 快訊';
+                // 識別 Grab 來源：若為 Grab 活動，標記綠色 Grab 標籤
+                const brandStr = safeStr(item.brand) + ' ' + safeStr(rawTitle);
+                const isGrabEvent = brandStr.includes('grab');
+
+                let titleHtml = rawTitle;
+                if (isGrabEvent) {
+                    titleHtml = `<span style="background:#00b14f; color:white; padding:2px 6px; border-radius:4px; font-size:0.75rem; font-weight:800; margin-right:5px; vertical-align:middle;">Grab</span>${rawTitle}`;
+                }
+
+                if (item.url) {
+                    titleHtml = `<a href="${item.url}" target="_blank" style="color:#1c1917; text-decoration:none; border-bottom:2px solid #f97316;">${titleHtml} 🔗</a>`;
+                }
+
+                const tag = isGrabEvent ? '🛵 Grab 限時特惠' : (getText(item.tag) || '🔥 快訊');
                 const validity = getText(item.validity) || '';
                 const location = getText(item.location) || '全菲適用';
                 const img = item.imageUrl || 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=800&auto=format&fit=crop';
-                const titleHtml = item.url ? `<a href="${item.url}" target="_blank" style="color:#1c1917; text-decoration:none; border-bottom:2px solid #f97316;">${title} 🔗</a>` : title;
 
                 return `
                     <div class="card">
@@ -1628,7 +1652,7 @@
                             <div class="badge-group">
                                 <span class="badge badge-city">${item.city || '全菲'}</span>
                                 ${item.brand ? `<span class="badge">${getText(item.brand)}</span>` : ''}
-                                <span class="badge" style="background:#fef2f2; color:#dc2626;">${tag}</span>
+                                <span class="badge" style="${isGrabEvent ? 'background:#ecfdf5; color:#059669; border-color:#a7f3d0;' : 'background:#fef2f2; color:#dc2626;'}">${tag}</span>
                                 ${validity ? `<span class="badge">⏰ ${validity}</span>` : ''}
                             </div>
                             <div class="card-title" style="font-size:1.05rem;">${titleHtml}</div>
@@ -1658,7 +1682,7 @@
         };
 
         window.switchMainTab = (tab) => {
-            currentMainTab = tab; // 鎖定當前 Tab
+            currentMainTab = tab;
             ['map', 'attraction', 'news'].forEach(t => {
                 document.getElementById('tab-btn-' + t).classList.toggle('active', t === tab);
                 document.getElementById('main-tab-' + t).classList.toggle('active', t === tab);
@@ -1684,7 +1708,6 @@
             };
             document.getElementById('current-city-label').innerText = labels[currentCity] || '選擇地區';
 
-            // 都會為「🍽️ 美食餐廳」；四大海島為「🌴 美食/度假」
             const tabBtnMap = document.getElementById('tab-btn-map');
             if (isIslandMode(currentCity)) {
                 tabBtnMap.innerText = '🌴 美食/度假';
@@ -1697,7 +1720,6 @@
             if (activeItem) activeItem.classList.add('active');
 
             renderCategoryBar();
-            // 保持在當前 Tab，絕不強跳回美食
             switchMainTab(currentMainTab);
         }
 
