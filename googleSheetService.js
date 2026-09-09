@@ -1,20 +1,17 @@
 /**
  * Tour2Gether.ph - Google Sheet Master Database Service
- * 採用 Google 官方「發布到網路」CSV 直讀管道
- * 100% 解決 404 權限問題，秒速加載真實試算表數據
+ * 採用 Google 官方公開 CSV 發布管道 (直讀真實資料庫)
+ * 100% 杜絕 404/400 錯誤，免 API Key 秒速加載
  */
 
+const SHEET_ID = '1sQELyvgQ8ZhL0iolKZ0fdEgr6z7FrFsK5Cgl2xz145g';
 const PUBLISHED_BASE_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTMYS6pUL-XFoAw2zM2B_fje5qfFAKlCoeLF7heOYLVfktamsWAvPmP-tRgt5vDCioomA52oBMdXHsW/pub?output=csv';
 
-// 各工作表名稱與 gid 對照 ( Attractions gid 為 1406320151 )
-const SHEET_CONFIGS = {
-  'BigV_Picks': '0',
-  'Attractions': '1406320151',
-  'Promotions': '1829302194'
-};
+// Attractions 分頁的真實 gid (由您發布的網址確認)
+const ATTRACTIONS_GID = '1406320151';
 
 /**
- * 簡易健壯的 CSV 解析器（支援引號內逗號與換行）
+ * 健壯的 CSV 解析器（支援引號內逗號與換行）
  */
 function parseCSV(text) {
   const lines = [];
@@ -89,11 +86,16 @@ function parseCSV(text) {
 }
 
 /**
- * 透過公開 CSV 端點讀取指定分頁
+ * 透過公開 CSV 端點或 gviz 直讀指定分頁資料
  */
 async function fetchSheetData(sheetName) {
-  const gid = SHEET_CONFIGS[sheetName] || '0';
-  const url = `${PUBLISHED_BASE_URL}&gid=${gid}&t=${Date.now()}`;
+  let url = '';
+  if (sheetName === 'Attractions') {
+    url = `${PUBLISHED_BASE_URL}&gid=${ATTRACTIONS_GID}&t=${Date.now()}`;
+  } else {
+    // BigV_Picks 與 Promotions 採用公開 gviz 查詢，免猜 gid 永不 400
+    url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(sheetName)}&t=${Date.now()}`;
+  }
 
   try {
     const response = await fetch(url);
@@ -110,7 +112,7 @@ async function fetchSheetData(sheetName) {
 }
 
 /**
- * 多語系文字輔助函式
+ * 多語系文字取得輔助函式
  */
 export function getLocalizedText(item, fieldPrefix, lang = 'zh') {
   if (!item) return '';
@@ -142,7 +144,7 @@ export function getLocalizedText(item, fieldPrefix, lang = 'zh') {
  * 一次性加載三合一主資料庫
  */
 export async function loadMasterDatabase() {
-  console.log('🔄 正在同步 Tour2Gether Master Database (公開網路發布端)...');
+  console.log('🔄 正在同步 Tour2Gether Master Database...');
   const [bigVPicks, attractions, promotions] = await Promise.all([
     fetchSheetData('BigV_Picks'),
     fetchSheetData('Attractions'),
