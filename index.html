@@ -23,6 +23,44 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 
   <style>
+  /* ============================================================
+     全域多語系排版防護罩 (i18n Anti-Break Layout Guard)
+     ============================================================ */
+
+  /* 1. 解決 Flex / Grid 子元素預設不可壓縮導致破版的底層限制 */
+  .grid > *, 
+  .flex > * {
+    min-width: 0;
+  }
+
+  /* 2. 所有文字元素遇到長單字自動折行，絕不向外溢出容器 */
+  button, 
+  .region-pill, 
+  .main-tab-pill, 
+  [data-i18n] {
+    word-break: break-word;
+    overflow-wrap: break-word;
+  }
+
+  /* 3. 並排等寬按鈕列（主分頁 Tab、底部三聯鍵），自動縮放字級並截斷超長單字 */
+  .grid-cols-3 button,
+  .grid-cols-2 button {
+    white-space: nowrap !important;
+    text-overflow: ellipsis !important;
+    overflow: hidden !important;
+    font-size: clamp(10px, 2.8vw, 12px) !important;
+    padding-left: 2px !important;
+    padding-right: 2px !important;
+  }
+
+  /* 4. 切換為英文或 Tagalog 時，西文字距微縮，提升容納空間 */
+  html[lang="en"] body,
+  html[lang="tl"] body {
+    letter-spacing: -0.015em;
+  }
+</style>
+
+  <style>
     :root {
       --sat: env(safe-area-inset-top, 0px);
       --sab: env(safe-area-inset-bottom, 0px);
@@ -142,10 +180,10 @@
       <!-- 第三列：探索主維度（都會生活圈 vs 渡假海島專區） -->
       <div class="flex gap-2">
         <button id="typeCityBtn" class="flex-1 py-1.5 text-xs font-bold rounded-xl transition text-center shadow-sm flex items-center justify-center gap-1.5 bg-white text-orange-700">
-          <i class="fa-solid fa-city"></i> 都會生活圈
+  <i class="fa-solid fa-city"></i> <span data-i18n="tabMetro">都會生活圈</span>
         </button>
-        <button id="typeIslandBtn" class="flex-1 py-1.5 text-xs font-bold rounded-xl transition text-center shadow-sm flex items-center justify-center gap-1.5 bg-orange-700/60 text-amber-100 hover:bg-orange-700">
-          <i class="fa-solid fa-umbrella-beach"></i> 渡假海島專區
+        <button id="typeIslandBtn" class="flex-1 py-1.5 text-xs font-bold rounded-xl transition text-center shadow-sm flex items-center justify-center gap-1.5 bg-orange-700/60 text-amber-100">
+  <i class="fa-solid fa-umbrella-beach"></i> <span data-i18n="tabIsland">渡假海島專區</span>
         </button>
       </div>
 
@@ -160,17 +198,16 @@
       <div class="grid grid-cols-3 gap-1.5 bg-orange-800/40 p-1 rounded-xl text-xs font-bold text-amber-100">
         <button data-maintab="map" id="tab-btn-map" class="main-tab-pill py-1.5 rounded-lg text-center transition flex items-center justify-center gap-1 bg-white text-orange-600 shadow-sm">
           <i class="fa-solid fa-utensils text-[11px]"></i>
-          <span id="tab-label-map">美食饗宴</span>
+          <span id="tab-label-map" data-i18n="navFood">美食饗宴</span>
         </button>
         <button data-maintab="attraction" id="tab-btn-attraction" class="main-tab-pill py-1.5 rounded-lg text-center transition flex items-center justify-center gap-1 hover:text-white">
           <i class="fa-solid fa-camera-retro text-[11px]"></i>
-          <span>景點導覽</span>
+          <span data-i18n="navSpot">景點導覽</span>
         </button>
         <button data-maintab="news" id="tab-btn-news" class="main-tab-pill py-1.5 rounded-lg text-center transition flex items-center justify-center gap-1 hover:text-white">
-          <i class="fa-solid fa-newspaper text-[11px]"></i>
-          <span>城市動態</span>
-        </button>
-      </div>
+        <i class="fa-solid fa-newspaper text-[11px]"></i>
+        <span data-i18n="navNews">城市動態</span>
+      </button>
     </div>
 
     <!-- 第六列：子分類標籤過濾列 -->
@@ -961,15 +998,18 @@ function mergeRestaurantsWithBigV(originalList = [], bigVPicks = []) {
       }
 
       regionPillsNav.innerHTML = list.map(r => {
-        const active = r.id === currentCity;
-        return `
-          <button data-city="${r.id}" class="region-pill px-3.5 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-all duration-200 ${
-            active ? 'bg-slate-900 text-white shadow-md scale-105' : 'bg-orange-800/40 text-amber-100 hover:bg-orange-800/80'
-          }">
-            ${r.name}
-          </button>
-        `;
-      }).join('');
+  const active = r.id === currentCity;
+  const cityName = (typeof I18N_DICT !== 'undefined' && I18N_DICT[currentLang] && I18N_DICT[currentLang]['city_' + r.id]) 
+    ? I18N_DICT[currentLang]['city_' + r.id] 
+    : (r.name_en && currentLang === 'en' ? r.name_en : r.name);
+  return `
+    <button data-city="${r.id}" class="region-pill px-3.5 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-all duration-200 ${
+      active ? 'bg-slate-900 text-white shadow-md scale-105' : 'bg-orange-800/40 text-amber-100 hover:bg-orange-800/80'
+    }">
+      ${cityName}
+    </button>
+  `;
+}).join('');
 
       document.querySelectorAll('.region-pill').forEach(btn => {
         btn.addEventListener('click', () => {
@@ -1525,10 +1565,27 @@ const I18N_DICT = {
 };
 
 function updateUiLanguage() {
+  document.documentElement.lang = currentLang;
   const dict = I18N_DICT[currentLang] || I18N_DICT['zh-TW'];
+  
+  // 1. 搜尋欄 placeholder
   const searchInput = document.getElementById('search-input');
   if (searchInput) searchInput.placeholder = dict.searchPlaceholder;
-  if (typeof renderRestaurants === 'function') {
+
+  // 2. 自動更新畫面上所有帶有 data-i18n 屬性的文字
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    if (dict[key]) {
+      el.textContent = dict[key];
+    }
+  });
+
+  // 3. 重新繪製城市標籤、分類標籤與卡片清單
+  if (typeof renderRegionPills === 'function') renderRegionPills();
+  if (typeof renderSubFilterBar === 'function') renderSubFilterBar();
+  if (typeof renderContent === 'function') {
+    renderContent();
+  } else if (typeof renderRestaurants === 'function') {
     renderRestaurants();
   }
 }
