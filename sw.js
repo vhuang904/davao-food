@@ -1,70 +1,73 @@
 /**
- * 大V的旅遊窩 PWA - Service Worker (v17.0 Master)
+ * 大V的旅遊窩 PWA - Service Worker (自動偵測與無感熱更新版)
+ * 1. API、Google Sheet、Firebase 嚴禁快取，100% 即時連線
+ * 2. 核心檔案採用 Network First（網路優先），免手動改版號，發布自動生效
+ * 3. 離線備援防護
  */
-const CACHE_NAME = 'bigv-travel-nest-v17.0';
 
-// 僅快取前端靜態外殼核心檔案
-const STATIC_ASSETS = [
-  './',
-  './index.html',
-  './manifest.json',
-  './googleSheetService.js',
-  './icon.svg'
-];
+const CACHE_NAME = 'bigv-app-dynamic';
 
-// 1. 安裝階段：快取靜態資源，並強制立即生效
-self.addEventListener('install', (e) => {
-  e.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(STATIC_ASSETS);
-    }).then(() => self.skipWaiting())
-  );
+self.addEventListener('install', (event) => {
+  // 發現新檔案立刻就位，不等待舊版關閉
+  self.skipWaiting();
 });
 
-// 2. 啟動階段：自動清理舊版快取（如舊的 davao-food-v1），釋放空間並避免死鎖
-self.addEventListener('activate', (e) => {
-  e.waitUntil(
-    caches.keys().then((keys) => {
-      return Promise.all(
-        keys.map((key) => {
-          if (key !== CACHE_NAME) {
-            return caches.delete(key);
-          }
-        })
-      );
-    }).then(() => self.clients.claim())
-  );
+self.addEventListener('activate', (event) => {
+  // 立刻接管所有開啟中的分頁
+  event.waitUntil(self.clients.claim());
 });
 
-// 3. 攔截請求：保護 Firebase、Google Sheets 與 AI 後端絕不走死快取
-self.addEventListener('fetch', (e) => {
-  const url = new URL(e.request.url);
+self.addEventListener('fetch', (event) => {
+  const url = new URL(event.request.url);
 
-  // 【關鍵防護】凡是 Firebase、Google APIs、Cloudflare Worker 一律放行網路優先，絕不吃掉資料
+  // 1. Google Sheets CSV 查詢、Firebase、Firestore 與 Cloudflare AI Worker 一律直通網路，永不快取
   if (
+    url.hostname.includes('docs.google.com') ||
     url.hostname.includes('firebase') ||
-    url.hostname.includes('googleapis.com') ||
-    url.hostname.includes('google.com') ||
-    url.hostname.includes('gstatic.com') ||
-    url.hostname.includes('workers.dev')
+    url.hostname.includes('firestore') ||
+    url.hostname.includes('workers.dev') ||
+    event.request.method !== 'GET'
   ) {
-    return; // 直接交給瀏覽器原生網路處理
+    event.respondWith(fetch(event.request));
+    return;
   }
 
-  // 靜態資源：快取優先，並具備離線保護
-  e.respondWith(
-    caches.match(e.request).then((cachedResponse) => {
-      if (cachedResponse) {
-        return cachedResponse;
-      }
-      return fetch(e.request).then((networkResponse) => {
-        return networkResponse;
-      }).catch(() => {
-        // 離線且找不到快取時的回退
-        if (e.request.mode === 'navigate') {
-          return caches.match('./index.html');
-        }
-      });
+  // 2. HTML 與 JS 檔案採用【網路優先 (Network First)】：
+  // 只要有網路，就必定去 GitHub 抓取最新檔案；斷網時才讀取快取作為離線備援
+  if (
+    event.request.mode === 'navigate' ||
+    url.pathname.endsWith('.html') ||
+    url.pathname.endsWith('.js') ||
+    url.pathname === '/'
+  ) {
+    event.respondWith(
+      fetch(event.request)
+        .then((response) => {
+          if (response && response.status === 200) {
+            const copy = response.clone();
+            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy));
+          }
+          return response;
+        })
+        .catch(() => caches.match(event.request))
+    );
+    return;
+  }
+
+  // 3. 圖標與其他靜態資源採用 Stale-While-Revalidate
+  event.respondWith(
+    caches.match(event.request).then((cached) => {
+      const networked = fetch(event.request)
+        .then((resp) => {
+          if (resp && resp.status === 200) {
+            const respClone = resp.clone();
+            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, respClone));
+          }
+          return resp;
+        })
+        .catch(() => null);
+
+      return cached || networked;
     })
   );
 });
