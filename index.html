@@ -8,7 +8,7 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
-  <meta name="app-version" content="20260909-v5.0-master-final" />
+  <meta name="app-version" content="20260909-v6.0-master-full" />
   <meta name="theme-color" content="#ea580c" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -45,12 +45,13 @@
     white-space: nowrap;
   }
 
-  /* 子分類膠囊：自動依文字延展寬度，平滑橫向捲動 */
+  /* 子分類膠囊：自動依文字延展寬度，平滑橫向捲動，滑鼠可抓取拖曳 */
   .sub-pill {
     flex-shrink: 0;
     white-space: nowrap;
     padding-left: 0.85rem !important;
     padding-right: 0.85rem !important;
+    user-select: none;
   }
 
   html[lang="en"] body,
@@ -110,6 +111,10 @@
     }
     .carousel-slide {
       scroll-snap-align: start;
+    }
+    .drag-scroll-active {
+      cursor: grabbing !important;
+      cursor: -webkit-grabbing !important;
     }
   </style>
 </head>
@@ -186,8 +191,8 @@
         </button>
       </div>
 
-      <!-- 第四列：橫向地區膠囊（支援滑鼠滾輪滾動） -->
-      <nav id="regionPillsNav" class="overflow-x-auto hide-scrollbar flex gap-1.5 pb-1 items-center">
+      <!-- 第四列：橫向地區膠囊（支援滑鼠滾輪 + 拖曳滑動） -->
+      <nav id="regionPillsNav" class="overflow-x-auto hide-scrollbar flex gap-1.5 pb-1 items-center cursor-grab">
         <!-- 由 JS 動態依序渲染 -->
       </nav>
     </div>
@@ -210,10 +215,10 @@
       </div>
     </div>
 
-    <!-- 第六列：子分類標籤過濾列（支援滑鼠滾輪滾動，不截斷文字） -->
+    <!-- 第六列：子分類標籤過濾列（支援滑鼠滾輪 + 拖曳滑動，中英雙向精準對齊） -->
     <div class="bg-white border-b border-slate-200/80 shadow-xs">
       <div class="max-w-md mx-auto px-3.5 py-2">
-        <div id="subFilterContainer" class="flex items-center gap-2 overflow-x-auto hide-scrollbar py-0.5">
+        <div id="subFilterContainer" class="flex items-center gap-2 overflow-x-auto hide-scrollbar py-0.5 cursor-grab">
           <!-- 由 JS 動態依主分頁與都會/海島模式變形渲染 -->
         </div>
       </div>
@@ -293,7 +298,7 @@
         </div>
         <div>
           <h3 id="chat-header-title" class="text-xs font-bold leading-tight">大V旅遊窩管家</h3>
-          <span class="text-[9px] text-amber-200">Powered by Gemini Flash</span>
+          <span class="text-[9px] text-amber-200">Powered by Gemini</span>
         </div>
       </div>
       <button id="btn-close-chat" class="text-white/80 hover:text-white text-base p-1">✕</button>
@@ -396,7 +401,7 @@
       ]
     };
 
-    // 安全線上備援圖庫（僅於 Google Sheet 完全未提供時作為保底）
+    // 安全保底圖庫（僅於 Google Sheet 完全未提供時作為備援）
     const SAFE_FALLBACK_IMAGES = {
       default_spot: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&auto=format&fit=crop",
       food_default: "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=800&auto=format&fit=crop"
@@ -611,13 +616,17 @@
       }
     };
 
-    // 資料讀取：100% 直讀 Google Sheet image_url 網址
+    // 資料讀取：100% 優先直接讀取 Google Sheet 的圖片網址
     async function fetchData() {
-      // 乾淨網址過濾器：直接去除前後空白
-      const cleanImageUrl = (raw, fallback) => {
-        if (!raw) return fallback || SAFE_FALLBACK_IMAGES.default_spot;
-        const s = String(raw).trim();
-        if (s.startsWith('http')) return s;
+      // 容錯擷取：支援所有可能的欄位命名，只要是 http 網址就直接採用
+      const extractSheetImage = (item, fallback) => {
+        if (!item) return fallback || SAFE_FALLBACK_IMAGES.default_spot;
+        const possibleKeys = ['image_url', 'imageUrl', 'image', 'photo', '圖片網址', '圖片', 'image_link'];
+        for (let k of possibleKeys) {
+          if (item[k] && String(item[k]).trim().startsWith('http')) {
+            return String(item[k]).trim();
+          }
+        }
         return fallback || SAFE_FALLBACK_IMAGES.default_spot;
       };
 
@@ -666,9 +675,7 @@
             item.city = matchedBigV.city;
             if (matchedBigV.address) item.address = matchedBigV.address;
             if (matchedBigV.nav_link) item.nav_link = matchedBigV.nav_link;
-            if (matchedBigV.image_url) {
-              item.images = [cleanImageUrl(matchedBigV.image_url, SAFE_FALLBACK_IMAGES.food_default)];
-            }
+            item.images = [extractSheetImage(matchedBigV, SAFE_FALLBACK_IMAGES.food_default)];
             bigVLookup.delete(matchedBigV.id.toLowerCase().trim());
           } else {
             item.isCurated = false;
@@ -696,7 +703,7 @@
           }
         });
 
-        // 注入 Google Sheet 上的站長私房清單（100% 直讀試算表 image_url）
+        // 注入 Google Sheet 上的站長私房清單（100% 直讀試算表圖片網址）
         bigVLookup.forEach(bigVItem => {
           mergedMap.set(bigVItem.id, {
             id: bigVItem.id,
@@ -713,7 +720,7 @@
             phone: bigVItem.phone || "",
             googleRating: 5.0,
             googleReviewCount: 50,
-            images: [cleanImageUrl(bigVItem.image_url, SAFE_FALLBACK_IMAGES.food_default)]
+            images: [extractSheetImage(bigVItem, SAFE_FALLBACK_IMAGES.food_default)]
           });
         });
 
@@ -727,8 +734,7 @@
         // 景點清單：100% 直接讀取 Google Sheet 試算表的 image_url
         if (sheetMaster.attractions && sheetMaster.attractions.length > 0) {
           allAttractions = sheetMaster.attractions.map(att => {
-            const rawUrl = att.image_url || att.imageUrl || '';
-            const img = cleanImageUrl(rawUrl, SAFE_FALLBACK_IMAGES.default_spot);
+            const img = extractSheetImage(att, SAFE_FALLBACK_IMAGES.default_spot);
 
             return {
               id: att.id,
@@ -750,8 +756,7 @@
         // 動態與優惠清單：100% 直接讀取 Google Sheet 的 image_url
         if (sheetMaster.promotions && sheetMaster.promotions.length > 0) {
           allNews = sheetMaster.promotions.map(promo => {
-            const rawUrl = promo.image_url || promo.imageUrl || '';
-            const img = cleanImageUrl(rawUrl, SAFE_FALLBACK_IMAGES.default_spot);
+            const img = extractSheetImage(promo, SAFE_FALLBACK_IMAGES.default_spot);
 
             return {
               id: promo.id,
@@ -826,7 +831,7 @@
           ? I18N_DICT[currentLang]['city_' + r.id] 
           : (r.name_en && currentLang === 'en' ? r.name_en : r.name);
         return `
-          <button data-city="${r.id}" class="region-pill px-3.5 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-all duration-200 ${
+          <button data-city="${r.id}" class="region-pill px-3.5 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-all duration-200 select-none ${
             active ? 'bg-slate-900 text-white shadow-md scale-105' : 'bg-orange-800/40 text-amber-100 hover:bg-orange-800/80'
           }">
             ${cityName}
@@ -868,7 +873,7 @@
         const active = f.key === currentSubFilter;
         let label = (typeof f.label === 'object') ? (f.label[currentLang] || f.label['zh-TW']) : f.label;
         return `
-          <button data-subkey="${f.key}" class="sub-pill px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap transition ${
+          <button data-subkey="${f.key}" class="sub-pill px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap transition select-none ${
             active ? 'bg-orange-500 text-white shadow-xs font-bold' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
           }">
             ${label}
@@ -926,7 +931,13 @@
           if (currentSubFilter === 'villa') return item.islandType === 'villa';
           return true;
         } else {
-          return item.categoryKey === currentSubFilter;
+          const cat = (safeStr(item.categoryKey) + ' ' + safeStr(item.category)).toLowerCase();
+          if (currentSubFilter === 'japanese_korean') return cat.includes('japanese') || cat.includes('korean') || cat.includes('日料') || cat.includes('燒肉') || cat.includes('生魚片');
+          if (currentSubFilter === 'chinese') return cat.includes('chinese') || cat.includes('中餐') || cat.includes('火鍋') || cat.includes('hotpot');
+          if (currentSubFilter === 'bbq_seafood') return cat.includes('bbq') || cat.includes('seafood') || cat.includes('炭烤') || cat.includes('海鮮') || cat.includes('排餐');
+          if (currentSubFilter === 'fast_food') return cat.includes('fast') || cat.includes('速食') || cat.includes('美式');
+          if (currentSubFilter === 'coffee_drinks') return cat.includes('coffee') || cat.includes('drinks') || cat.includes('咖啡') || cat.includes('手搖');
+          return cat.includes(currentSubFilter.toLowerCase());
         }
       });
 
@@ -1089,11 +1100,31 @@
 
       let filtered = allAttractions.filter(item => {
         const matchC = isCityMatch(item, currentCity);
-        let matchCat = true;
-        if (currentSubFilter !== 'all') {
-          matchCat = (item.category === currentSubFilter);
+        if (!matchC) return false;
+        if (currentSubFilter === 'all') return true;
+
+        // 中英雙向相容比對，解決分類過濾出現 0 個景點
+        const cat = (safeStr(item.category) + ' ' + safeStr(item.categoryKey) + ' ' + safeStr(item.id)).toLowerCase();
+        if (currentSubFilter === 'shopping') {
+          return cat.includes('shop') || cat.includes('商場') || cat.includes('購物') || cat.includes('mall');
         }
-        return matchC && matchCat;
+        if (currentSubFilter === 'casino') {
+          return cat.includes('casino') || cat.includes('賭場') || cat.includes('娛樂') || cat.includes('dreams') || cat.includes('okada') || cat.includes('solaire') || cat.includes('nustar');
+        }
+        if (currentSubFilter === 'history') {
+          return cat.includes('history') || cat.includes('歷史') || cat.includes('文化') || cat.includes('古蹟') || cat.includes('church') || cat.includes('cathedral') || cat.includes('教堂') || cat.includes('intramuros');
+        }
+        if (currentSubFilter === 'nature') {
+          return cat.includes('nature') || cat.includes('自然') || cat.includes('公園') || cat.includes('park') || cat.includes('tarsier') || cat.includes('hills');
+        }
+        if (currentSubFilter === 'beach') {
+          return cat.includes('beach') || cat.includes('沙灘') || cat.includes('海灘');
+        }
+        if (currentSubFilter === 'island_hopping') {
+          return cat.includes('island') || cat.includes('跳島') || cat.includes('浮潛') || cat.includes('lagoon');
+        }
+
+        return cat.includes(currentSubFilter.toLowerCase());
       });
 
       if (currentSearchQuery) {
@@ -1123,7 +1154,7 @@
       listEl.innerHTML = filtered.map(item => {
         const name = getLocalizedText(item, 'name', currentShortLang) || item.name_en || item.name_zh || item.id || '景點地標';
         const desc = getLocalizedText(item, 'desc', currentShortLang) || getText(item.description) || '菲律賓熱門推薦地標。';
-        // 100% 讀取 Google Sheet 的 image_url
+        // 100% 優先讀取 Google Sheet 上的專屬圖片網址
         const img = (item.images && item.images[0]) ? item.images[0] : SAFE_FALLBACK_IMAGES.default_spot;
 
         return `
@@ -1289,7 +1320,7 @@
 
     window.updateUiLanguage = updateUiLanguage;
 
-    // 電腦滑鼠滾輪橫向滾動支援
+    // 滑鼠滾輪橫向滾動 + 滑鼠拖曳 (Drag to Scroll) 雙重支援
     function enableHorizontalScroll() {
       const scrollContainers = [
         document.getElementById('regionPillsNav'),
@@ -1298,12 +1329,39 @@
 
       scrollContainers.forEach(container => {
         if (!container) return;
+
+        // 1. 滾輪滾動監聽
         container.addEventListener('wheel', (e) => {
           if (e.deltaY !== 0) {
             e.preventDefault();
             container.scrollLeft += e.deltaY;
           }
         }, { passive: false });
+
+        // 2. 滑鼠按住拖曳監聽 (Drag to Scroll)
+        let isDown = false;
+        let startX, scrollLeft;
+
+        container.addEventListener('mousedown', (e) => {
+          isDown = true;
+          container.classList.add('drag-scroll-active');
+          startX = e.pageX - container.offsetLeft;
+          scrollLeft = container.scrollLeft;
+        });
+
+        window.addEventListener('mouseup', () => {
+          if (!isDown) return;
+          isDown = false;
+          container.classList.remove('drag-scroll-active');
+        });
+
+        container.addEventListener('mousemove', (e) => {
+          if (!isDown) return;
+          e.preventDefault();
+          const x = e.pageX - container.offsetLeft;
+          const walk = (x - startX) * 1.5;
+          container.scrollLeft = scrollLeft - walk;
+        });
       });
     }
 
