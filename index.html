@@ -8,7 +8,7 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
-  <meta name="app-version" content="20260909-v16.0-final-master" />
+  <meta name="app-version" content="20260909-v17.0-final-master" />
   <meta name="theme-color" content="#ea580c" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -25,8 +25,8 @@
 
   <style>
   /* ============================================================
-     全域多語系排版防護罩 (i18n Anti-Break Layout Guard)
-     ============================================================ */
+      全域多語系排版防護罩 (i18n Anti-Break Layout Guard)
+      ============================================================ */
   .grid > *, 
   .flex > * {
     min-width: 0;
@@ -105,16 +105,31 @@
       backdrop-filter: blur(8px);
       -webkit-backdrop-filter: blur(8px);
     }
+    
+    /* 第二階段滑動體驗核心引擎 (CSS Scroll Snap) */
     .carousel-track {
+      display: flex;
+      width: 100%;
+      height: 100%;
+      overflow-x: auto;
       scroll-snap-type: x mandatory;
       -webkit-overflow-scrolling: touch;
     }
     .carousel-slide {
-      scroll-snap-align: start;
+      flex: 0 0 100%;
+      width: 100%;
+      height: 100%;
+      scroll-snap-align: center;
+      position: relative;
     }
     .drag-scroll-active {
       cursor: grabbing !important;
       cursor: -webkit-grabbing !important;
+    }
+    .dot-indicator.active {
+      width: 14px;
+      border-radius: 4px;
+      background: #FFFFFF;
     }
   </style>
 </head>
@@ -209,8 +224,8 @@
           <span data-i18n="navSpot">景點導覽</span>
         </button>
         <button data-maintab="news" id="tab-btn-news" class="main-tab-pill py-1.5 rounded-lg text-center transition flex items-center justify-center gap-1 hover:text-white">
-          <i class="fa-solid fa-newspaper text-[11px]"></i>
-          <span data-i18n="navNews">城市動態</span>
+          <i class="fa-solid fa-tags text-[11px]"></i>
+          <span id="tab-label-news" data-i18n="navNews">精選優惠</span>
         </button>
       </div>
     </div>
@@ -250,7 +265,7 @@
       <div id="attraction-list" class="flex flex-col gap-4"></div>
     </div>
 
-    <!-- 3. 城市動態分頁清單 -->
+    <!-- 3. 精選優惠 / 城市動態分頁清單 -->
     <div id="section-news" class="tab-panel hidden flex flex-col gap-4">
       <div id="news-list" class="flex flex-col gap-4"></div>
     </div>
@@ -375,8 +390,7 @@
       food_island: [
         { key: 'all', label: { 'zh-TW': '🏝️ 全部推薦', 'en': '🏝️ All Spots', 'tl': '🏝️ Lahat' } },
         { key: 'food', label: { 'zh-TW': '🍽️ Top 必吃美食', 'en': '🍽️ Top Eats', 'tl': '🍽️ Pagkain' } },
-        { key: 'hotel', label: { 'zh-TW': '🏨 精選星級飯店', 'en': '🏨 Star Hotels', 'tl': '🏨 Mga Hotel' } },
-        { key: 'villa', label: { 'zh-TW': '🌴 海景 Villa / 度假村', 'en': '🌴 Villas & Resorts', 'tl': '🌴 Resorts' } }
+        { key: 'hotel_villa', label: { 'zh-TW': '🏨 星級飯店 / 海景 Villa', 'en': '🏨 Star Hotels & Villas', 'tl': '🏨 Mga Hotel at Villa' } }
       ],
       attraction_urban: [
         { key: 'all', label: { 'zh-TW': '全部景點', 'en': 'All Attractions', 'tl': 'Lahat ng Pasyalan' } },
@@ -392,10 +406,10 @@
         { key: 'nature', label: { 'zh-TW': '🌴 生態秘境', 'en': '🌴 Eco Tours', 'tl': '🌴 Ekoturismo' } }
       ],
       news: [
-        { key: 'all', label: { 'zh-TW': '全部動態', 'en': 'All Updates', 'tl': 'Lahat ng Balita' } },
-        { key: 'promo', label: { 'zh-TW': '🔥 限時折扣', 'en': '🔥 Promos', 'tl': '🔥 Diskwento' } },
-        { key: 'event', label: { 'zh-TW': '🎵 活動特惠', 'en': '🎵 Events', 'tl': '🎵 Kaganapan' } },
-        { key: 'new', label: { 'zh-TW': '✨ 最新情報', 'en': '✨ News', 'tl': '✨ Balita' } }
+        { key: 'all', label: { 'zh-TW': '全部優惠', 'en': 'All Deals', 'tl': 'Lahat ng Alok' } },
+        { key: 'exclusive', label: { 'zh-TW': '🔥 大V特約', 'en': '🔥 BigV Exclusive', 'tl': '🔥 BigV Espesyal' } },
+        { key: 'limited', label: { 'zh-TW': '⏰ 限時快閃', 'en': '⏰ Limited Deals', 'tl': '⏰ Limitadong Alok' } },
+        { key: 'ongoing', label: { 'zh-TW': '💎 長期優惠', 'en': '💎 Ongoing Deals', 'tl': '💎 Patuloy na Alok' } }
       ]
     };
 
@@ -482,17 +496,18 @@
         tabIsland: '渡假海島專區',
         navFood: '美食饗宴',
         navSpot: '景點導覽',
-        navNews: '城市動態',
+        navNews: '精選優惠',
+        navNewsIsland: '海島特惠',
         navFoodIsland: '美食/度假',
         filterAll: '全部推薦',
         filterAllSpot: '全部景點',
-        filterAllNews: '全部動態',
+        filterAllNews: '全部優惠',
         btnGrab: 'Grab外送',
         btnCall: '撥打電話',
         btnNav: '導航地圖',
         badgeCurated: '👑 站長私房嚴選',
         badgeGoogleTop: '🔥 Google Top',
-        mustTryBadge: '必點',
+        mustTryBadge: '必點招牌',
         curatedNotePrefix: '站長私房點評：',
         googleTopNotePrefix: '饕客點評：',
         slideHint: '👈 左右滑動',
@@ -503,7 +518,7 @@
         toastSwitch: '已切換語言：',
         spotsCountUnit: '個景點',
         placesCountUnit: '個地點',
-        newsCountUnit: '則動態',
+        newsCountUnit: '個特惠',
         city_manila: '馬尼拉',
         city_cebu: '宿霧',
         city_davao: '達沃',
@@ -514,7 +529,11 @@
         city_samal: '薩馬爾島',
         aiChatWelcome: '嗨！我是大V旅遊窩管家 👋 歡迎來到菲律賓！想尋找在地特色私房美食、海島渡假村或行程安排，隨時問我喔！',
         aiChatPlaceholder: '問點什麼吧（例：達沃必吃生魚片...）',
-        aiLoading: '管家正在為您查詢... ⚡'
+        aiLoading: '管家正在為您查詢... ⚡',
+        badgeExclusive: '🔥 大V特約',
+        badgeLimited: '⏰ 限時快閃',
+        badgeOngoing: '💎 長期優惠',
+        validUntilPrefix: '有效期至: '
       },
       'en': {
         appTitle: "Big V's Travel Nest",
@@ -527,11 +546,12 @@
         tabIsland: 'Islands',
         navFood: 'Food & Eats',
         navSpot: 'Attractions',
-        navNews: 'City News',
+        navNews: 'Promotions',
+        navNewsIsland: 'Island Deals',
         navFoodIsland: 'Food/Resort',
         filterAll: 'All',
         filterAllSpot: 'All Attractions',
-        filterAllNews: 'All Updates',
+        filterAllNews: 'All Deals',
         btnGrab: 'GrabFood',
         btnCall: 'Call Now',
         btnNav: 'Directions',
@@ -548,7 +568,7 @@
         toastSwitch: 'Language changed: ',
         spotsCountUnit: 'spots',
         placesCountUnit: 'places',
-        newsCountUnit: 'updates',
+        newsCountUnit: 'deals',
         city_manila: 'Manila',
         city_cebu: 'Cebu',
         city_davao: 'Davao',
@@ -559,7 +579,11 @@
         city_samal: 'Samal',
         aiChatWelcome: 'Hello! I am your Big V Concierge 👋 Welcome to the Philippines! Ask me anything about local food, island resorts, or trip tips!',
         aiChatPlaceholder: 'Ask something (e.g., Best steak in Davao...)',
-        aiLoading: 'Concierge is checking for you... ⚡'
+        aiLoading: 'Concierge is checking for you... ⚡',
+        badgeExclusive: '🔥 BigV Exclusive',
+        badgeLimited: '⏰ Limited Deal',
+        badgeOngoing: '💎 Ongoing Deal',
+        validUntilPrefix: 'Valid until: '
       },
       'tl': {
         appTitle: 'Big V Travel Nest',
@@ -572,17 +596,18 @@
         tabIsland: 'Mga Isla',
         navFood: 'Pagkain',
         navSpot: 'Pasyalan',
-        navNews: 'Balita',
+        navNews: 'Mga Promosyon',
+        navNewsIsland: 'Alok sa Isla',
         navFoodIsland: 'Pagkain/Resort',
         filterAll: 'Lahat',
         filterAllSpot: 'Lahat ng Pasyalan',
-        filterAllNews: 'Lahat ng Balita',
+        filterAllNews: 'Lahat ng Alok',
         btnGrab: 'GrabFood',
         btnCall: 'Tawagan',
         btnNav: 'Direksyon',
         badgeCurated: '👑 Pili ng Admin',
         badgeGoogleTop: '🔥 Google Top',
-        mustTryBadge: 'Subukan',
+        mustTryBadge: 'Dapat Tikman',
         curatedNotePrefix: 'Kumento ng Admin: ',
         googleTopNotePrefix: 'Komento ng Bisita: ',
         slideHint: '👈 I-swipe',
@@ -593,7 +618,7 @@
         toastSwitch: 'Pinalitan ang wika: ',
         spotsCountUnit: 'pasyalan',
         placesCountUnit: 'lugar',
-        newsCountUnit: 'balita',
+        newsCountUnit: 'alok',
         city_manila: 'Manila',
         city_cebu: 'Cebu',
         city_davao: 'Davao',
@@ -604,26 +629,61 @@
         city_samal: 'Samal',
         aiChatWelcome: 'Kumusta! Ako ang iyong Big V Concierge 👋 Maligayang pagdating sa Pilipinas! Magtanong tungkol sa pagkain o mga isla!',
         aiChatPlaceholder: 'Magtanong dito (hal. Masarap na steak...)',
-        aiLoading: 'Naghahanap na ang concierge... ⚡'
+        aiLoading: 'Naghahanap na ang concierge... ⚡',
+        badgeExclusive: '🔥 BigV Espesyal',
+        badgeLimited: '⏰ Limitado',
+        badgeOngoing: '💎 Patuloy',
+        validUntilPrefix: 'May bisa hanggang: '
       }
     };
 
-    // 取得合法圖片網址：100% 優先讀取試算表中的真圖
-    function getValidImageUrl(item, fallback) {
-      if (!item) return fallback || 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&auto=format&fit=crop';
-
+    // 解析支援多張照片陣列（支援逗號隔開）
+    function parseImages(item, fallback) {
+      if (!item) return [fallback];
       const keys = ['image_url', 'imageurl', 'image', 'photo', 'col_14', 'col_7'];
       for (let k of keys) {
         const val = item[k];
         if (val && typeof val === 'string') {
-          const s = val.trim();
-          if (s.startsWith('http') && !s.includes('maps.google') && !s.includes('goo.gl/maps')) {
-            return s;
-          }
+          const list = val.split(',')
+            .map(s => s.trim())
+            .filter(s => s.startsWith('http') && !s.includes('maps.google') && !s.includes('goo.gl/maps'));
+          if (list.length > 0) return list;
         }
       }
+      return [fallback || 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&auto=format&fit=crop'];
+    }
 
-      return fallback || 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&auto=format&fit=crop';
+    // 全站多圖輪播相簿產生器 (支援原生滑動、吸附與圓點聯動)
+    function buildCarouselHtml(images, uniqueId, altTitle) {
+      if (!images || images.length === 0) {
+        images = ["https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=800&auto=format&fit=crop"];
+      }
+
+      const hasMultiple = images.length > 1;
+
+      return `
+        <div class="relative h-48 w-full bg-slate-100 overflow-hidden">
+          <div id="track-${uniqueId}" class="carousel-track flex w-full h-full overflow-x-auto hide-scrollbar">
+            ${images.map(img => `
+              <div class="carousel-slide flex-shrink-0 w-full h-full">
+                <img 
+                  src="${img}" 
+                  alt="${altTitle}" 
+                  class="w-full h-full object-cover" 
+                  loading="lazy"
+                  onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=800&auto=format&fit=crop';" 
+                />
+              </div>
+            `).join('')}
+          </div>
+          ${hasMultiple ? `
+            <span class="absolute top-2.5 right-2.5 bg-neutral-900/60 text-white text-[10px] px-2 py-0.5 rounded-full backdrop-blur-xs pointer-events-none z-10">👈 左右滑動</span>
+            <div id="dots-${uniqueId}" class="absolute bottom-2.5 right-2.5 flex items-center gap-1 z-10 bg-black/40 backdrop-blur-xs px-2 py-1 rounded-full">
+              ${images.map((_, i) => `<span class="dot-indicator inline-block w-1.5 h-1.5 rounded-full bg-white/40 transition-all ${i === 0 ? 'active' : ''}"></span>`).join('')}
+            </div>
+          ` : ''}
+        </div>
+      `;
     }
 
     async function fetchData() {
@@ -667,12 +727,13 @@
             item.name_tl = matchedBigV.name_tl;
             item.isCurated = true;
             item.curatedBadge = "👑 站長私房嚴選";
-            item.curatedNote = matchedBigV.big_v_comment || "站長每週必訪私房推薦！";
-            item.mustTry = matchedBigV.must_try || "";
+            item.curatedNote = matchedBigV.big_v_comment || matchedBigV.bigv_comment_zh || "站長每週必訪私房推薦！";
+            item.mustTry = matchedBigV.must_try || matchedBigV.must_try_zh || "";
             item.city = matchedBigV.city;
             if (matchedBigV.address) item.address = matchedBigV.address;
+            if (matchedBigV.phone) item.phone = String(matchedBigV.phone).replace(/^['"]/, '').trim();
             if (matchedBigV.nav_link) item.nav_link = matchedBigV.nav_link;
-            item.images = [getValidImageUrl(matchedBigV, 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=800&auto=format&fit=crop')];
+            item.images = parseImages(matchedBigV, 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=800&auto=format&fit=crop');
             bigVLookup.delete(matchedBigV.id.toLowerCase().trim());
           } else {
             item.isCurated = false;
@@ -683,7 +744,7 @@
 
           if (nameAll.includes('pearl farm') || nameAll.includes('chema')) {
             item.city = 'samal';
-            item.islandType = 'hotel';
+            item.islandType = 'hotel_villa';
           }
 
           if (!item.images || item.images.length === 0) {
@@ -700,28 +761,35 @@
           }
         });
 
-        // 注入 Google Sheet 上的站長私房清單
+        // 注入 Google Sheet 上的站長私房清單 (BigV_Picks 17 欄對齊)
         bigVLookup.forEach(bigVItem => {
           mergedMap.set(bigVItem.id, {
             id: bigVItem.id,
-            name: bigVItem.name,
+            name: bigVItem.name_zh || bigVItem.name,
             name_zh: bigVItem.name_zh || bigVItem.name,
             name_en: bigVItem.name_en || '',
             name_tl: bigVItem.name_tl || '',
+            category: bigVItem.category || '',
             city: bigVItem.city,
             isCurated: true,
             curatedBadge: "👑 站長私房嚴選",
-            curatedNote: bigVItem.big_v_comment,
-            mustTry: bigVItem.must_try,
+            curatedNote: bigVItem.big_v_comment || bigVItem.bigv_comment_zh || '',
+            bigv_comment_zh: bigVItem.bigv_comment_zh || bigVItem.big_v_comment,
+            bigv_comment_en: bigVItem.bigv_comment_en,
+            bigv_comment_tl: bigVItem.bigv_comment_tl,
+            mustTry: bigVItem.must_try || bigVItem.must_try_zh || '',
+            must_try_zh: bigVItem.must_try_zh || bigVItem.must_try,
+            must_try_en: bigVItem.must_try_en,
+            must_try_tl: bigVItem.must_try_tl,
             address: bigVItem.address || "",
-            phone: bigVItem.phone || "",
+            phone: String(bigVItem.phone || "").replace(/^['"]/, '').trim(),
+            nav_link: bigVItem.nav_link || "",
             googleRating: 5.0,
             googleReviewCount: 50,
-            images: [getValidImageUrl(bigVItem, 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=800&auto=format&fit=crop')]
+            images: parseImages(bigVItem, 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=800&auto=format&fit=crop')
           });
         });
 
-        // 恢復 Google Top 藍色標章計算
         allRestaurants = Array.from(mergedMap.values())
           .map(item => {
             const r = item.googleRating || 0;
@@ -744,12 +812,11 @@
             return (b.googleRating || 0) - (a.googleRating || 0);
           });
 
-        // 景點清單：100% 直讀試算表發布的真圖
+        // Attractions: 13 欄真值鎖定讀取
         if (sheetMaster.attractions && sheetMaster.attractions.length > 0) {
-          allAttractions = sheetMaster.attractions.map(att => {
-            const img = getValidImageUrl(att, 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&auto=format&fit=crop');
-
-            return {
+          allAttractions = sheetMaster.attractions
+            .filter(att => (att.is_active || 'TRUE').toUpperCase() === 'TRUE')
+            .map(att => ({
               id: att.id,
               city: att.city,
               category: att.category || '',
@@ -760,37 +827,33 @@
               desc_en: att.desc_en,
               desc_tl: att.desc_tl,
               address: att.address,
-              nav_link: att.nav_link || (att.image_url && String(att.image_url).includes('maps.google') ? att.image_url : ''),
-              images: [img]
-            };
-          });
-          console.log("📸 景點第一筆發布網址解析結果:", allAttractions[0]?.name_zh, allAttractions[0]?.images[0]);
+              phone: String(att.phone || "").replace(/^['"]/, '').trim(),
+              nav_link: att.nav_link || '',
+              images: parseImages(att, 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&auto=format&fit=crop')
+            }));
         }
 
-        // 動態清單
+        // Promotions: 16 欄真值鎖定讀取 (含 is_active)
         if (sheetMaster.promotions && sheetMaster.promotions.length > 0) {
-          allNews = sheetMaster.promotions.map(promo => {
-            const img = getValidImageUrl(promo, 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=800&auto=format&fit=crop');
-
-            return {
+          allNews = sheetMaster.promotions
+            .filter(promo => (promo.is_active || 'TRUE').toUpperCase() === 'TRUE')
+            .map(promo => ({
               id: promo.id,
               city: promo.city || 'all',
-              type: promo.type || 'promo',
-              brand: promo.store_name,
+              type: (promo.type || 'ongoing').toLowerCase(),
+              store_name: promo.store_name || promo.brand || '精選特約門市',
               title_zh: promo.title_zh || promo.title,
               title_en: promo.title_en,
               title_tl: promo.title_tl,
-              tag: promo.discount_badge || '🔥 獨家優惠',
-              validity_zh: promo.valid_until_zh || promo.valid_until || '長期有效',
-              validity_en: promo.valid_until_en || promo.valid_until || 'Ongoing',
-              validity_tl: promo.valid_until_tl || promo.valid_until || 'Patuloy',
-              detail_zh: promo.detail_zh || promo.detail || promo.description,
-              detail_en: promo.detail_en,
-              detail_tl: promo.detail_tl,
-              location: promo.store_name,
-              images: [img]
-            };
-          });
+              description_zh: promo.description_zh || promo.detail_zh || promo.description,
+              description_en: promo.description_en || promo.detail_en,
+              description_tl: promo.description_tl || promo.detail_tl,
+              valid_until: promo.valid_until || promo.valid_until_zh || '長期有效',
+              address: promo.address || '',
+              phone: String(promo.phone || '').replace(/^['"]/, '').trim(),
+              nav_link: promo.nav_link || '',
+              images: parseImages(promo, 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=800&auto=format&fit=crop')
+            }));
         }
 
       } catch (err) {
@@ -804,15 +867,9 @@
       if (targetCity === 'all') return true;
       const c = safeStr(item.city);
       const a = safeStr(item.address);
-      if (targetCity === 'samal') {
-        return c === 'samal' || a.includes('samal');
-      }
-      if (targetCity === 'davao') {
-        return (c === 'davao' || a.includes('davao')) && !c.includes('samal') && !a.includes('samal');
-      }
-      if (targetCity === 'manila') {
-        return c === 'manila' || a.includes('manila') || a.includes('makati') || a.includes('taguig') || a.includes('pasay') || a.includes('bgc');
-      }
+      if (targetCity === 'samal') return c === 'samal' || a.includes('samal');
+      if (targetCity === 'davao') return (c === 'davao' || a.includes('davao')) && !c.includes('samal') && !a.includes('samal');
+      if (targetCity === 'manila') return c === 'manila' || a.includes('manila') || a.includes('makati') || a.includes('taguig') || a.includes('pasay') || a.includes('bgc');
       return c === targetCity || a.includes(targetCity);
     }
 
@@ -906,6 +963,8 @@
 
     function renderContent() {
       const dict = I18N_DICT[currentLang] || I18N_DICT['zh-TW'];
+      const isIsland = isIslandMode(currentCity);
+
       ['map', 'attraction', 'news'].forEach(tab => {
         document.getElementById(`section-${tab}`).classList.toggle('hidden', tab !== currentMainTab);
         const btn = document.getElementById(`tab-btn-${tab}`);
@@ -918,12 +977,39 @@
 
       const mapLabel = document.getElementById('tab-label-map');
       if (mapLabel) {
-        mapLabel.innerText = isIslandMode(currentCity) ? dict.navFoodIsland : dict.navFood;
+        mapLabel.innerText = isIsland ? dict.navFoodIsland : dict.navFood;
+      }
+
+      // 海島情境自動變形第三分頁名稱
+      const newsLabel = document.getElementById('tab-label-news');
+      if (newsLabel) {
+        newsLabel.innerText = isIsland ? dict.navNewsIsland : dict.navNews;
       }
 
       if (currentMainTab === 'map') renderRestaurants();
       if (currentMainTab === 'attraction') renderAttractions();
       if (currentMainTab === 'news') renderNews();
+
+      bindCarouselDots();
+    }
+
+    // 監聽輪播滑動與圓點聯動
+    function bindCarouselDots() {
+      document.querySelectorAll('.carousel-track').forEach(track => {
+        const id = track.id.replace('track-', '');
+        const dotsContainer = document.getElementById(`dots-${id}`);
+        if (!dotsContainer) return;
+        const dots = dotsContainer.querySelectorAll('.dot-indicator');
+        
+        track.addEventListener('scroll', () => {
+          const slideWidth = track.offsetWidth;
+          if (slideWidth === 0) return;
+          const activeIndex = Math.round(track.scrollLeft / slideWidth);
+          dots.forEach((dot, idx) => {
+            dot.classList.toggle('active', idx === activeIndex);
+          });
+        }, { passive: true });
+      });
     }
 
     function renderRestaurants() {
@@ -940,8 +1026,7 @@
 
         if (isIslandMode(currentCity)) {
           if (currentSubFilter === 'food') return item.islandType === 'food' || item.categoryKey !== 'hotel_villa';
-          if (currentSubFilter === 'hotel') return item.islandType === 'hotel';
-          if (currentSubFilter === 'villa') return item.islandType === 'villa';
+          if (currentSubFilter === 'hotel_villa') return item.islandType === 'hotel_villa' || item.categoryKey === 'hotel_villa' || item.categoryKey === 'hotel' || item.categoryKey === 'villa';
           return true;
         } else {
           const cat = (safeStr(item.categoryKey) + ' ' + safeStr(item.category)).toLowerCase();
@@ -990,16 +1075,14 @@
         return;
       }
 
-      listEl.innerHTML = filtered.map(item => {
+      listEl.innerHTML = filtered.map((item, idx) => {
         const name = getLocalizedText(item, 'name', currentShortLang) || item.name || item.name_en || '特色名店';
         const desc = getLocalizedText(item, 'desc', currentShortLang) || getText(item.description) || '暫無詳細介紹。';
         const isCurated = !!item.isCurated;
         const isGoogleTop = !!item.isGoogleTop;
 
-        let images = item.images;
-        if (!images || images.length === 0) {
-          images = ["https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=800&auto=format&fit=crop"];
-        }
+        const curatedNote = getLocalizedText(item, 'bigv_comment', currentShortLang) || item.curatedNote || '';
+        const mustTry = getLocalizedText(item, 'must_try', currentShortLang) || item.mustTry || '';
 
         const reviewCount = item.googleReviewCount || 0;
         const isFoodOnly = (item.islandType === 'food') || (!item.islandType && item.categoryKey !== 'hotel_villa' && item.categoryKey !== 'hotel' && item.categoryKey !== 'villa');
@@ -1009,34 +1092,22 @@
             isCurated ? 'border-amber-400 ring-2 ring-amber-400/20' : isGoogleTop ? 'border-sky-300 ring-2 ring-sky-300/20' : 'border-slate-200/80'
           } flex flex-col transition">
             
-            <div class="relative h-48 w-full bg-slate-100 overflow-hidden">
-              <div class="carousel-track flex w-full h-full overflow-x-auto hide-scrollbar">
-                ${images.map(img => `
-                  <div class="carousel-slide flex-shrink-0 w-full h-full">
-                    <img 
-                      src="${img}" 
-                      alt="${name}" 
-                      class="w-full h-full object-cover" 
-                      onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=800&auto=format&fit=crop';" 
-                    />
-                  </div>
-                `).join('')}
-              </div>
-              <span class="absolute top-2.5 right-2.5 bg-neutral-900/60 text-white text-[10px] px-2 py-0.5 rounded-full backdrop-blur-xs pointer-events-none">${dict.slideHint}</span>
+            <div class="relative w-full overflow-hidden">
+              ${buildCarouselHtml(item.images, `res-${idx}`, name)}
 
               ${isCurated ? `
-                <div class="absolute top-2.5 left-2.5 bg-neutral-900/95 text-amber-300 text-[11px] font-extrabold px-2.5 py-1 rounded-full shadow-lg flex items-center gap-1.5 border border-amber-400/60 backdrop-blur-md">
+                <div class="absolute top-2.5 left-2.5 bg-neutral-900/95 text-amber-300 text-[11px] font-extrabold px-2.5 py-1 rounded-full shadow-lg flex items-center gap-1.5 border border-amber-400/60 backdrop-blur-md z-10">
                   <i class="fa-solid fa-crown text-amber-400"></i> ${dict.badgeCurated}
                 </div>
               ` : ''}
 
               ${(!isCurated && isGoogleTop) ? `
-                <div class="absolute top-2.5 left-2.5 bg-sky-900/95 text-sky-200 text-[11px] font-extrabold px-2.5 py-1 rounded-full shadow-lg flex items-center gap-1 border border-sky-400/60 backdrop-blur-md">
+                <div class="absolute top-2.5 left-2.5 bg-sky-900/95 text-sky-200 text-[11px] font-extrabold px-2.5 py-1 rounded-full shadow-lg flex items-center gap-1 border border-sky-400/60 backdrop-blur-md z-10">
                   <i class="fa-solid fa-fire text-amber-300"></i> ${dict.badgeGoogleTop}
                 </div>
               ` : ''}
 
-              <div class="absolute bottom-2.5 left-2.5 flex items-center gap-1.5">
+              <div class="absolute bottom-2.5 left-2.5 flex items-center gap-1.5 z-10">
                 <span class="bg-slate-900/80 backdrop-blur-xs text-white text-[10px] px-2 py-0.5 rounded font-medium">
                   ${dict['city_' + item.city] || item.city}
                 </span>
@@ -1051,16 +1122,16 @@
             <div class="p-3.5 flex flex-col flex-1">
               <h2 class="font-extrabold text-sm text-slate-900 leading-snug mb-1">${name}</h2>
 
-              ${(isCurated && item.curatedNote) ? `
+              ${(isCurated && curatedNote) ? `
                 <div class="bg-amber-50/90 border-l-3 border-amber-500 p-2.5 rounded-r-lg text-xs text-amber-950 font-medium leading-relaxed mb-2.5">
-                  💡 <b>${dict.curatedNotePrefix}</b>${item.curatedNote}
+                  💡 <b>${dict.curatedNotePrefix}</b>${curatedNote}
                 </div>
               ` : ''}
               
-              ${(isCurated && item.mustTry) ? `
+              ${(isCurated && mustTry) ? `
                 <div class="flex items-start gap-1.5 p-2 mb-2.5 rounded-lg bg-amber-50/60 border border-amber-200/80 text-xs text-amber-900">
                   <span class="shrink-0 px-1.5 py-0.5 rounded bg-amber-500 text-white font-bold text-[10px] leading-none mt-0.5">${dict.mustTryBadge}</span>
-                  <span class="font-medium leading-tight">${item.mustTry}</span>
+                  <span class="font-medium leading-tight">${mustTry}</span>
                 </div>
               ` : ''}
 
@@ -1164,25 +1235,18 @@
         return;
       }
 
-      listEl.innerHTML = filtered.map(item => {
+      listEl.innerHTML = filtered.map((item, idx) => {
         const name = getLocalizedText(item, 'name', currentShortLang) || item.name_en || item.name_zh || item.id || '景點地標';
         const desc = getLocalizedText(item, 'desc', currentShortLang) || getText(item.description) || '菲律賓熱門推薦地標。';
-        // 100% 直讀 Google Sheet 試算表上的真圖網址
-        const photo = (item.images && item.images[0]) ? item.images[0] : 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&auto=format&fit=crop';
 
         return `
           <article class="bg-white rounded-2xl overflow-hidden shadow-xs hover:shadow-md border border-slate-200/80 flex flex-col transition">
-            <div class="relative h-48 w-full bg-slate-100 overflow-hidden">
-              <img src="${photo}" alt="${name}" class="w-full h-full object-cover" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1518509562904-e7ef99cdcc86?w=800&auto=format&fit=crop';" />
-              <div class="absolute bottom-2.5 left-2.5 flex items-center gap-1.5">
+            <div class="relative w-full overflow-hidden">
+              ${buildCarouselHtml(item.images, `attr-${idx}`, name)}
+              <div class="absolute bottom-2.5 left-2.5 flex items-center gap-1.5 z-10">
                 <span class="bg-slate-900/80 backdrop-blur-xs text-white text-[10px] px-2 py-0.5 rounded font-medium">
                   ${dict['city_' + item.city] || item.city}
                 </span>
-                ${item.googleRating ? `
-                  <span class="bg-amber-500 text-white text-[10px] px-2 py-0.5 rounded font-bold shadow-xs">
-                    ★ ${item.googleRating}
-                  </span>
-                ` : ''}
               </div>
             </div>
 
@@ -1214,6 +1278,7 @@
       }).join('');
     }
 
+    // 3. 精選優惠卡片渲染 (標準黃金視覺動線升級版)
     function renderNews() {
       const listEl = document.getElementById('news-list');
       const dict = I18N_DICT[currentLang] || I18N_DICT['zh-TW'];
@@ -1229,18 +1294,19 @@
         const q = currentSearchQuery.toLowerCase();
         filtered = filtered.filter(item => {
           const t = getLocalizedText(item, 'title', currentShortLang);
-          const d = getLocalizedText(item, 'detail', currentShortLang);
-          return (safeStr(t) + ' ' + safeStr(d)).includes(q);
+          const d = getLocalizedText(item, 'description', currentShortLang);
+          const s = safeStr(item.store_name);
+          return (safeStr(t) + ' ' + safeStr(d) + ' ' + s).includes(q);
         });
       }
 
-      filterSummaryText.textContent = `${dict.navNews} · 即時情報`;
+      filterSummaryText.textContent = `${isIslandMode(currentCity) ? dict.navNewsIsland : dict.navNews} · 即時優惠`;
       itemCountBadge.textContent = `${filtered.length} ${dict.newsCountUnit}`;
 
       if (filtered.length === 0) {
         listEl.innerHTML = `
           <div class="bg-white rounded-2xl p-8 text-center border border-slate-200/80 shadow-xs mt-2">
-            <i class="fa-solid fa-newspaper text-3xl text-slate-300 mb-2"></i>
+            <i class="fa-solid fa-tags text-3xl text-slate-300 mb-2"></i>
             <h4 class="text-xs font-bold text-slate-700">${dict.noResult}</h4>
             <p class="text-[11px] text-slate-400 mt-1">${dict.noResultSub}</p>
           </div>
@@ -1248,48 +1314,110 @@
         return;
       }
 
-      listEl.innerHTML = filtered.map(item => {
-        let rawTitle = getLocalizedText(item, 'title', currentShortLang) || item.title || '在地精選活動';
-        let desc = getLocalizedText(item, 'detail', currentShortLang) || item.description || '菲律賓精選優惠活動與在地即時快訊。';
-        const brandStr = (safeStr(item.brand) + ' ' + safeStr(rawTitle)).toLowerCase();
-        const isGrabEvent = brandStr.includes('grab');
+      listEl.innerHTML = filtered.map((item, idx) => {
+        const storeName = item.store_name || '精選特約門市';
+        const title = getLocalizedText(item, 'title', currentShortLang) || '特惠活動';
+        const description = getLocalizedText(item, 'description', currentShortLang) || '活動詳情請洽門市工作人員。';
+        const type = (item.type || 'ongoing').toLowerCase();
 
-        let titleHtml = rawTitle;
-        if (isGrabEvent) {
-          titleHtml = `<span class="bg-emerald-600 text-white px-1.5 py-0.5 rounded text-[10px] font-extrabold mr-1.5 align-middle">Grab</span>${rawTitle}`;
-        }
-        if (item.url) {
-          titleHtml = `<a href="${item.url}" target="_blank" class="text-slate-900 hover:text-orange-600 transition border-b border-orange-400">${titleHtml} 🔗</a>`;
+        // 標籤樣式判斷
+        let badgeHtml = '';
+        if (type === 'exclusive') {
+          badgeHtml = `
+            <span class="bg-neutral-900/95 text-amber-300 border border-amber-400/70 text-[11px] font-extrabold px-2.5 py-1 rounded-full shadow-lg flex items-center gap-1.5 backdrop-blur-md">
+              <i class="fa-solid fa-crown text-amber-400"></i> ${dict.badgeExclusive}
+            </span>
+          `;
+        } else if (type === 'limited') {
+          badgeHtml = `
+            <span class="bg-rose-600/90 text-white text-[11px] font-bold px-2.5 py-1 rounded-full shadow-md flex items-center gap-1 backdrop-blur-md">
+              <i class="fa-solid fa-clock text-white"></i> ${dict.badgeLimited}
+            </span>
+          `;
+        } else {
+          badgeHtml = `
+            <span class="bg-emerald-600/90 text-white text-[11px] font-bold px-2.5 py-1 rounded-full shadow-md flex items-center gap-1 backdrop-blur-md">
+              <i class="fa-solid fa-gem text-white"></i> ${dict.badgeOngoing}
+            </span>
+          `;
         }
 
-        const tag = isGrabEvent ? '🛵 Grab 限時特惠' : (getText(item.tag) || '🔥 快訊');
-        const validity = getLocalizedText(item, 'validity', currentShortLang) || getText(item.validity) || '';
-        const location = getText(item.location) || '全菲適用';
-        const img = (item.images && item.images[0]) ? item.images[0] : "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=800&auto=format&fit=crop";
+        const validUntil = item.valid_until ? `${dict.validUntilPrefix}${item.valid_until}` : '長期有效';
 
         return `
-          <article class="bg-white rounded-2xl overflow-hidden shadow-xs hover:shadow-md border border-slate-200/80 flex flex-col transition">
-            <div class="relative h-44 w-full bg-slate-100 overflow-hidden">
-              <img src="${img}" alt="News" class="w-full h-full object-cover" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=800&auto=format&fit=crop';" />
-              <div class="absolute bottom-2.5 left-2.5 flex items-center gap-1.5">
+          <article class="bg-white rounded-2xl overflow-hidden shadow-xs hover:shadow-md border ${
+            type === 'exclusive' ? 'border-amber-400 ring-2 ring-amber-400/20' : 'border-slate-200/80'
+          } flex flex-col transition">
+            
+            <!-- 1. 頂部多圖輪播相簿 (支援 Touch Snap & 指示圓點) -->
+            <div class="relative w-full overflow-hidden">
+              ${buildCarouselHtml(item.images, `promo-${idx}`, title)}
+              
+              <!-- 左上角子分類標籤 -->
+              <div class="absolute top-2.5 left-2.5 z-10 flex flex-col gap-1">
+                ${badgeHtml}
+              </div>
+
+              <!-- 右上角有效期膠囊 -->
+              <div class="absolute top-2.5 right-2.5 z-10">
+                <span class="bg-neutral-900/80 text-white text-[10px] px-2 py-0.5 rounded-full backdrop-blur-xs font-mono">
+                  ${validUntil}
+                </span>
+              </div>
+
+              <div class="absolute bottom-2.5 left-2.5 z-10">
                 <span class="bg-slate-900/80 backdrop-blur-xs text-white text-[10px] px-2 py-0.5 rounded font-medium">
                   ${dict['city_' + item.city] || item.city || '全菲'}
                 </span>
-                <span class="px-2 py-0.5 rounded text-[10px] font-bold ${
-                  isGrabEvent ? 'bg-emerald-100 text-emerald-800 border border-emerald-300' : 'bg-rose-100 text-rose-800 border border-rose-300'
-                }">
-                  ${tag}
-                </span>
-                ${validity ? `<span class="bg-neutral-900/80 text-white text-[10px] px-2 py-0.5 rounded">⏰ ${validity}</span>` : ''}
               </div>
             </div>
 
-            <div class="p-3.5 flex flex-col flex-1">
-              <h2 class="font-extrabold text-sm text-slate-900 mb-1.5">${titleHtml}</h2>
-              <p class="text-xs text-slate-600 leading-relaxed mb-3">${desc}</p>
-              <div class="mt-auto text-[11px] text-slate-500 border-t border-slate-100 pt-2 flex items-center gap-1.5 font-medium">
-                <i class="fa-solid fa-location-dot text-orange-500"></i>
-                <span>${location}</span>
+            <!-- 卡片內容主體 (標準視覺動線) -->
+            <div class="p-4 flex flex-col flex-1">
+              <!-- 2. 店家大標置頂 -->
+              <h2 class="font-extrabold text-base text-slate-900 leading-tight mb-1 flex items-center gap-1.5">
+                <i class="fa-solid fa-store text-orange-500 text-xs"></i>
+                <span>${storeName}</span>
+              </h2>
+
+              <!-- 3. 優惠主標 -->
+              <h3 class="font-bold text-xs text-orange-600 mb-2 leading-snug">
+                ${title}
+              </h3>
+
+              <!-- 詳細活動說明文 -->
+              <div class="bg-slate-50 border-l-3 border-orange-400 p-2.5 rounded-r-lg text-xs text-slate-600 leading-relaxed mb-3">
+                ${description}
+              </div>
+
+              <!-- 4. 門市地址與電話 -->
+              <div class="space-y-1 text-[11px] text-slate-500 border-t border-slate-100 pt-2 mb-3 font-medium">
+                ${item.address ? `
+                  <p class="flex items-center gap-1.5 truncate">
+                    <i class="fa-solid fa-location-dot text-orange-500 w-3"></i>
+                    <span class="truncate">${item.address}</span>
+                  </p>
+                ` : ''}
+                ${item.phone ? `
+                  <p class="flex items-center gap-1.5 font-mono">
+                    <i class="fa-solid fa-phone text-slate-400 w-3"></i>
+                    <a href="tel:${item.phone}" class="hover:text-orange-600 transition">${item.phone}</a>
+                  </p>
+                ` : ''}
+              </div>
+
+              <!-- 5. 底部 CTA 一鍵導航按鈕 -->
+              <div class="mt-auto grid ${item.phone ? 'grid-cols-2' : 'grid-cols-1'} gap-2 pt-1 border-t border-slate-100">
+                ${item.phone ? `
+                  <a href="tel:${item.phone}" class="bg-slate-100 hover:bg-slate-200 active:scale-95 text-slate-700 text-xs font-bold py-2.5 rounded-xl text-center flex items-center justify-center gap-1.5 transition">
+                    <i class="fa-solid fa-phone text-xs"></i> ${dict.btnCall}
+                  </a>
+                ` : ''}
+                <a href="${item.nav_link || ('https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(storeName + ' ' + (item.address || '')))}" 
+                   target="_blank" rel="noopener noreferrer"
+                   class="bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 active:scale-95 text-white text-xs font-bold py-2.5 rounded-xl text-center flex items-center justify-center gap-1.5 shadow-sm transition">
+                  <i class="fa-solid fa-location-arrow text-xs"></i> ${dict.btnNav}
+                </a>
               </div>
             </div>
           </article>
