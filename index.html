@@ -8,7 +8,7 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
-  <meta name="app-version" content="20260909-v17.0-final-master" />
+  <meta name="app-version" content="20260909-v17.2-bugfix" />
   <meta name="theme-color" content="#ea580c" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -877,51 +877,18 @@
             return (b.googleRating || 0) - (a.googleRating || 0);
           });
 
-        // 6. Attractions: 合併 13 欄真值景點與 Auto_Discovered 景點
-        let sheetAttractions = [];
-        if (sheetMaster.attractions && sheetMaster.attractions.length > 0) {
-          sheetAttractions = sheetMaster.attractions
-            .filter(att => (att.is_active || 'TRUE').toUpperCase() === 'TRUE')
-            .map(att => ({
-              id: att.id,
-              city: att.city,
-              category: att.category || '',
-              name_zh: att.name_zh || att.name,
-              name_en: att.name_en,
-              name_tl: att.name_tl,
-              desc_zh: att.desc_zh || att.description || att.desc,
-              desc_en: att.desc_en,
-              desc_tl: att.desc_tl,
-              address: att.address,
-              phone: String(att.phone || "").replace(/^['"]/, '').trim(),
-              nav_link: att.nav_link || '',
-              images: parseImages(att, 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&auto=format&fit=crop')
-            }));
-        }
+        // 6. Attractions: 直接接收正規化後的資料（徹底移除型別破壞錯誤，保證景點順暢進來）
+        const sheetAttractions = (sheetMaster.attractions || []).map(att => ({
+          ...att,
+          images: parseImages(att, 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&auto=format&fit=crop')
+        }));
         allAttractions = [...sheetAttractions, ...autoAttractions];
 
-        // 7. Promotions: 16 欄真值鎖定讀取 (含 is_active)
-        if (sheetMaster.promotions && sheetMaster.promotions.length > 0) {
-          allNews = sheetMaster.promotions
-            .filter(promo => (promo.is_active || 'TRUE').toUpperCase() === 'TRUE')
-            .map(promo => ({
-              id: promo.id,
-              city: promo.city || 'all',
-              type: (promo.type || 'ongoing').toLowerCase(),
-              store_name: promo.store_name || promo.brand || '精選特約門市',
-              title_zh: promo.title_zh || promo.title,
-              title_en: promo.title_en,
-              title_tl: promo.title_tl,
-              description_zh: promo.description_zh || promo.detail_zh || promo.description,
-              description_en: promo.description_en || promo.detail_en,
-              description_tl: promo.description_tl || promo.detail_tl,
-              valid_until: promo.valid_until || promo.valid_until_zh || '長期有效',
-              address: promo.address || '',
-              phone: String(promo.phone || '').replace(/^['"]/, '').trim(),
-              nav_link: promo.nav_link || '',
-              images: parseImages(promo, 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=800&auto=format&fit=crop')
-            }));
-        }
+        // 7. Promotions: 直接接收正規化後的資料（徹底移除型別破壞錯誤，保證特惠順暢進來）
+        allNews = (sheetMaster.promotions || []).map(promo => ({
+          ...promo,
+          images: parseImages(promo, 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=800&auto=format&fit=crop')
+        }));
 
       } catch (err) {
         console.error("載入失敗:", err);
@@ -931,7 +898,7 @@
     }
 
     function isCityMatch(item, targetCity) {
-      if (targetCity === 'all') return true;
+      if (!item || !targetCity || targetCity === 'all') return true;
       const c = safeStr(item.city);
       const a = safeStr(item.address);
       if (targetCity === 'samal') return c === 'samal' || a.includes('samal');
@@ -1059,7 +1026,6 @@
       bindCarouselDots();
     }
 
-    // 監聽輪播滑動與圓點聯動
     function bindCarouselDots() {
       document.querySelectorAll('.carousel-track').forEach(track => {
         const id = track.id.replace('track-', '');
@@ -1249,9 +1215,10 @@
       const currentShortLang = currentLang === 'zh-TW' ? 'zh' : currentLang;
 
       let filtered = allAttractions.filter(item => {
-        const matchC = isCityMatch(item, currentCity);
+        // 景點城市比對：若為 all 或比對符合即放行
+        const matchC = !item.city || item.city === 'all' || isCityMatch(item, currentCity);
         if (!matchC) return false;
-        if (currentSubFilter === 'all') return true;
+        if (!currentSubFilter || currentSubFilter === 'all') return true;
 
         const cat = (safeStr(item.category) + ' ' + safeStr(item.id) + ' ' + safeStr(item.name_zh) + ' ' + safeStr(item.name_en)).toLowerCase();
         
@@ -1351,8 +1318,9 @@
       const currentShortLang = currentLang === 'zh-TW' ? 'zh' : currentLang;
 
       let filtered = allNews.filter(item => {
-        const matchC = (currentCity === 'all') || (item.city === 'all') || isCityMatch(item, currentCity);
-        const matchS = (currentSubFilter === 'all') || (item.type === currentSubFilter);
+        // 優惠城市放行：若為 all 或符合當前城市即放行
+        const matchC = !item.city || (item.city === 'all') || (currentCity === 'all') || isCityMatch(item, currentCity);
+        const matchS = (!currentSubFilter || currentSubFilter === 'all') || (item.type === currentSubFilter);
         return matchC && matchS;
       });
 
@@ -1748,12 +1716,10 @@
       chatMessages.scrollTop = chatMessages.scrollHeight;
     }
 
-    // 啟動全域訪客計數與橫向滑動
     initVisitorCounter();
     enableHorizontalScroll();
     fetchData();
 
-    // 註冊 Service Worker 啟用 PWA 離線核心 (防死鎖快取)
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
         navigator.serviceWorker.register('./sw.js').catch(err => {
