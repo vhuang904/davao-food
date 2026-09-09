@@ -44,7 +44,9 @@
 
   /* 3. 並排等寬按鈕列（主分頁 Tab、底部三聯鍵），自動縮放字級並截斷超長單字 */
   .grid-cols-3 button,
-  .grid-cols-2 button {
+  .grid-cols-2 button,
+  .grid-cols-3 a,
+  .grid-cols-2 a {
     white-space: nowrap !important;
     text-overflow: ellipsis !important;
     overflow: hidden !important;
@@ -58,7 +60,7 @@
   html[lang="tl"] body {
     letter-spacing: -0.015em;
   }
-</style>
+  </style>
 
   <style>
     :root {
@@ -156,7 +158,7 @@
           <!-- 分享按鈕 -->
           <button id="share-btn" class="bg-white/20 hover:bg-white/30 border border-white/30 text-white rounded-lg px-2.5 py-1 text-[11px] font-bold flex items-center gap-1 transition active:scale-95">
             <i class="fa-solid fa-share-nodes text-[10px]"></i>
-            <span>分享</span>
+            <span data-i18n="shareBtn">分享</span>
           </button>
         </div>
       </div>
@@ -180,10 +182,10 @@
       <!-- 第三列：探索主維度（都會生活圈 vs 渡假海島專區） -->
       <div class="flex gap-2">
         <button id="typeCityBtn" class="flex-1 py-1.5 text-xs font-bold rounded-xl transition text-center shadow-sm flex items-center justify-center gap-1.5 bg-white text-orange-700">
-  <i class="fa-solid fa-city"></i> <span data-i18n="tabMetro">都會生活圈</span>
+          <i class="fa-solid fa-city"></i> <span data-i18n="tabMetro">都會生活圈</span>
         </button>
         <button id="typeIslandBtn" class="flex-1 py-1.5 text-xs font-bold rounded-xl transition text-center shadow-sm flex items-center justify-center gap-1.5 bg-orange-700/60 text-amber-100">
-  <i class="fa-solid fa-umbrella-beach"></i> <span data-i18n="tabIsland">渡假海島專區</span>
+          <i class="fa-solid fa-umbrella-beach"></i> <span data-i18n="tabIsland">渡假海島專區</span>
         </button>
       </div>
 
@@ -205,9 +207,10 @@
           <span data-i18n="navSpot">景點導覽</span>
         </button>
         <button data-maintab="news" id="tab-btn-news" class="main-tab-pill py-1.5 rounded-lg text-center transition flex items-center justify-center gap-1 hover:text-white">
-        <i class="fa-solid fa-newspaper text-[11px]"></i>
-        <span data-i18n="navNews">城市動態</span>
-      </button>
+          <i class="fa-solid fa-newspaper text-[11px]"></i>
+          <span data-i18n="navNews">城市動態</span>
+        </button>
+      </div>
     </div>
 
     <!-- 第六列：子分類標籤過濾列 -->
@@ -331,67 +334,11 @@
     };
 
     // Google Sheet Master Data 暫存
-let masterData = {
-  bigVPicks: [],
-  attractions: [],
-  promotions: []
-};
-
-/**
- * 合併餐廳資料：以 BigV_Picks 為最高權限白名單，徹底防重複
- */
-function mergeRestaurantsWithBigV(originalList = [], bigVPicks = []) {
-  const bigVMap = new Map();
-  // 建立大V白名單字典
-  bigVPicks.forEach(item => {
-    if (item.id) {
-      bigVMap.set(item.id.toLowerCase().trim(), item);
-    }
-  });
-
-  const mergedMap = new Map();
-
-  // 1. 先處理一般資料庫/現有清單
-  originalList.forEach(item => {
-    const key = (item.id || '').toLowerCase().trim();
-    if (!key) return;
-
-    if (bigVMap.has(key)) {
-      // 命中大V白名單：特權覆蓋融合，絕不新增第二筆
-      const bigVItem = bigVMap.get(key);
-      mergedMap.set(key, {
-        ...item,
-        ...bigVItem,
-        isBigV: true,
-        rating: item.rating || 4.9,
-        reviews_count: item.reviews_count || 100
-      });
-      bigVMap.delete(key);
-    } else {
-      // 一般餐廳：嚴禁賦予黑金標章
-      mergedMap.set(key, {
-        ...item,
-        isBigV: false
-      });
-    }
-  });
-
-  // 2. 將只存在於 Google Sheet、尚未存在於一般資料庫的大V私房名店加入
-  bigVMap.forEach((bigVItem, key) => {
-    mergedMap.set(key, {
-      ...bigVItem,
-      isBigV: true,
-      rating: 5.0,
-      reviews_count: 50
-    });
-  });
-
-  // 3. 轉回陣列，並以大V站長嚴選最高優先度排序 (置頂)
-  const result = Array.from(mergedMap.values());
-  result.sort((a, b) => (b.isBigV ? 1 : 0) - (a.isBigV ? 1 : 0));
-
-  return result;
-}
+    let masterData = {
+      bigVPicks: [],
+      attractions: [],
+      promotions: []
+    };
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
@@ -404,16 +351,16 @@ function mergeRestaurantsWithBigV(originalList = [], bigVPicks = []) {
     // 嚴格北至南地理設定與維度定義
     const REGION_CONFIG = {
       cities: [
-        { id: 'manila', name: '馬尼拉', fullName: '🏙️ 馬尼拉 (Metro Manila)', lat: 14.5995, lng: 120.9842 },
-        { id: 'cebu', name: '宿霧', fullName: '🌊 宿霧 (Cebu)', lat: 10.3157, lng: 123.8854 },
-        { id: 'davao', name: '達沃', fullName: '🌺 達沃市 (Davao City)', lat: 7.0731, lng: 125.6128 }
+        { id: 'manila', name: '馬尼拉', name_en: 'Manila', fullName: '🏙️ 馬尼拉 (Metro Manila)', lat: 14.5995, lng: 120.9842 },
+        { id: 'cebu', name: '宿霧', name_en: 'Cebu', fullName: '🌊 宿霧 (Cebu)', lat: 10.3157, lng: 123.8854 },
+        { id: 'davao', name: '達沃', name_en: 'Davao', fullName: '🌺 達沃市 (Davao City)', lat: 7.0731, lng: 125.6128 }
       ],
       islands: [
-        { id: 'boracay', name: '長灘島', fullName: '🏖️ 長灘島 (Boracay)', lat: 11.9674, lng: 121.9248 },
-        { id: 'palawan', name: '巴拉望', fullName: '🏝️ 巴拉望 (Palawan)', lat: 11.1800, lng: 119.3900 },
-        { id: 'bohol', name: '薄荷島', fullName: '🍫 薄荷島 (Bohol)', lat: 9.6444, lng: 123.8550 },
-        { id: 'siargao', name: '錫亞高島', fullName: '🏄‍♂️ 錫亞高島 (Siargao)', lat: 9.7833, lng: 126.1500 },
-        { id: 'samal', name: '薩馬爾島', fullName: '🌴 薩馬爾島 (Samal Island)', lat: 7.0800, lng: 125.7100 }
+        { id: 'boracay', name: '長灘島', name_en: 'Boracay', fullName: '🏖️ 長灘島 (Boracay)', lat: 11.9674, lng: 121.9248 },
+        { id: 'palawan', name: '巴拉望', name_en: 'Palawan', fullName: '🏝️ 巴拉望 (Palawan)', lat: 11.1800, lng: 119.3900 },
+        { id: 'bohol', name: '薄荷島', name_en: 'Bohol', fullName: '🍫 薄荷島 (Bohol)', lat: 9.6444, lng: 123.8550 },
+        { id: 'siargao', name: '錫亞高島', name_en: 'Siargao', fullName: '🏄‍♂️ 錫亞高島 (Siargao)', lat: 9.7833, lng: 126.1500 },
+        { id: 'samal', name: '薩馬爾島', name_en: 'Samal', fullName: '🌴 薩馬爾島 (Samal Island)', lat: 7.0800, lng: 125.7100 }
       ]
     };
 
@@ -459,7 +406,7 @@ function mergeRestaurantsWithBigV(originalList = [], bigVPicks = []) {
       ]
     };
 
-    // 分類預設圖庫池（已將可能造成誤導的吉隆坡雙子星、大床等全部換為菲律賓實景圖）
+    // 分類預設圖庫池
     const PHOTO_POOLS = {
       japanese_korean: [
         "https://images.unsplash.com/photo-1579871494447-9811cf80d66c?w=800&auto=format&fit=crop",
@@ -521,6 +468,7 @@ function mergeRestaurantsWithBigV(originalList = [], bigVPicks = []) {
     let currentMainTab = sessionStorage.getItem('ph_nav_tab') || 'map';
     let currentSubFilter = sessionStorage.getItem('ph_nav_sub') || 'all';
     let currentSearchQuery = '';
+    let currentLang = localStorage.getItem('ph_app_lang') || 'zh-TW';
 
     if (currentDimension === 'cities' && !REGION_CONFIG.cities.some(c => c.id === currentCity)) {
       currentCity = 'davao';
@@ -687,7 +635,7 @@ function mergeRestaurantsWithBigV(originalList = [], bigVPicks = []) {
       if (!val) return '';
       if (typeof val === 'string') return val;
       if (typeof val === 'object') {
-        return val['zh-TW'] || val['zh'] || val['en'] || val['tl'] || Object.values(val)[0] || '';
+        return val[currentLang] || val['zh-TW'] || val['zh'] || val['en'] || val['tl'] || Object.values(val)[0] || '';
       }
       return String(val);
     }
@@ -727,9 +675,123 @@ function mergeRestaurantsWithBigV(originalList = [], bigVPicks = []) {
       document.getElementById('auth-btn-text').innerText = user ? (user.displayName ? user.displayName.split(' ')[0] : '會員') : '登入';
     });
 
-  // 資料抓取與核心業務邏輯 (已整合 Google Sheet Master Database)
+    // 多語系字典定義
+    const I18N_DICT = {
+      'zh-TW': {
+        searchPlaceholder: '搜尋燒肉、火鍋、景點、Villa、飯店...',
+        shareBtn: '分享',
+        tabMetro: '都會生活圈',
+        tabIsland: '渡假海島專區',
+        navFood: '美食饗宴',
+        navSpot: '景點導覽',
+        navNews: '城市動態',
+        navFoodIsland: '美食/度假',
+        filterAll: '全部推薦',
+        filterAllSpot: '全部景點',
+        filterAllNews: '全部動態',
+        btnGrab: 'Grab外送',
+        btnCall: '撥打電話',
+        btnNav: '導航地圖',
+        badgeCurated: '👑 站長私房嚴選',
+        mustTryBadge: '必點',
+        curatedNotePrefix: '站長私房點評：',
+        googleTopNotePrefix: '饕客點評：',
+        slideHint: '👈 左右滑動',
+        addressEmpty: '地址收集中',
+        phoneEmpty: '暫無電話',
+        noResult: '目前暫無對應項目',
+        noResultSub: '我們正為您持續親訪收錄更多精選！',
+        toastSwitch: '已切換語言：',
+        spotsCountUnit: '個景點',
+        placesCountUnit: '個地點',
+        newsCountUnit: '則動態',
+        city_manila: '馬尼拉',
+        city_cebu: '宿霧',
+        city_davao: '達沃',
+        city_boracay: '長灘島',
+        city_palawan: '巴拉望',
+        city_bohol: '薄荷島',
+        city_siargao: '錫亞高島',
+        city_samal: '薩馬爾島'
+      },
+      'en': {
+        searchPlaceholder: 'Search BBQ, hotpot, spots, villas, hotels...',
+        shareBtn: 'Share',
+        tabMetro: 'Metro Area',
+        tabIsland: 'Islands',
+        navFood: 'Food & Eats',
+        navSpot: 'Attractions',
+        navNews: 'City News',
+        navFoodIsland: 'Food/Resort',
+        filterAll: 'All Recommendations',
+        filterAllSpot: 'All Spots',
+        filterAllNews: 'All Updates',
+        btnGrab: 'GrabFood',
+        btnCall: 'Call Now',
+        btnNav: 'Directions',
+        badgeCurated: '👑 Curator Pick',
+        mustTryBadge: 'Must Try',
+        curatedNotePrefix: "Curator's Note: ",
+        googleTopNotePrefix: 'Review: ',
+        slideHint: '👈 Swipe',
+        addressEmpty: 'Address updating',
+        phoneEmpty: 'No phone available',
+        noResult: 'No spots available',
+        noResultSub: 'More curated spots coming soon!',
+        toastSwitch: 'Language changed: ',
+        spotsCountUnit: 'spots',
+        placesCountUnit: 'places',
+        newsCountUnit: 'updates',
+        city_manila: 'Manila',
+        city_cebu: 'Cebu',
+        city_davao: 'Davao',
+        city_boracay: 'Boracay',
+        city_palawan: 'Palawan',
+        city_bohol: 'Bohol',
+        city_siargao: 'Siargao',
+        city_samal: 'Samal'
+      },
+      'tl': {
+        searchPlaceholder: 'Maghanap ng pagkain, pasyalan, hotel...',
+        shareBtn: 'Ibahagi',
+        tabMetro: 'Kalunsuran',
+        tabIsland: 'Mga Isla',
+        navFood: 'Mga Pagkain',
+        navSpot: 'Pasyalan',
+        navNews: 'Balita',
+        navFoodIsland: 'Kainan/Resort',
+        filterAll: 'Lahat Rekomendado',
+        filterAllSpot: 'Lahat ng Pasyalan',
+        filterAllNews: 'Lahat ng Balita',
+        btnGrab: 'GrabFood',
+        btnCall: 'Tawagan',
+        btnNav: 'Direksyon',
+        badgeCurated: '👑 Pili ng Admin',
+        mustTryBadge: 'Subukan',
+        curatedNotePrefix: 'Kumento ng Admin: ',
+        googleTopNotePrefix: 'Komento ng Bisita: ',
+        slideHint: '👈 I-swipe',
+        addressEmpty: 'Ina-update ang address',
+        phoneEmpty: 'Walang numero',
+        noResult: 'Walang nahanap',
+        noResultSub: 'Mas maraming rekomendasyon paparating!',
+        toastSwitch: 'Pinalitan ang wika: ',
+        spotsCountUnit: 'pasyalan',
+        placesCountUnit: 'lugar',
+        newsCountUnit: 'balita',
+        city_manila: 'Manila',
+        city_cebu: 'Cebu',
+        city_davao: 'Davao',
+        city_boracay: 'Boracay',
+        city_palawan: 'Palawan',
+        city_bohol: 'Bohol',
+        city_siargao: 'Siargao',
+        city_samal: 'Samal'
+      }
+    };
+
+    // 資料抓取與核心業務邏輯
     async function fetchData() {
-      // 自動校正所有路徑中的空格問題與預設保底
       const fixImg = (url) => {
         if (!url) return '';
         return String(url)
@@ -738,7 +800,6 @@ function mergeRestaurantsWithBigV(originalList = [], bigVPicks = []) {
           .trim();
       };
       try {
-        // 1. 同步載入 Google Sheet 三合一資料庫
         let sheetMaster = { bigVPicks: [], attractions: [], promotions: [] };
         try {
           sheetMaster = await loadMasterDatabase();
@@ -746,25 +807,20 @@ function mergeRestaurantsWithBigV(originalList = [], bigVPicks = []) {
           console.warn("讀取 Google Sheet 失敗，降級使用本地/Firebase 資料:", e);
         }
 
-        // 2. 抓取 Firebase 一般餐廳資料
         const resSnap = await getDocs(collection(db, "restaurants"));
         const rawList = [];
         resSnap.forEach(d => rawList.push({ id: d.id, ...d.data() }));
 
         const mergedMap = new Map();
-
-        // 建立 Google Sheet 大V白名單字典 (以 id 與名稱小寫作為雙重索引)
         const bigVLookup = new Map();
         sheetMaster.bigVPicks.forEach(v => {
           if (v.id) bigVLookup.set(v.id.toLowerCase().trim(), v);
         });
 
-        // 處理 Firebase 餐廳資料
         rawList.forEach(item => {
           const nameAll = (safeStr(item.name) + ' ' + safeStr(item.name_en) + ' ' + safeStr(item.id)).toLowerCase();
           let key = item.id;
 
-          // 檢查是否命中 Google Sheet 大V白名單
           let matchedBigV = null;
           for (let [bId, bItem] of bigVLookup.entries()) {
             const cityMatch = !bItem.city || (item.city && item.city.toLowerCase().trim() === bItem.city.toLowerCase().trim());
@@ -775,7 +831,6 @@ function mergeRestaurantsWithBigV(originalList = [], bigVPicks = []) {
           }
 
           if (matchedBigV) {
-            // 👑 命中大V白名單：由 Google Sheet 內容特權覆蓋，絕不重複
             key = matchedBigV.id;
             item.id = matchedBigV.id;
             item.name = matchedBigV.name;
@@ -789,7 +844,7 @@ function mergeRestaurantsWithBigV(originalList = [], bigVPicks = []) {
             if (matchedBigV.image_url) {
               item.images = [fixImg(matchedBigV.image_url)];
             }
-            bigVLookup.delete(matchedBigV.id.toLowerCase().trim()); // 標記已處理
+            bigVLookup.delete(matchedBigV.id.toLowerCase().trim());
           } else {
             item.isCurated = false;
             delete item.curatedBadge;
@@ -820,7 +875,6 @@ function mergeRestaurantsWithBigV(originalList = [], bigVPicks = []) {
           }
         });
 
-        // 3. 將存在於 Google Sheet 但尚未在 Firebase 的大V私房店直接注入
         bigVLookup.forEach(bigVItem => {
           mergedMap.set(bigVItem.id, {
             id: bigVItem.id,
@@ -838,7 +892,6 @@ function mergeRestaurantsWithBigV(originalList = [], bigVPicks = []) {
           });
         });
 
-        // 宿霧與錫亞高名店注入
         const cebuMott32 = {
           id: "cebu_mott_32",
           city: "cebu",
@@ -884,7 +937,6 @@ function mergeRestaurantsWithBigV(originalList = [], bigVPicks = []) {
         if (!mergedMap.has(cebuGoodLuck.id)) mergedMap.set(cebuGoodLuck.id, cebuGoodLuck);
         if (!mergedMap.has(siaKermit.id)) mergedMap.set(siaKermit.id, siaKermit);
 
-        // 三級榮譽篩選與排序（大V私房嚴選置頂）
         allRestaurants = Array.from(mergedMap.values())
           .filter(item => {
             const r = item.googleRating || 0;
@@ -910,7 +962,6 @@ function mergeRestaurantsWithBigV(originalList = [], bigVPicks = []) {
             return (b.googleRating || 0) - (a.googleRating || 0);
           });
 
-        // 4. 景點資料庫：優先採用 Google Sheet 景點表
         if (sheetMaster.attractions && sheetMaster.attractions.length > 0) {
           const sheetAtts = sheetMaster.attractions.map(att => ({
             id: att.id,
@@ -931,7 +982,6 @@ function mergeRestaurantsWithBigV(originalList = [], bigVPicks = []) {
           allAttractions = ISLAND_ATTRACTIONS_FALLBACK;
         }
 
-        // 5. 城市動態 / 專屬優惠：優先採用 Google Sheet 優惠表
         if (sheetMaster.promotions && sheetMaster.promotions.length > 0) {
           allNews = sheetMaster.promotions.map(promo => ({
             id: promo.id,
@@ -955,7 +1005,7 @@ function mergeRestaurantsWithBigV(originalList = [], bigVPicks = []) {
         console.error("載入失敗:", err);
       }
 
-      renderUI();
+      updateUiLanguage();
     }
 
     function isCityMatch(item, targetCity) {
@@ -974,7 +1024,7 @@ function mergeRestaurantsWithBigV(originalList = [], bigVPicks = []) {
       return c === targetCity || a.includes(targetCity);
     }
 
-    // UI 渲染
+    // UI 渲染元件參考
     const typeCityBtn = document.getElementById('typeCityBtn');
     const typeIslandBtn = document.getElementById('typeIslandBtn');
     const regionPillsNav = document.getElementById('regionPillsNav');
@@ -998,18 +1048,18 @@ function mergeRestaurantsWithBigV(originalList = [], bigVPicks = []) {
       }
 
       regionPillsNav.innerHTML = list.map(r => {
-  const active = r.id === currentCity;
-  const cityName = (typeof I18N_DICT !== 'undefined' && I18N_DICT[currentLang] && I18N_DICT[currentLang]['city_' + r.id]) 
-    ? I18N_DICT[currentLang]['city_' + r.id] 
-    : (r.name_en && currentLang === 'en' ? r.name_en : r.name);
-  return `
-    <button data-city="${r.id}" class="region-pill px-3.5 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-all duration-200 ${
-      active ? 'bg-slate-900 text-white shadow-md scale-105' : 'bg-orange-800/40 text-amber-100 hover:bg-orange-800/80'
-    }">
-      ${cityName}
-    </button>
-  `;
-}).join('');
+        const active = r.id === currentCity;
+        const cityName = (typeof I18N_DICT !== 'undefined' && I18N_DICT[currentLang] && I18N_DICT[currentLang]['city_' + r.id]) 
+          ? I18N_DICT[currentLang]['city_' + r.id] 
+          : (r.name_en && currentLang === 'en' ? r.name_en : r.name);
+        return `
+          <button data-city="${r.id}" class="region-pill px-3.5 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-all duration-200 ${
+            active ? 'bg-slate-900 text-white shadow-md scale-105' : 'bg-orange-800/40 text-amber-100 hover:bg-orange-800/80'
+          }">
+            ${cityName}
+          </button>
+        `;
+      }).join('');
 
       document.querySelectorAll('.region-pill').forEach(btn => {
         btn.addEventListener('click', () => {
@@ -1041,13 +1091,19 @@ function mergeRestaurantsWithBigV(originalList = [], bigVPicks = []) {
         sessionStorage.setItem('ph_nav_sub', 'all');
       }
 
+      const dict = I18N_DICT[currentLang] || I18N_DICT['zh-TW'];
+
       subFilterContainer.innerHTML = filterList.map(f => {
         const active = f.key === currentSubFilter;
+        let label = f.label;
+        if (f.key === 'all') {
+          label = (currentMainTab === 'attraction') ? dict.filterAllSpot : (currentMainTab === 'news' ? dict.filterAllNews : dict.filterAll);
+        }
         return `
           <button data-subkey="${f.key}" class="sub-pill px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap transition ${
             active ? 'bg-orange-500 text-white shadow-xs font-bold' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
           }">
-            ${f.label}
+            ${label}
           </button>
         `;
       }).join('');
@@ -1063,6 +1119,7 @@ function mergeRestaurantsWithBigV(originalList = [], bigVPicks = []) {
     }
 
     function renderContent() {
+      const dict = I18N_DICT[currentLang] || I18N_DICT['zh-TW'];
       ['map', 'attraction', 'news'].forEach(tab => {
         document.getElementById(`section-${tab}`).classList.toggle('hidden', tab !== currentMainTab);
         const btn = document.getElementById(`tab-btn-${tab}`);
@@ -1073,7 +1130,10 @@ function mergeRestaurantsWithBigV(originalList = [], bigVPicks = []) {
         }
       });
 
-      document.getElementById('tab-label-map').innerText = isIslandMode(currentCity) ? '美食/度假' : '美食饗宴';
+      const mapLabel = document.getElementById('tab-label-map');
+      if (mapLabel) {
+        mapLabel.innerText = isIslandMode(currentCity) ? dict.navFoodIsland : dict.navFood;
+      }
 
       if (currentMainTab === 'map') renderRestaurants();
       if (currentMainTab === 'attraction') renderAttractions();
@@ -1083,6 +1143,7 @@ function mergeRestaurantsWithBigV(originalList = [], bigVPicks = []) {
     function renderRestaurants() {
       const listEl = document.getElementById('restaurant-list');
       document.getElementById('loading').style.display = 'none';
+      const dict = I18N_DICT[currentLang] || I18N_DICT['zh-TW'];
 
       let filtered = allRestaurants.filter(item => {
         const matchC = isCityMatch(item, currentCity);
@@ -1109,23 +1170,24 @@ function mergeRestaurantsWithBigV(originalList = [], bigVPicks = []) {
       }
 
       const curReg = [...REGION_CONFIG.cities, ...REGION_CONFIG.islands].find(r => r.id === currentCity);
-      filterSummaryText.textContent = `${curReg?.name || ''} · ${currentSubFilter === 'all' ? '全部推薦' : currentSubFilter}`;
-      itemCountBadge.textContent = `${filtered.length} 個地點`;
+      const cityName = dict['city_' + currentCity] || curReg?.name || '';
+      filterSummaryText.textContent = `${cityName} · ${currentSubFilter === 'all' ? dict.filterAll : currentSubFilter}`;
+      itemCountBadge.textContent = `${filtered.length} ${dict.placesCountUnit}`;
 
       if (filtered.length === 0) {
         listEl.innerHTML = `
           <div class="bg-white rounded-2xl p-8 text-center border border-slate-200/80 shadow-xs mt-2">
             <i class="fa-solid fa-compass-drafting text-3xl text-slate-300 mb-2"></i>
-            <h4 class="text-xs font-bold text-slate-700">目前暫無對應項目</h4>
-            <p class="text-[11px] text-slate-400 mt-1">我們正為您持續親訪收錄更多精選！</p>
+            <h4 class="text-xs font-bold text-slate-700">${dict.noResult}</h4>
+            <p class="text-[11px] text-slate-400 mt-1">${dict.noResultSub}</p>
           </div>
         `;
         return;
       }
 
       listEl.innerHTML = filtered.map(item => {
-        const name = (typeof item.name === 'object' ? item.name['zh-TW'] : item.name) || item.name_en || '特色名店';
-        const desc = (typeof item.description === 'object' ? item.description['zh-TW'] : item.description) || '暫無詳細介紹。';
+        const name = (currentLang === 'en' && item.name_en) ? item.name_en : (getText(item.name) || item.name_en || '特色名店');
+        const desc = getText(item.description) || '暫無詳細介紹。';
         const isCurated = !!item.isCurated;
         const isGoogleTop = !!item.isGoogleTop;
 
@@ -1155,27 +1217,27 @@ function mergeRestaurantsWithBigV(originalList = [], bigVPicks = []) {
                   </div>
                 `).join('')}
               </div>
-              <span class="absolute top-2.5 right-2.5 bg-neutral-900/60 text-white text-[10px] px-2 py-0.5 rounded-full backdrop-blur-xs pointer-events-none">👈 左右滑動</span>
+              <span class="absolute top-2.5 right-2.5 bg-neutral-900/60 text-white text-[10px] px-2 py-0.5 rounded-full backdrop-blur-xs pointer-events-none">${dict.slideHint}</span>
 
               ${isCurated ? `
                 <div class="absolute top-2.5 left-2.5 bg-neutral-900/95 text-amber-300 text-[11px] font-extrabold px-2.5 py-1 rounded-full shadow-lg flex items-center gap-1.5 border border-amber-400/60 backdrop-blur-md">
-                  <i class="fa-solid fa-crown text-amber-400"></i> ${item.curatedBadge || '站長私房嚴選'}
+                  <i class="fa-solid fa-crown text-amber-400"></i> ${dict.badgeCurated}
                 </div>
               ` : ''}
 
               ${(!isCurated && isGoogleTop) ? `
                 <div class="absolute top-2.5 left-2.5 bg-sky-900/95 text-sky-200 text-[11px] font-extrabold px-2.5 py-1 rounded-full shadow-lg flex items-center gap-1 border border-sky-400/60 backdrop-blur-md">
-                  <i class="fa-solid fa-fire text-amber-300"></i> Google 頂級推薦
+                  <i class="fa-solid fa-fire text-amber-300"></i> Google Top
                 </div>
               ` : ''}
 
               <div class="absolute bottom-2.5 left-2.5 flex items-center gap-1.5">
                 <span class="bg-slate-900/80 backdrop-blur-xs text-white text-[10px] px-2 py-0.5 rounded font-medium">
-                  ${item.city}
+                  ${dict['city_' + item.city] || item.city}
                 </span>
                 ${item.googleRating ? `
                   <span class="bg-amber-500 text-white text-[10px] px-2 py-0.5 rounded font-bold flex items-center gap-0.5 shadow-xs">
-                    <i class="fa-solid fa-star text-[9px]"></i> ${item.googleRating} (${reviewCount}則)
+                    <i class="fa-solid fa-star text-[9px]"></i> ${item.googleRating} (${reviewCount})
                   </span>
                 ` : ''}
               </div>
@@ -1186,20 +1248,20 @@ function mergeRestaurantsWithBigV(originalList = [], bigVPicks = []) {
 
               ${(isCurated && item.curatedNote) ? `
                 <div class="bg-amber-50/90 border-l-3 border-amber-500 p-2.5 rounded-r-lg text-xs text-amber-950 font-medium leading-relaxed mb-2.5">
-                  💡 <b>站長私房點評：</b>${item.curatedNote}
+                  💡 <b>${dict.curatedNotePrefix}</b>${item.curatedNote}
                 </div>
               ` : ''}
               
               ${(isCurated && item.mustTry) ? `
-            <div class="flex items-start gap-1.5 p-2 mb-2.5 rounded-lg bg-amber-50/60 border border-amber-200/80 text-xs text-amber-900">
-              <span class="shrink-0 px-1.5 py-0.5 rounded bg-amber-500 text-white font-bold text-[10px] leading-none mt-0.5">必點</span>
-              <span class="font-medium leading-tight">${item.mustTry}</span>
-            </div>
-          ` : ''}
+                <div class="flex items-start gap-1.5 p-2 mb-2.5 rounded-lg bg-amber-50/60 border border-amber-200/80 text-xs text-amber-900">
+                  <span class="shrink-0 px-1.5 py-0.5 rounded bg-amber-500 text-white font-bold text-[10px] leading-none mt-0.5">${dict.mustTryBadge}</span>
+                  <span class="font-medium leading-tight">${item.mustTry}</span>
+                </div>
+              ` : ''}
 
               ${(!isCurated && isGoogleTop && item.googleTopNote) ? `
                 <div class="bg-sky-50/90 border-l-3 border-sky-500 p-2.5 rounded-r-lg text-xs text-sky-950 font-medium leading-relaxed mb-2.5">
-                  💬 <b>饕客點評：</b>${item.googleTopNote}
+                  💬 <b>${dict.googleTopNotePrefix}</b>${item.googleTopNote}
                 </div>
               ` : ''}
 
@@ -1210,28 +1272,27 @@ function mergeRestaurantsWithBigV(originalList = [], bigVPicks = []) {
               <div class="space-y-1 text-[11px] text-slate-500 border-t border-slate-100 pt-2 mb-3 font-medium">
                 <p class="flex items-center gap-1.5 truncate">
                   <i class="fa-solid fa-location-dot text-orange-500 w-3"></i>
-                  <span class="truncate">${item.address || '地址收錄中'}</span>
+                  <span class="truncate">${item.address || dict.addressEmpty}</span>
                 </p>
                 <p class="flex items-center gap-1.5 font-mono">
                   <i class="fa-solid fa-phone text-slate-400 w-3"></i>
-                  <span>${item.phone || '暫無電話'}</span>
+                  <span>${item.phone || dict.phoneEmpty}</span>
                 </p>
               </div>
 
-              <!-- 按鈕隔離：純餐飲有 Grab，飯店/住宿無 Grab -->
               <div class="mt-auto grid ${(!isIslandMode(currentCity) && isFoodOnly) ? 'grid-cols-3' : 'grid-cols-2'} gap-1.5 pt-1 border-t border-slate-100">
                 ${(!isIslandMode(currentCity) && isFoodOnly) ? `
                   <a href="https://food.grab.com/ph/en/restaurants?search=${encodeURIComponent(name)}" target="_blank" rel="noopener noreferrer"
                      class="bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white text-[11px] font-bold py-2 rounded-xl text-center flex items-center justify-center gap-1 shadow-xs transition">
-                    <i class="fa-solid fa-motorcycle"></i> Grab外送
+                    <i class="fa-solid fa-motorcycle"></i> ${dict.btnGrab}
                   </a>
                 ` : ''}
                 <a href="tel:${item.phone || ''}" class="bg-slate-100 hover:bg-slate-200 active:scale-95 text-slate-700 text-[11px] font-bold py-2 rounded-xl text-center flex items-center justify-center gap-1 transition">
-                  <i class="fa-solid fa-phone"></i> 撥打電話
+                  <i class="fa-solid fa-phone"></i> ${dict.btnCall}
                 </a>
                 <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(name + ' ' + (item.address || ''))}" target="_blank" rel="noopener noreferrer"
                    class="bg-orange-500 hover:bg-orange-600 active:scale-95 text-white text-[11px] font-bold py-2 rounded-xl text-center flex items-center justify-center gap-1 shadow-xs transition">
-                  <i class="fa-solid fa-location-arrow"></i> 導航地圖
+                  <i class="fa-solid fa-location-arrow"></i> ${dict.btnNav}
                 </a>
               </div>
             </div>
@@ -1240,9 +1301,9 @@ function mergeRestaurantsWithBigV(originalList = [], bigVPicks = []) {
       }).join('');
     }
 
-    // 景點渲染：穿透式比對 + 官方永久實景白名單
     function renderAttractions() {
       const listEl = document.getElementById('attraction-list');
+      const dict = I18N_DICT[currentLang] || I18N_DICT['zh-TW'];
       let filtered = allAttractions.filter(item => {
         const matchC = isCityMatch(item, currentCity);
         let matchCat = true;
@@ -1258,44 +1319,29 @@ function mergeRestaurantsWithBigV(originalList = [], bigVPicks = []) {
       }
 
       const curReg = [...REGION_CONFIG.cities, ...REGION_CONFIG.islands].find(r => r.id === currentCity);
-      filterSummaryText.textContent = `${curReg?.name || ''} · 景點導覽`;
-      itemCountBadge.textContent = `${filtered.length} 個景點`;
+      const cityName = dict['city_' + currentCity] || curReg?.name || '';
+      filterSummaryText.textContent = `${cityName} · ${dict.navSpot}`;
+      itemCountBadge.textContent = `${filtered.length} ${dict.spotsCountUnit}`;
 
       if (filtered.length === 0) {
         listEl.innerHTML = `
           <div class="bg-white rounded-2xl p-8 text-center border border-slate-200/80 shadow-xs mt-2">
             <i class="fa-solid fa-camera-retro text-3xl text-slate-300 mb-2"></i>
-            <h4 class="text-xs font-bold text-slate-700">該分類暫無景點資料</h4>
-            <p class="text-[11px] text-slate-400 mt-1">請切換至「全部」或其他子標籤瀏覽！</p>
+            <h4 class="text-xs font-bold text-slate-700">${dict.noResult}</h4>
+            <p class="text-[11px] text-slate-400 mt-1">${dict.noResultSub}</p>
           </div>
         `;
         return;
       }
 
-      // 官方實景圖強制字典（全數採用全球開放 CDN 直連，永不破圖、秒級載入）
       const LANDMARK_OFFICIAL_PHOTOS = {
-        // 1. 達沃聖佩德羅主教座堂：真實石造大教堂外觀
         san_pedro: "https://images.unsplash.com/photo-1548625361-19597793d5f9?auto=format&fit=crop&w=800&q=80",
-        
-        // 2. 馬尼拉西班牙王城區：聖地牙哥堡石造古城門
         intramuros: "https://images.unsplash.com/photo-1518509562904-e7ef99cdcc86?auto=format&fit=crop&w=800&q=80",
-        
-        // 3. 宿霧麥哲倫十字架：歷史八角紅瓦石亭
         magellan: "https://images.unsplash.com/photo-1596422846543-75c6fc197f07?auto=format&fit=crop&w=800&q=80",
-        
-        // 4. 宿霧聖嬰聖殿：百年巴洛克石造大教堂外觀
         santo_nino: "https://images.unsplash.com/photo-1544077960-604201fe74bc?auto=format&fit=crop&w=800&q=80",
-        
-        // 5. Okada Manila：璀璨五星級綜合度假城夜景建築
         okada: "https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=800&q=80",
-        
-        // 6. Solaire Resort：晨麗娛樂城海濱奢華外觀建築
         solaire: "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=800&q=80",
-        
-        // 7. City of Dreams Manila：新濠天地指標性現代奢華建築
         dreams: "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=800&q=80",
-        
-        // 8. 宿霧 NUSTAR：海濱娛樂度假城
         nustar: "https://images.unsplash.com/photo-1571896349842-33c89424de2d?auto=format&fit=crop&w=800&q=80"
       };
 
@@ -1304,7 +1350,6 @@ function mergeRestaurantsWithBigV(originalList = [], bigVPicks = []) {
         const name = getText(rawName) || item.id || '景點地標';
         const desc = getText(item.description || item.desc) || '菲律賓熱門推薦地標。';
 
-        // 打平所有可能欄位以進行比對
         const fullDump = (
           JSON.stringify(item) + ' ' + 
           name + ' ' + 
@@ -1339,7 +1384,7 @@ function mergeRestaurantsWithBigV(originalList = [], bigVPicks = []) {
               <img src="${img}" alt="${name}" class="w-full h-full object-cover" />
               <div class="absolute bottom-2.5 left-2.5 flex items-center gap-1.5">
                 <span class="bg-slate-900/80 backdrop-blur-xs text-white text-[10px] px-2 py-0.5 rounded font-medium">
-                  ${item.city}
+                  ${dict['city_' + item.city] || item.city}
                 </span>
                 ${item.googleRating ? `
                   <span class="bg-amber-500 text-white text-[10px] px-2 py-0.5 rounded font-bold shadow-xs">
@@ -1356,20 +1401,19 @@ function mergeRestaurantsWithBigV(originalList = [], bigVPicks = []) {
               <div class="space-y-1 text-[11px] text-slate-500 border-t border-slate-100 pt-2 mb-3">
                 <p class="flex items-center gap-1.5 truncate">
                   <i class="fa-solid fa-location-dot text-orange-500 w-3"></i>
-                  <span class="truncate">${item.address || '地址收錄中'}</span>
+                  <span class="truncate">${item.address || dict.addressEmpty}</span>
                 </p>
               </div>
 
-              <!-- 景點按鈕嚴格排除 Grab 外送 -->
               <div class="mt-auto grid ${item.phone ? 'grid-cols-2' : 'grid-cols-1'} gap-1.5 pt-1 border-t border-slate-100">
                 ${item.phone ? `
                   <a href="tel:${item.phone}" class="bg-slate-100 hover:bg-slate-200 active:scale-95 text-slate-700 text-[11px] font-bold py-2 rounded-xl text-center flex items-center justify-center gap-1 transition">
-                    <i class="fa-solid fa-phone"></i> 撥打電話
+                    <i class="fa-solid fa-phone"></i> ${dict.btnCall}
                   </a>
                 ` : ''}
                 <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(name + ' ' + (item.address || ''))}" target="_blank" rel="noopener noreferrer"
                    class="bg-orange-500 hover:bg-orange-600 active:scale-95 text-white text-[11px] font-bold py-2 rounded-xl text-center flex items-center justify-center gap-1 shadow-xs transition">
-                  <i class="fa-solid fa-location-arrow"></i> 導航地圖
+                  <i class="fa-solid fa-location-arrow"></i> ${dict.btnNav}
                 </a>
               </div>
             </div>
@@ -1380,6 +1424,7 @@ function mergeRestaurantsWithBigV(originalList = [], bigVPicks = []) {
 
     function renderNews() {
       const listEl = document.getElementById('news-list');
+      const dict = I18N_DICT[currentLang] || I18N_DICT['zh-TW'];
       let filtered = allNews.filter(item => {
         const matchC = (currentCity === 'all') || (item.city === 'all') || isCityMatch(item, currentCity);
         const matchS = (currentSubFilter === 'all') || (item.type === currentSubFilter);
@@ -1391,15 +1436,15 @@ function mergeRestaurantsWithBigV(originalList = [], bigVPicks = []) {
         filtered = filtered.filter(item => (safeStr(getText(item.title)) + ' ' + safeStr(getText(item.description))).includes(q));
       }
 
-      filterSummaryText.textContent = `城市動態 · 即時情報`;
-      itemCountBadge.textContent = `${filtered.length} 則動態`;
+      filterSummaryText.textContent = `${dict.navNews} · 即時情報`;
+      itemCountBadge.textContent = `${filtered.length} ${dict.newsCountUnit}`;
 
       if (filtered.length === 0) {
         listEl.innerHTML = `
           <div class="bg-white rounded-2xl p-8 text-center border border-slate-200/80 shadow-xs mt-2">
             <i class="fa-solid fa-newspaper text-3xl text-slate-300 mb-2"></i>
-            <h4 class="text-xs font-bold text-slate-700">目前無符合動態</h4>
-            <p class="text-[11px] text-slate-400 mt-1">最新即時活動與折扣情報即將更新！</p>
+            <h4 class="text-xs font-bold text-slate-700">${dict.noResult}</h4>
+            <p class="text-[11px] text-slate-400 mt-1">${dict.noResultSub}</p>
           </div>
         `;
         return;
@@ -1430,7 +1475,7 @@ function mergeRestaurantsWithBigV(originalList = [], bigVPicks = []) {
               <img src="${img}" alt="News" class="w-full h-full object-cover" />
               <div class="absolute bottom-2.5 left-2.5 flex items-center gap-1.5">
                 <span class="bg-slate-900/80 backdrop-blur-xs text-white text-[10px] px-2 py-0.5 rounded font-medium">
-                  ${item.city || '全菲'}
+                  ${dict['city_' + item.city] || item.city || '全菲'}
                 </span>
                 <span class="px-2 py-0.5 rounded text-[10px] font-bold ${
                   isGrabEvent ? 'bg-emerald-100 text-emerald-800 border border-emerald-300' : 'bg-rose-100 text-rose-800 border border-rose-300'
@@ -1460,7 +1505,39 @@ function mergeRestaurantsWithBigV(originalList = [], bigVPicks = []) {
       renderContent();
     }
 
+    // 多語系全域切換函式
+    function updateUiLanguage() {
+      document.documentElement.lang = currentLang;
+      const dict = I18N_DICT[currentLang] || I18N_DICT['zh-TW'];
+      
+      const searchInput = document.getElementById('search-input');
+      if (searchInput) searchInput.placeholder = dict.searchPlaceholder;
+
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (dict[key]) {
+          el.textContent = dict[key];
+        }
+      });
+
+      renderUI();
+    }
+
+    window.updateUiLanguage = updateUiLanguage;
+
     // 事件綁定
+    const langSelect = document.getElementById('lang-select');
+    if (langSelect) {
+      langSelect.value = currentLang;
+      langSelect.addEventListener('change', (e) => {
+        currentLang = e.target.value;
+        localStorage.setItem('ph_app_lang', currentLang);
+        updateUiLanguage();
+        const dict = I18N_DICT[currentLang] || I18N_DICT['zh-TW'];
+        showToast(`${dict.toastSwitch}${e.target.options[e.target.selectedIndex].text}`);
+      });
+    }
+
     typeCityBtn.addEventListener('click', () => {
       currentDimension = 'cities';
       sessionStorage.setItem('ph_dim', 'cities');
@@ -1507,95 +1584,6 @@ function mergeRestaurantsWithBigV(originalList = [], bigVPicks = []) {
       searchClearBtn.classList.add('hidden');
       renderContent();
     });
-
-    let currentLang = 'zh-TW';
-
-const I18N_DICT = {
-  'zh-TW': {
-    searchPlaceholder: '搜尋燒肉、火鍋、景點、Villa、飯店...',
-    filterAll: '全部推薦',
-    btnGrab: 'Grab外送',
-    btnCall: '撥打電話',
-    btnNav: '導航地圖',
-    badgeCurated: '👑 站長私房嚴選',
-    mustTry: '必點',
-    curatedComment: '站長私房點評：',
-    googleComment: '饕客點評：',
-    slideHint: '👈 左右滑動',
-    addressEmpty: '地址收集中',
-    phoneEmpty: '暫無電話',
-    noResult: '目前暫無對應項目',
-    noResultSub: '我們正為您持續親訪收錄更多精選！',
-    toastSwitch: '已切換語言：'
-  },
-  'en': {
-    searchPlaceholder: 'Search BBQ, hotpot, spots, villas, hotels...',
-    filterAll: 'All Spots',
-    btnGrab: 'GrabFood',
-    btnCall: 'Call Now',
-    btnNav: 'Navigate',
-    badgeCurated: '👑 Curator Pick',
-    mustTry: 'Must Try',
-    curatedComment: "Curator's Note: ",
-    googleComment: 'Review: ',
-    slideHint: '👈 Swipe to view',
-    addressEmpty: 'Address updating',
-    phoneEmpty: 'No phone available',
-    noResult: 'No spots available',
-    noResultSub: 'More curated spots coming soon!',
-    toastSwitch: 'Language changed: '
-  },
-  'tl': {
-    searchPlaceholder: 'Maghanap ng pagkain, pasyalan, hotel...',
-    filterAll: 'Lahat',
-    btnGrab: 'GrabFood',
-    btnCall: 'Tawagan',
-    btnNav: 'Direksyon',
-    badgeCurated: '👑 Pili ng Admin',
-    mustTry: 'Subukan',
-    curatedComment: 'Kumento ng Admin: ',
-    googleComment: 'Komento ng Bisita: ',
-    slideHint: '👈 I-swipe',
-    addressEmpty: 'Ina-update ang address',
-    phoneEmpty: 'Walang numero',
-    noResult: 'Walang nahanap',
-    noResultSub: 'Mas maraming rekomendasyon paparating!',
-    toastSwitch: 'Pinalitan ang wika: '
-  }
-};
-
-function updateUiLanguage() {
-  document.documentElement.lang = currentLang;
-  const dict = I18N_DICT[currentLang] || I18N_DICT['zh-TW'];
-  
-  // 1. 搜尋欄 placeholder
-  const searchInput = document.getElementById('search-input');
-  if (searchInput) searchInput.placeholder = dict.searchPlaceholder;
-
-  // 2. 自動更新畫面上所有帶有 data-i18n 屬性的文字
-  document.querySelectorAll('[data-i18n]').forEach(el => {
-    const key = el.getAttribute('data-i18n');
-    if (dict[key]) {
-      el.textContent = dict[key];
-    }
-  });
-
-  // 3. 重新繪製城市標籤、分類標籤與卡片清單
-  if (typeof renderRegionPills === 'function') renderRegionPills();
-  if (typeof renderSubFilterBar === 'function') renderSubFilterBar();
-  if (typeof renderContent === 'function') {
-    renderContent();
-  } else if (typeof renderRestaurants === 'function') {
-    renderRestaurants();
-  }
-}
-
-document.getElementById('lang-select').addEventListener('change', (e) => {
-  currentLang = e.target.value;
-  const dict = I18N_DICT[currentLang] || I18N_DICT['zh-TW'];
-  updateUiLanguage();
-  showToast(`${dict.toastSwitch}${e.target.options[e.target.selectedIndex].text}`);
-});
 
     const authModal = document.getElementById('auth-modal');
     document.getElementById('auth-state-btn').addEventListener('click', () => {
