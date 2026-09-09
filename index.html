@@ -730,7 +730,8 @@ function mergeRestaurantsWithBigV(originalList = [], bigVPicks = []) {
           // 檢查是否命中 Google Sheet 大V白名單
           let matchedBigV = null;
           for (let [bId, bItem] of bigVLookup.entries()) {
-            if (key.toLowerCase().trim() === bId || (bItem.name && nameAll.includes(bItem.name.toLowerCase().trim().split(' ')[0]))) {
+            const cityMatch = !bItem.city || (item.city && item.city.toLowerCase().trim() === bItem.city.toLowerCase().trim());
+            if (key.toLowerCase().trim() === bId || (cityMatch && bItem.name && nameAll.includes(bItem.name.toLowerCase().trim()))) {
               matchedBigV = bItem;
               break;
             }
@@ -746,6 +747,8 @@ function mergeRestaurantsWithBigV(originalList = [], bigVPicks = []) {
             item.curatedNote = matchedBigV.big_v_comment || "站長每週必訪私房推薦！";
             item.mustTry = matchedBigV.must_try || "";
             item.city = matchedBigV.city;
+            if (matchedBigV.address) item.address = matchedBigV.address;
+            if (matchedBigV.nav_link) item.nav_link = matchedBigV.nav_link;
             if (matchedBigV.image_url) {
               item.images = [fixImg(matchedBigV.image_url)];
             }
