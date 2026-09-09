@@ -8,7 +8,7 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
-  <meta name="app-version" content="20260909-v12.0-all-38-spots-mapped" />
+  <meta name="app-version" content="20260909-v13.0-google-top-and-38-unique-photos" />
   <meta name="theme-color" content="#ea580c" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -144,7 +144,7 @@
               <!-- 瀏覽人數膠囊 -->
               <div class="bg-white/25 border border-white/40 rounded-full px-2 py-0.5 text-[9px] sm:text-[10px] font-bold text-white flex items-center gap-1 shadow-inner flex-shrink-0">
                 <i class="fa-solid fa-fire text-amber-300 text-[10px]"></i>
-                <span id="visit-count-val">3,853</span>
+                <span id="visit-count-val">3,856</span>
               </div>
             </div>
             <p data-i18n="appSubtitle" class="text-[9px] text-amber-100/80 font-medium tracking-tight truncate mt-0.5">菲律賓精緻生活 & 海島漫遊地圖</p>
@@ -407,8 +407,8 @@
     const ALL_38_SPOTS_UNIQUE_PHOTOS = {
       // --- 馬尼拉 (12 個) ---
       manila_city_of_dreams: "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=800&auto=format&fit=crop", // 新濠天地奢華建築夜景
-      manila_okada: "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&auto=format&fit=crop",          // 岡田粉金噴泉夜景
-      manila_solaire: "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=800&auto=format&fit=crop",        // 晨麗海景豪華客房
+      manila_okada: "https://images.unsplash.com/photo-1514565131-fce0801e5785?w=800&auto=format&fit=crop",          // 岡田音樂噴泉夜景
+      manila_solaire: "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=800&auto=format&fit=crop",        // 晨麗海灣五星夜景
       manila_intramuros: "https://images.unsplash.com/photo-1518509562904-e7ef99cdcc86?w=800&auto=format&fit=crop",     // 西班牙王城古石門
       manila_cathedral: "https://images.unsplash.com/photo-1548625361-19597793d5f9?w=800&auto=format&fit=crop",      // 馬尼拉大教堂石造正立面
       manila_san_agustin: "https://images.unsplash.com/photo-1544077960-604201fe74bc?w=800&auto=format&fit=crop",    // 聖奧古斯丁巴洛克大教堂
@@ -455,7 +455,7 @@
       samal_vanishing_island: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&auto=format&fit=crop" // 薩馬爾退潮浮現沙洲
     };
 
-    // 依景點 ID 或關鍵字進行 38 筆一對一精準匹配
+    // 依景點 ID 或名稱關鍵字進行 38 筆一對一精準匹配
     function getSpotUniquePhoto(item) {
       const id = safeStr(item.id);
       const name = (safeStr(item.name_zh) + ' ' + safeStr(item.name_en) + ' ' + safeStr(item.name) + ' ' + id).toLowerCase();
@@ -521,7 +521,7 @@
     function getGuaranteedValidPhoto(item) {
       if (!item) return "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&auto=format&fit=crop";
 
-      const keys = ['image_url', 'imageurl', 'photo', 'image', 'col_14', 'col_7'];
+      const keys = ['image_url', 'imageurl', 'photo', 'image'];
       for (let k of keys) {
         const val = item[k];
         if (val && typeof val === 'string') {
@@ -596,7 +596,7 @@
         }
         document.getElementById('visit-count-val').innerText = Number(count).toLocaleString();
       } catch (err) {
-        document.getElementById('visit-count-val').innerText = "3,853";
+        document.getElementById('visit-count-val').innerText = "3,856";
       }
     }
 
@@ -629,6 +629,7 @@
         btnCall: '撥打電話',
         btnNav: '導航地圖',
         badgeCurated: '👑 站長私房嚴選',
+        badgeGoogleTop: '🔥 Google Top',
         mustTryBadge: '必點',
         curatedNotePrefix: '站長私房點評：',
         googleTopNotePrefix: '饕客點評：',
@@ -673,6 +674,7 @@
         btnCall: 'Call Now',
         btnNav: 'Directions',
         badgeCurated: '👑 Curator Pick',
+        badgeGoogleTop: '🔥 Google Top',
         mustTryBadge: 'Must Try',
         curatedNotePrefix: "Curator's Note: ",
         googleTopNotePrefix: 'Review: ',
@@ -717,6 +719,7 @@
         btnCall: 'Tawagan',
         btnNav: 'Direksyon',
         badgeCurated: '👑 Pili ng Admin',
+        badgeGoogleTop: '🔥 Google Top',
         mustTryBadge: 'Subukan',
         curatedNotePrefix: 'Kumento ng Admin: ',
         googleTopNotePrefix: 'Komento ng Bisita: ',
@@ -838,10 +841,28 @@
           });
         });
 
+        // ============================================================
+        // 恢復 Google Top 藍色推薦機制 (評分 >= 4.6 且 評論數 >= 100)
+        // ============================================================
         allRestaurants = Array.from(mergedMap.values())
+          .map(item => {
+            const r = item.googleRating || 0;
+            const c = item.googleReviewCount || 0;
+            if (!item.isCurated && r >= 4.6 && c >= 100) {
+              item.isGoogleTop = true;
+              if (!item.googleTopNote) {
+                item.googleTopNote = `Google 饕客高頻推薦：累積逾 ${c} 則好評，在地極高人氣指標！`;
+              }
+            } else if (!item.isCurated) {
+              item.isGoogleTop = false;
+            }
+            return item;
+          })
           .sort((a, b) => {
             if (a.isCurated && !b.isCurated) return -1;
             if (!a.isCurated && b.isCurated) return 1;
+            if (a.isGoogleTop && !b.isGoogleTop) return -1;
+            if (!a.isGoogleTop && b.isGoogleTop) return 1;
             return (b.googleRating || 0) - (a.googleRating || 0);
           });
 
@@ -1098,7 +1119,7 @@
 
         let images = item.images;
         if (!images || images.length === 0) {
-          images = [ALL_38_SPOTS_UNIQUE_PHOTOS.binondo];
+          images = [ALL_38_SPOTS_UNIQUE_PHOTOS.manila_binondo];
         }
 
         const reviewCount = item.googleReviewCount || 0;
@@ -1132,7 +1153,7 @@
 
               ${(!isCurated && isGoogleTop) ? `
                 <div class="absolute top-2.5 left-2.5 bg-sky-900/95 text-sky-200 text-[11px] font-extrabold px-2.5 py-1 rounded-full shadow-lg flex items-center gap-1 border border-sky-400/60 backdrop-blur-md">
-                  <i class="fa-solid fa-fire text-amber-300"></i> Google Top
+                  <i class="fa-solid fa-fire text-amber-300"></i> ${dict.badgeGoogleTop}
                 </div>
               ` : ''}
 
