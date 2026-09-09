@@ -8,7 +8,7 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
-  <meta name="app-version" content="20260909-v17.2-bugfix" />
+  <meta name="app-version" content="20260910-v17.4-master" />
   <meta name="theme-color" content="#ea580c" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -662,15 +662,16 @@
       const hasMultiple = images.length > 1;
 
       return `
-        <div class="relative h-48 w-full bg-slate-100 overflow-hidden">
-          <div id="track-${uniqueId}" class="carousel-track flex w-full h-full overflow-x-auto hide-scrollbar">
+        <div class="relative h-48 w-full bg-slate-100 overflow-hidden select-none">
+          <div id="track-${uniqueId}" class="carousel-track flex w-full h-full overflow-x-auto hide-scrollbar cursor-grab active:cursor-grabbing">
             ${images.map(img => `
-              <div class="carousel-slide flex-shrink-0 w-full h-full">
+              <div class="carousel-slide flex-shrink-0 w-full h-full pointer-events-none">
                 <img 
                   src="${img}" 
                   alt="${altTitle}" 
-                  class="w-full h-full object-cover" 
+                  class="w-full h-full object-cover select-none pointer-events-none" 
                   loading="lazy"
+                  draggable="false"
                   onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=800&auto=format&fit=crop';" 
                 />
               </div>
@@ -684,6 +685,58 @@
           ` : ''}
         </div>
       `;
+    }
+
+    // 監聽輪播滑動、圓點聯動與滑鼠抓取拖曳
+    function bindCarouselControls() {
+      document.querySelectorAll('.carousel-track').forEach(track => {
+        const id = track.id.replace('track-', '');
+        const dotsContainer = document.getElementById(`dots-${id}`);
+        const dots = dotsContainer ? dotsContainer.querySelectorAll('.dot-indicator') : [];
+        
+        // 1. 滾動與指示點聯動
+        track.addEventListener('scroll', () => {
+          const slideWidth = track.offsetWidth;
+          if (slideWidth === 0) return;
+          const activeIndex = Math.round(track.scrollLeft / slideWidth);
+          dots.forEach((dot, idx) => {
+            dot.classList.toggle('active', idx === activeIndex);
+          });
+        }, { passive: true });
+
+        // 2. 支援滑鼠滾輪橫向滾動
+        track.addEventListener('wheel', (e) => {
+          if (e.deltaY !== 0) {
+            e.preventDefault();
+            track.scrollLeft += e.deltaY;
+          }
+        }, { passive: false });
+
+        // 3. 支援滑鼠按住左右拖曳 (Mouse Drag-to-Scroll)
+        let isDown = false;
+        let startX, scrollLeft;
+
+        track.addEventListener('mousedown', (e) => {
+          isDown = true;
+          track.classList.add('drag-scroll-active');
+          startX = e.pageX - track.offsetLeft;
+          scrollLeft = track.scrollLeft;
+        });
+
+        window.addEventListener('mouseup', () => {
+          if (!isDown) return;
+          isDown = false;
+          track.classList.remove('drag-scroll-active');
+        });
+
+        track.addEventListener('mousemove', (e) => {
+          if (!isDown) return;
+          e.preventDefault();
+          const x = e.pageX - track.offsetLeft;
+          const walk = (x - startX) * 1.5;
+          track.scrollLeft = scrollLeft - walk;
+        });
+      });
     }
 
     // 核心資料擷取與聚合整合 (四大分頁真值對齊 + Auto_Discovered 路由)
@@ -877,14 +930,14 @@
             return (b.googleRating || 0) - (a.googleRating || 0);
           });
 
-        // 6. Attractions: 直接接收正規化後的資料（徹底移除型別破壞錯誤，保證景點順暢進來）
+        // 6. Attractions: 直接接收正規化後的景點資料（徹底排除型別錯誤）
         const sheetAttractions = (sheetMaster.attractions || []).map(att => ({
           ...att,
           images: parseImages(att, 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&auto=format&fit=crop')
         }));
         allAttractions = [...sheetAttractions, ...autoAttractions];
 
-        // 7. Promotions: 直接接收正規化後的資料（徹底移除型別破壞錯誤，保證特惠順暢進來）
+        // 7. Promotions: 直接接收正規化後的特惠資料（第三筆及所有優惠保證放行）
         allNews = (sheetMaster.promotions || []).map(promo => ({
           ...promo,
           images: parseImages(promo, 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=800&auto=format&fit=crop')
@@ -1023,25 +1076,7 @@
       if (currentMainTab === 'attraction') renderAttractions();
       if (currentMainTab === 'news') renderNews();
 
-      bindCarouselDots();
-    }
-
-    function bindCarouselDots() {
-      document.querySelectorAll('.carousel-track').forEach(track => {
-        const id = track.id.replace('track-', '');
-        const dotsContainer = document.getElementById(`dots-${id}`);
-        if (!dotsContainer) return;
-        const dots = dotsContainer.querySelectorAll('.dot-indicator');
-        
-        track.addEventListener('scroll', () => {
-          const slideWidth = track.offsetWidth;
-          if (slideWidth === 0) return;
-          const activeIndex = Math.round(track.scrollLeft / slideWidth);
-          dots.forEach((dot, idx) => {
-            dot.classList.toggle('active', idx === activeIndex);
-          });
-        }, { passive: true });
-      });
+      bindCarouselControls();
     }
 
     function renderRestaurants() {
