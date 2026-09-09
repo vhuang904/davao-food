@@ -8,7 +8,7 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
-  <meta name="app-version" content="20260909-v13.0-google-top-and-38-unique-photos" />
+  <meta name="app-version" content="20260909-v15.0-pubhtml-master" />
   <meta name="theme-color" content="#ea580c" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -343,7 +343,6 @@
     const AI_WORKER_URL = "https://food-ai-assistant.vhuang904.workers.dev";
     let currentUser = null;
 
-    // 嚴格北至南地理設定與維度定義
     const REGION_CONFIG = {
       cities: [
         { id: 'manila', name: '馬尼拉', name_en: 'Manila', fullName: '🏙️ 馬尼拉 (Metro Manila)', lat: 14.5995, lng: 120.9842 },
@@ -364,7 +363,6 @@
       return ISLAND_KEYS.includes(cityKey);
     }
 
-    // 多語系子分類配置
     const SUB_FILTERS = {
       food_urban: [
         { key: 'all', label: { 'zh-TW': '全部', 'en': 'All', 'tl': 'Lahat' } },
@@ -400,142 +398,6 @@
         { key: 'new', label: { 'zh-TW': '✨ 最新情報', 'en': '✨ News', 'tl': '✨ Balita' } }
       ]
     };
-
-    // =========================================================================
-    // 全菲律賓 38 景點專屬高畫質實景庫 (一對一精確對應，杜絕任何海島圖或撲克牌重複)
-    // =========================================================================
-    const ALL_38_SPOTS_UNIQUE_PHOTOS = {
-      // --- 馬尼拉 (12 個) ---
-      manila_city_of_dreams: "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=800&auto=format&fit=crop", // 新濠天地奢華建築夜景
-      manila_okada: "https://images.unsplash.com/photo-1514565131-fce0801e5785?w=800&auto=format&fit=crop",          // 岡田音樂噴泉夜景
-      manila_solaire: "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=800&auto=format&fit=crop",        // 晨麗海灣五星夜景
-      manila_intramuros: "https://images.unsplash.com/photo-1518509562904-e7ef99cdcc86?w=800&auto=format&fit=crop",     // 西班牙王城古石門
-      manila_cathedral: "https://images.unsplash.com/photo-1548625361-19597793d5f9?w=800&auto=format&fit=crop",      // 馬尼拉大教堂石造正立面
-      manila_san_agustin: "https://images.unsplash.com/photo-1544077960-604201fe74bc?w=800&auto=format&fit=crop",    // 聖奧古斯丁巴洛克大教堂
-      manila_national_museum: "https://images.unsplash.com/photo-1582555172866-f73bb12a2ab3?w=800&auto=format&fit=crop",// 國家博物館石柱藝廊
-      manila_rizal_park: "https://images.unsplash.com/photo-1519331379826-f10be5486c6f?w=800&auto=format&fit=crop",     // 黎剎公園林蔭長廊
-      manila_moa: "https://images.unsplash.com/photo-1519567241046-7f570eee3ce6?w=800&auto=format&fit=crop",            // SM MOA 現代購物中心
-      manila_binondo: "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=800&auto=format&fit=crop",        // 岷倫洛唐人街傳統市集咖啡
-      manila_ocean_park: "https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=800&auto=format&fit=crop",     // 海洋公園深海潛水
-      manila_zoo: "https://images.unsplash.com/photo-1534567153574-2b12153a87f0?w=800&auto=format&fit=crop",            // 馬尼拉動物園長頸鹿斑馬
-
-      // --- 宿霧 (10 個) ---
-      cebu_magellan_cross: "https://images.unsplash.com/photo-1596422846543-75c6fc197f07?w=800&auto=format&fit=crop",   // 麥哲倫十字架亭
-      cebu_basilica_minore: "https://images.unsplash.com/photo-1544077960-604201fe74bc?w=800&auto=format&fit=crop",  // 聖嬰大教堂聖殿
-      cebu_fort_san_pedro: "https://images.unsplash.com/photo-1548625361-19597793d5f9?w=800&auto=format&fit=crop",   // 聖佩德羅三角古堡城牆
-      cebu_temple_of_leah: "https://images.unsplash.com/photo-1518509562904-e7ef99cdcc86?w=800&auto=format&fit=crop",   // 莉雅神殿希臘風石柱
-      cebu_sirao_garden: "https://images.unsplash.com/photo-1465146344425-f00d5f5c8f07?w=800&auto=format&fit=crop",     // Sirao 巨手佛手花海
-      cebu_tops_lookout: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=800&auto=format&fit=crop",     // 布塞山頂 Tops 眺望夜景
-      cebu_sm_seaside: "https://images.unsplash.com/photo-1519567241046-7f570eee3ce6?w=800&auto=format&fit=crop",       // SM Seaside 圓環商場
-      cebu_nustar_resort: "https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=800&auto=format&fit=crop",    // NUSTAR 海景豪華度假城
-      cebu_ocean_park: "https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=800&auto=format&fit=crop",       // 宿霧海洋公園全景
-      cebu_kawasaw_falls: "https://images.unsplash.com/photo-1432405972618-c60b0225b8f9?w=800&auto=format&fit=crop",    // 卡瓦森翡翠綠瀑布
-
-      // --- 達沃 (5 個) ---
-      davao_san_pedro_cathedral: "https://images.unsplash.com/photo-1548625361-19597793d5f9?w=800&auto=format&fit=crop",// 達沃聖佩德羅大教堂方舟外觀
-      davao_peoples_park: "https://images.unsplash.com/photo-1519331379826-f10be5486c6f?w=800&auto=format&fit=crop",   // 達沃人民公園巨鷹與綠意
-      davao_crocodile_park: "https://images.unsplash.com/photo-1534567153574-2b12153a87f0?w=800&auto=format&fit=crop", // 達沃鱷魚生態公園
-      davao_jacks_ridge: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=800&auto=format&fit=crop",    // 達沃 Jack's Ridge 山頂景觀
-      davao_eden_nature_park: "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=800&auto=format&fit=crop",// 伊甸自然生態高山林地
-
-      // --- 渡假海島 (11 個) ---
-      boracay_white_beach: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&auto=format&fit=crop",  // 長灘島綿延白沙灘
-      boracay_willys_rock: "https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=800&auto=format&fit=crop",  // 長灘島聖母礁岩海上石
-      boracay_puka_beach: "https://images.unsplash.com/photo-1519046904884-53103b34b206?w=800&auto=format&fit=crop",   // 普卡貝殼黃金海浪
-      palawan_big_lagoon: "https://images.unsplash.com/photo-1518509562904-e7ef99cdcc86?w=800&auto=format&fit=crop",   // 愛妮島大潟湖喀斯特峭壁
-      palawan_kayangan_lake: "https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=800&auto=format&fit=crop",// 科隆凱央根湖國寶清澈水質
-      palawan_nacpan_beach: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&auto=format&fit=crop", // 納克潘椰林雙胞胎沙灘
-      bohol_chocolate_hills: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=800&auto=format&fit=crop",// 薄荷島巧克力山圓錐丘
-      bohol_tarsier_sanctuary: "https://images.unsplash.com/photo-1534567153574-2b12153a87f0?w=800&auto=format&fit=crop",// 薄荷島眼鏡猴珍稀生態
-      bohol_alona_beach: "https://images.unsplash.com/photo-1519046904884-53103b34b206?w=800&auto=format&fit=crop",    // 邦勞島阿羅納沙灘
-      siargao_cloud_9: "https://images.unsplash.com/photo-1502680390469-be75c86b636f?w=800&auto=format&fit=crop",      // 錫亞高 Cloud 9 木棧道
-      siargao_sugba_lagoon: "https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=800&auto=format&fit=crop", // 蘇格巴紅樹林翡翠潟湖
-      samal_pearl_farm: "https://images.unsplash.com/photo-1540541338287-41700207dee6?w=800&auto=format&fit=crop",    // 薩馬爾珍珠農場水上高腳屋
-      samal_monfort_bat_cave: "https://images.unsplash.com/photo-1518509562904-e7ef99cdcc86?w=800&auto=format&fit=crop",// 蒙福特世界紀錄果蝠洞
-      samal_vanishing_island: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&auto=format&fit=crop" // 薩馬爾退潮浮現沙洲
-    };
-
-    // 依景點 ID 或名稱關鍵字進行 38 筆一對一精準匹配
-    function getSpotUniquePhoto(item) {
-      const id = safeStr(item.id);
-      const name = (safeStr(item.name_zh) + ' ' + safeStr(item.name_en) + ' ' + safeStr(item.name) + ' ' + id).toLowerCase();
-
-      // 1. 直接比對預設 ID
-      if (ALL_38_SPOTS_UNIQUE_PHOTOS[id]) {
-        return ALL_38_SPOTS_UNIQUE_PHOTOS[id];
-      }
-
-      // 2. 馬尼拉 12 景點
-      if (name.includes('dreams') || name.includes('新濠')) return ALL_38_SPOTS_UNIQUE_PHOTOS.manila_city_of_dreams;
-      if (name.includes('okada') || name.includes('岡田')) return ALL_38_SPOTS_UNIQUE_PHOTOS.manila_okada;
-      if (name.includes('solaire') || name.includes('晨麗')) return ALL_38_SPOTS_UNIQUE_PHOTOS.manila_solaire;
-      if (name.includes('agustin') || name.includes('奧古斯丁')) return ALL_38_SPOTS_UNIQUE_PHOTOS.manila_san_agustin;
-      if (name.includes('cathedral') && (name.includes('manila') || name.includes('馬尼拉'))) return ALL_38_SPOTS_UNIQUE_PHOTOS.manila_cathedral;
-      if (name.includes('intramuros') || name.includes('王城') || name.includes('santiago') || name.includes('聖地牙哥')) return ALL_38_SPOTS_UNIQUE_PHOTOS.manila_intramuros;
-      if (name.includes('museum') || name.includes('博物館')) return ALL_38_SPOTS_UNIQUE_PHOTOS.manila_national_museum;
-      if (name.includes('rizal') || name.includes('黎剎')) return ALL_38_SPOTS_UNIQUE_PHOTOS.manila_rizal_park;
-      if (name.includes('moa') || name.includes('mall of asia')) return ALL_38_SPOTS_UNIQUE_PHOTOS.manila_moa;
-      if (name.includes('binondo') || name.includes('唐人街') || name.includes('中國城')) return ALL_38_SPOTS_UNIQUE_PHOTOS.manila_binondo;
-      if (name.includes('ocean') && (name.includes('manila') || name.includes('馬尼拉'))) return ALL_38_SPOTS_UNIQUE_PHOTOS.manila_ocean_park;
-      if (name.includes('zoo') && (name.includes('manila') || name.includes('馬尼拉'))) return ALL_38_SPOTS_UNIQUE_PHOTOS.manila_zoo;
-
-      // 3. 宿霧 10 景點
-      if (name.includes('magellan') || name.includes('麥哲倫')) return ALL_38_SPOTS_UNIQUE_PHOTOS.cebu_magellan_cross;
-      if (name.includes('santo') || name.includes('nino') || name.includes('聖嬰')) return ALL_38_SPOTS_UNIQUE_PHOTOS.cebu_basilica_minore;
-      if (name.includes('pedro') && (name.includes('cebu') || name.includes('宿霧') || name.includes('fort'))) return ALL_38_SPOTS_UNIQUE_PHOTOS.cebu_fort_san_pedro;
-      if (name.includes('leah') || name.includes('莉雅')) return ALL_38_SPOTS_UNIQUE_PHOTOS.cebu_temple_of_leah;
-      if (name.includes('sira') || name.includes('希努')) return ALL_38_SPOTS_UNIQUE_PHOTOS.cebu_sirao_garden;
-      if (name.includes('tops') || name.includes('布塞')) return ALL_38_SPOTS_UNIQUE_PHOTOS.cebu_tops_lookout;
-      if (name.includes('seaside')) return ALL_38_SPOTS_UNIQUE_PHOTOS.cebu_sm_seaside;
-      if (name.includes('nustar')) return ALL_38_SPOTS_UNIQUE_PHOTOS.cebu_nustar_resort;
-      if (name.includes('ocean') && (name.includes('cebu') || name.includes('宿霧'))) return ALL_38_SPOTS_UNIQUE_PHOTOS.cebu_ocean_park;
-      if (name.includes('kawa') || name.includes('瀑布')) return ALL_38_SPOTS_UNIQUE_PHOTOS.cebu_kawasaw_falls;
-
-      // 4. 達沃 5 景點
-      if (name.includes('pedro') && (name.includes('davao') || name.includes('達沃') || name.includes('cathedral'))) return ALL_38_SPOTS_UNIQUE_PHOTOS.davao_san_pedro_cathedral;
-      if (name.includes('people') || (name.includes('人民') && name.includes('公園'))) return ALL_38_SPOTS_UNIQUE_PHOTOS.davao_peoples_park;
-      if (name.includes('croc') || name.includes('鱷魚')) return ALL_38_SPOTS_UNIQUE_PHOTOS.davao_crocodile_park;
-      if (name.includes('jack') || name.includes('ridge')) return ALL_38_SPOTS_UNIQUE_PHOTOS.davao_jacks_ridge;
-      if (name.includes('eden') || name.includes('伊甸')) return ALL_38_SPOTS_UNIQUE_PHOTOS.davao_eden_nature_park;
-
-      // 5. 渡假海島 11 景點
-      if (name.includes('white') && name.includes('beach')) return ALL_38_SPOTS_UNIQUE_PHOTOS.boracay_white_beach;
-      if (name.includes('willy') || name.includes('聖母礁岩')) return ALL_38_SPOTS_UNIQUE_PHOTOS.boracay_willys_rock;
-      if (name.includes('puka')) return ALL_38_SPOTS_UNIQUE_PHOTOS.boracay_puka_beach;
-      if (name.includes('big lagoon') || name.includes('大潟湖')) return ALL_38_SPOTS_UNIQUE_PHOTOS.palawan_big_lagoon;
-      if (name.includes('kayangan') || name.includes('凱央根')) return ALL_38_SPOTS_UNIQUE_PHOTOS.palawan_kayangan_lake;
-      if (name.includes('nacpan')) return ALL_38_SPOTS_UNIQUE_PHOTOS.palawan_nacpan_beach;
-      if (name.includes('chocolate') || name.includes('巧克力山')) return ALL_38_SPOTS_UNIQUE_PHOTOS.bohol_chocolate_hills;
-      if (name.includes('tarsier') || name.includes('眼鏡猴')) return ALL_38_SPOTS_UNIQUE_PHOTOS.bohol_tarsier_sanctuary;
-      if (name.includes('alona') || name.includes('阿羅納')) return ALL_38_SPOTS_UNIQUE_PHOTOS.bohol_alona_beach;
-      if (name.includes('cloud 9') || name.includes('cloud9')) return ALL_38_SPOTS_UNIQUE_PHOTOS.siargao_cloud_9;
-      if (name.includes('sugba') || name.includes('蘇格巴')) return ALL_38_SPOTS_UNIQUE_PHOTOS.siargao_sugba_lagoon;
-      if (name.includes('pearl farm') || name.includes('珍珠農場')) return ALL_38_SPOTS_UNIQUE_PHOTOS.samal_pearl_farm;
-      if (name.includes('bat') || name.includes('蝙蝠洞')) return ALL_38_SPOTS_UNIQUE_PHOTOS.samal_monfort_bat_cave;
-      if (name.includes('vanishing') || name.includes('消失之島')) return ALL_38_SPOTS_UNIQUE_PHOTOS.samal_vanishing_island;
-
-      return "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&auto=format&fit=crop";
-    }
-
-    // 智能照片判斷：優先試算表有效網址，若為地圖連結或留空則精準配對專屬實景圖
-    function getGuaranteedValidPhoto(item) {
-      if (!item) return "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&auto=format&fit=crop";
-
-      const keys = ['image_url', 'imageurl', 'photo', 'image'];
-      for (let k of keys) {
-        const val = item[k];
-        if (val && typeof val === 'string') {
-          const s = val.trim();
-          // 排除 Google Maps 導航連結，且必須是真正的圖片網址
-          if (s.startsWith('http') && !s.includes('maps.google') && !s.includes('goo.gl/maps') && !s.endsWith('.html')) {
-            return s;
-          }
-        }
-      }
-
-      // 若試算表為空或填錯成地圖網址，自動以 38 筆專屬實景庫一對一匹配！
-      return getSpotUniquePhoto(item);
-    }
 
     let currentDimension = sessionStorage.getItem('ph_dim') || 'cities';
     let currentCity = localStorage.getItem('ph_app_city') || 'davao';
@@ -746,6 +608,24 @@
       }
     };
 
+    // 取得合法圖片網址：100% 優先讀取試算表中的真圖
+    function getValidImageUrl(item, fallback) {
+      if (!item) return fallback || 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&auto=format&fit=crop';
+
+      const keys = ['image_url', 'imageurl', 'image', 'photo', 'col_14', 'col_7'];
+      for (let k of keys) {
+        const val = item[k];
+        if (val && typeof val === 'string') {
+          const s = val.trim();
+          if (s.startsWith('http') && !s.includes('maps.google') && !s.includes('goo.gl/maps')) {
+            return s;
+          }
+        }
+      }
+
+      return fallback || 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&auto=format&fit=crop';
+    }
+
     async function fetchData() {
       try {
         let sheetMaster = { bigVPicks: [], attractions: [], promotions: [] };
@@ -792,7 +672,7 @@
             item.city = matchedBigV.city;
             if (matchedBigV.address) item.address = matchedBigV.address;
             if (matchedBigV.nav_link) item.nav_link = matchedBigV.nav_link;
-            item.images = [getGuaranteedValidPhoto(matchedBigV)];
+            item.images = [getValidImageUrl(matchedBigV, 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=800&auto=format&fit=crop')];
             bigVLookup.delete(matchedBigV.id.toLowerCase().trim());
           } else {
             item.isCurated = false;
@@ -837,13 +717,11 @@
             phone: bigVItem.phone || "",
             googleRating: 5.0,
             googleReviewCount: 50,
-            images: [getGuaranteedValidPhoto(bigVItem)]
+            images: [getValidImageUrl(bigVItem, 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=800&auto=format&fit=crop')]
           });
         });
 
-        // ============================================================
-        // 恢復 Google Top 藍色推薦機制 (評分 >= 4.6 且 評論數 >= 100)
-        // ============================================================
+        // 恢復 Google Top 藍色標章計算
         allRestaurants = Array.from(mergedMap.values())
           .map(item => {
             const r = item.googleRating || 0;
@@ -866,10 +744,10 @@
             return (b.googleRating || 0) - (a.googleRating || 0);
           });
 
-        // 景點清單：採用全菲 38 筆專屬實景庫一對一精準匹配
+        // 景點清單：100% 直讀試算表發布的真圖
         if (sheetMaster.attractions && sheetMaster.attractions.length > 0) {
           allAttractions = sheetMaster.attractions.map(att => {
-            const accuratePhoto = getGuaranteedValidPhoto(att);
+            const img = getValidImageUrl(att, 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&auto=format&fit=crop');
 
             return {
               id: att.id,
@@ -883,15 +761,16 @@
               desc_tl: att.desc_tl,
               address: att.address,
               nav_link: att.nav_link || (att.image_url && String(att.image_url).includes('maps.google') ? att.image_url : ''),
-              images: [accuratePhoto]
+              images: [img]
             };
           });
+          console.log("📸 景點第一筆發布網址解析結果:", allAttractions[0]?.name_zh, allAttractions[0]?.images[0]);
         }
 
         // 動態清單
         if (sheetMaster.promotions && sheetMaster.promotions.length > 0) {
           allNews = sheetMaster.promotions.map(promo => {
-            const promoImg = getGuaranteedValidPhoto(promo);
+            const img = getValidImageUrl(promo, 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=800&auto=format&fit=crop');
 
             return {
               id: promo.id,
@@ -909,7 +788,7 @@
               detail_en: promo.detail_en,
               detail_tl: promo.detail_tl,
               location: promo.store_name,
-              images: [promoImg]
+              images: [img]
             };
           });
         }
@@ -1119,7 +998,7 @@
 
         let images = item.images;
         if (!images || images.length === 0) {
-          images = [ALL_38_SPOTS_UNIQUE_PHOTOS.manila_binondo];
+          images = ["https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=800&auto=format&fit=crop"];
         }
 
         const reviewCount = item.googleReviewCount || 0;
@@ -1288,7 +1167,7 @@
       listEl.innerHTML = filtered.map(item => {
         const name = getLocalizedText(item, 'name', currentShortLang) || item.name_en || item.name_zh || item.id || '景點地標';
         const desc = getLocalizedText(item, 'desc', currentShortLang) || getText(item.description) || '菲律賓熱門推薦地標。';
-        const photo = (item.images && item.images[0]) ? item.images[0] : getSpotUniquePhoto(item);
+        const photo = (item.images && item.images[0]) ? item.images[0] : 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&auto=format&fit=crop';
 
         return `
           <article class="bg-white rounded-2xl overflow-hidden shadow-xs hover:shadow-md border border-slate-200/80 flex flex-col transition">
@@ -1594,7 +1473,6 @@
       }
     });
 
-    // 大V AI 懸浮球與管家問答
     const chatFab = document.getElementById('chat-fab');
     const chatModal = document.getElementById('chat-modal');
     const btnCloseChat = document.getElementById('btn-close-chat');
