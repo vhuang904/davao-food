@@ -692,6 +692,11 @@ function mergeRestaurantsWithBigV(originalList = [], bigVPicks = []) {
 
   // 資料抓取與核心業務邏輯 (已整合 Google Sheet Master Database)
     async function fetchData() {
+      // 自動校正路徑中的空格問題與預設保底
+      const fixImg = (url) => {
+        if (!url) return '';
+        return String(url).replace('kyo to.jpg', 'kyo_to.jpg').trim();
+      };
       try {
         // 1. 同步載入 Google Sheet 三合一資料庫
         let sheetMaster = { bigVPicks: [], attractions: [], promotions: [] };
@@ -739,7 +744,7 @@ function mergeRestaurantsWithBigV(originalList = [], bigVPicks = []) {
             item.mustTry = matchedBigV.must_try || "";
             item.city = matchedBigV.city;
             if (matchedBigV.image_url) {
-              item.images = [matchedBigV.image_url];
+              item.images = [fixImg(matchedBigV.image_url)];
             }
             bigVLookup.delete(matchedBigV.id.toLowerCase().trim()); // 標記已處理
           } else {
@@ -782,7 +787,7 @@ function mergeRestaurantsWithBigV(originalList = [], bigVPicks = []) {
             phone: bigVItem.phone || "",
             googleRating: 5.0,
             googleReviewCount: 50,
-            images: [bigVItem.image_url || "./assets/restaurants/yaki2gether.jpg"]
+            images: [fixImg(bigVItem.image_url) || "./assets/restaurants/yaki2gether.jpg"]
           });
         });
 
@@ -868,7 +873,7 @@ function mergeRestaurantsWithBigV(originalList = [], bigVPicks = []) {
             description: att.description,
             address: att.address,
             nav_link: att.nav_link,
-            images: [att.image_url || "./assets/landmarks/moa_globe.jpg"]
+            images: fixImg(att.image_url) || "./assets/landmarks/moa_globe.jpg"]
           }));
 
           const attMap = new Map();
@@ -891,7 +896,7 @@ function mergeRestaurantsWithBigV(originalList = [], bigVPicks = []) {
             validity: promo.valid_until ? `有效期限至 ${promo.valid_until}` : '長期有效',
             description: promo.detail,
             location: promo.store_name,
-            images: [promo.image_url]
+            images: [fixImg(promo.image_url)]
           }));
         } else {
           allNews = [
