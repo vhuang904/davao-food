@@ -1141,6 +1141,13 @@ function mergeRestaurantsWithBigV(originalList = [], bigVPicks = []) {
                   💡 <b>站長私房點評：</b>${item.curatedNote}
                 </div>
               ` : ''}
+              
+              ${(isCurated && item.mustTry) ? `
+            <div class="flex items-start gap-1.5 p-2 mb-2.5 rounded-lg bg-amber-50/60 border border-amber-200/80 text-xs text-amber-900">
+              <span class="shrink-0 px-1.5 py-0.5 rounded bg-amber-500 text-white font-bold text-[10px] leading-none mt-0.5">必點</span>
+              <span class="font-medium leading-tight">${item.mustTry}</span>
+            </div>
+          ` : ''}
 
               ${(!isCurated && isGoogleTop && item.googleTopNote) ? `
                 <div class="bg-sky-50/90 border-l-3 border-sky-500 p-2.5 rounded-r-lg text-xs text-sky-950 font-medium leading-relaxed mb-2.5">
