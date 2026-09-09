@@ -692,10 +692,13 @@ function mergeRestaurantsWithBigV(originalList = [], bigVPicks = []) {
 
   // 資料抓取與核心業務邏輯 (已整合 Google Sheet Master Database)
     async function fetchData() {
-      // 自動校正路徑中的空格問題與預設保底
+      // 自動校正所有路徑中的空格問題與預設保底
       const fixImg = (url) => {
         if (!url) return '';
-        return String(url).replace('kyo to.jpg', 'kyo_to.jpg').trim();
+        return String(url)
+          .replace(/kyo\s+to\.jpg/gi, 'kyo_to.jpg')
+          .replace(/kyo%20to\.jpg/gi, 'kyo_to.jpg')
+          .trim();
       };
       try {
         // 1. 同步載入 Google Sheet 三合一資料庫
@@ -761,6 +764,10 @@ function mergeRestaurantsWithBigV(originalList = [], bigVPicks = []) {
 
           if (!item.images || item.images.length === 0 || item.images[0].includes('photo-1518684079')) {
             item.images = [getSmartImage(item, item.categoryKey)];
+          }
+
+          if (item.images && item.images.length > 0) {
+            item.images = item.images.map(img => fixImg(img));
           }
 
           if (mergedMap.has(key)) {
