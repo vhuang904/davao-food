@@ -686,9 +686,10 @@
       `;
     }
 
+    // 核心資料擷取與聚合整合 (四大分頁真值對齊 + Auto_Discovered 路由)
     async function fetchData() {
       try {
-        let sheetMaster = { bigVPicks: [], attractions: [], promotions: [] };
+        let sheetMaster = { bigVPicks: [], attractions: [], promotions: [], autoDiscovered: [] };
         try {
           sheetMaster = await loadMasterDatabase();
         } catch (e) {
@@ -701,10 +702,13 @@
 
         const mergedMap = new Map();
         const bigVLookup = new Map();
-        sheetMaster.bigVPicks.forEach(v => {
+
+        // 1. 建立 BigV 私房嚴選索引 Map
+        (sheetMaster.bigVPicks || []).forEach(v => {
           if (v.id) bigVLookup.set(v.id.toLowerCase().trim(), v);
         });
 
+        // 2. 處理 Firebase 資料並與 BigV 私房嚴選去重對齊
         rawList.forEach(item => {
           const nameAll = (safeStr(item.name) + ' ' + safeStr(item.name_en) + ' ' + safeStr(item.id)).toLowerCase();
           let key = item.id;
@@ -728,7 +732,13 @@
             item.isCurated = true;
             item.curatedBadge = "👑 站長私房嚴選";
             item.curatedNote = matchedBigV.big_v_comment || matchedBigV.bigv_comment_zh || "站長每週必訪私房推薦！";
+            item.bigv_comment_zh = matchedBigV.bigv_comment_zh || matchedBigV.big_v_comment;
+            item.bigv_comment_en = matchedBigV.bigv_comment_en;
+            item.bigv_comment_tl = matchedBigV.bigv_comment_tl;
             item.mustTry = matchedBigV.must_try || matchedBigV.must_try_zh || "";
+            item.must_try_zh = matchedBigV.must_try_zh || matchedBigV.must_try;
+            item.must_try_en = matchedBigV.must_try_en;
+            item.must_try_tl = matchedBigV.must_try_tl;
             item.city = matchedBigV.city;
             if (matchedBigV.address) item.address = matchedBigV.address;
             if (matchedBigV.phone) item.phone = String(matchedBigV.phone).replace(/^['"]/, '').trim();
@@ -761,7 +771,7 @@
           }
         });
 
-        // 注入 Google Sheet 上的站長私房清單 (BigV_Picks 17 欄對齊)
+        // 3. 注入 Google Sheet 剩餘的站長私房清單 (BigV_Picks 17 欄對齊)
         bigVLookup.forEach(bigVItem => {
           mergedMap.set(bigVItem.id, {
             id: bigVItem.id,
@@ -790,6 +800,63 @@
           });
         });
 
+        // 4. 【核心新增】整合第 4 分頁 Auto_Discovered 資料流 (13 欄精準映射與分流)
+        const autoAttractions = [];
+        (sheetMaster.autoDiscovered || []).forEach(autoItem => {
+          if (!autoItem.id) return;
+          const autoKey = autoItem.id.toLowerCase().trim();
+          const itemType = (autoItem.type || 'restaurant').toLowerCase().trim();
+          const categoryStr = (autoItem.category || '').toLowerCase();
+
+          // 判斷是否為景點導覽類型
+          if (itemType === 'attraction' || itemType === 'spot') {
+            autoAttractions.push({
+              id: autoItem.id,
+              city: autoItem.city,
+              category: autoItem.category || '',
+              name_zh: autoItem.name_zh || autoItem.name_en || autoItem.id,
+              name_en: autoItem.name_en || '',
+              name_tl: autoItem.name_tl || '',
+              desc_zh: `【Google探索指標】評分 ${autoItem.googleRating || 4.5} 星 (累積 ${autoItem.googleReviewCount || 50}+ 則在地評論)`,
+              desc_en: `Google Pick: Rated ${autoItem.googleRating || 4.5} stars (${autoItem.googleReviewCount || 50}+ reviews)`,
+              desc_tl: `Google Pick: May markang ${autoItem.googleRating || 4.5} bituin`,
+              address: autoItem.address || '',
+              phone: String(autoItem.phone || "").replace(/^['"]/, '').trim(),
+              nav_link: autoItem.nav_link || '',
+              images: parseImages(autoItem, 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&auto=format&fit=crop')
+            });
+          } else {
+            // 美食 / 住宿類別：若未被 BigV 私房嚴選佔據，則併入餐廳庫
+            if (!mergedMap.has(autoKey)) {
+              const r = autoItem.googleRating || 4.5;
+              const c = autoItem.googleReviewCount || 50;
+              const isResort = categoryStr.includes('hotel') || categoryStr.includes('resort') || categoryStr.includes('villa');
+
+              mergedMap.set(autoKey, {
+                id: autoItem.id,
+                name: autoItem.name_zh || autoItem.name_en || autoItem.id,
+                name_zh: autoItem.name_zh || '',
+                name_en: autoItem.name_en || '',
+                name_tl: autoItem.name_tl || '',
+                category: autoItem.category || '',
+                categoryKey: categoryStr,
+                city: autoItem.city,
+                islandType: isResort ? 'hotel_villa' : 'food',
+                isCurated: false,
+                isGoogleTop: r >= 4.6 && c >= 100,
+                googleTopNote: `Google 饕客探索推薦：累積逾 ${c} 則好評，在地極高評分熱點！`,
+                address: autoItem.address || '',
+                phone: String(autoItem.phone || "").replace(/^['"]/, '').trim(),
+                nav_link: autoItem.nav_link || '',
+                googleRating: r,
+                googleReviewCount: c,
+                images: parseImages(autoItem, 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=800&auto=format&fit=crop')
+              });
+            }
+          }
+        });
+
+        // 5. 餐廳列表權重排序 (站長私房 > Google Top > 評分高低)
         allRestaurants = Array.from(mergedMap.values())
           .map(item => {
             const r = item.googleRating || 0;
@@ -812,9 +879,10 @@
             return (b.googleRating || 0) - (a.googleRating || 0);
           });
 
-        // Attractions: 13 欄真值鎖定讀取
+        // 6. Attractions: 合併 13 欄真值景點與 Auto_Discovered 景點
+        let sheetAttractions = [];
         if (sheetMaster.attractions && sheetMaster.attractions.length > 0) {
-          allAttractions = sheetMaster.attractions
+          sheetAttractions = sheetMaster.attractions
             .filter(att => (att.is_active || 'TRUE').toUpperCase() === 'TRUE')
             .map(att => ({
               id: att.id,
@@ -832,8 +900,9 @@
               images: parseImages(att, 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&auto=format&fit=crop')
             }));
         }
+        allAttractions = [...sheetAttractions, ...autoAttractions];
 
-        // Promotions: 16 欄真值鎖定讀取 (含 is_active)
+        // 7. Promotions: 16 欄真值鎖定讀取 (含 is_active)
         if (sheetMaster.promotions && sheetMaster.promotions.length > 0) {
           allNews = sheetMaster.promotions
             .filter(promo => (promo.is_active || 'TRUE').toUpperCase() === 'TRUE')
