@@ -1106,7 +1106,12 @@ function mergeRestaurantsWithBigV(originalList = [], bigVPicks = []) {
               <div class="carousel-track flex w-full h-full overflow-x-auto hide-scrollbar">
                 ${images.map(img => `
                   <div class="carousel-slide flex-shrink-0 w-full h-full">
-                    <img src="${img}" alt="${name}" class="w-full h-full object-cover" />
+                    <img 
+                      src="${img}" 
+                      alt="${name}" 
+                      class="w-full h-full object-cover" 
+                      onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800&auto=format&fit=crop';" 
+                    />
                   </div>
                 `).join('')}
               </div>
