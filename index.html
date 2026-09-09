@@ -282,9 +282,9 @@
     </div>
   </div>
 
-  <!-- 右下角專屬大V圓形懸浮 AI 頭像球 -->
+  <!-- 右下角專屬大V圓形懸浮 AI 頭像球（方案 B：優先使用 ai-avatar.jpg） -->
   <button id="chat-fab" class="fixed bottom-5 right-4 w-13 h-13 rounded-full bg-white border-2 border-orange-500 shadow-xl overflow-hidden flex items-center justify-center cursor-pointer z-40 active:scale-95 transition" style="width:52px; height:52px;" title="大V旅遊管家">
-    <img src="ai-avatar.png" alt="AI 管家" class="w-full h-full object-cover" onerror="this.onerror=null; this.src='ai-avatar.jpg';" />
+    <img src="ai-avatar.jpg" alt="AI 管家" class="w-full h-full object-cover" onerror="this.onerror=null; this.src='ai-avatar.png';" />
   </button>
 
   <!-- AI 管家彈出面板 -->
@@ -292,18 +292,18 @@
     <div class="bg-orange-500 text-white p-3 flex justify-between items-center">
       <div class="flex items-center gap-2">
         <div class="w-7 h-7 rounded-full overflow-hidden border border-white bg-white">
-          <img src="ai-avatar.png" class="w-full h-full object-cover" onerror="this.onerror=null; this.src='ai-avatar.jpg';" />
+          <img src="ai-avatar.jpg" class="w-full h-full object-cover" onerror="this.onerror=null; this.src='ai-avatar.png';" />
         </div>
         <div>
-          <h3 class="text-xs font-bold leading-tight">大V旅遊窩管家</h3>
-          <span class="text-[9px] text-amber-200">Powered by Gemini Flash</span>
+          <h3 id="chat-header-title" class="text-xs font-bold leading-tight">大V旅遊窩管家</h3>
+          <span class="text-[9px] text-amber-200">Powered by Gemini</span>
         </div>
       </div>
       <button id="btn-close-chat" class="text-white/80 hover:text-white text-base p-1">✕</button>
     </div>
 
     <div id="chat-messages" class="flex-1 p-3 overflow-y-auto space-y-2.5 text-xs bg-slate-50 hide-scrollbar">
-      <div class="bg-white p-2.5 rounded-xl rounded-tl-sm border border-slate-200/70 text-slate-800 leading-relaxed shadow-2xs self-start max-w-[88%]">
+      <div id="chat-welcome-bubble" class="bg-white p-2.5 rounded-xl rounded-tl-sm border border-slate-200/70 text-slate-800 leading-relaxed shadow-2xs self-start max-w-[88%]">
         嗨！我是大V旅遊窩管家 👋 歡迎來到菲律賓！想尋找在地特色私房美食、海島渡假村或行程安排，隨時問我喔！
       </div>
     </div>
@@ -321,7 +321,7 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getFirestore, collection, getDocs, doc, getDoc, setDoc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
     import { getAuth, GoogleAuthProvider, signInWithPopup, sendSignInLinkToEmail, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-    import { loadMasterDatabase } from './googleSheetService.js';
+    import { loadMasterDatabase, getLocalizedText } from './googleSheetService.js';
 
     const firebaseConfig = {
       apiKey: "AIzaSyCM2dCa2Y8d6Z-Dc_Uz9yvvgaifav-1Vg",
@@ -333,7 +333,6 @@
       measurementId: "G-9G6BR6ZGBP"
     };
 
-    // Google Sheet Master Data 暫存
     let masterData = {
       bigVPicks: [],
       attractions: [],
@@ -348,12 +347,11 @@
     const AI_WORKER_URL = "https://food-ai-assistant.vhuang904.workers.dev";
     let currentUser = null;
 
-    // 嚴格北至南地理設定與維度定義
     const REGION_CONFIG = {
       cities: [
         { id: 'manila', name: '馬尼拉', name_en: 'Manila', fullName: '🏙️ 馬尼拉 (Metro Manila)', lat: 14.5995, lng: 120.9842 },
         { id: 'cebu', name: '宿霧', name_en: 'Cebu', fullName: '🌊 宿霧 (Cebu)', lat: 10.3157, lng: 123.8854 },
-        { id: 'davao', name: '達沃', name_en: 'Davao', fullName: '🌺 達沃市 (Davao City)', lat: 7.0731, lng: 125.6128 }
+        { id: 'davao', name: '達沃', name_en: '達沃', fullName: '🌺 達沃市 (Davao City)', lat: 7.0731, lng: 125.6128 }
       ],
       islands: [
         { id: 'boracay', name: '長灘島', name_en: 'Boracay', fullName: '🏖️ 長灘島 (Boracay)', lat: 11.9674, lng: 121.9248 },
@@ -369,7 +367,6 @@
       return ISLAND_KEYS.includes(cityKey);
     }
 
-    // 多語系子分類配置
     const SUB_FILTERS = {
       food_urban: [
         { key: 'all', label: { 'zh-TW': '全部', 'en': 'All', 'tl': 'Lahat' } },
@@ -406,7 +403,6 @@
       ]
     };
 
-    // 分類預設圖庫池
     const PHOTO_POOLS = {
       japanese_korean: [
         "https://images.unsplash.com/photo-1579871494447-9811cf80d66c?w=800&auto=format&fit=crop",
@@ -462,7 +458,6 @@
       return pool[Math.abs(hash) % pool.length];
     }
 
-    // 狀態管理
     let currentDimension = sessionStorage.getItem('ph_dim') || 'cities';
     let currentCity = localStorage.getItem('ph_app_city') || 'davao';
     let currentMainTab = sessionStorage.getItem('ph_nav_tab') || 'map';
@@ -480,15 +475,18 @@
     let allAttractions = [];
     let allNews = [];
 
-    // 海島全景點保底資料庫
     const ISLAND_ATTRACTIONS_FALLBACK = [
       {
         id: "boracay_white_beach",
         city: "boracay",
         category: "beach",
-        name: "White Beach 長灘島白沙灘",
+        name_zh: "White Beach 長灘島白沙灘",
+        name_en: "White Beach Boracay",
+        name_tl: "White Beach Boracay",
         googleRating: 4.8,
-        description: "世界排名前列的頂級沙灘！綿延4公里的細緻粉末白沙與漸層清澈海水，長灘島的靈魂地標。",
+        desc_zh: "世界排名前列的頂級沙灘！綿延4公里的細緻粉末白沙與漸層清澈海水，長灘島的靈魂地標。",
+        desc_en: "World-renowned 4-kilometer stretch of powdery white sand and turquoise crystal-clear waters, the soul of Boracay.",
+        desc_tl: "Bantog sa buong mundo na 4-kilometrong pino at puting buhangin na may malinaw na asul na dagat, ang sentro ng Boracay.",
         address: "White Beach Path, Malay, Aklan, Boracay",
         images: ["https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&auto=format&fit=crop"]
       },
@@ -496,9 +494,13 @@
         id: "boracay_willys_rock",
         city: "boracay",
         category: "beach",
-        name: "Willy's Rock 聖母礁岩",
+        name_zh: "Willy's Rock 聖母礁岩",
+        name_en: "Willy's Rock",
+        name_tl: "Willy's Rock",
         googleRating: 4.6,
-        description: "退潮時可徒步走上海中石灰岩礁石，上頭供奉聖母雕像，長灘島最著名的明信片打卡點。",
+        desc_zh: "退潮時可徒步走上海中石灰岩礁石，上頭供奉聖母雕像，長灘島最著名的明信片打卡點。",
+        desc_en: "Volcanic rock formation accessible during low tide, topped with a statue of the Virgin Mary, Boracay's iconic postcard spot.",
+        desc_tl: "Bato sa gitna ng dagat na napupuntahan kapag low tide, may imahen ng Birheng Maria, sikat na postcard spot sa Boracay.",
         address: "Station 1, Balabag, Boracay Island",
         images: ["https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=800&auto=format&fit=crop"]
       },
@@ -506,9 +508,13 @@
         id: "boracay_puka_beach",
         city: "boracay",
         category: "beach",
-        name: "Puka Shell Beach 普卡貝殼海灘",
+        name_zh: "Puka Shell Beach 普卡貝殼海灘",
+        name_en: "Puka Shell Beach",
+        name_tl: "Puka Shell Beach",
         googleRating: 4.7,
-        description: "保有原始島嶼風情的天然海灘，閃耀金黃的普卡貝殼與壯麗浪潮，遠離喧囂的度假秘境。",
+        desc_zh: "保有原始島嶼風情的天然海灘，閃耀金黃的普卡貝殼與壯麗浪潮，遠離喧囂的度假秘境。",
+        desc_en: "A pristine coastal escape famous for shiny puka shells and crashing azure waves, offering a quiet tropical getaway.",
+        desc_tl: "Likas at payapang dalampasigan na kilala sa mga makintab na puka shell at magagandang alon, malayo sa ingay ng isla.",
         address: "Yapak, Boracay Island, Malay, Aklan",
         images: ["https://images.unsplash.com/photo-1519046904884-53103b34b206?w=800&auto=format&fit=crop"]
       },
@@ -516,9 +522,13 @@
         id: "palawan_big_lagoon",
         city: "palawan",
         category: "island_hopping",
-        name: "Big Lagoon 愛妮島大潟湖",
+        name_zh: "Big Lagoon 愛妮島大潟湖",
+        name_en: "Big Lagoon El Nido",
+        name_tl: "Big Lagoon El Nido",
         googleRating: 4.9,
-        description: "石灰岩峭壁環抱的祖母綠平靜海域，划著透明獨木舟穿梭在壯麗喀斯特岩壁之間，極致震撼。",
+        desc_zh: "石灰岩峭壁環抱的祖母綠平靜海域，划著透明獨木舟穿梭在壯麗喀斯特岩壁之間，極致震撼。",
+        desc_en: "Emerald tranquil waters surrounded by towering limestone cliffs, best explored via kayak through majestic karst passages.",
+        desc_tl: "Payapang esmeraldang tubig na napapalibutan ng matatayog na limestone cliff, mainam libutin sakay ng kayak.",
         address: "Miniloc Island, El Nido, Palawan",
         images: ["https://images.unsplash.com/photo-1518509562904-e7ef99cdcc86?w=800&auto=format&fit=crop"]
       },
@@ -526,9 +536,13 @@
         id: "palawan_kayangan_lake",
         city: "palawan",
         category: "nature",
-        name: "Kayangan Lake 科隆凱央根湖",
+        name_zh: "Kayangan Lake 科隆凱央根湖",
+        name_en: "Kayangan Lake Coron",
+        name_tl: "Kayangan Lake Coron",
         googleRating: 4.9,
-        description: "菲律賓最純淨清澈的國寶級湖泊，能見度深達數公尺，群山環抱如世外桃源般的跳島必遊地標。",
+        desc_zh: "菲律賓最純淨清澈的國寶級湖泊，能見度深達數公尺，群山環抱如世外桃源般的跳島必遊地標。",
+        desc_en: "Dubbed the cleanest lake in the Philippines, featuring crystal-clear mountain waters nestled in dramatic limestone peaks.",
+        desc_tl: "Tinaguriang pinakamalinis na lawa sa Pilipinas, napapaligiran ng matatayog na bundok at may napakalinaw na tubig.",
         address: "Coron Island, Palawan",
         images: ["https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=800&auto=format&fit=crop"]
       },
@@ -536,9 +550,13 @@
         id: "palawan_nacpan_beach",
         city: "palawan",
         category: "beach",
-        name: "Nacpan Beach 納克潘黃金海灘",
+        name_zh: "Nacpan Beach 納克潘黃金海灘",
+        name_en: "Nacpan Beach",
+        name_tl: "Nacpan Beach",
         googleRating: 4.7,
-        description: "長達4公里的雙胞胎黃金沙灘，椰林隨風搖曳，被評為全亞洲最美麗浪漫的落日海岸線之一。",
+        desc_zh: "長達4公里的雙胞胎黃金沙灘，椰林隨風搖曳，被評為全亞洲最美麗浪漫的落日海岸線之一。",
+        desc_en: "A stunning 4-kilometer golden sand beach lined with swaying coconut palms, famous for breathtaking ocean sunsets.",
+        desc_tl: "Magandang 4-kilometrong ginintuang buhangin na may hanay ng mga puno ng niyog, kilala sa magandang paglubog ng araw.",
         address: "El Nido, Palawan",
         images: ["https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&auto=format&fit=crop"]
       },
@@ -546,9 +564,13 @@
         id: "bohol_chocolate_hills",
         city: "bohol",
         category: "nature",
-        name: "Chocolate Hills 巧克力山奇景",
+        name_zh: "Chocolate Hills 巧克力山奇景",
+        name_en: "Chocolate Hills",
+        name_tl: "Chocolate Hills",
         googleRating: 4.7,
-        description: "世界自然奇景！超過1,200座形狀對稱的圓錐形石灰岩山丘，旱季時草木乾枯化身壯觀巧克力球。",
+        desc_zh: "世界自然奇景！超過1,200座形狀對稱的圓錐形石灰岩山丘，旱季時草木乾枯化身壯觀巧克力球。",
+        desc_en: "Famous geological wonder with over 1,200 symmetrical hills turning cocoa-brown in the dry season.",
+        desc_tl: "Tanyag na likas na atraksyon na may mahigit 1,200 simetriko na burol na nagiging kulay tsokolate tuwing tag-araw.",
         address: "Carmen, Bohol",
         images: ["https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=800&auto=format&fit=crop"]
       },
@@ -556,9 +578,13 @@
         id: "bohol_tarsier_sanctuary",
         city: "bohol",
         category: "nature",
-        name: "Tarsier Conservation Area 眼鏡猴保護區",
+        name_zh: "Tarsier Conservation Area 眼鏡猴保護區",
+        name_en: "Philippine Tarsier Sanctuary",
+        name_tl: "Philippine Tarsier Sanctuary",
         googleRating: 4.6,
-        description: "近距離探訪世界體型最小、只有巴掌大的珍稀靈長類動物眼鏡猴，生態維護良好且富有教育意義。",
+        desc_zh: "近距離探訪世界體型最小、只有巴掌大的珍稀靈長類動物眼鏡猴，生態維護良好且富有教育意義。",
+        desc_en: "Lush forest sanctuary offering an up-close glimpse of one of the world's smallest primates, the Philippine Tarsier.",
+        desc_tl: "Kanlungan sa gubat kung saan makikita nang malapitan ang isa sa pinakamaliit na primate sa mundo, ang Tarsier.",
         address: "Tukuran, Corella, Bohol",
         images: ["https://images.unsplash.com/photo-1534567153574-2b12153a87f0?w=800&auto=format&fit=crop"]
       },
@@ -566,9 +592,13 @@
         id: "bohol_alona_beach",
         city: "bohol",
         category: "beach",
-        name: "Alona Beach 阿羅納白沙灘",
+        name_zh: "Alona Beach 阿羅納白沙灘",
+        name_en: "Alona Beach Panglao",
+        name_tl: "Alona Beach Panglao",
         googleRating: 4.6,
-        description: "邦勞島最熱鬧的白沙灘與潛水核心，沿岸酒吧、海鮮燒烤林立，亦是出海看海豚與潛水集合點。",
+        desc_zh: "邦勞島最熱鬧的白沙灘與潛水核心，沿岸酒吧、海鮮燒烤林立，亦是出海看海豚與潛水集合點。",
+        desc_en: "The bustling white-sand beach hub of Panglao Island, lined with dive resorts, bars, and dolphin-watching boat departures.",
+        desc_tl: "Masiglang dalampasigan sa Panglao Island na may mga dive shop, kainan, at sakayan para sa dolphin watching.",
         address: "Panglao Island, Bohol",
         images: ["https://images.unsplash.com/photo-1519046904884-53103b34b206?w=800&auto=format&fit=crop"]
       },
@@ -576,9 +606,13 @@
         id: "siargao_cloud_9",
         city: "siargao",
         category: "beach",
-        name: "Cloud 9 衝浪勝地木棧道",
+        name_zh: "Cloud 9 衝浪勝地木棧道",
+        name_en: "Cloud 9 Surfing Boardwalk",
+        name_tl: "Cloud 9 Surfing Boardwalk",
         googleRating: 4.8,
-        description: "世界前八大著名浪點！長型木質棧道直通外海，日落與破浪者英姿交織出最富生命力的海島畫面。",
+        desc_zh: "世界前八大著名浪點！長型木質棧道直通外海，日落與破浪者英姿交織出最富生命力的海島畫面。",
+        desc_en: "World-renowned surf break with an iconic multi-level boardwalk over the reef, offering prime sunset and wave watching.",
+        desc_tl: "Sikat na surfing spot sa buong mundo na may mahabang boardwalk sa ibabaw ng bahura, mainam para sa paglubog ng araw.",
         address: "General Luna, Siargao Island",
         images: ["https://images.unsplash.com/photo-1502680390469-be75c86b636f?w=800&auto=format&fit=crop"]
       },
@@ -586,9 +620,13 @@
         id: "siargao_sugba_lagoon",
         city: "siargao",
         category: "nature",
-        name: "Sugba Lagoon 蘇格巴翡翠潟湖",
+        name_zh: "Sugba Lagoon 蘇格巴翡翠潟湖",
+        name_en: "Sugba Lagoon",
+        name_tl: "Sugba Lagoon",
         googleRating: 4.8,
-        description: "隱身於巨大紅樹林生態保護區中的翡翠色平靜海灣，提供跳水台、SUP 立式划槳與竹筏漂流。",
+        desc_zh: "隱身於巨大紅樹林生態保護區中的翡翠色平靜海灣，提供跳水台、SUP 立式划槳與竹筏漂流。",
+        desc_en: "A tranquil turquoise cove hidden within a vast mangrove forest, featuring wooden diving platforms, SUP, and bamboo rafts.",
+        desc_tl: "Payapang lagoon sa loob ng bakawan na may malinaw na berdeng tubig, tampok ang diving board at paddleboarding.",
         address: "Del Carmen, Siargao Island",
         images: ["https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=800&auto=format&fit=crop"]
       },
@@ -596,9 +634,13 @@
         id: "samal_pearl_farm_beach",
         city: "samal",
         category: "beach",
-        name: "Pearl Farm Beach 珍珠農場沙灘",
+        name_zh: "Pearl Farm Beach 珍珠農場沙灘",
+        name_en: "Pearl Farm Beach Resort",
+        name_tl: "Pearl Farm Beach Resort",
         googleRating: 4.8,
-        description: "薩馬爾島最高指標的五星奢華沙灘，清澈平靜的海水與保留早期採珠文化的特色高腳水上屋。",
+        desc_zh: "薩馬爾島最高指標的五星奢華沙灘，清澈平靜的海水與保留早期採珠文化的特色高腳水上屋。",
+        desc_en: "Samal's premier 5-star island escape, featuring serene pristine beaches, turquoise waters, and iconic overwater stilt houses.",
+        desc_tl: "Pangunahing 5-star resort sa Samal, may tahimik at malinis na dalampasigan at mga magagandang overwater villa.",
         address: "Kaputian, Island Garden City of Samal",
         images: ["https://images.unsplash.com/photo-1540541338287-41700207dee6?w=800&auto=format&fit=crop"]
       },
@@ -606,9 +648,13 @@
         id: "samal_monfort_bat_cave",
         city: "samal",
         category: "nature",
-        name: "Monfort Bat Cave 蒙福特蝙蝠洞",
+        name_zh: "Monfort Bat Cave 蒙福特蝙蝠洞",
+        name_en: "Monfort Bat Sanctuary",
+        name_tl: "Monfort Bat Sanctuary",
         googleRating: 4.5,
-        description: "金氏世界紀錄認證！全球最大果蝠棲息聚落，數百萬隻蝙蝠群居的自然奇觀，極具生態教育價值。",
+        desc_zh: "金氏世界紀錄認證！全球最大果蝠棲息聚落，數百萬隻蝙蝠群居的自然奇觀，極具生態教育價值。",
+        desc_en: "Guinness World Record holder for the largest colony of Geoffroy's rousette fruit bats, an awe-inspiring eco-sanctuary.",
+        desc_tl: "May hawak ng Guinness World Record para sa pinakamalaking kolonya ng fruit bats sa mundo, isang likas na pook-kanlungan.",
         address: "Babak, Island Garden City of Samal",
         images: ["https://images.unsplash.com/photo-1518509562904-e7ef99cdcc86?w=800&auto=format&fit=crop"]
       },
@@ -616,9 +662,13 @@
         id: "samal_vanishing_island",
         city: "samal",
         category: "island_hopping",
-        name: "Vanishing Island 消失之島",
+        name_zh: "Vanishing Island 消失之島",
+        name_en: "Vanishing Island Samal",
+        name_tl: "Vanishing Island Samal",
         googleRating: 4.6,
-        description: "退潮時才會自大海中浮現的夢幻潔白沙洲，水質透亮，適合涉水踏浪與紅樹林淺灘浮潛。",
+        desc_zh: "退潮時才會自大海中浮現的夢幻潔白沙洲，水質透亮，適合涉水踏浪與紅樹林淺灘浮潛。",
+        desc_en: "A dreamy sandbar that only appears during low tide, surrounded by crystal-clear shallows and mangrove snorkeling areas.",
+        desc_tl: "Isang magandang sandbar na lumilitaw lamang kapag low tide, may malinaw na mababaw na tubig at bakawan.",
         address: "Tambon, Babak, Samal Island",
         images: ["https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&auto=format&fit=crop"]
       }
@@ -635,7 +685,8 @@
       if (!val) return '';
       if (typeof val === 'string') return val;
       if (typeof val === 'object') {
-        return val[currentLang] || val['zh-TW'] || val['zh'] || val['en'] || val['tl'] || Object.values(val)[0] || '';
+        const langKey = currentLang === 'zh-TW' ? 'zh' : currentLang;
+        return val[currentLang] || val[langKey] || val['zh-TW'] || val['zh'] || val['en'] || val['tl'] || Object.values(val)[0] || '';
       }
       return String(val);
     }
@@ -652,7 +703,6 @@
       }, 2000);
     }
 
-    // 在線訪客計數器
     async function initVisitorCounter() {
       try {
         const statsRef = doc(db, "stats", "global");
@@ -678,7 +728,6 @@
       document.getElementById('auth-btn-text').innerText = user ? (user.displayName ? user.displayName.split(' ')[0] : memberText) : loginText;
     });
 
-    // 多語系字典定義（完整覆蓋標題、副標題、登入、各類按鈕）
     const I18N_DICT = {
       'zh-TW': {
         appTitle: '大V的旅遊窩',
@@ -719,7 +768,10 @@
         city_palawan: '巴拉望',
         city_bohol: '薄荷島',
         city_siargao: '錫亞高島',
-        city_samal: '薩馬爾島'
+        city_samal: '薩馬爾島',
+        aiChatWelcome: '嗨！我是大V旅遊窩管家 👋 歡迎來到菲律賓！想尋找在地特色私房美食、海島渡假村或行程安排，隨時問我喔！',
+        aiChatPlaceholder: '問點什麼吧（例：達沃必吃生魚片...）',
+        aiLoading: '管家正在為您查詢... ⚡'
       },
       'en': {
         appTitle: "Big V's Travel Nest",
@@ -760,7 +812,10 @@
         city_palawan: 'Palawan',
         city_bohol: 'Bohol',
         city_siargao: 'Siargao',
-        city_samal: 'Samal'
+        city_samal: 'Samal',
+        aiChatWelcome: 'Hello! I am your Big V Concierge 👋 Welcome to the Philippines! Ask me anything about local food, island resorts, or trip tips!',
+        aiChatPlaceholder: 'Ask something (e.g., Best sashimi in Davao...)',
+        aiLoading: 'Concierge is checking for you... ⚡'
       },
       'tl': {
         appTitle: 'Pugad ng Paglalakbay ni Big V',
@@ -801,11 +856,13 @@
         city_palawan: 'Palawan',
         city_bohol: 'Bohol',
         city_siargao: 'Siargao',
-        city_samal: 'Samal'
+        city_samal: 'Samal',
+        aiChatWelcome: 'Kumusta! Ako ang iyong Big V Concierge 👋 Maligayang pagdating sa Pilipinas! Magtanong tungkol sa masasarap na pagkain o mga isla!',
+        aiChatPlaceholder: 'Magtanong dito (hal. Masarap na sashimi sa Davao...)',
+        aiLoading: 'Naghahanap na ang concierge... ⚡'
       }
     };
 
-    // 資料抓取與核心業務邏輯
     async function fetchData() {
       const fixImg = (url) => {
         if (!url) return '';
@@ -849,6 +906,9 @@
             key = matchedBigV.id;
             item.id = matchedBigV.id;
             item.name = matchedBigV.name;
+            item.name_zh = matchedBigV.name_zh || matchedBigV.name;
+            item.name_en = matchedBigV.name_en || item.name_en;
+            item.name_tl = matchedBigV.name_tl;
             item.isCurated = true;
             item.curatedBadge = "👑 站長私房嚴選";
             item.curatedNote = matchedBigV.big_v_comment || "站長每週必訪私房推薦！";
@@ -894,6 +954,9 @@
           mergedMap.set(bigVItem.id, {
             id: bigVItem.id,
             name: bigVItem.name,
+            name_zh: bigVItem.name_zh || bigVItem.name,
+            name_en: bigVItem.name_en || '',
+            name_tl: bigVItem.name_tl || '',
             city: bigVItem.city,
             isCurated: true,
             curatedBadge: "👑 站長私房嚴選",
@@ -980,10 +1043,14 @@
         if (sheetMaster.attractions && sheetMaster.attractions.length > 0) {
           const sheetAtts = sheetMaster.attractions.map(att => ({
             id: att.id,
-            name: att.name,
             city: att.city,
             category: att.category,
-            description: att.description,
+            name_zh: att.name_zh || att.name,
+            name_en: att.name_en,
+            name_tl: att.name_tl,
+            desc_zh: att.desc_zh || att.description || att.desc,
+            desc_en: att.desc_en,
+            desc_tl: att.desc_tl,
             address: att.address,
             nav_link: att.nav_link,
             images: [fixImg(att.image_url) || "./assets/landmarks/moa_globe.jpg"]
@@ -1001,18 +1068,39 @@
           allNews = sheetMaster.promotions.map(promo => ({
             id: promo.id,
             city: promo.city || 'all',
-            type: 'promo',
+            type: promo.type || 'promo',
             brand: promo.store_name,
-            title: promo.title,
+            title_zh: promo.title_zh || promo.title,
+            title_en: promo.title_en,
+            title_tl: promo.title_tl,
             tag: promo.discount_badge || '🔥 獨家優惠',
-            validity: promo.valid_until ? `有效期限至 ${promo.valid_until}` : '長期有效',
-            description: promo.detail,
+            validity_zh: promo.valid_until_zh || promo.valid_until || '長期有效',
+            validity_en: promo.valid_until_en || promo.valid_until || 'Ongoing',
+            validity_tl: promo.valid_until_tl || promo.valid_until || 'Patuloy',
+            detail_zh: promo.detail_zh || promo.detail || promo.description,
+            detail_en: promo.detail_en,
+            detail_tl: promo.detail_tl,
             location: promo.store_name,
             images: [fixImg(promo.image_url)]
           }));
         } else {
           allNews = [
-            { city: 'all', type: 'promo', brand: 'GrabFood', title: '全菲週末精選美食 50% OFF 折扣狂歡', tag: '🔥 限時優惠', validity: '每週五至週日限定', description: '全菲律賓 GrabFood 外送精選指定知名餐廳，訂單滿額即享 5 折超值折扣與免運優惠！', location: 'Manila, Davao, Cebu 全菲適用' }
+            { 
+              city: 'all', 
+              type: 'promo', 
+              brand: 'GrabFood', 
+              title_zh: '全菲週末精選美食 50% OFF 折扣狂歡',
+              title_en: 'GrabFood Weekend Feast - Up to 50% OFF',
+              title_tl: 'GrabFood Weekend Salo-Salo - Hanggang 50% OFF',
+              tag: '🔥 限時優惠', 
+              validity_zh: '每週五至週日限定',
+              validity_en: 'Fri to Sun Only',
+              validity_tl: 'Biyernes hanggang Linggo',
+              detail_zh: '全菲律賓 GrabFood 外送精選指定知名餐廳，訂單滿額即享 5 折超值折扣與免運優惠！',
+              detail_en: 'Enjoy up to 50% discount and free delivery on selected top restaurants nationwide via GrabFood!',
+              detail_tl: 'Mag-enjoy ng hanggang 50% diskwento at libreng delivery sa mga piling restawran sa buong bansa gamit ang GrabFood!',
+              location: 'Manila, Davao, Cebu 全菲適用' 
+            }
           ];
         }
 
@@ -1039,7 +1127,6 @@
       return c === targetCity || a.includes(targetCity);
     }
 
-    // UI 渲染元件參考
     const typeCityBtn = document.getElementById('typeCityBtn');
     const typeIslandBtn = document.getElementById('typeIslandBtn');
     const regionPillsNav = document.getElementById('regionPillsNav');
@@ -1154,6 +1241,7 @@
       const listEl = document.getElementById('restaurant-list');
       document.getElementById('loading').style.display = 'none';
       const dict = I18N_DICT[currentLang] || I18N_DICT['zh-TW'];
+      const currentShortLang = currentLang === 'zh-TW' ? 'zh' : currentLang;
 
       let filtered = allRestaurants.filter(item => {
         const matchC = isCityMatch(item, currentCity);
@@ -1208,8 +1296,8 @@
       }
 
       listEl.innerHTML = filtered.map(item => {
-        const name = (currentLang === 'en' && item.name_en) ? item.name_en : (getText(item.name) || item.name_en || '特色名店');
-        const desc = getText(item.description) || '暫無詳細介紹。';
+        const name = getLocalizedText(item, 'name', currentShortLang) || item.name || item.name_en || '特色名店';
+        const desc = getLocalizedText(item, 'desc', currentShortLang) || getText(item.description) || '暫無詳細介紹。';
         const isCurated = !!item.isCurated;
         const isGoogleTop = !!item.isGoogleTop;
 
@@ -1312,7 +1400,7 @@
                 <a href="tel:${item.phone || ''}" class="bg-slate-100 hover:bg-slate-200 active:scale-95 text-slate-700 text-[11px] font-bold py-2 rounded-xl text-center flex items-center justify-center gap-1 transition">
                   <i class="fa-solid fa-phone"></i> ${dict.btnCall}
                 </a>
-                <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(name + ' ' + (item.address || ''))}" target="_blank" rel="noopener noreferrer"
+                <a href="${item.nav_link || ('https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(name + ' ' + (item.address || '')))}" target="_blank" rel="noopener noreferrer"
                    class="bg-orange-500 hover:bg-orange-600 active:scale-95 text-white text-[11px] font-bold py-2 rounded-xl text-center flex items-center justify-center gap-1 shadow-xs transition">
                   <i class="fa-solid fa-location-arrow"></i> ${dict.btnNav}
                 </a>
@@ -1326,6 +1414,8 @@
     function renderAttractions() {
       const listEl = document.getElementById('attraction-list');
       const dict = I18N_DICT[currentLang] || I18N_DICT['zh-TW'];
+      const currentShortLang = currentLang === 'zh-TW' ? 'zh' : currentLang;
+
       let filtered = allAttractions.filter(item => {
         const matchC = isCityMatch(item, currentCity);
         let matchCat = true;
@@ -1337,7 +1427,10 @@
 
       if (currentSearchQuery) {
         const q = currentSearchQuery.toLowerCase();
-        filtered = filtered.filter(item => (safeStr(getText(item.name)) + ' ' + safeStr(item.address)).includes(q));
+        filtered = filtered.filter(item => {
+          const name = getLocalizedText(item, 'name', currentShortLang);
+          return (safeStr(name) + ' ' + safeStr(item.address)).includes(q);
+        });
       }
 
       const curReg = [...REGION_CONFIG.cities, ...REGION_CONFIG.islands].find(r => r.id === currentCity);
@@ -1356,49 +1449,10 @@
         return;
       }
 
-      const LANDMARK_OFFICIAL_PHOTOS = {
-        san_pedro: "https://images.unsplash.com/photo-1548625361-19597793d5f9?auto=format&fit=crop&w=800&q=80",
-        intramuros: "https://images.unsplash.com/photo-1518509562904-e7ef99cdcc86?auto=format&fit=crop&w=800&q=80",
-        magellan: "https://images.unsplash.com/photo-1596422846543-75c6fc197f07?auto=format&fit=crop&w=800&q=80",
-        santo_nino: "https://images.unsplash.com/photo-1544077960-604201fe74bc?auto=format&fit=crop&w=800&q=80",
-        okada: "https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=800&q=80",
-        solaire: "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=800&q=80",
-        dreams: "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=800&q=80",
-        nustar: "https://images.unsplash.com/photo-1571896349842-33c89424de2d?auto=format&fit=crop&w=800&q=80"
-      };
-
       listEl.innerHTML = filtered.map(item => {
-        const rawName = item.name || item.title || item.name_en || '';
-        const name = getText(rawName) || item.id || '景點地標';
-        const desc = getText(item.description || item.desc) || '菲律賓熱門推薦地標。';
-
-        const fullDump = (
-          JSON.stringify(item) + ' ' + 
-          name + ' ' + 
-          (item.id || '') + ' ' + 
-          (item.address || '')
-        ).toLowerCase();
-
-        let img = '';
-        if (fullDump.includes('pedro') || fullDump.includes('聖佩德羅')) {
-          img = LANDMARK_OFFICIAL_PHOTOS.san_pedro;
-        } else if (fullDump.includes('intramuros') || fullDump.includes('王城') || fullDump.includes('santiago') || fullDump.includes('聖地牙哥')) {
-          img = LANDMARK_OFFICIAL_PHOTOS.intramuros;
-        } else if (fullDump.includes('magellan') || fullDump.includes('麥哲倫')) {
-          img = LANDMARK_OFFICIAL_PHOTOS.magellan;
-        } else if (fullDump.includes('santo') || fullDump.includes('nino') || fullDump.includes('聖嬰')) {
-          img = LANDMARK_OFFICIAL_PHOTOS.santo_nino;
-        } else if (fullDump.includes('okada') || fullDump.includes('岡田')) {
-          img = LANDMARK_OFFICIAL_PHOTOS.okada;
-        } else if (fullDump.includes('solaire') || fullDump.includes('晨麗')) {
-          img = LANDMARK_OFFICIAL_PHOTOS.solaire;
-        } else if (fullDump.includes('dreams') || fullDump.includes('新濠')) {
-          img = LANDMARK_OFFICIAL_PHOTOS.dreams;
-        } else if (fullDump.includes('nustar')) {
-          img = LANDMARK_OFFICIAL_PHOTOS.nustar;
-        } else {
-          img = (item.images && item.images[0]) || getSmartImage(item, item.category);
-        }
+        const name = getLocalizedText(item, 'name', currentShortLang) || item.name_en || item.name_zh || item.id || '景點地標';
+        const desc = getLocalizedText(item, 'desc', currentShortLang) || getText(item.description) || '菲律賓熱門推薦地標。';
+        const img = (item.images && item.images[0]) || getSmartImage(item, item.category);
 
         return `
           <article class="bg-white rounded-2xl overflow-hidden shadow-xs hover:shadow-md border border-slate-200/80 flex flex-col transition">
@@ -1433,7 +1487,7 @@
                     <i class="fa-solid fa-phone"></i> ${dict.btnCall}
                   </a>
                 ` : ''}
-                <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(name + ' ' + (item.address || ''))}" target="_blank" rel="noopener noreferrer"
+                <a href="${item.nav_link || ('https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(name + ' ' + (item.address || '')))}" target="_blank" rel="noopener noreferrer"
                    class="bg-orange-500 hover:bg-orange-600 active:scale-95 text-white text-[11px] font-bold py-2 rounded-xl text-center flex items-center justify-center gap-1 shadow-xs transition">
                   <i class="fa-solid fa-location-arrow"></i> ${dict.btnNav}
                 </a>
@@ -1447,6 +1501,8 @@
     function renderNews() {
       const listEl = document.getElementById('news-list');
       const dict = I18N_DICT[currentLang] || I18N_DICT['zh-TW'];
+      const currentShortLang = currentLang === 'zh-TW' ? 'zh' : currentLang;
+
       let filtered = allNews.filter(item => {
         const matchC = (currentCity === 'all') || (item.city === 'all') || isCityMatch(item, currentCity);
         const matchS = (currentSubFilter === 'all') || (item.type === currentSubFilter);
@@ -1455,7 +1511,11 @@
 
       if (currentSearchQuery) {
         const q = currentSearchQuery.toLowerCase();
-        filtered = filtered.filter(item => (safeStr(getText(item.title)) + ' ' + safeStr(getText(item.description))).includes(q));
+        filtered = filtered.filter(item => {
+          const t = getLocalizedText(item, 'title', currentShortLang);
+          const d = getLocalizedText(item, 'detail', currentShortLang);
+          return (safeStr(t) + ' ' + safeStr(d)).includes(q);
+        });
       }
 
       filterSummaryText.textContent = `${dict.navNews} · 即時情報`;
@@ -1473,8 +1533,8 @@
       }
 
       listEl.innerHTML = filtered.map(item => {
-        let rawTitle = getText(item.title) || getText(item.headline) || getText(item.name) || '在地精選活動';
-        let desc = getText(item.description) || getText(item.content) || getText(item.summary) || '菲律賓精選優惠活動與在地即時快訊。';
+        let rawTitle = getLocalizedText(item, 'title', currentShortLang) || item.title || '在地精選活動';
+        let desc = getLocalizedText(item, 'detail', currentShortLang) || item.description || '菲律賓精選優惠活動與在地即時快訊。';
         const brandStr = (safeStr(item.brand) + ' ' + safeStr(rawTitle)).toLowerCase();
         const isGrabEvent = brandStr.includes('grab');
 
@@ -1487,9 +1547,9 @@
         }
 
         const tag = isGrabEvent ? '🛵 Grab 限時特惠' : (getText(item.tag) || '🔥 快訊');
-        const validity = getText(item.validity) || '';
+        const validity = getLocalizedText(item, 'validity', currentShortLang) || getText(item.validity) || '';
         const location = getText(item.location) || '全菲適用';
-        const img = item.imageUrl || 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=800&auto=format&fit=crop';
+        const img = (item.images && item.images[0]) || 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=800&auto=format&fit=crop';
 
         return `
           <article class="bg-white rounded-2xl overflow-hidden shadow-xs hover:shadow-md border border-slate-200/80 flex flex-col transition">
@@ -1527,13 +1587,22 @@
       renderContent();
     }
 
-    // 多語系全域切換函式
     function updateUiLanguage() {
       document.documentElement.lang = currentLang;
       const dict = I18N_DICT[currentLang] || I18N_DICT['zh-TW'];
       
       const searchInput = document.getElementById('search-input');
       if (searchInput) searchInput.placeholder = dict.searchPlaceholder;
+
+      const chatWelcome = document.getElementById('chat-welcome-bubble');
+      if (chatWelcome && dict.aiChatWelcome) {
+        chatWelcome.textContent = dict.aiChatWelcome;
+      }
+
+      const chatInputEl = document.getElementById('chat-input');
+      if (chatInputEl && dict.aiChatPlaceholder) {
+        chatInputEl.placeholder = dict.aiChatPlaceholder;
+      }
 
       document.querySelectorAll('[data-i18n]').forEach(el => {
         const key = el.getAttribute('data-i18n');
@@ -1552,7 +1621,6 @@
 
     window.updateUiLanguage = updateUiLanguage;
 
-    // 事件綁定
     const langSelect = document.getElementById('lang-select');
     if (langSelect) {
       langSelect.value = currentLang;
@@ -1652,7 +1720,6 @@
       }
     });
 
-    // 大V AI 懸浮球與管家問答
     const chatFab = document.getElementById('chat-fab');
     const chatModal = document.getElementById('chat-modal');
     const btnCloseChat = document.getElementById('btn-close-chat');
@@ -1677,6 +1744,9 @@
       const msg = chatInput.value.trim();
       if (!msg) return;
 
+      const dict = I18N_DICT[currentLang] || I18N_DICT['zh-TW'];
+      const targetLang = currentLang === 'zh-TW' ? 'zh' : currentLang;
+
       chatMessages.innerHTML += `
         <div class="bg-orange-500 text-white p-2.5 rounded-xl rounded-tr-sm self-end max-w-[85%] ml-auto text-xs leading-relaxed shadow-xs">
           ${msg}
@@ -1686,9 +1756,10 @@
       chatMessages.scrollTop = chatMessages.scrollHeight;
 
       const loadId = 'load-' + Date.now();
+      const loadingText = dict.aiLoading || '管家正在為您查詢... ⚡';
       chatMessages.innerHTML += `
         <div id="${loadId}" class="bg-white p-2.5 rounded-xl rounded-tl-sm border border-slate-200/70 text-slate-500 text-xs self-start max-w-[85%] flex items-center gap-1.5 shadow-2xs">
-          <i class="fa-solid fa-spinner fa-spin text-orange-500"></i> 管家正在為您查詢... ⚡
+          <i class="fa-solid fa-spinner fa-spin text-orange-500"></i> ${loadingText}
         </div>
       `;
       chatMessages.scrollTop = chatMessages.scrollHeight;
@@ -1696,7 +1767,7 @@
       const resContext = (allRestaurants || [])
         .filter(i => currentCity === 'all' || isCityMatch(i, currentCity))
         .slice(0, 8)
-        .map(r => r.name)
+        .map(r => getLocalizedText(r, 'name', targetLang) || r.name)
         .join(', ');
 
       try {
@@ -1704,8 +1775,8 @@
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            message: `${msg}（請用繁體中文以2到3句話俐落重點回答，字數嚴格控制在100字內）`,
-            lang: 'zh-TW',
+            message: msg,
+            lang: targetLang,
             currentCity: currentCity,
             restaurantsContext: `精選參考: ${resContext}`
           })
@@ -1720,7 +1791,11 @@
         const loadEl = document.getElementById(loadId);
         if (loadEl) {
           loadEl.className = 'bg-white p-2.5 rounded-xl rounded-tl-sm border border-slate-200/70 text-slate-800 text-xs self-start max-w-[88%] leading-relaxed shadow-2xs';
-          loadEl.innerText = "已為您快速查詢！推薦造訪達沃 Yaki2gether 日料、馬尼拉王城區歷史古蹟與長灘島白沙灘。";
+          loadEl.innerText = targetLang === 'en'
+            ? "Quick tip: Check out Yaki2gether Japanese BBQ in Davao, Intramuros in Manila, and White Beach in Boracay!"
+            : targetLang === 'tl'
+            ? "Mabilisang tip: Bisitahin ang Yaki2gether sa Davao, Intramuros sa Manila, at White Beach sa Boracay!"
+            : "已為您快速查詢！推薦造訪達沃 Yaki2gether 日料、馬尼拉王城區歷史古蹟與長灘島白沙灘。";
         }
       }
       chatMessages.scrollTop = chatMessages.scrollHeight;
