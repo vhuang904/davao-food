@@ -1468,9 +1468,77 @@ function mergeRestaurantsWithBigV(originalList = [], bigVPicks = []) {
       renderContent();
     });
 
-    document.getElementById('lang-select').addEventListener('change', (e) => {
-      showToast(`已切換語言：${e.target.options[e.target.selectedIndex].text}`);
-    });
+    let currentLang = 'zh-TW';
+
+const I18N_DICT = {
+  'zh-TW': {
+    searchPlaceholder: '搜尋燒肉、火鍋、景點、Villa、飯店...',
+    filterAll: '全部推薦',
+    btnGrab: 'Grab外送',
+    btnCall: '撥打電話',
+    btnNav: '導航地圖',
+    badgeCurated: '👑 站長私房嚴選',
+    mustTry: '必點',
+    curatedComment: '站長私房點評：',
+    googleComment: '饕客點評：',
+    slideHint: '👈 左右滑動',
+    addressEmpty: '地址收集中',
+    phoneEmpty: '暫無電話',
+    noResult: '目前暫無對應項目',
+    noResultSub: '我們正為您持續親訪收錄更多精選！',
+    toastSwitch: '已切換語言：'
+  },
+  'en': {
+    searchPlaceholder: 'Search BBQ, hotpot, spots, villas, hotels...',
+    filterAll: 'All Spots',
+    btnGrab: 'GrabFood',
+    btnCall: 'Call Now',
+    btnNav: 'Navigate',
+    badgeCurated: '👑 Curator Pick',
+    mustTry: 'Must Try',
+    curatedComment: "Curator's Note: ",
+    googleComment: 'Review: ',
+    slideHint: '👈 Swipe to view',
+    addressEmpty: 'Address updating',
+    phoneEmpty: 'No phone available',
+    noResult: 'No spots available',
+    noResultSub: 'More curated spots coming soon!',
+    toastSwitch: 'Language changed: '
+  },
+  'tl': {
+    searchPlaceholder: 'Maghanap ng pagkain, pasyalan, hotel...',
+    filterAll: 'Lahat',
+    btnGrab: 'GrabFood',
+    btnCall: 'Tawagan',
+    btnNav: 'Direksyon',
+    badgeCurated: '👑 Pili ng Admin',
+    mustTry: 'Subukan',
+    curatedComment: 'Kumento ng Admin: ',
+    googleComment: 'Komento ng Bisita: ',
+    slideHint: '👈 I-swipe',
+    addressEmpty: 'Ina-update ang address',
+    phoneEmpty: 'Walang numero',
+    noResult: 'Walang nahanap',
+    noResultSub: 'Mas maraming rekomendasyon paparating!',
+    toastSwitch: 'Pinalitan ang wika: '
+  }
+};
+
+function updateUiLanguage() {
+  const dict = I18N_DICT[currentLang] || I18N_DICT['zh-TW'];
+  const searchInput = document.getElementById('search-input');
+  if (searchInput) searchInput.placeholder = dict.searchPlaceholder;
+  if (typeof renderRestaurants === 'function') {
+    renderRestaurants();
+  }
+}
+
+document.getElementById('lang-select').addEventListener('change', (e) => {
+  currentLang = e.target.value;
+  const dict = I18N_DICT[currentLang] || I18N_DICT['zh-TW'];
+  updateUiLanguage();
+  showToast(`${dict.toastSwitch}${e.target.options[e.target.selectedIndex].text}`);
+});
 
     const authModal = document.getElementById('auth-modal');
     document.getElementById('auth-state-btn').addEventListener('click', () => {
