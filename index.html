@@ -800,7 +800,7 @@
           });
         });
 
-        // 4. 【核心新增】整合第 4 分頁 Auto_Discovered 資料流 (13 欄精準映射與分流)
+        // 4. 【核心整合】第 4 分頁 Auto_Discovered 資料流 (13 欄精準映射與分流)
         const autoAttractions = [];
         (sheetMaster.autoDiscovered || []).forEach(autoItem => {
           if (!autoItem.id) return;
@@ -808,7 +808,6 @@
           const itemType = (autoItem.type || 'restaurant').toLowerCase().trim();
           const categoryStr = (autoItem.category || '').toLowerCase();
 
-          // 判斷是否為景點導覽類型
           if (itemType === 'attraction' || itemType === 'spot') {
             autoAttractions.push({
               id: autoItem.id,
@@ -826,7 +825,6 @@
               images: parseImages(autoItem, 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&auto=format&fit=crop')
             });
           } else {
-            // 美食 / 住宿類別：若未被 BigV 私房嚴選佔據，則併入餐廳庫
             if (!mergedMap.has(autoKey)) {
               const r = autoItem.googleRating || 4.5;
               const c = autoItem.googleReviewCount || 50;
@@ -1049,7 +1047,6 @@
         mapLabel.innerText = isIsland ? dict.navFoodIsland : dict.navFood;
       }
 
-      // 海島情境自動變形第三分頁名稱
       const newsLabel = document.getElementById('tab-label-news');
       if (newsLabel) {
         newsLabel.innerText = isIsland ? dict.navNewsIsland : dict.navNews;
@@ -1389,7 +1386,6 @@
         const description = getLocalizedText(item, 'description', currentShortLang) || '活動詳情請洽門市工作人員。';
         const type = (item.type || 'ongoing').toLowerCase();
 
-        // 標籤樣式判斷
         let badgeHtml = '';
         if (type === 'exclusive') {
           badgeHtml = `
@@ -1752,9 +1748,19 @@
       chatMessages.scrollTop = chatMessages.scrollHeight;
     }
 
+    // 啟動全域訪客計數與橫向滑動
     initVisitorCounter();
     enableHorizontalScroll();
     fetchData();
+
+    // 註冊 Service Worker 啟用 PWA 離線核心 (防死鎖快取)
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js').catch(err => {
+          console.warn('ServiceWorker 註冊失敗:', err);
+        });
+      });
+    }
   </script>
 </body>
 </html>
