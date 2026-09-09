@@ -3,9 +3,9 @@
  * 支援四大分頁 Schema 映射、RFC 4180 狀態機 CSV 解析、多語系 Fallback 與快取機制
  */
 
-// 試算表設定 (請填入您的 Google Sheet ID 與各分頁名稱或 GID)
+// 試算表設定 (已對齊您的真實 Google Sheet)
 export const SHEET_CONFIG = {
-  spreadsheetId: "1e1B6XUjX4_q4g9f8Q_EXAMPLE_SHEET_ID", // 請替換為真實的 Google Sheet ID
+  spreadsheetId: "1sQELyvgQ8ZhL0iolKZ0fdEgr6z7FrFsK5Cgl2xz145g", //
   sheets: {
     bigVPicks: "BigV_Picks",
     attractions: "Attractions",
