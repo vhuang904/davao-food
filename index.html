@@ -281,6 +281,7 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getFirestore, collection, getDocs, doc, getDoc, setDoc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
     import { getAuth, GoogleAuthProvider, signInWithPopup, sendSignInLinkToEmail, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { loadMasterDatabase } from './googleSheetService.js';
 
     const firebaseConfig = {
       apiKey: "AIzaSyCM2dCa2Y8d6Z-Dc_Uz9yvvgaifav-1Vg",
@@ -291,6 +292,69 @@
       appId: "1:701000455421:web:ab02befef466e1f8989a94",
       measurementId: "G-9G6BR6ZGBP"
     };
+
+    // Google Sheet Master Data 暫存
+let masterData = {
+  bigVPicks: [],
+  attractions: [],
+  promotions: []
+};
+
+/**
+ * 合併餐廳資料：以 BigV_Picks 為最高權限白名單，徹底防重複
+ */
+function mergeRestaurantsWithBigV(originalList = [], bigVPicks = []) {
+  const bigVMap = new Map();
+  // 建立大V白名單字典
+  bigVPicks.forEach(item => {
+    if (item.id) {
+      bigVMap.set(item.id.toLowerCase().trim(), item);
+    }
+  });
+
+  const mergedMap = new Map();
+
+  // 1. 先處理一般資料庫/現有清單
+  originalList.forEach(item => {
+    const key = (item.id || '').toLowerCase().trim();
+    if (!key) return;
+
+    if (bigVMap.has(key)) {
+      // 命中大V白名單：特權覆蓋融合，絕不新增第二筆
+      const bigVItem = bigVMap.get(key);
+      mergedMap.set(key, {
+        ...item,
+        ...bigVItem,
+        isBigV: true,
+        rating: item.rating || 4.9,
+        reviews_count: item.reviews_count || 100
+      });
+      bigVMap.delete(key);
+    } else {
+      // 一般餐廳：嚴禁賦予黑金標章
+      mergedMap.set(key, {
+        ...item,
+        isBigV: false
+      });
+    }
+  });
+
+  // 2. 將只存在於 Google Sheet、尚未存在於一般資料庫的大V私房名店加入
+  bigVMap.forEach((bigVItem, key) => {
+    mergedMap.set(key, {
+      ...bigVItem,
+      isBigV: true,
+      rating: 5.0,
+      reviews_count: 50
+    });
+  });
+
+  // 3. 轉回陣列，並以大V站長嚴選最高優先度排序 (置頂)
+  const result = Array.from(mergedMap.values());
+  result.sort((a, b) => (b.isBigV ? 1 : 0) - (a.isBigV ? 1 : 0));
+
+  return result;
+}
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
@@ -626,48 +690,63 @@
       document.getElementById('auth-btn-text').innerText = user ? (user.displayName ? user.displayName.split(' ')[0] : '會員') : '登入';
     });
 
-    // 資料抓取與核心業務邏輯
+  // 資料抓取與核心業務邏輯 (已整合 Google Sheet Master Database)
     async function fetchData() {
       try {
+        // 1. 同步載入 Google Sheet 三合一資料庫
+        let sheetMaster = { bigVPicks: [], attractions: [], promotions: [] };
+        try {
+          sheetMaster = await loadMasterDatabase();
+        } catch (e) {
+          console.warn("讀取 Google Sheet 失敗，降級使用本地/Firebase 資料:", e);
+        }
+
+        // 2. 抓取 Firebase 一般餐廳資料
         const resSnap = await getDocs(collection(db, "restaurants"));
         const rawList = [];
         resSnap.forEach(d => rawList.push({ id: d.id, ...d.data() }));
 
         const mergedMap = new Map();
 
+        // 建立 Google Sheet 大V白名單字典 (以 id 與名稱小寫作為雙重索引)
+        const bigVLookup = new Map();
+        sheetMaster.bigVPicks.forEach(v => {
+          if (v.id) bigVLookup.set(v.id.toLowerCase().trim(), v);
+        });
+
+        // 處理 Firebase 餐廳資料
         rawList.forEach(item => {
           const nameAll = (safeStr(item.name) + ' ' + safeStr(item.name_en) + ' ' + safeStr(item.id)).toLowerCase();
           let key = item.id;
 
-          // 👑 嚴格鎖定僅 3 家元老「站長私房嚴選」
-          if (nameAll.includes('yaki') && (nameAll.includes('gether') || nameAll.includes('yaki2gether'))) {
-            key = 'curated_yaki2gether';
-            item.name = "Yaki2gether 日式炭火燒肉刺身";
+          // 檢查是否命中 Google Sheet 大V白名單
+          let matchedBigV = null;
+          for (let [bId, bItem] of bigVLookup.entries()) {
+            if (key.toLowerCase().trim() === bId || (bItem.name && nameAll.includes(bItem.name.toLowerCase().trim().split(' ')[0]))) {
+              matchedBigV = bItem;
+              break;
+            }
+          }
+
+          if (matchedBigV) {
+            // 👑 命中大V白名單：由 Google Sheet 內容特權覆蓋，絕不重複
+            key = matchedBigV.id;
+            item.id = matchedBigV.id;
+            item.name = matchedBigV.name;
             item.isCurated = true;
             item.curatedBadge = "👑 站長私房嚴選";
-            item.curatedNote = "站長私房愛店！達沃高水準黑鮪刺身、特色日式壽司卷與炭火串燒，食材每日直送，小酌聚餐首選。";
-            item.city = 'davao';
-            item.categoryKey = 'japanese_korean';
-          } else if (nameAll.includes('backyard') && nameAll.includes('butcher')) {
-            key = 'curated_backyard_butcher';
-            item.name = "Backyard Butcher 炭烤美式煙燻牛排";
-            item.isCurated = true;
-            item.curatedBadge = "👑 站長私房嚴選";
-            item.curatedNote = "站長親自認證！達沃隱藏在半山丘的私房肉舖，16呎低溫慢火柴燒煙燻牛胸肉肉質軟嫩、香氣極致濃郁。";
-            item.city = 'davao';
-            item.categoryKey = 'bbq_seafood';
-          } else if (!nameAll.includes('yaki') && (nameAll.includes('kyo-to') || (nameAll.includes('kyoto') && (item.city === 'manila' || safeStr(item.address).includes('makati'))))) {
-            key = 'curated_kyoto_manila';
-            item.name = "Kyo-to 京料理 懷石割烹";
-            item.isCurated = true;
-            item.curatedBadge = "👑 站長私房嚴選";
-            item.curatedNote = "全菲律賓頂級板前懷石天花板！Makati 極具水準的無菜單割烹料理，京都旬味直送，需提前預約。";
-            item.city = 'manila';
-            item.categoryKey = 'japanese_korean';
+            item.curatedNote = matchedBigV.big_v_comment || "站長每週必訪私房推薦！";
+            item.mustTry = matchedBigV.must_try || "";
+            item.city = matchedBigV.city;
+            if (matchedBigV.image_url) {
+              item.images = [matchedBigV.image_url];
+            }
+            bigVLookup.delete(matchedBigV.id.toLowerCase().trim()); // 標記已處理
           } else {
             item.isCurated = false;
             delete item.curatedBadge;
             delete item.curatedNote;
+            delete item.mustTry;
           }
 
           if (nameAll.includes('pearl farm') || nameAll.includes('chema')) {
@@ -689,7 +768,25 @@
           }
         });
 
-        // 宿霧名店注入
+        // 3. 將存在於 Google Sheet 但尚未在 Firebase 的大V私房店直接注入
+        bigVLookup.forEach(bigVItem => {
+          mergedMap.set(bigVItem.id, {
+            id: bigVItem.id,
+            name: bigVItem.name,
+            city: bigVItem.city,
+            isCurated: true,
+            curatedBadge: "👑 站長私房嚴選",
+            curatedNote: bigVItem.big_v_comment,
+            mustTry: bigVItem.must_try,
+            address: bigVItem.address || "",
+            phone: bigVItem.phone || "",
+            googleRating: 5.0,
+            googleReviewCount: 50,
+            images: [bigVItem.image_url || "./assets/restaurants/yaki2gether.jpg"]
+          });
+        });
+
+        // 宿霧與錫亞高名店注入
         const cebuMott32 = {
           id: "cebu_mott_32",
           city: "cebu",
@@ -715,11 +812,6 @@
           address: "The Strip, NUSTAR Resort, Cebu City",
           images: ["https://images.unsplash.com/photo-1563245372-f21724e3856d?w=800&auto=format&fit=crop"]
         };
-
-        mergedMap.set(cebuMott32.id, cebuMott32);
-        mergedMap.set(cebuGoodLuck.id, cebuGoodLuck);
-
-        // 錫亞高名店注入
         const siaKermit = {
           id: "sia_kermit_pizza",
           city: "siargao",
@@ -736,9 +828,11 @@
           images: ["https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=800&auto=format&fit=crop"]
         };
 
-        mergedMap.set(siaKermit.id, siaKermit);
+        if (!mergedMap.has(cebuMott32.id)) mergedMap.set(cebuMott32.id, cebuMott32);
+        if (!mergedMap.has(cebuGoodLuck.id)) mergedMap.set(cebuGoodLuck.id, cebuGoodLuck);
+        if (!mergedMap.has(siaKermit.id)) mergedMap.set(siaKermit.id, siaKermit);
 
-        // 三級榮譽篩選
+        // 三級榮譽篩選與排序（大V私房嚴選置頂）
         allRestaurants = Array.from(mergedMap.values())
           .filter(item => {
             const r = item.googleRating || 0;
@@ -764,39 +858,47 @@
             return (b.googleRating || 0) - (a.googleRating || 0);
           });
 
-        // 讀取景點資料庫，並與保底地標庫智慧合併
-        try {
-          const attSnap = await getDocs(collection(db, "attractions"));
-          const remoteAtts = [];
-          attSnap.forEach(d => remoteAtts.push({ id: d.id, ...d.data() }));
+        // 4. 景點資料庫：優先採用 Google Sheet 景點表
+        if (sheetMaster.attractions && sheetMaster.attractions.length > 0) {
+          const sheetAtts = sheetMaster.attractions.map(att => ({
+            id: att.id,
+            name: att.name,
+            city: att.city,
+            category: att.category,
+            description: att.description,
+            address: att.address,
+            nav_link: att.nav_link,
+            images: [att.image_url || "./assets/landmarks/moa_globe.jpg"]
+          }));
 
           const attMap = new Map();
           ISLAND_ATTRACTIONS_FALLBACK.forEach(a => attMap.set(a.id, a));
-          remoteAtts.forEach(a => attMap.set(a.id, a));
+          sheetAtts.forEach(a => attMap.set(a.id, a));
           allAttractions = Array.from(attMap.values());
-        } catch (e) {
+        } else {
           allAttractions = ISLAND_ATTRACTIONS_FALLBACK;
         }
 
-        // 讀取城市動態
-        try {
-          const newsSnap = await getDocs(collection(db, "news"));
-          allNews = [];
-          newsSnap.forEach(d => {
-            const nData = d.data();
-            const checkStr = safeStr(nData.brand) + ' ' + safeStr(nData.title) + ' ' + safeStr(nData.description);
-            if (!checkStr.includes('foodpanda')) {
-              allNews.push({ id: d.id, ...nData });
-            }
-          });
-        } catch (e) { allNews = []; }
-
-        if (allNews.length === 0) {
+        // 5. 城市動態 / 專屬優惠：優先採用 Google Sheet 優惠表
+        if (sheetMaster.promotions && sheetMaster.promotions.length > 0) {
+          allNews = sheetMaster.promotions.map(promo => ({
+            id: promo.id,
+            city: promo.city || 'all',
+            type: 'promo',
+            brand: promo.store_name,
+            title: promo.title,
+            tag: promo.discount_badge || '🔥 獨家優惠',
+            validity: promo.valid_until ? `有效期限至 ${promo.valid_until}` : '長期有效',
+            description: promo.detail,
+            location: promo.store_name,
+            images: [promo.image_url]
+          }));
+        } else {
           allNews = [
-            { city: 'all', type: 'promo', brand: 'GrabFood', title: '全菲週末精選美食 50% OFF 折扣狂歡', tag: '🔥 限時優惠', validity: '每週五至週日限定', description: '全菲律賓 GrabFood 外送精選指定知名餐廳，訂單滿額即享 5 折超值折扣與免運優惠！', location: 'Manila, Davao, Cebu 全菲適用' },
-            { city: 'all', type: 'event', brand: 'TicketWorld', title: 'Ed Sheeran Mathematics Tour Manila', tag: '🎵 巨星巡演', validity: '2026/09/25', description: '西洋流行天王 Ed Sheeran 降臨馬尼拉開唱！', location: 'SMDC Festival Grounds, Manila' }
+            { city: 'all', type: 'promo', brand: 'GrabFood', title: '全菲週末精選美食 50% OFF 折扣狂歡', tag: '🔥 限時優惠', validity: '每週五至週日限定', description: '全菲律賓 GrabFood 外送精選指定知名餐廳，訂單滿額即享 5 折超值折扣與免運優惠！', location: 'Manila, Davao, Cebu 全菲適用' }
           ];
         }
+
       } catch (err) {
         console.error("載入失敗:", err);
       }
