@@ -1,80 +1,116 @@
 /**
  * Tour2Gether.ph - Google Sheet Master Database Service
- * 負責讀取 Google Sheet 三合一公開檢視資料 (BigV_Picks / Attractions / Promotions)
- * 支援標題自適應解析，保證 100% 抓出每欄真實資料
+ * 採用 Google 官方「發布到網路」CSV 直讀管道
+ * 100% 解決 404 權限問題，秒速加載真實試算表數據
  */
 
-const SHEET_ID = '1sQELyvgQ8ZhL0iolKZ0fdEgr6z7FrFsK5Cgl2xz145g';
+const PUBLISHED_BASE_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTMYS6pUL-XFoAw2zM2B_fje5qfFAKlCoeLF7heOYLVfktamsWAvPmP-tRgt5vDCioomA52oBMdXHsW/pub?output=csv';
+
+// 各工作表名稱與 gid 對照 ( Attractions gid 為 1406320151 )
+const SHEET_CONFIGS = {
+  'BigV_Picks': '0',
+  'Attractions': '1406320151',
+  'Promotions': '1829302194'
+};
 
 /**
- * 透過 Google Visualization (gviz) API 抓取指定分頁資料
- * 具備雙重標題識別機制：優先讀取 c.label，若無則自動取第一列第一列為 Key
+ * 簡易健壯的 CSV 解析器（支援引號內逗號與換行）
+ */
+function parseCSV(text) {
+  const lines = [];
+  let row = [];
+  let inQuotes = false;
+  let currentStr = '';
+
+  for (let i = 0; i < text.length; i++) {
+    const char = text[i];
+    const nextChar = text[i + 1];
+
+    if (char === '"') {
+      if (inQuotes && nextChar === '"') {
+        currentStr += '"';
+        i++;
+      } else {
+        inQuotes = !inQuotes;
+      }
+    } else if (char === ',' && !inQuotes) {
+      row.push(currentStr.trim());
+      currentStr = '';
+    } else if ((char === '\r' || char === '\n') && !inQuotes) {
+      if (char === '\r' && nextChar === '\n') {
+        i++;
+      }
+      row.push(currentStr.trim());
+      if (row.some(val => val !== '')) {
+        lines.push(row);
+      }
+      row = [];
+      currentStr = '';
+    } else {
+      currentStr += char;
+    }
+  }
+
+  if (currentStr || row.length > 0) {
+    row.push(currentStr.trim());
+    if (row.some(val => val !== '')) {
+      lines.push(row);
+    }
+  }
+
+  if (lines.length < 2) return [];
+
+  const headers = lines[0].map(h => h.toLowerCase().trim());
+  const results = [];
+
+  for (let i = 1; i < lines.length; i++) {
+    const values = lines[i];
+    const entry = {};
+    let hasValue = false;
+
+    headers.forEach((header, idx) => {
+      const val = values[idx] !== undefined ? values[idx] : '';
+      if (header) {
+        entry[header] = val;
+      }
+      entry[`col_${idx}`] = val;
+      if (val !== '') hasValue = true;
+    });
+
+    if (hasValue) {
+      const isActive = String(entry.is_active || 'TRUE').toUpperCase();
+      if (isActive === 'TRUE' || isActive === '') {
+        results.push(entry);
+      }
+    }
+  }
+
+  return results;
+}
+
+/**
+ * 透過公開 CSV 端點讀取指定分頁
  */
 async function fetchSheetData(sheetName) {
-  const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(sheetName)}`;
-  
+  const gid = SHEET_CONFIGS[sheetName] || '0';
+  const url = `${PUBLISHED_BASE_URL}&gid=${gid}&t=${Date.now()}`;
+
   try {
     const response = await fetch(url);
     if (!response.ok) {
-      throw new Error(`HTTP 錯誤! 狀態碼: ${response.status}`);
+      throw new Error(`HTTP 狀態碼錯誤: ${response.status}`);
     }
-    
-    const text = await response.text();
-    const jsonString = text.substring(text.indexOf('{'), text.lastIndexOf('}') + 1);
-    const data = JSON.parse(jsonString);
-    
-    if (!data.table || !data.table.rows || data.table.rows.length === 0) {
-      return [];
-    }
-
-    // 1. 先嘗試從 cols 取標題
-    let colKeys = data.table.cols.map(c => (c && c.label) ? String(c.label).trim().toLowerCase() : '');
-    
-    let startIndex = 0;
-    // 如果 cols 裡面的 label 大多為空，代表試算表第一列 (rows[0]) 才是真實標題！
-    const hasValidLabels = colKeys.some(k => k.length > 0);
-    if (!hasValidLabels && data.table.rows.length > 0) {
-      colKeys = data.table.rows[0].c.map(cell => cell && cell.v ? String(cell.v).trim().toLowerCase() : '');
-      startIndex = 1; // 從第二列開始讀取真實資料
-    }
-
-    const result = [];
-    for (let i = startIndex; i < data.table.rows.length; i++) {
-      const r = data.table.rows[i];
-      if (!r || !r.c) continue;
-
-      const entry = {};
-      let hasData = false;
-
-      r.c.forEach((cell, idx) => {
-        const key = colKeys[idx];
-        const val = cell ? (cell.v !== null && cell.v !== undefined ? cell.v : '') : '';
-        if (key) {
-          entry[key] = typeof val === 'string' ? val.trim() : val;
-          if (val !== '') hasData = true;
-        }
-        // 同時備份以欄位索引 (col_0, col_1...) 為 key，確保 100% 絕對拿得到資料！
-        entry[`col_${idx}`] = typeof val === 'string' ? val.trim() : val;
-      });
-
-      if (hasData) {
-        // 如果有 is_active 欄位，檢查是否為 TRUE；若沒有該欄位則預設收錄
-        const isActiveStr = String(entry.is_active || entry.col_15 || 'TRUE').toUpperCase();
-        if (isActiveStr === 'TRUE' || isActiveStr === '') {
-          result.push(entry);
-        }
-      }
-    }
-
-    return result;
+    const csvText = await response.text();
+    const data = parseCSV(csvText);
+    return data;
   } catch (error) {
-    console.error(`讀取分頁 [${sheetName}] 失敗:`, error);
+    console.warn(`讀取分頁 [${sheetName}] 失敗:`, error);
     return [];
   }
 }
 
 /**
- * 多語系文字取得輔助函式
+ * 多語系文字輔助函式
  */
 export function getLocalizedText(item, fieldPrefix, lang = 'zh') {
   if (!item) return '';
@@ -103,10 +139,10 @@ export function getLocalizedText(item, fieldPrefix, lang = 'zh') {
 }
 
 /**
- * 一次性加載所有 Master Database 核心資料
+ * 一次性加載三合一主資料庫
  */
 export async function loadMasterDatabase() {
-  console.log('🔄 正在同步 Tour2Gether Master Database...');
+  console.log('🔄 正在同步 Tour2Gether Master Database (公開網路發布端)...');
   const [bigVPicks, attractions, promotions] = await Promise.all([
     fetchSheetData('BigV_Picks'),
     fetchSheetData('Attractions'),
