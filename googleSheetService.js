@@ -1,161 +1,315 @@
 /**
- * Tour2Gether.ph - Google Sheet Master Database Service
- * 採用 Google 官方公開 CSV 發布管道 (直讀真實資料庫)
- * 100% 杜絕 404/400 錯誤，免 API Key 秒速加載
+ * 大V的旅遊窩 PWA - Google Sheets CMS 資料串接服務 (v17.0 Master)
+ * 支援四大分頁 Schema 映射、RFC 4180 狀態機 CSV 解析、多語系 Fallback 與快取機制
  */
 
-const SHEET_ID = '1sQELyvgQ8ZhL0iolKZ0fdEgr6z7FrFsK5Cgl2xz145g';
-const PUBLISHED_BASE_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTMYS6pUL-XFoAw2zM2B_fje5qfFAKlCoeLF7heOYLVfktamsWAvPmP-tRgt5vDCioomA52oBMdXHsW/pub?output=csv';
-
-// Attractions 分頁的真實 gid (由您發布的網址確認)
-const ATTRACTIONS_GID = '1406320151';
+// 試算表設定 (請填入您的 Google Sheet ID 與各分頁名稱或 GID)
+export const SHEET_CONFIG = {
+  spreadsheetId: "1e1B6XUjX4_q4g9f8Q_EXAMPLE_SHEET_ID", // 請替換為真實的 Google Sheet ID
+  sheets: {
+    bigVPicks: "BigV_Picks",
+    attractions: "Attractions",
+    promotions: "Promotions",
+    autoDiscovered: "Auto_Discovered"
+  },
+  // 快取有效期限：5 分鐘 (毫秒)
+  cacheTTL: 5 * 60 * 1000
+};
 
 /**
- * 健壯的 CSV 解析器（支援引號內逗號與換行）
+ * RFC 4180 規格之強固型 CSV 解析器 (狀態機實作)
+ * 能精準處理單元格內的換行、逗號與雙引號跳脫
  */
-function parseCSV(text) {
-  const lines = [];
-  let row = [];
+export function parseCSV(text) {
+  const rows = [];
+  let currentRow = [];
+  let currentVal = '';
   let inQuotes = false;
-  let currentStr = '';
 
   for (let i = 0; i < text.length; i++) {
     const char = text[i];
     const nextChar = text[i + 1];
 
-    if (char === '"') {
-      if (inQuotes && nextChar === '"') {
-        currentStr += '"';
-        i++;
+    if (inQuotes) {
+      if (char === '"') {
+        if (nextChar === '"') {
+          currentVal += '"';
+          i++; // 跳過下一個轉義雙引號
+        } else {
+          inQuotes = false;
+        }
       } else {
-        inQuotes = !inQuotes;
+        currentVal += char;
       }
-    } else if (char === ',' && !inQuotes) {
-      row.push(currentStr.trim());
-      currentStr = '';
-    } else if ((char === '\r' || char === '\n') && !inQuotes) {
-      if (char === '\r' && nextChar === '\n') {
-        i++;
-      }
-      row.push(currentStr.trim());
-      if (row.some(val => val !== '')) {
-        lines.push(row);
-      }
-      row = [];
-      currentStr = '';
     } else {
-      currentStr += char;
-    }
-  }
-
-  if (currentStr || row.length > 0) {
-    row.push(currentStr.trim());
-    if (row.some(val => val !== '')) {
-      lines.push(row);
-    }
-  }
-
-  if (lines.length < 2) return [];
-
-  const headers = lines[0].map(h => h.toLowerCase().trim());
-  const results = [];
-
-  for (let i = 1; i < lines.length; i++) {
-    const values = lines[i];
-    const entry = {};
-    let hasValue = false;
-
-    headers.forEach((header, idx) => {
-      const val = values[idx] !== undefined ? values[idx] : '';
-      if (header) {
-        entry[header] = val;
+      if (char === '"') {
+        inQuotes = true;
+      } else if (char === ',') {
+        currentRow.push(currentVal.trim());
+        currentVal = '';
+      } else if (char === '\r') {
+        if (nextChar === '\n') i++;
+        currentRow.push(currentVal.trim());
+        rows.push(currentRow);
+        currentRow = [];
+        currentVal = '';
+      } else if (char === '\n') {
+        currentRow.push(currentVal.trim());
+        rows.push(currentRow);
+        currentRow = [];
+        currentVal = '';
+      } else {
+        currentVal += char;
       }
-      entry[`col_${idx}`] = val;
-      if (val !== '') hasValue = true;
+    }
+  }
+
+  // 處理最後一個單元格
+  if (currentVal || currentRow.length > 0) {
+    currentRow.push(currentVal.trim());
+    rows.push(currentRow);
+  }
+
+  return rows;
+}
+
+/**
+ * 依據 Sheet 名稱抓取 gviz/tq CSV 資料並轉為物件陣列
+ */
+export async function fetchSheetCsv(sheetName) {
+  const url = `https://docs.google.com/spreadsheets/d/${SHEET_CONFIG.spreadsheetId}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(sheetName)}`;
+  const response = await fetch(url, { cache: 'no-store' });
+  
+  if (!response.ok) {
+    throw new Error(`無法抓取分頁 ${sheetName}: HTTP ${response.status}`);
+  }
+
+  const csvText = await response.text();
+  const rawRows = parseCSV(csvText);
+  if (!rawRows || rawRows.length < 2) return [];
+
+  const headers = rawRows[0].map(h => h.toLowerCase().trim().replace(/^['"]|['"]$/g, ''));
+  const records = [];
+
+  for (let r = 1; r < rawRows.length; r++) {
+    const row = rawRows[r];
+    if (!row || row.length === 0 || !row[0]) continue; // 略過無 ID 之空行
+
+    const obj = {};
+    headers.forEach((key, colIndex) => {
+      let val = row[colIndex] || '';
+      // 清除多餘包裹引號
+      if (typeof val === 'string') {
+        val = val.trim();
+        if (val.startsWith("'") || val.startsWith('"')) {
+          val = val.replace(/^['"]/, '').replace(/['"]$/, '');
+        }
+      }
+      obj[key] = val;
     });
 
-    if (hasValue) {
-      const isActive = String(entry.is_active || 'TRUE').toUpperCase();
-      if (isActive === 'TRUE' || isActive === '') {
-        results.push(entry);
-      }
-    }
+    records.push(obj);
   }
 
-  return results;
+  return records;
 }
 
 /**
- * 透過公開 CSV 端點或 gviz 直讀指定分頁資料
+ * 1. BigV_Picks Schema (17 欄位精準映射)
+ * id | city | name_zh | name_en | name_tl | category | bigv_comment_zh | bigv_comment_en | bigv_comment_tl | must_try_zh | must_try_en | must_try_tl | address | phone | image_url | is_active | nav_link
  */
-async function fetchSheetData(sheetName) {
-  let url = '';
-  if (sheetName === 'Attractions') {
-    url = `${PUBLISHED_BASE_URL}&gid=${ATTRACTIONS_GID}&t=${Date.now()}`;
-  } else {
-    // BigV_Picks 與 Promotions 採用公開 gviz 查詢，免猜 gid 永不 400
-    url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(sheetName)}&t=${Date.now()}`;
+function normalizeBigVPicks(rows) {
+  return rows
+    .filter(row => (row.is_active || 'TRUE').toUpperCase() === 'TRUE')
+    .map(row => ({
+      id: row.id,
+      city: (row.city || '').toLowerCase().trim(),
+      name: row.name_zh || row.name || row.id,
+      name_zh: row.name_zh || row.name || '',
+      name_en: row.name_en || '',
+      name_tl: row.name_tl || '',
+      category: row.category || '',
+      categoryKey: (row.category || '').toLowerCase().trim(),
+      // 點評三語
+      big_v_comment: row.bigv_comment_zh || row.big_v_comment || '',
+      bigv_comment_zh: row.bigv_comment_zh || row.big_v_comment || '',
+      bigv_comment_en: row.bigv_comment_en || '',
+      bigv_comment_tl: row.bigv_comment_tl || '',
+      // 必點三語
+      must_try: row.must_try_zh || row.must_try || '',
+      must_try_zh: row.must_try_zh || row.must_try || '',
+      must_try_en: row.must_try_en || '',
+      must_try_tl: row.must_try_tl || '',
+      address: row.address || '',
+      phone: cleanPhoneNumber(row.phone),
+      image_url: row.image_url || '',
+      nav_link: row.nav_link || '',
+      is_active: true
+    }));
+}
+
+/**
+ * 2. Attractions Schema (13 欄位精準映射)
+ * id | name_zh | name_en | name_tl | city | category | desc_zh | desc_en | desc_tl | image_url | address | nav_link | is_active
+ */
+function normalizeAttractions(rows) {
+  return rows
+    .filter(row => (row.is_active || 'TRUE').toUpperCase() === 'TRUE')
+    .map(row => ({
+      id: row.id,
+      city: (row.city || '').toLowerCase().trim(),
+      name: row.name_zh || row.name || row.id,
+      name_zh: row.name_zh || row.name || '',
+      name_en: row.name_en || '',
+      name_tl: row.name_tl || '',
+      category: row.category || '',
+      desc: row.desc_zh || row.description || '',
+      desc_zh: row.desc_zh || row.description || '',
+      desc_en: row.desc_en || '',
+      desc_tl: row.desc_tl || '',
+      address: row.address || '',
+      phone: cleanPhoneNumber(row.phone),
+      nav_link: row.nav_link || '',
+      image_url: row.image_url || '',
+      is_active: true
+    }));
+}
+
+/**
+ * 3. Promotions Schema (16 欄位精準映射)
+ * id | city | type | is_active | store_name | title_zh | title_en | title_tl | description_zh | description_en | description_tl | valid_until | image_url | address | phone | nav_link
+ */
+function normalizePromotions(rows) {
+  return rows
+    .filter(row => (row.is_active || 'TRUE').toUpperCase() === 'TRUE')
+    .map(row => ({
+      id: row.id,
+      city: (row.city || 'all').toLowerCase().trim(),
+      type: (row.type || 'ongoing').toLowerCase().trim(),
+      store_name: row.store_name || row.brand || '精選特約門市',
+      title: row.title_zh || row.title || '',
+      title_zh: row.title_zh || row.title || '',
+      title_en: row.title_en || '',
+      title_tl: row.title_tl || '',
+      description: row.description_zh || row.description || '',
+      description_zh: row.description_zh || row.description || '',
+      description_en: row.description_en || '',
+      description_tl: row.description_tl || '',
+      valid_until: row.valid_until || '長期有效',
+      address: row.address || '',
+      phone: cleanPhoneNumber(row.phone),
+      nav_link: row.nav_link || '',
+      image_url: row.image_url || '',
+      is_active: true
+    }));
+}
+
+/**
+ * 4. Auto_Discovered Schema (13 欄位預留爬蟲規格)
+ * id | city | type | name_zh | name_en | name_tl | category | google_rating | review_count | address | phone | image_url | nav_link
+ */
+function normalizeAutoDiscovered(rows) {
+  return rows.map(row => ({
+    id: row.id,
+    city: (row.city || '').toLowerCase().trim(),
+    type: (row.type || 'restaurant').toLowerCase().trim(),
+    name_zh: row.name_zh || '',
+    name_en: row.name_en || '',
+    name_tl: row.name_tl || '',
+    category: row.category || '',
+    googleRating: parseFloat(row.google_rating) || 4.5,
+    googleReviewCount: parseInt(row.review_count, 10) || 50,
+    address: row.address || '',
+    phone: cleanPhoneNumber(row.phone),
+    image_url: row.image_url || '',
+    nav_link: row.nav_link || ''
+  }));
+}
+
+/**
+ * 電話號碼過濾器：清除開頭引號與特殊不合法字元
+ */
+function cleanPhoneNumber(phone) {
+  if (!phone) return '';
+  let str = String(phone).trim();
+  str = str.replace(/^['"]+/, '').replace(/['"]+$/, '');
+  return str;
+}
+
+/**
+ * 載入 Master 資料庫核心入口（具備 LocalStorage 快取容錯）
+ */
+export async function loadMasterDatabase(forceRefresh = false) {
+  const cacheKey = 'bigv_master_db_cache';
+  const cacheTimeKey = 'bigv_master_db_time';
+
+  if (!forceRefresh) {
+    try {
+      const cached = localStorage.getItem(cacheKey);
+      const cacheTime = localStorage.getItem(cacheTimeKey);
+      if (cached && cacheTime && (Date.now() - parseInt(cacheTime, 10) < SHEET_CONFIG.cacheTTL)) {
+        return JSON.parse(cached);
+      }
+    } catch (e) {
+      console.warn("讀取快取失敗，改採即時連線抓取:", e);
+    }
   }
+
+  // 平行異步抓取四大分頁
+  const [rawBigV, rawAttr, rawPromo, rawAuto] = await Promise.allSettled([
+    fetchSheetCsv(SHEET_CONFIG.sheets.bigVPicks),
+    fetchSheetCsv(SHEET_CONFIG.sheets.attractions),
+    fetchSheetCsv(SHEET_CONFIG.sheets.promotions),
+    fetchSheetCsv(SHEET_CONFIG.sheets.autoDiscovered)
+  ]);
+
+  const result = {
+    bigVPicks: rawBigV.status === 'fulfilled' ? normalizeBigVPicks(rawBigV.value) : [],
+    attractions: rawAttr.status === 'fulfilled' ? normalizeAttractions(rawAttr.value) : [],
+    promotions: rawPromo.status === 'fulfilled' ? normalizePromotions(rawPromo.value) : [],
+    autoDiscovered: rawAuto.status === 'fulfilled' ? normalizeAutoDiscovered(rawAuto.value) : []
+  };
 
   try {
-    const response = await fetch(url);
-    if (!response.ok) {
-      throw new Error(`HTTP 狀態碼錯誤: ${response.status}`);
-    }
-    const csvText = await response.text();
-    const data = parseCSV(csvText);
-    return data;
-  } catch (error) {
-    console.warn(`讀取分頁 [${sheetName}] 失敗:`, error);
-    return [];
+    localStorage.setItem(cacheKey, JSON.stringify(result));
+    localStorage.setItem(cacheTimeKey, Date.now().toString());
+  } catch (e) {
+    console.warn("寫入 LocalStorage 快取失敗:", e);
   }
+
+  return result;
 }
 
 /**
- * 多語系文字取得輔助函式
+ * 多語系文字安全取得工具 (含三級 Fallback)
+ * @param {Object} item 資料物件
+ * @param {string} field 欄位前綴 (如 'name', 'desc', 'title', 'bigv_comment', 'must_try')
+ * @param {string} langCode 語言簡碼 ('zh', 'en', 'tl')
  */
-export function getLocalizedText(item, fieldPrefix, lang = 'zh') {
+export function getLocalizedText(item, field, langCode = 'zh') {
   if (!item) return '';
-  const currentLang = (lang || 'zh').toLowerCase();
 
-  const targetKey = `${fieldPrefix}_${currentLang}`;
-  if (item[targetKey] && String(item[targetKey]).trim() !== '') {
-    return String(item[targetKey]).trim();
+  const keySpecific = `${field}_${langCode}`;
+  if (item[keySpecific] && String(item[keySpecific]).trim()) {
+    return String(item[keySpecific]).trim();
   }
 
-  const enKey = `${fieldPrefix}_en`;
-  if (item[enKey] && String(item[enKey]).trim() !== '') {
-    return String(item[enKey]).trim();
+  // 1. 回退到中文
+  const keyZh = `${field}_zh`;
+  if (item[keyZh] && String(item[keyZh]).trim()) {
+    return String(item[keyZh]).trim();
   }
 
-  const zhKey = `${fieldPrefix}_zh`;
-  if (item[zhKey] && String(item[zhKey]).trim() !== '') {
-    return String(item[zhKey]).trim();
+  // 2. 回退到英文
+  const keyEn = `${field}_en`;
+  if (item[keyEn] && String(item[keyEn]).trim()) {
+    return String(item[keyEn]).trim();
   }
 
-  if (item[fieldPrefix] && String(item[fieldPrefix]).trim() !== '') {
-    return String(item[fieldPrefix]).trim();
+  // 3. 回退到純欄位名
+  if (item[field] && String(item[field]).trim()) {
+    return String(item[field]).trim();
   }
 
   return '';
-}
-
-/**
- * 一次性加載三合一主資料庫
- */
-export async function loadMasterDatabase() {
-  console.log('🔄 正在同步 Tour2Gether Master Database...');
-  const [bigVPicks, attractions, promotions] = await Promise.all([
-    fetchSheetData('BigV_Picks'),
-    fetchSheetData('Attractions'),
-    fetchSheetData('Promotions')
-  ]);
-
-  console.log(`✅ 同步完成: 站長嚴選 (${bigVPicks.length} 筆), 景點 (${attractions.length} 筆), 專屬優惠 (${promotions.length} 筆)`);
-
-  return {
-    bigVPicks,
-    attractions,
-    promotions
-  };
 }
