@@ -8,7 +8,7 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
-  <meta name="app-version" content="20260909-v8.0-image-unlocked" />
+  <meta name="app-version" content="20260909-v9.0-real-photo-fixed" />
   <meta name="theme-color" content="#ea580c" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -145,7 +145,7 @@
               <!-- 瀏覽人數膠囊 -->
               <div class="bg-white/25 border border-white/40 rounded-full px-2 py-0.5 text-[9px] sm:text-[10px] font-bold text-white flex items-center gap-1 shadow-inner flex-shrink-0">
                 <i class="fa-solid fa-fire text-amber-300 text-[10px]"></i>
-                <span id="visit-count-val">3,847</span>
+                <span id="visit-count-val">3,851</span>
               </div>
             </div>
             <p data-i18n="appSubtitle" class="text-[9px] text-amber-100/80 font-medium tracking-tight truncate mt-0.5">菲律賓精緻生活 & 海島漫遊地圖</p>
@@ -402,10 +402,48 @@
       ]
     };
 
-    const SAFE_FALLBACK_IMAGES = {
-      default_spot: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&auto=format&fit=crop",
+    // 智能精準分類代表圖（當景點未填圖或網址無效時，依分類自動套用，絕不千篇一律套海灘）
+    const LANDMARK_CATEGORY_PHOTOS = {
+      casino: "https://images.unsplash.com/photo-1511193311914-0346f16efe90?w=800&auto=format&fit=crop", // 奢華賭場
+      mall: "https://images.unsplash.com/photo-1519567241046-7f570eee3ce6?w=800&auto=format&fit=crop",   // 購物商場
+      museum: "https://images.unsplash.com/photo-1582555172866-f73bb12a2ab3?w=800&auto=format&fit=crop", // 國家博物館
+      park: "https://images.unsplash.com/photo-1519331379826-f10be5486c6f?w=800&auto=format&fit=crop",   // 黎剎公園/市中心公園
+      church: "https://images.unsplash.com/photo-1548625361-19597793d5f9?w=800&auto=format&fit=crop", // 聖佩德羅/聖嬰大教堂
+      ocean: "https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=800&auto=format&fit=crop",  // 海洋公園
+      nature: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=800&auto=format&fit=crop", // 自然花園景點
+      beach: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&auto=format&fit=crop",  // 海灘
       food_default: "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=800&auto=format&fit=crop"
     };
+
+    // 依景點關鍵字取得專屬風格圖片
+    function getSmartLandmarkPhoto(item) {
+      const dump = (safeStr(item.id) + ' ' + safeStr(item.name_zh) + ' ' + safeStr(item.name_en) + ' ' + safeStr(item.category)).toLowerCase();
+      if (dump.includes('dreams') || dump.includes('新濠') || dump.includes('okada') || dump.includes('solaire') || dump.includes('nustar') || dump.includes('casino')) {
+        return LANDMARK_CATEGORY_PHOTOS.casino;
+      }
+      if (dump.includes('mall') || dump.includes('moa') || dump.includes('商場') || dump.includes('購物') || dump.includes('sm ')) {
+        return LANDMARK_CATEGORY_PHOTOS.mall;
+      }
+      if (dump.includes('museum') || dump.includes('博物館') || dump.includes('art') || dump.includes('heritage')) {
+        return LANDMARK_CATEGORY_PHOTOS.museum;
+      }
+      if (dump.includes('rizal') || dump.includes('黎剎') || dump.includes('park') || dump.includes('公園') || dump.includes('people')) {
+        return LANDMARK_CATEGORY_PHOTOS.park;
+      }
+      if (dump.includes('church') || dump.includes('cathedral') || dump.includes('教堂') || dump.includes('pedro') || dump.includes('santo') || dump.includes('intramuros')) {
+        return LANDMARK_CATEGORY_PHOTOS.church;
+      }
+      if (dump.includes('ocean') || dump.includes('海洋') || dump.includes('aquarium') || dump.includes('zoo')) {
+        return LANDMARK_CATEGORY_PHOTOS.ocean;
+      }
+      if (dump.includes('garden') || dump.includes('sira') || dump.includes('hills') || dump.includes('nature') || dump.includes('花園')) {
+        return LANDMARK_CATEGORY_PHOTOS.nature;
+      }
+      if (dump.includes('beach') || dump.includes('island') || dump.includes('沙灘') || dump.includes('海灘')) {
+        return LANDMARK_CATEGORY_PHOTOS.beach;
+      }
+      return LANDMARK_CATEGORY_PHOTOS.nature;
+    }
 
     let currentDimension = sessionStorage.getItem('ph_dim') || 'cities';
     let currentCity = localStorage.getItem('ph_app_city') || 'davao';
@@ -466,7 +504,7 @@
         }
         document.getElementById('visit-count-val').innerText = Number(count).toLocaleString();
       } catch (err) {
-        document.getElementById('visit-count-val').innerText = "3,847";
+        document.getElementById('visit-count-val').innerText = "3,851";
       }
     }
 
@@ -613,24 +651,24 @@
       }
     };
 
-    // 萬能圖片擷取器：深度遍歷物件，只要值是 http 網址就直接採用！
-    function extractAnyValidImageUrl(obj, fallback) {
-      if (!obj) return fallback || SAFE_FALLBACK_IMAGES.default_spot;
-      
-      const priorityKeys = ['image_url', 'imageurl', 'image', 'photo', '圖片網址', '圖片', 'image_link'];
-      for (let k of priorityKeys) {
-        if (obj[k] && String(obj[k]).trim().startsWith('http')) {
-          return String(obj[k]).trim();
+    // 嚴格圖片擷取器：過濾掉 Google Maps 網頁導航連結，只取真實圖片網址！
+    function extractValidPhotoUrl(item, fallbackUrl) {
+      if (!item) return fallbackUrl;
+
+      // 檢查候選鍵值
+      const keys = ['image_url', 'imageurl', 'photo', 'image', '圖片網址', '圖片', 'image_link', 'col_14', 'col_7'];
+      for (let k of keys) {
+        const val = item[k];
+        if (val && typeof val === 'string') {
+          const trimmed = val.trim();
+          // 嚴格排除 Google Maps 導航連結
+          if (trimmed.startsWith('http') && !trimmed.includes('maps.google') && !trimmed.includes('goo.gl/maps')) {
+            return trimmed;
+          }
         }
       }
 
-      for (let [k, v] of Object.entries(obj)) {
-        if (typeof v === 'string' && v.trim().startsWith('http')) {
-          return v.trim();
-        }
-      }
-
-      return fallback || SAFE_FALLBACK_IMAGES.default_spot;
+      return fallbackUrl;
     }
 
     async function fetchData() {
@@ -679,7 +717,7 @@
             item.city = matchedBigV.city;
             if (matchedBigV.address) item.address = matchedBigV.address;
             if (matchedBigV.nav_link) item.nav_link = matchedBigV.nav_link;
-            item.images = [extractAnyValidImageUrl(matchedBigV, SAFE_FALLBACK_IMAGES.food_default)];
+            item.images = [extractValidPhotoUrl(matchedBigV, LANDMARK_CATEGORY_PHOTOS.food_default)];
             bigVLookup.delete(matchedBigV.id.toLowerCase().trim());
           } else {
             item.isCurated = false;
@@ -694,7 +732,7 @@
           }
 
           if (!item.images || item.images.length === 0) {
-            item.images = [SAFE_FALLBACK_IMAGES.food_default];
+            item.images = [LANDMARK_CATEGORY_PHOTOS.food_default];
           }
 
           if (mergedMap.has(key)) {
@@ -723,7 +761,7 @@
             phone: bigVItem.phone || "",
             googleRating: 5.0,
             googleReviewCount: 50,
-            images: [extractAnyValidImageUrl(bigVItem, SAFE_FALLBACK_IMAGES.food_default)]
+            images: [extractValidPhotoUrl(bigVItem, LANDMARK_CATEGORY_PHOTOS.food_default)]
           });
         });
 
@@ -734,10 +772,11 @@
             return (b.googleRating || 0) - (a.googleRating || 0);
           });
 
-        // 景點清單：100% 直讀試算表真實圖片網址
+        // 景點清單：排除 Google Maps 導航網址，並對應專屬高畫質代表圖
         if (sheetMaster.attractions && sheetMaster.attractions.length > 0) {
           allAttractions = sheetMaster.attractions.map(att => {
-            const img = extractAnyValidImageUrl(att, SAFE_FALLBACK_IMAGES.default_spot);
+            const smartFallback = getSmartLandmarkPhoto(att);
+            const img = extractValidPhotoUrl(att, smartFallback);
 
             return {
               id: att.id,
@@ -750,17 +789,17 @@
               desc_en: att.desc_en,
               desc_tl: att.desc_tl,
               address: att.address,
-              nav_link: att.nav_link,
+              nav_link: att.nav_link || (att.image_url && String(att.image_url).includes('maps.google') ? att.image_url : ''),
               images: [img]
             };
           });
-          console.log("📸 景點第一筆抓取的圖片網址:", allAttractions[0]?.images[0]);
+          console.log("📸 景點第一筆修正後的圖片網址:", allAttractions[0]?.images[0]);
         }
 
-        // 動態清單：100% 直讀試算表真實圖片網址
+        // 動態清單
         if (sheetMaster.promotions && sheetMaster.promotions.length > 0) {
           allNews = sheetMaster.promotions.map(promo => {
-            const img = extractAnyValidImageUrl(promo, SAFE_FALLBACK_IMAGES.default_spot);
+            const img = extractValidPhotoUrl(promo, LANDMARK_CATEGORY_PHOTOS.nature);
 
             return {
               id: promo.id,
@@ -988,7 +1027,7 @@
 
         let images = item.images;
         if (!images || images.length === 0) {
-          images = [SAFE_FALLBACK_IMAGES.food_default];
+          images = [LANDMARK_CATEGORY_PHOTOS.food_default];
         }
 
         const reviewCount = item.googleReviewCount || 0;
@@ -1007,7 +1046,7 @@
                       src="${img}" 
                       alt="${name}" 
                       class="w-full h-full object-cover" 
-                      onerror="this.onerror=null; this.src='${SAFE_FALLBACK_IMAGES.food_default}';" 
+                      onerror="this.onerror=null; this.src='${LANDMARK_CATEGORY_PHOTOS.food_default}';" 
                     />
                   </div>
                 `).join('')}
@@ -1115,7 +1154,7 @@
           return cat.includes('casino') || cat.includes('賭場') || cat.includes('娛樂') || cat.includes('dreams') || cat.includes('okada') || cat.includes('solaire') || cat.includes('nustar');
         }
         if (currentSubFilter === 'history') {
-          return cat.includes('history') || cat.includes('歷史') || cat.includes('文化') || cat.includes('古蹟') || cat.includes('church') || cat.includes('cathedral') || cat.includes('教堂') || cat.includes('intramuros') || cat.includes('pedro') || cat.includes('santo') || cat.includes('magellan');
+          return cat.includes('history') || cat.includes('歷史') || cat.includes('文化') || cat.includes('古蹟') || cat.includes('church') || cat.includes('cathedral') || cat.includes('教堂') || cat.includes('intramuros') || cat.includes('pedro') || cat.includes('santo') || cat.includes('magellan') || cat.includes('museum') || cat.includes('博物館');
         }
         if (currentSubFilter === 'nature') {
           return cat.includes('nature') || cat.includes('自然') || cat.includes('公園') || cat.includes('park') || cat.includes('garden') || cat.includes('ocean') || cat.includes('zoo') || cat.includes('tarsier') || cat.includes('hills') || cat.includes('cave');
@@ -1157,13 +1196,13 @@
       listEl.innerHTML = filtered.map(item => {
         const name = getLocalizedText(item, 'name', currentShortLang) || item.name_en || item.name_zh || item.id || '景點地標';
         const desc = getLocalizedText(item, 'desc', currentShortLang) || getText(item.description) || '菲律賓熱門推薦地標。';
-        // 100% 優先讀取 Google Sheet 上的真實圖片網址
-        const img = (item.images && item.images[0]) ? item.images[0] : SAFE_FALLBACK_IMAGES.default_spot;
+        const smartPhoto = getSmartLandmarkPhoto(item);
+        const img = (item.images && item.images[0]) ? item.images[0] : smartPhoto;
 
         return `
           <article class="bg-white rounded-2xl overflow-hidden shadow-xs hover:shadow-md border border-slate-200/80 flex flex-col transition">
             <div class="relative h-48 w-full bg-slate-100 overflow-hidden">
-              <img src="${img}" alt="${name}" class="w-full h-full object-cover" onerror="this.onerror=null; this.src='${SAFE_FALLBACK_IMAGES.default_spot}';" />
+              <img src="${img}" alt="${name}" class="w-full h-full object-cover" onerror="this.onerror=null; this.src='${smartPhoto}';" />
               <div class="absolute bottom-2.5 left-2.5 flex items-center gap-1.5">
                 <span class="bg-slate-900/80 backdrop-blur-xs text-white text-[10px] px-2 py-0.5 rounded font-medium">
                   ${dict['city_' + item.city] || item.city}
@@ -1255,12 +1294,12 @@
         const tag = isGrabEvent ? '🛵 Grab 限時特惠' : (getText(item.tag) || '🔥 快訊');
         const validity = getLocalizedText(item, 'validity', currentShortLang) || getText(item.validity) || '';
         const location = getText(item.location) || '全菲適用';
-        const img = (item.images && item.images[0]) ? item.images[0] : SAFE_FALLBACK_IMAGES.default_spot;
+        const img = (item.images && item.images[0]) ? item.images[0] : LANDMARK_CATEGORY_PHOTOS.nature;
 
         return `
           <article class="bg-white rounded-2xl overflow-hidden shadow-xs hover:shadow-md border border-slate-200/80 flex flex-col transition">
             <div class="relative h-44 w-full bg-slate-100 overflow-hidden">
-              <img src="${img}" alt="News" class="w-full h-full object-cover" onerror="this.onerror=null; this.src='${SAFE_FALLBACK_IMAGES.default_spot}';" />
+              <img src="${img}" alt="News" class="w-full h-full object-cover" onerror="this.onerror=null; this.src='${LANDMARK_CATEGORY_PHOTOS.nature}';" />
               <div class="absolute bottom-2.5 left-2.5 flex items-center gap-1.5">
                 <span class="bg-slate-900/80 backdrop-blur-xs text-white text-[10px] px-2 py-0.5 rounded font-medium">
                   ${dict['city_' + item.city] || item.city || '全菲'}
@@ -1323,7 +1362,6 @@
 
     window.updateUiLanguage = updateUiLanguage;
 
-    // 滑鼠滾輪橫向滾動 + 滑鼠拖曳 (Drag to Scroll)
     function enableHorizontalScroll() {
       const scrollContainers = [
         document.getElementById('regionPillsNav'),
