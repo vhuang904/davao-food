@@ -1720,9 +1720,24 @@
     enableHorizontalScroll();
     fetchData();
 
+    // 註冊 Service Worker 啟用 PWA 自動偵測更新
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js').catch(err => {
+        navigator.serviceWorker.register('./sw.js').then((reg) => {
+          // 每次開啟主動向伺服器檢查更新
+          reg.update();
+
+          // 偵測到新版本時自動提示並重整生效
+          reg.addEventListener('updatefound', () => {
+            const newWorker = reg.installing;
+            newWorker.addEventListener('statechange', () => {
+              if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                showToast('已為您自動更新至最新版本！', 'fa-bolt');
+                setTimeout(() => location.reload(), 1200);
+              }
+            });
+          });
+        }).catch(err => {
           console.warn('ServiceWorker 註冊失敗:', err);
         });
       });
