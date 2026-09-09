@@ -873,7 +873,7 @@ function mergeRestaurantsWithBigV(originalList = [], bigVPicks = []) {
             description: att.description,
             address: att.address,
             nav_link: att.nav_link,
-            images: fixImg(att.image_url) || "./assets/landmarks/moa_globe.jpg"]
+            images: [fixImg(att.image_url) || "./assets/landmarks/moa_globe.jpg"]
           }));
 
           const attMap = new Map();
