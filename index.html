@@ -138,14 +138,14 @@
           </div>
           <div class="min-w-0">
             <div class="flex items-center gap-2">
-              <h1 class="text-sm font-extrabold tracking-tight truncate leading-none">大V的旅遊窩</h1>
+              <h1 data-i18n="appTitle" class="text-sm font-extrabold tracking-tight truncate leading-none">大V的旅遊窩</h1>
               <!-- 瀏覽人數膠囊：緊貼標題右側 -->
               <div class="bg-white/25 border border-white/40 rounded-full px-2 py-0.5 text-[10px] font-bold text-white flex items-center gap-1 shadow-inner flex-shrink-0">
                 <i class="fa-solid fa-fire text-amber-300 text-[10px]"></i>
                 <span id="visit-count-val">3,688</span>
               </div>
             </div>
-            <p class="text-[9px] text-amber-100/80 font-medium tracking-tight mt-0.5">菲律賓精緻生活 & 海島漫遊地圖</p>
+            <p data-i18n="appSubtitle" class="text-[9px] text-amber-100/80 font-medium tracking-tight mt-0.5">菲律賓精緻生活 & 海島漫遊地圖</p>
           </div>
         </div>
 
@@ -153,7 +153,7 @@
           <!-- 登入按鈕 -->
           <button id="auth-state-btn" class="bg-white/20 hover:bg-white/30 border border-white/30 text-white rounded-lg px-2.5 py-1 text-[11px] font-bold flex items-center gap-1 transition active:scale-95">
             <i class="fa-regular fa-user text-[10px]"></i>
-            <span id="auth-btn-text">登入</span>
+            <span id="auth-btn-text" data-i18n="btnLogin">登入</span>
           </button>
           <!-- 分享按鈕 -->
           <button id="share-btn" class="bg-white/20 hover:bg-white/30 border border-white/30 text-white rounded-lg px-2.5 py-1 text-[11px] font-bold flex items-center gap-1 transition active:scale-95">
@@ -369,40 +369,40 @@
       return ISLAND_KEYS.includes(cityKey);
     }
 
-    // 子分類配置
+    // 多語系子分類配置
     const SUB_FILTERS = {
       food_urban: [
-        { key: 'all', label: '全部' },
-        { key: 'japanese_korean', label: '日料生魚片/燒肉' },
-        { key: 'chinese', label: '精選中餐/火鍋' },
-        { key: 'bbq_seafood', label: '炭烤排餐/海鮮' },
-        { key: 'fast_food', label: '美式速食' },
-        { key: 'coffee_drinks', label: '手搖咖啡' }
+        { key: 'all', label: { 'zh-TW': '全部', 'en': 'All', 'tl': 'Lahat' } },
+        { key: 'japanese_korean', label: { 'zh-TW': '日料生魚片/燒肉', 'en': 'Japanese/Korean BBQ', 'tl': 'Hapones/Koreano' } },
+        { key: 'chinese', label: { 'zh-TW': '精選中餐/火鍋', 'en': 'Chinese/Hotpot', 'tl': 'Tsino/Hotpot' } },
+        { key: 'bbq_seafood', label: { 'zh-TW': '炭烤排餐/海鮮', 'en': 'BBQ & Seafood', 'tl': 'Inihaw at Seafood' } },
+        { key: 'fast_food', label: { 'zh-TW': '美式速食', 'en': 'Fast Food', 'tl': 'Fast Food' } },
+        { key: 'coffee_drinks', label: { 'zh-TW': '手搖咖啡', 'en': 'Coffee & Cafe', 'tl': 'Kape at Inumin' } }
       ],
       food_island: [
-        { key: 'all', label: '🏝️ 全部推薦' },
-        { key: 'food', label: '🍽️ Top 必吃美食' },
-        { key: 'hotel', label: '🏨 精選星級飯店' },
-        { key: 'villa', label: '🌴 海景 Villa / 度假村' }
+        { key: 'all', label: { 'zh-TW': '🏝️ 全部推薦', 'en': '🏝️ All Spots', 'tl': '🏝️ Lahat' } },
+        { key: 'food', label: { 'zh-TW': '🍽️ Top 必吃美食', 'en': '🍽️ Top Eats', 'tl': '🍽️ Pagkain' } },
+        { key: 'hotel', label: { 'zh-TW': '🏨 精選星級飯店', 'en': '🏨 Star Hotels', 'tl': '🏨 Mga Hotel' } },
+        { key: 'villa', label: { 'zh-TW': '🌴 海景 Villa / 度假村', 'en': '🌴 Villas & Resorts', 'tl': '🌴 Resorts' } }
       ],
       attraction_urban: [
-        { key: 'all', label: '全部景點' },
-        { key: 'shopping', label: '🛒 購物商場' },
-        { key: 'casino', label: '🎰 賭場娛樂' },
-        { key: 'history', label: '🏛️ 歷史文化' },
-        { key: 'nature', label: '🌳 自然休閒' }
+        { key: 'all', label: { 'zh-TW': '全部景點', 'en': 'All Attractions', 'tl': 'Lahat ng Pasyalan' } },
+        { key: 'shopping', label: { 'zh-TW': '🛒 購物商場', 'en': '🛒 Malls', 'tl': '🛒 Pamilihan' } },
+        { key: 'casino', label: { 'zh-TW': '🎰 賭場娛樂', 'en': '🎰 Casinos', 'tl': '🎰 Casino' } },
+        { key: 'history', label: { 'zh-TW': '🏛️ 歷史文化', 'en': '🏛️ Heritage & History', 'tl': '🏛️ Kasaysayan' } },
+        { key: 'nature', label: { 'zh-TW': '🌳 自然休閒', 'en': '🌳 Nature & Parks', 'tl': '🌳 Kalikasan' } }
       ],
       attraction_island: [
-        { key: 'all', label: '🏝️ 全部海島景點' },
-        { key: 'beach', label: '🏖️ 絕美沙灘' },
-        { key: 'island_hopping', label: '🤿 跳島浮潛' },
-        { key: 'nature', label: '🌴 生態秘境' }
+        { key: 'all', label: { 'zh-TW': '🏝️ 全部海島景點', 'en': '🏝️ All Island Spots', 'tl': '🏝️ Lahat ng Isla' } },
+        { key: 'beach', label: { 'zh-TW': '🏖️ 絕美沙灘', 'en': '🏖️ Beaches', 'tl': '🏖️ Baybayin' } },
+        { key: 'island_hopping', label: { 'zh-TW': '🤿 跳島浮潛', 'en': '🤿 Island Hopping', 'tl': '🤿 Island Hopping' } },
+        { key: 'nature', label: { 'zh-TW': '🌴 生態秘境', 'en': '🌴 Eco Tours', 'tl': '🌴 Ekoturismo' } }
       ],
       news: [
-        { key: 'all', label: '全部動態' },
-        { key: 'promo', label: '🔥 限時折扣' },
-        { key: 'event', label: '🎵 活動特惠' },
-        { key: 'new', label: '✨ 最新情報' }
+        { key: 'all', label: { 'zh-TW': '全部動態', 'en': 'All Updates', 'tl': 'Lahat ng Balita' } },
+        { key: 'promo', label: { 'zh-TW': '🔥 限時折扣', 'en': '🔥 Promos', 'tl': '🔥 Diskwento' } },
+        { key: 'event', label: { 'zh-TW': '🎵 活動特惠', 'en': '🎵 Events', 'tl': '🎵 Kaganapan' } },
+        { key: 'new', label: { 'zh-TW': '✨ 最新情報', 'en': '✨ News', 'tl': '✨ Balita' } }
       ]
     };
 
@@ -672,12 +672,19 @@
 
     onAuthStateChanged(auth, (user) => {
       currentUser = user;
-      document.getElementById('auth-btn-text').innerText = user ? (user.displayName ? user.displayName.split(' ')[0] : '會員') : '登入';
+      const dict = I18N_DICT[currentLang] || I18N_DICT['zh-TW'];
+      const loginText = dict.btnLogin || '登入';
+      const memberText = dict.btnMember || '會員';
+      document.getElementById('auth-btn-text').innerText = user ? (user.displayName ? user.displayName.split(' ')[0] : memberText) : loginText;
     });
 
-    // 多語系字典定義
+    // 多語系字典定義（完整覆蓋標題、副標題、登入、各類按鈕）
     const I18N_DICT = {
       'zh-TW': {
+        appTitle: '大V的旅遊窩',
+        appSubtitle: '菲律賓精緻生活 & 海島漫遊地圖',
+        btnLogin: '登入',
+        btnMember: '會員',
         searchPlaceholder: '搜尋燒肉、火鍋、景點、Villa、飯店...',
         shareBtn: '分享',
         tabMetro: '都會生活圈',
@@ -715,6 +722,10 @@
         city_samal: '薩馬爾島'
       },
       'en': {
+        appTitle: "Big V's Travel Nest",
+        appSubtitle: 'Philippine Living & Island Travel Guide',
+        btnLogin: 'Login',
+        btnMember: 'Member',
         searchPlaceholder: 'Search BBQ, hotpot, spots, villas, hotels...',
         shareBtn: 'Share',
         tabMetro: 'Metro Area',
@@ -724,7 +735,7 @@
         navNews: 'City News',
         navFoodIsland: 'Food/Resort',
         filterAll: 'All Recommendations',
-        filterAllSpot: 'All Spots',
+        filterAllSpot: 'All Attractions',
         filterAllNews: 'All Updates',
         btnGrab: 'GrabFood',
         btnCall: 'Call Now',
@@ -752,6 +763,10 @@
         city_samal: 'Samal'
       },
       'tl': {
+        appTitle: 'Pugad ng Paglalakbay ni Big V',
+        appSubtitle: 'Gabay sa Pamumuhay at Isla sa Pilipinas',
+        btnLogin: 'Mag-login',
+        btnMember: 'Miyembro',
         searchPlaceholder: 'Maghanap ng pagkain, pasyalan, hotel...',
         shareBtn: 'Ibahagi',
         tabMetro: 'Kalunsuran',
@@ -1091,14 +1106,9 @@
         sessionStorage.setItem('ph_nav_sub', 'all');
       }
 
-      const dict = I18N_DICT[currentLang] || I18N_DICT['zh-TW'];
-
       subFilterContainer.innerHTML = filterList.map(f => {
         const active = f.key === currentSubFilter;
-        let label = f.label;
-        if (f.key === 'all') {
-          label = (currentMainTab === 'attraction') ? dict.filterAllSpot : (currentMainTab === 'news' ? dict.filterAllNews : dict.filterAll);
-        }
+        let label = (typeof f.label === 'object') ? (f.label[currentLang] || f.label['zh-TW']) : f.label;
         return `
           <button data-subkey="${f.key}" class="sub-pill px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap transition ${
             active ? 'bg-orange-500 text-white shadow-xs font-bold' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
@@ -1171,7 +1181,19 @@
 
       const curReg = [...REGION_CONFIG.cities, ...REGION_CONFIG.islands].find(r => r.id === currentCity);
       const cityName = dict['city_' + currentCity] || curReg?.name || '';
-      filterSummaryText.textContent = `${cityName} · ${currentSubFilter === 'all' ? dict.filterAll : currentSubFilter}`;
+      
+      let subName = dict.filterAll;
+      if (currentSubFilter !== 'all') {
+        const currentList = isIslandMode(currentCity) ? SUB_FILTERS.food_island : SUB_FILTERS.food_urban;
+        const targetObj = currentList.find(f => f.key === currentSubFilter);
+        if (targetObj && typeof targetObj.label === 'object') {
+          subName = targetObj.label[currentLang] || targetObj.label['zh-TW'];
+        } else if (targetObj) {
+          subName = targetObj.label;
+        }
+      }
+
+      filterSummaryText.textContent = `${cityName} · ${subName}`;
       itemCountBadge.textContent = `${filtered.length} ${dict.placesCountUnit}`;
 
       if (filtered.length === 0) {
@@ -1519,6 +1541,11 @@
           el.textContent = dict[key];
         }
       });
+
+      const authBtn = document.getElementById('auth-btn-text');
+      if (authBtn && !currentUser) {
+        authBtn.textContent = dict.btnLogin;
+      }
 
       renderUI();
     }
