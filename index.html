@@ -8,13 +8,12 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
-  <meta name="app-version" content="20260909-v7.0-perfect-fixed" />
+  <meta name="app-version" content="20260909-v8.0-image-unlocked" />
   <meta name="theme-color" content="#ea580c" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="大V的旅遊窩" />
   <meta name="description" content="大V的旅遊窩 - 菲律賓精選美食地圖、星級飯店、絕美海島與景點導覽 PWA" />
-  <!-- 行內 Favicon 消除 404 報錯 -->
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧭</text></svg>" />
   <link rel="manifest" href="manifest.json" />
   <title>大V的旅遊窩 - 菲律賓精緻生活與海島漫遊</title>
@@ -146,7 +145,7 @@
               <!-- 瀏覽人數膠囊 -->
               <div class="bg-white/25 border border-white/40 rounded-full px-2 py-0.5 text-[9px] sm:text-[10px] font-bold text-white flex items-center gap-1 shadow-inner flex-shrink-0">
                 <i class="fa-solid fa-fire text-amber-300 text-[10px]"></i>
-                <span id="visit-count-val">3,688</span>
+                <span id="visit-count-val">3,847</span>
               </div>
             </div>
             <p data-i18n="appSubtitle" class="text-[9px] text-amber-100/80 font-medium tracking-tight truncate mt-0.5">菲律賓精緻生活 & 海島漫遊地圖</p>
@@ -403,13 +402,11 @@
       ]
     };
 
-    // 安全保底圖庫（僅於 Google Sheet 完全未提供時作為備援）
     const SAFE_FALLBACK_IMAGES = {
       default_spot: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&auto=format&fit=crop",
       food_default: "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=800&auto=format&fit=crop"
     };
 
-    // 狀態管理
     let currentDimension = sessionStorage.getItem('ph_dim') || 'cities';
     let currentCity = localStorage.getItem('ph_app_city') || 'davao';
     let currentMainTab = sessionStorage.getItem('ph_nav_tab') || 'map';
@@ -456,7 +453,6 @@
       }, 2000);
     }
 
-    // 在線訪客計數器
     async function initVisitorCounter() {
       try {
         const statsRef = doc(db, "stats", "global");
@@ -470,7 +466,7 @@
         }
         document.getElementById('visit-count-val').innerText = Number(count).toLocaleString();
       } catch (err) {
-        document.getElementById('visit-count-val').innerText = "3,843";
+        document.getElementById('visit-count-val').innerText = "3,847";
       }
     }
 
@@ -482,7 +478,6 @@
       document.getElementById('auth-btn-text').innerText = user ? (user.displayName ? user.displayName.split(' ')[0] : memberText) : loginText;
     });
 
-    // 多語系字典完整定義
     const I18N_DICT = {
       'zh-TW': {
         appTitle: '大V的旅遊窩',
@@ -622,17 +617,15 @@
     function extractAnyValidImageUrl(obj, fallback) {
       if (!obj) return fallback || SAFE_FALLBACK_IMAGES.default_spot;
       
-      // 1. 優先檢查標準欄位
-      const priorityKeys = ['image_url', 'imageUrl', 'image', 'photo', '圖片網址', '圖片', 'image_link'];
+      const priorityKeys = ['image_url', 'imageurl', 'image', 'photo', '圖片網址', '圖片', 'image_link'];
       for (let k of priorityKeys) {
         if (obj[k] && String(obj[k]).trim().startsWith('http')) {
           return String(obj[k]).trim();
         }
       }
 
-      // 2. 深度遍歷所有屬性，找出任何隱藏的 http 圖片網址
       for (let [k, v] of Object.entries(obj)) {
-        if (typeof v === 'string' && v.trim().startsWith('http') && (v.includes('.jpg') || v.includes('.png') || v.includes('.webp') || v.includes('unsplash') || v.includes('images') || v.includes('googleusercontent'))) {
+        if (typeof v === 'string' && v.trim().startsWith('http')) {
           return v.trim();
         }
       }
@@ -640,14 +633,13 @@
       return fallback || SAFE_FALLBACK_IMAGES.default_spot;
     }
 
-    // 資料讀取：100% 優先直接讀取 Google Sheet 的真實圖片網址
     async function fetchData() {
       try {
         let sheetMaster = { bigVPicks: [], attractions: [], promotions: [] };
         try {
           sheetMaster = await loadMasterDatabase();
         } catch (e) {
-          console.warn("讀取 Google Sheet 失敗，降級使用快取/保底資料:", e);
+          console.warn("讀取 Google Sheet 失敗:", e);
         }
 
         const resSnap = await getDocs(collection(db, "restaurants")).catch(() => ({ forEach: () => {} }));
@@ -715,7 +707,6 @@
           }
         });
 
-        // 注入 Google Sheet 上的站長私房清單（100% 直讀試算表圖片網址）
         bigVLookup.forEach(bigVItem => {
           mergedMap.set(bigVItem.id, {
             id: bigVItem.id,
@@ -743,7 +734,7 @@
             return (b.googleRating || 0) - (a.googleRating || 0);
           });
 
-        // 景點清單：100% 直接讀取 Google Sheet 試算表的真實 image_url
+        // 景點清單：100% 直讀試算表真實圖片網址
         if (sheetMaster.attractions && sheetMaster.attractions.length > 0) {
           allAttractions = sheetMaster.attractions.map(att => {
             const img = extractAnyValidImageUrl(att, SAFE_FALLBACK_IMAGES.default_spot);
@@ -763,9 +754,10 @@
               images: [img]
             };
           });
+          console.log("📸 景點第一筆抓取的圖片網址:", allAttractions[0]?.images[0]);
         }
 
-        // 動態與優惠清單：100% 直接讀取 Google Sheet 的 image_url
+        // 動態清單：100% 直讀試算表真實圖片網址
         if (sheetMaster.promotions && sheetMaster.promotions.length > 0) {
           allNews = sheetMaster.promotions.map(promo => {
             const img = extractAnyValidImageUrl(promo, SAFE_FALLBACK_IMAGES.default_spot);
@@ -814,7 +806,6 @@
       return c === targetCity || a.includes(targetCity);
     }
 
-    // UI 渲染元件參考
     const typeCityBtn = document.getElementById('typeCityBtn');
     const typeIslandBtn = document.getElementById('typeIslandBtn');
     const regionPillsNav = document.getElementById('regionPillsNav');
@@ -1115,7 +1106,6 @@
         if (!matchC) return false;
         if (currentSubFilter === 'all') return true;
 
-        // 全方位中英雙向模糊比對，徹底解決分類過濾顯示 0 個景點的問題！
         const cat = (safeStr(item.category) + ' ' + safeStr(item.id) + ' ' + safeStr(item.name_zh) + ' ' + safeStr(item.name_en)).toLowerCase();
         
         if (currentSubFilter === 'shopping') {
@@ -1333,7 +1323,7 @@
 
     window.updateUiLanguage = updateUiLanguage;
 
-    // 滑鼠滾輪橫向滾動 + 滑鼠拖曳 (Drag to Scroll) 雙重支援
+    // 滑鼠滾輪橫向滾動 + 滑鼠拖曳 (Drag to Scroll)
     function enableHorizontalScroll() {
       const scrollContainers = [
         document.getElementById('regionPillsNav'),
@@ -1343,7 +1333,6 @@
       scrollContainers.forEach(container => {
         if (!container) return;
 
-        // 1. 滾輪滾動監聽
         container.addEventListener('wheel', (e) => {
           if (e.deltaY !== 0) {
             e.preventDefault();
@@ -1351,7 +1340,6 @@
           }
         }, { passive: false });
 
-        // 2. 滑鼠按住拖曳監聽 (Drag to Scroll)
         let isDown = false;
         let startX, scrollLeft;
 
