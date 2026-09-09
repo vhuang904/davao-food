@@ -1179,8 +1179,8 @@ function mergeRestaurantsWithBigV(originalList = [], bigVPicks = []) {
               </div>
 
               <!-- 按鈕隔離：純餐飲有 Grab，飯店/住宿無 Grab -->
-              <div class="mt-auto grid ${isFoodOnly ? 'grid-cols-3' : 'grid-cols-2'} gap-1.5 pt-1 border-t border-slate-100">
-                ${isFoodOnly ? `
+              <div class="mt-auto grid ${(!isIslandMode(currentCity) && isFoodOnly) ? 'grid-cols-3' : 'grid-cols-2'} gap-1.5 pt-1 border-t border-slate-100">
+                ${(!isIslandMode(currentCity) && isFoodOnly) ? `
                   <a href="https://food.grab.com/ph/en/restaurants?search=${encodeURIComponent(name)}" target="_blank" rel="noopener noreferrer"
                      class="bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white text-[11px] font-bold py-2 rounded-xl text-center flex items-center justify-center gap-1 shadow-xs transition">
                     <i class="fa-solid fa-motorcycle"></i> Grab外送
