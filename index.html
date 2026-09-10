@@ -1677,6 +1677,7 @@
       }
 
       listEl.innerHTML = filtered.map((item, idx) => {
+        console.log("【醫療單筆資料結構】", item);
         const name = getLocalizedText(item, 'name', currentShortLang) || item.name_en || item.name_zh || '醫療急救機構';
         const smartLink = getSmartLink(item.name_en || name, item.city, item.website);
         const rawPhone = item.phone || item.telephone || item.contact || item.col_8 || item.col_9 || '';
