@@ -8,12 +8,12 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
-  <meta name="app-version" content="20260910-v17.5-master" />
+  <meta name="app-version" content="20260910-v18.0-master" />
   <meta name="theme-color" content="#ea580c" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="大V的旅遊窩" />
-  <meta name="description" content="大V的旅遊窩 - 菲律賓精選美食地圖、星級飯店、絕美海島與景點導覽 PWA" />
+  <meta name="description" content="大V的旅遊窩 - 菲律賓精選美食地圖、星級飯店、絕美海島、景點導覽與在地急救醫療 PWA" />
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧭</text></svg>" />
   <link rel="manifest" href="manifest.json" />
   <title>大V的旅遊窩 - 菲律賓精緻生活與海島漫遊</title>
@@ -41,7 +41,7 @@
   }
 
   .main-tab-pill {
-    font-size: clamp(10px, 2.8vw, 12px) !important;
+    font-size: clamp(10px, 2.5vw, 12px) !important;
     white-space: nowrap;
   }
 
@@ -169,7 +169,7 @@
         <div class="flex items-center gap-1.5 flex-shrink-0">
           <!-- 登入按鈕 -->
           <button id="auth-state-btn" class="bg-white/20 hover:bg-white/30 border border-white/30 text-white rounded-lg px-2.5 py-1 text-[11px] font-bold flex items-center gap-1 transition active:scale-95 whitespace-nowrap">
-            <i class="fa-regular fa-user text-[10px]"></i>
+            <i id="user-avatar-icon" class="fa-regular fa-user text-[10px]"></i>
             <span id="auth-btn-text" data-i18n="btnLogin">登入</span>
           </button>
           <!-- 分享按鈕 -->
@@ -184,7 +184,7 @@
       <div class="flex items-center gap-1.5">
         <div class="relative flex-1 flex items-center">
           <i class="fa-solid fa-magnifying-glass absolute left-3 text-slate-400 text-xs pointer-events-none"></i>
-          <input id="search-input" type="text" placeholder="搜尋燒肉、火鍋、景點、Villa、飯店..." class="w-full bg-white text-slate-800 placeholder-slate-400 text-xs rounded-xl pl-8 pr-7 py-2 focus:outline-none focus:ring-2 focus:ring-amber-300 shadow-inner" />
+          <input id="search-input" type="text" placeholder="搜尋燒肉、火鍋、景點、Villa、飯店、醫院、藥局..." class="w-full bg-white text-slate-800 placeholder-slate-400 text-xs rounded-xl pl-8 pr-7 py-2 focus:outline-none focus:ring-2 focus:ring-amber-300 shadow-inner" />
           <button id="search-clear-btn" class="absolute right-2 text-slate-400 hover:text-slate-600 hidden text-xs p-1">
             <i class="fa-solid fa-circle-xmark"></i>
           </button>
@@ -212,19 +212,23 @@
       </nav>
     </div>
 
-    <!-- 第五列：三大核心主分頁 Tab -->
+    <!-- 第五列：四大核心主分頁 Tab (美食、景點、醫療、特惠) -->
     <div class="max-w-md mx-auto px-3.5 pt-1">
-      <div class="grid grid-cols-3 gap-1.5 bg-orange-800/40 p-1 rounded-xl text-xs font-bold text-amber-100">
-        <button data-maintab="map" id="tab-btn-map" class="main-tab-pill py-1.5 rounded-lg text-center transition flex items-center justify-center gap-1 bg-white text-orange-600 shadow-sm">
-          <i class="fa-solid fa-utensils text-[11px]"></i>
+      <div class="grid grid-cols-4 gap-1 bg-orange-800/40 p-1 rounded-xl text-xs font-bold text-amber-100">
+        <button data-maintab="map" id="tab-btn-map" class="main-tab-pill py-1.5 rounded-lg text-center transition flex items-center justify-center gap-1 bg-white text-orange-600 shadow-sm font-bold">
+          <i class="fa-solid fa-utensils text-[10px]"></i>
           <span id="tab-label-map" data-i18n="navFood">美食饗宴</span>
         </button>
         <button data-maintab="attraction" id="tab-btn-attraction" class="main-tab-pill py-1.5 rounded-lg text-center transition flex items-center justify-center gap-1 hover:text-white">
-          <i class="fa-solid fa-camera-retro text-[11px]"></i>
+          <i class="fa-solid fa-camera-retro text-[10px]"></i>
           <span data-i18n="navSpot">景點導覽</span>
         </button>
+        <button data-maintab="medical" id="tab-btn-medical" class="main-tab-pill py-1.5 rounded-lg text-center transition flex items-center justify-center gap-1 hover:text-white">
+          <i class="fa-solid fa-notes-medical text-[10px]"></i>
+          <span data-i18n="navMedical">醫療藥局</span>
+        </button>
         <button data-maintab="news" id="tab-btn-news" class="main-tab-pill py-1.5 rounded-lg text-center transition flex items-center justify-center gap-1 hover:text-white">
-          <i class="fa-solid fa-tags text-[11px]"></i>
+          <i class="fa-solid fa-tags text-[10px]"></i>
           <span id="tab-label-news" data-i18n="navNews">精選優惠</span>
         </button>
       </div>
@@ -265,37 +269,105 @@
       <div id="attraction-list" class="flex flex-col gap-4"></div>
     </div>
 
-    <!-- 3. 精選優惠 / 城市動態分頁清單 -->
+    <!-- 3. 醫療藥局分頁清單 -->
+    <div id="section-medical" class="tab-panel hidden flex flex-col gap-4">
+      <div id="medical-list" class="flex flex-col gap-4"></div>
+    </div>
+
+    <!-- 4. 精選優惠 / 城市動態分頁清單 -->
     <div id="section-news" class="tab-panel hidden flex flex-col gap-4">
       <div id="news-list" class="flex flex-col gap-4"></div>
     </div>
   </main>
 
-  <!-- 會員登入彈窗 -->
+  <!-- 會員登入 / 個人中心彈窗 -->
   <div id="auth-modal" class="fixed inset-0 z-50 glass-modal hidden flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl w-full max-w-sm p-5 shadow-2xl relative text-center">
       <button id="close-auth-btn" class="absolute top-3.5 right-3.5 w-7 h-7 bg-slate-100 rounded-full text-slate-400 hover:text-slate-700 flex items-center justify-center text-xs">✕</button>
-      <div class="w-10 h-10 bg-orange-100 text-orange-600 rounded-full flex items-center justify-center mx-auto mb-2 text-base">
-        <i class="fa-solid fa-crown"></i>
-      </div>
-      <h3 class="text-sm font-bold text-slate-900 mb-1">加入大V會員</h3>
-      <p class="text-xs text-slate-500 mb-4 leading-relaxed">解鎖私房探店評語、收藏口袋名單與在地最新專屬優惠！</p>
       
-      <button id="btn-google-login" class="w-full bg-white border border-slate-200 hover:bg-slate-50 py-2.5 px-3 rounded-xl font-bold text-xs text-slate-800 flex items-center justify-center gap-2 shadow-xs transition mb-3">
-        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" class="w-4 h-4" alt="Google">
-        使用 Google 帳號一鍵登入
-      </button>
+      <!-- 未登入畫面 -->
+      <div id="auth-modal-login-view">
+        <div class="w-10 h-10 bg-orange-100 text-orange-600 rounded-full flex items-center justify-center mx-auto mb-2 text-base">
+          <i class="fa-solid fa-crown"></i>
+        </div>
+        <h3 class="text-sm font-bold text-slate-900 mb-1">加入大V會員</h3>
+        <p class="text-xs text-slate-500 mb-4 leading-relaxed">解鎖私房探店評語、發表評論累積吃貨積分！</p>
+        
+        <button id="btn-google-login" class="w-full bg-white border border-slate-200 hover:bg-slate-50 py-2.5 px-3 rounded-xl font-bold text-xs text-slate-800 flex items-center justify-center gap-2 shadow-xs transition mb-3">
+          <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" class="w-4 h-4" alt="Google">
+          使用 Google 帳號一鍵登入
+        </button>
 
-      <div class="flex items-center gap-2 text-slate-300 text-[11px] my-3">
-        <span class="flex-1 h-px bg-slate-200"></span>
-        <span class="text-slate-400">或使用 Email 無密碼登入</span>
-        <span class="flex-1 h-px bg-slate-200"></span>
+        <div class="flex items-center gap-2 text-slate-300 text-[11px] my-3">
+          <span class="flex-1 h-px bg-slate-200"></span>
+          <span class="text-slate-400">或使用 Email 無密碼登入</span>
+          <span class="flex-1 h-px bg-slate-200"></span>
+        </div>
+
+        <input type="email" id="magic-email-input" placeholder="請輸入您的 Email 信箱" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs outline-none focus:ring-2 focus:ring-orange-500 mb-2.5" />
+        <button id="btn-send-magic" class="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold text-xs py-2.5 rounded-xl transition shadow-sm">
+          ✉️ 發送魔法登入連結
+        </button>
       </div>
 
-      <input type="email" id="magic-email-input" placeholder="請輸入您的 Email 信箱" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs outline-none focus:ring-2 focus:ring-orange-500 mb-2.5" />
-      <button id="btn-send-magic" class="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold text-xs py-2.5 rounded-xl transition shadow-sm">
-        ✉️ 發送魔法登入連結
-      </button>
+      <!-- 已登入個人中心畫面 -->
+      <div id="auth-modal-user-view" class="hidden text-left">
+        <div class="flex items-center gap-3 border-b border-slate-100 pb-3 mb-3">
+          <img id="user-modal-avatar" src="" class="w-12 h-12 rounded-full border border-orange-200 object-cover" />
+          <div>
+            <h4 id="user-modal-name" class="font-bold text-sm text-slate-800"></h4>
+            <span id="user-modal-level" class="inline-block bg-orange-100 text-orange-700 text-[10px] font-bold px-2 py-0.5 rounded-full mt-0.5">LV.1 探店初心者</span>
+          </div>
+        </div>
+        <div class="bg-orange-50/70 border border-orange-200/60 rounded-xl p-3 mb-4 flex items-center justify-between">
+          <div>
+            <p class="text-[11px] text-orange-950 font-medium">累積探店積分</p>
+            <p id="user-modal-points" class="text-xl font-black text-orange-600">50 <span class="text-xs font-normal text-slate-500">PTS</span></p>
+          </div>
+          <span class="text-xs text-orange-600 font-bold">每則留言 +20 分 🎁</span>
+        </div>
+        <button id="btn-logout" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs py-2.5 rounded-xl transition">
+          登出帳號
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 即時留言彈窗 (Comments Modal) -->
+  <div id="comment-modal" class="fixed inset-0 z-50 glass-modal hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
+    <div class="bg-white rounded-t-3xl sm:rounded-2xl w-full max-w-md h-[80vh] max-h-[600px] p-4 shadow-2xl flex flex-col relative">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+        <div>
+          <h3 id="comment-modal-title" class="font-bold text-sm text-slate-900 truncate">店家留言討論</h3>
+          <p class="text-[10px] text-slate-400">分享您的真實探店評語與心得</p>
+        </div>
+        <button id="close-comment-btn" class="w-7 h-7 bg-slate-100 rounded-full text-slate-400 hover:text-slate-700 flex items-center justify-center text-xs">✕</button>
+      </div>
+
+      <!-- 留言清單區 -->
+      <div id="comment-list-container" class="flex-1 overflow-y-auto hide-scrollbar py-3 space-y-2.5 text-xs">
+        <p class="text-center text-slate-400 py-6">載入留言中...</p>
+      </div>
+
+      <!-- 發表留言輸入區 -->
+      <div class="border-t border-slate-100 pt-3 flex flex-col gap-2 bg-white">
+        <div class="flex items-center gap-2">
+          <span class="text-xs text-slate-500 font-medium">打分：</span>
+          <div id="star-rating-select" class="flex items-center gap-1 text-amber-400 cursor-pointer text-sm">
+            <i class="fa-solid fa-star" data-star="1"></i>
+            <i class="fa-solid fa-star" data-star="2"></i>
+            <i class="fa-solid fa-star" data-star="3"></i>
+            <i class="fa-solid fa-star" data-star="4"></i>
+            <i class="fa-solid fa-star" data-star="5"></i>
+          </div>
+        </div>
+        <div class="flex items-center gap-1.5">
+          <input type="text" id="comment-input-text" placeholder="寫下您的真實體驗與點評..." class="flex-1 bg-slate-100 border-none rounded-xl px-3 py-2 text-xs focus:ring-2 focus:ring-orange-500 outline-none text-slate-800" />
+          <button id="btn-submit-comment" class="bg-orange-500 hover:bg-orange-600 text-white font-bold text-xs px-3.5 py-2 rounded-xl transition active:scale-95 shadow-xs whitespace-nowrap">
+            發表 (+20分)
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -321,7 +393,7 @@
 
     <div id="chat-messages" class="flex-1 p-3 overflow-y-auto space-y-2.5 text-xs bg-slate-50 hide-scrollbar">
       <div id="chat-welcome-bubble" class="bg-white p-2.5 rounded-xl rounded-tl-sm border border-slate-200/70 text-slate-800 leading-relaxed shadow-2xs self-start max-w-[88%]">
-        嗨！我是大V旅遊窩管家 👋 歡迎來到菲律賓！想尋找在地特色私房美食、海島渡假村或行程安排，隨時問我喔！
+        嗨！我是大V旅遊窩管家 👋 歡迎來到菲律賓！想尋找在地特色私房美食、海島渡假村、急救醫療藥局或行程安排，隨時問我喔！
       </div>
     </div>
 
@@ -336,7 +408,7 @@
   <!-- Firebase SDK 與核心邏輯模組 -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getFirestore, collection, getDocs, doc, getDoc, setDoc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { getFirestore, collection, getDocs, doc, getDoc, setDoc, updateDoc, increment, query, where, orderBy, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
     import { getAuth, GoogleAuthProvider, signInWithPopup, sendSignInLinkToEmail, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
     import { loadMasterDatabase, getLocalizedText } from './googleSheetService.js';
 
@@ -357,6 +429,7 @@
 
     const AI_WORKER_URL = "https://food-ai-assistant.vhuang904.workers.dev";
     let currentUser = null;
+    let currentUserProfile = { points: 50, level: 'LV.1 探店初心者' };
 
     const REGION_CONFIG = {
       cities: [
@@ -397,13 +470,19 @@
         { key: 'shopping', label: { 'zh-TW': '🛒 購物商場', 'en': '🛒 Malls', 'tl': '🛒 Pamilihan' } },
         { key: 'casino', label: { 'zh-TW': '🎰 賭場娛樂', 'en': '🎰 Casinos', 'tl': '🎰 Casino' } },
         { key: 'history', label: { 'zh-TW': '🏛️ 歷史文化', 'en': '🏛️ History & Culture', 'tl': '🏛️ Kasaysayan' } },
-        { key: 'nature', label: { 'zh-TW': '🌳 自然休閒', 'en': '🌳 Nature & Parks', 'tl': '🌳 Kalikasan' } }
+        { key: 'nature', label: { 'zh-TW': '🌳 自然生態/休閒莊園', 'en': '🌳 Nature & Eco Farm', 'tl': '🌳 Kalikasan' } }
       ],
       attraction_island: [
         { key: 'all', label: { 'zh-TW': '🏝️ 全部海島景點', 'en': '🏝️ All Island Spots', 'tl': '🏝️ Lahat ng Isla' } },
         { key: 'beach', label: { 'zh-TW': '🏖️ 絕美沙灘', 'en': '🏖️ Beaches', 'tl': '🏖️ Baybayin' } },
         { key: 'island_hopping', label: { 'zh-TW': '🤿 跳島浮潛', 'en': '🤿 Island Hopping', 'tl': '🤿 Island Hopping' } },
         { key: 'nature', label: { 'zh-TW': '🌴 生態秘境', 'en': '🌴 Eco Tours', 'tl': '🌴 Ekoturismo' } }
+      ],
+      medical: [
+        { key: 'all', label: { 'zh-TW': '全部醫療資源', 'en': 'All Medical', 'tl': 'Lahat ng Medikal' } },
+        { key: 'hospital', label: { 'zh-TW': '🏥 綜合醫院 (24H急診)', 'en': '🏥 Hospitals', 'tl': '🏥 Mga Ospital' } },
+        { key: 'clinic', label: { 'zh-TW': '🩺 專科/家庭診所', 'en': '🩺 Clinics', 'tl': '🩺 Mga Klinika' } },
+        { key: 'pharmacy', label: { 'zh-TW': '💊 連鎖/急診藥局', 'en': '💊 Pharmacies', 'tl': '💊 Mga Botika' } }
       ],
       news: [
         { key: 'all', label: { 'zh-TW': '全部優惠', 'en': 'All Deals', 'tl': 'Lahat ng Alok' } },
@@ -428,6 +507,7 @@
 
     let allRestaurants = [];
     let allAttractions = [];
+    let allMedical = [];
     let allNews = [];
 
     // ====== 智慧跳轉與一鍵撥號核心工具函式 ======
@@ -477,12 +557,12 @@
       try {
         const statsRef = doc(db, "stats", "global");
         const snap = await getDoc(statsRef);
-        let count = 3688;
+        let count = 3856;
         if (!snap.exists()) {
-          await setDoc(statsRef, { viewCount: 3688 });
+          await setDoc(statsRef, { viewCount: 3856 });
         } else {
           await updateDoc(statsRef, { viewCount: increment(1) });
-          count = (snap.data().viewCount || 3688) + 1;
+          count = (snap.data().viewCount || 3856) + 1;
         }
         document.getElementById('visit-count-val').innerText = Number(count).toLocaleString();
       } catch (err) {
@@ -490,12 +570,45 @@
       }
     }
 
-    onAuthStateChanged(auth, (user) => {
+    // ====== 會員身分與 Firestore 積分同步 ======
+    onAuthStateChanged(auth, async (user) => {
       currentUser = user;
       const dict = I18N_DICT[currentLang] || I18N_DICT['zh-TW'];
-      const loginText = dict.btnLogin || '登入';
-      const memberText = dict.btnMember || '會員';
-      document.getElementById('auth-btn-text').innerText = user ? (user.displayName ? user.displayName.split(' ')[0] : memberText) : loginText;
+      const authBtnText = document.getElementById('auth-btn-text');
+      const avatarIcon = document.getElementById('user-avatar-icon');
+
+      if (user) {
+        authBtnText.innerText = user.displayName ? user.displayName.split(' ')[0] : dict.btnMember;
+        if (user.photoURL) {
+          avatarIcon.className = 'w-3.5 h-3.5 rounded-full object-cover';
+          avatarIcon.outerHTML = `<img id="user-avatar-icon" src="${user.photoURL}" class="w-3.5 h-3.5 rounded-full object-cover inline-block" />`;
+        }
+        
+        try {
+          const userDocRef = doc(db, "users", user.uid);
+          const snap = await getDoc(userDocRef);
+          if (!snap.exists()) {
+            currentUserProfile = {
+              displayName: user.displayName || '吃貨好友',
+              photoURL: user.photoURL || '',
+              points: 50,
+              level: 'LV.1 探店初心者',
+              createdAt: serverTimestamp()
+            };
+            await setDoc(userDocRef, currentUserProfile);
+          } else {
+            currentUserProfile = snap.data();
+          }
+        } catch (e) {
+          console.warn("無法取得用戶積分:", e);
+        }
+      } else {
+        authBtnText.innerText = dict.btnLogin;
+        const currentIcon = document.getElementById('user-avatar-icon');
+        if (currentIcon && currentIcon.tagName === 'IMG') {
+          currentIcon.outerHTML = `<i id="user-avatar-icon" class="fa-regular fa-user text-[10px]"></i>`;
+        }
+      }
     });
 
     const I18N_DICT = {
@@ -504,21 +617,24 @@
         appSubtitle: '菲律賓精緻生活 & 海島漫遊地圖',
         btnLogin: '登入',
         btnMember: '會員',
-        searchPlaceholder: '搜尋燒肉、火鍋、景點、Villa、飯店...',
+        searchPlaceholder: '搜尋燒肉、火鍋、景點、Villa、飯店、醫院、藥局...',
         shareBtn: '分享',
         tabMetro: '都會生活圈',
         tabIsland: '渡假海島專區',
         navFood: '美食饗宴',
         navSpot: '景點導覽',
+        navMedical: '醫療藥局',
         navNews: '精選優惠',
         navNewsIsland: '海島特惠',
         navFoodIsland: '美食/度假',
         filterAll: '全部推薦',
         filterAllSpot: '全部景點',
+        filterAllMedical: '全部醫療資源',
         filterAllNews: '全部優惠',
         btnGrab: 'Grab外送',
         btnCall: '撥打電話',
         btnNav: '導航地圖',
+        btnComment: '討論/點評',
         badgeCurated: '👑 站長私房嚴選',
         badgeGoogleTop: '🔥 Google Top',
         mustTryBadge: '必點招牌',
@@ -532,6 +648,7 @@
         toastSwitch: '已切換語言：',
         spotsCountUnit: '個景點',
         placesCountUnit: '個地點',
+        medicalCountUnit: '所機構',
         newsCountUnit: '個特惠',
         city_manila: '馬尼拉',
         city_cebu: '宿霧',
@@ -554,21 +671,24 @@
         appSubtitle: 'Philippine Living & Island Travel Guide',
         btnLogin: 'Login',
         btnMember: 'Member',
-        searchPlaceholder: 'Search BBQ, hotpot, spots, villas, hotels...',
+        searchPlaceholder: 'Search BBQ, hotpot, spots, villas, hotels, hospitals...',
         shareBtn: 'Share',
         tabMetro: 'Metro Area',
         tabIsland: 'Islands',
         navFood: 'Food & Eats',
         navSpot: 'Attractions',
+        navMedical: 'Medical',
         navNews: 'Promotions',
         navNewsIsland: 'Island Deals',
         navFoodIsland: 'Food/Resort',
         filterAll: 'All',
         filterAllSpot: 'All Attractions',
+        filterAllMedical: 'All Medical',
         filterAllNews: 'All Deals',
         btnGrab: 'GrabFood',
         btnCall: 'Call Now',
         btnNav: 'Directions',
+        btnComment: 'Reviews',
         badgeCurated: '👑 Curator Pick',
         badgeGoogleTop: '🔥 Google Top',
         mustTryBadge: 'Must Try',
@@ -582,6 +702,7 @@
         toastSwitch: 'Language changed: ',
         spotsCountUnit: 'spots',
         placesCountUnit: 'places',
+        medicalCountUnit: 'facilities',
         newsCountUnit: 'deals',
         city_manila: 'Manila',
         city_cebu: 'Cebu',
@@ -603,22 +724,25 @@
         appTitle: 'Big V Travel Nest',
         appSubtitle: 'Gabay sa Pamumuhay at Isla sa Pilipinas',
         btnLogin: 'Login',
-        btnMember: 'Member',
-        searchPlaceholder: 'Maghanap ng pagkain, pasyalan, hotel...',
+        btnMember: 'Miyembro',
+        searchPlaceholder: 'Maghanap ng pagkain, pasyalan, hotel, ospital...',
         shareBtn: 'Ibahagi',
         tabMetro: 'Kalunsuran',
         tabIsland: 'Mga Isla',
         navFood: 'Pagkain',
         navSpot: 'Pasyalan',
+        navMedical: 'Medikal',
         navNews: 'Mga Promosyon',
         navNewsIsland: 'Alok sa Isla',
         navFoodIsland: 'Pagkain/Resort',
         filterAll: 'Lahat',
         filterAllSpot: 'Lahat ng Pasyalan',
+        filterAllMedical: 'Lahat ng Medikal',
         filterAllNews: 'Lahat ng Alok',
         btnGrab: 'GrabFood',
         btnCall: 'Tawagan',
         btnNav: 'Direksyon',
+        btnComment: 'Kumento',
         badgeCurated: '👑 Pili ng Admin',
         badgeGoogleTop: '🔥 Google Top',
         mustTryBadge: 'Dapat Tikman',
@@ -632,6 +756,7 @@
         toastSwitch: 'Pinalitan ang wika: ',
         spotsCountUnit: 'pasyalan',
         placesCountUnit: 'lugar',
+        medicalCountUnit: 'pasilidad',
         newsCountUnit: 'alok',
         city_manila: 'Manila',
         city_cebu: 'Cebu',
@@ -753,19 +878,17 @@
       });
     }
 
-    // 核心資料擷取與聚合整合 (四大分頁真值對齊 + Auto_Discovered 路由)
+    // 核心資料擷取與聚合整合 (四大分頁真值對齊 + Auto_Discovered 路由 + Medical 分流)
     async function fetchData() {
       try {
-        let sheetMaster = { bigVPicks: [], attractions: [], promotions: [], autoDiscovered: [] };
+        let sheetMaster = { bigVPicks: [], attractions: [], promotions: [], autoDiscovered: [], medical: [] };
         try {
           sheetMaster = await loadMasterDatabase();
         } catch (e) {
           console.warn("讀取 Google Sheet 失敗:", e);
         }
 
-        // 停用 Firebase 舊資料讀取，完全只讀 Google 試算表
         const rawList = [];
-
         const mergedMap = new Map();
         const bigVLookup = new Map();
 
@@ -838,9 +961,9 @@
           }
         });
 
-        // 3. 注入 Google Sheet 剩餘的站長私房清單 (BigV_Picks 17 欄對齊)
+        // 3. 注入 Google Sheet 剩餘的站長私房清單
         bigVLookup.forEach(bigVItem => {
-          mergedMap.set(bigVItem.id, {
+          mergedMap.set(bigVItem.id.toLowerCase().trim(), {
             id: bigVItem.id,
             name: bigVItem.name_zh || bigVItem.name,
             name_zh: bigVItem.name_zh || bigVItem.name,
@@ -868,7 +991,7 @@
           });
         });
 
-        // 4. 【核心整合】第 4 分頁 Auto_Discovered 資料流 (13 欄精準映射與分流)
+        // 4. Auto_Discovered 資料流
         const autoAttractions = [];
         (sheetMaster.autoDiscovered || []).forEach(autoItem => {
           if (!autoItem.id) return;
@@ -924,7 +1047,7 @@
           }
         });
 
-        // 5. 餐廳列表權重排序 (站長私房 > Google Top > 評分高低)
+        // 5. 餐廳列表排序
         allRestaurants = Array.from(mergedMap.values())
           .map(item => {
             const r = item.googleRating || 0;
@@ -947,14 +1070,20 @@
             return (b.googleRating || 0) - (a.googleRating || 0);
           });
 
-        // 6. Attractions: 直接接收正規化後的景點資料（徹底排除型別錯誤）
+        // 6. Attractions 整合
         const sheetAttractions = (sheetMaster.attractions || []).map(att => ({
           ...att,
           images: parseImages(att, 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&auto=format&fit=crop')
         }));
         allAttractions = [...sheetAttractions, ...autoAttractions];
 
-        // 7. Promotions: 直接接收正規化後的特惠資料（第三筆及所有優惠保證放行）
+        // 7. Medical 醫療專區整合
+        allMedical = (sheetMaster.medical || []).map(med => ({
+          ...med,
+          images: parseImages(med, 'https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=800&auto=format&fit=crop')
+        }));
+
+        // 8. Promotions 整合
         allNews = (sheetMaster.promotions || []).map(promo => ({
           ...promo,
           images: parseImages(promo, 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=800&auto=format&fit=crop')
@@ -1034,6 +1163,8 @@
         filterList = isIsland ? SUB_FILTERS.food_island : SUB_FILTERS.food_urban;
       } else if (currentMainTab === 'attraction') {
         filterList = isIsland ? SUB_FILTERS.attraction_island : SUB_FILTERS.attraction_urban;
+      } else if (currentMainTab === 'medical') {
+        filterList = SUB_FILTERS.medical;
       } else {
         filterList = SUB_FILTERS.news;
       }
@@ -1069,7 +1200,7 @@
       const dict = I18N_DICT[currentLang] || I18N_DICT['zh-TW'];
       const isIsland = isIslandMode(currentCity);
 
-      ['map', 'attraction', 'news'].forEach(tab => {
+      ['map', 'attraction', 'medical', 'news'].forEach(tab => {
         document.getElementById(`section-${tab}`).classList.toggle('hidden', tab !== currentMainTab);
         const btn = document.getElementById(`tab-btn-${tab}`);
         if (tab === currentMainTab) {
@@ -1091,9 +1222,11 @@
 
       if (currentMainTab === 'map') renderRestaurants();
       if (currentMainTab === 'attraction') renderAttractions();
+      if (currentMainTab === 'medical') renderMedical();
       if (currentMainTab === 'news') renderNews();
 
       bindCarouselControls();
+      bindCommentButtons();
     }
 
     function renderRestaurants() {
@@ -1118,13 +1251,13 @@
             return cat.includes('菲餐') || cat.includes('filipino') || cat.includes('lechon') || cat.includes('inasal');
           }
           if (currentSubFilter === 'japanese') {
-            return cat.includes('日式') || cat.includes('日料') || cat.includes('燒肉') || cat.includes('生魚片') || cat.includes('japanese') || cat.includes('korean');
+            return cat.includes('日式') || cat.includes('日料') || cat.includes('燒肉') || cat.includes('生魚片') || cat.includes('japanese') || cat.includes('korean') || cat.includes('yaki');
           }
           if (currentSubFilter === 'chinese') {
             return cat.includes('中餐') || cat.includes('火鍋') || cat.includes('chinese') || cat.includes('hotpot');
           }
           if (currentSubFilter === 'bbq_seafood') {
-            return cat.includes('炭烤') || cat.includes('海鮮') || cat.includes('bbq') || cat.includes('seafood') || cat.includes('steak');
+            return cat.includes('炭烤') || cat.includes('海鮮') || cat.includes('bbq') || cat.includes('seafood') || cat.includes('steak') || cat.includes('grill');
           }
           if (currentSubFilter === 'dessert_cafe') {
             return cat.includes('甜點') || cat.includes('咖啡') || cat.includes('cafe') || cat.includes('coffee') || cat.includes('dessert') || cat.includes('bakery') || cat.includes('手搖');
@@ -1259,15 +1392,12 @@
                 </p>
               </div>
 
-              <div class="mt-auto grid ${(!isIslandMode(currentCity) && isFoodOnly) ? 'grid-cols-3' : 'grid-cols-2'} gap-1.5 pt-1 border-t border-slate-100">
-                ${(!isIslandMode(currentCity) && isFoodOnly) ? `
-                  <a href="https://food.grab.com/ph/en/restaurants?search=${encodeURIComponent(name)}" target="_blank" rel="noopener noreferrer"
-                     class="bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white text-[11px] font-bold py-2 rounded-xl text-center flex items-center justify-center gap-1 shadow-xs transition">
-                    <i class="fa-solid fa-motorcycle"></i> ${dict.btnGrab}
-                  </a>
-                ` : ''}
-                <a href="${cleanPhone ? `tel:${cleanPhone}` : '#'}" class="bg-slate-100 hover:bg-slate-200 active:scale-95 text-slate-700 text-[11px] font-bold py-2 rounded-xl text-center flex items-center justify-center gap-1 transition ${!cleanPhone ? 'opacity-50 pointer-events-none' : ''}">
-                  <i class="fa-solid fa-phone"></i> ${dict.btnCall}
+              <div class="mt-auto grid grid-cols-3 gap-1.5 pt-1 border-t border-slate-100">
+                <button data-comment-id="${item.id}" data-comment-name="${name}" class="btn-open-comment bg-slate-100 hover:bg-slate-200 active:scale-95 text-slate-700 text-[11px] font-bold py-2 rounded-xl text-center flex items-center justify-center gap-1 transition">
+                  <i class="fa-regular fa-comment-dots"></i> ${dict.btnComment}
+                </button>
+                <a href="${cleanPhone ? `tel:${cleanPhone}` : '#'}" class="bg-emerald-50 hover:bg-emerald-100 text-emerald-700 active:scale-95 text-[11px] font-bold py-2 rounded-xl text-center flex items-center justify-center gap-1 transition ${!cleanPhone ? 'opacity-50 pointer-events-none' : ''}">
+                  <i class="fa-solid fa-phone text-emerald-600"></i> ${dict.btnCall}
                 </a>
                 <a href="${item.nav_link || ('https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(name + ' ' + (item.address || '')))}" target="_blank" rel="noopener noreferrer"
                    class="bg-orange-500 hover:bg-orange-600 active:scale-95 text-white text-[11px] font-bold py-2 rounded-xl text-center flex items-center justify-center gap-1 shadow-xs transition">
@@ -1286,7 +1416,6 @@
       const currentShortLang = currentLang === 'zh-TW' ? 'zh' : currentLang;
 
       let filtered = allAttractions.filter(item => {
-        // 景點城市比對：若為 all 或比對符合即放行
         const matchC = !item.city || item.city === 'all' || isCityMatch(item, currentCity);
         if (!matchC) return false;
         if (!currentSubFilter || currentSubFilter === 'all') return true;
@@ -1383,13 +1512,14 @@
                 </p>
               </div>
 
-              <!-- 底部操作按鈕：有電話才顯示一鍵撥號 -->
-              <div class="mt-auto grid ${cleanPhone ? 'grid-cols-2' : 'grid-cols-1'} gap-1.5 pt-1 border-t border-slate-100">
-                ${cleanPhone ? `
-                  <a href="tel:${cleanPhone}" class="bg-emerald-50 hover:bg-emerald-100 text-emerald-700 active:scale-95 text-[11px] font-bold py-2 rounded-xl text-center flex items-center justify-center gap-1 transition">
-                    <i class="fa-solid fa-phone text-emerald-600"></i> ${dict.btnCall}
-                  </a>
-                ` : ''}
+              <!-- 底部操作按鈕：加入留言討論、一鍵撥號與導航 -->
+              <div class="mt-auto grid grid-cols-3 gap-1.5 pt-1 border-t border-slate-100">
+                <button data-comment-id="${item.id}" data-comment-name="${name}" class="btn-open-comment bg-slate-100 hover:bg-slate-200 active:scale-95 text-slate-700 text-[11px] font-bold py-2 rounded-xl text-center flex items-center justify-center gap-1 transition">
+                  <i class="fa-regular fa-comment-dots"></i> ${dict.btnComment}
+                </button>
+                <a href="${cleanPhone ? `tel:${cleanPhone}` : '#'}" class="bg-emerald-50 hover:bg-emerald-100 text-emerald-700 active:scale-95 text-[11px] font-bold py-2 rounded-xl text-center flex items-center justify-center gap-1 transition ${!cleanPhone ? 'opacity-50 pointer-events-none' : ''}">
+                  <i class="fa-solid fa-phone text-emerald-600"></i> ${dict.btnCall}
+                </a>
                 <a href="${item.nav_link || ('https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(name + ' ' + (item.address || '')))}" target="_blank" rel="noopener noreferrer"
                    class="bg-orange-500 hover:bg-orange-600 active:scale-95 text-white text-[11px] font-bold py-2 rounded-xl text-center flex items-center justify-center gap-1 shadow-xs transition">
                   <i class="fa-solid fa-location-arrow"></i> ${dict.btnNav}
@@ -1401,14 +1531,100 @@
       }).join('');
     }
 
-    // 3. 精選優惠卡片渲染 (標準黃金視覺動線升級版)
+    // 3. 醫療藥局分頁清單渲染 (Medical Tab)
+    function renderMedical() {
+      const listEl = document.getElementById('medical-list');
+      const dict = I18N_DICT[currentLang] || I18N_DICT['zh-TW'];
+      const currentShortLang = currentLang === 'zh-TW' ? 'zh' : currentLang;
+
+      let filtered = allMedical.filter(item => {
+        if (!isCityMatch(item, currentCity)) return false;
+        if (!currentSubFilter || currentSubFilter === 'all') return true;
+        return (item.category || '').toLowerCase() === currentSubFilter.toLowerCase();
+      });
+
+      if (currentSearchQuery) {
+        const q = currentSearchQuery.toLowerCase();
+        filtered = filtered.filter(item => {
+          const name = getLocalizedText(item, 'name', currentShortLang);
+          return (safeStr(name) + ' ' + safeStr(item.address)).includes(q);
+        });
+      }
+
+      const curReg = [...REGION_CONFIG.cities, ...REGION_CONFIG.islands].find(r => r.id === currentCity);
+      const cityName = dict['city_' + currentCity] || curReg?.name || '';
+      filterSummaryText.textContent = `${cityName} · ${dict.navMedical}`;
+      itemCountBadge.textContent = `${filtered.length} ${dict.medicalCountUnit}`;
+
+      if (filtered.length === 0) {
+        listEl.innerHTML = `
+          <div class="bg-white rounded-2xl p-8 text-center border border-slate-200/80 shadow-xs mt-2">
+            <i class="fa-solid fa-notes-medical text-3xl text-slate-300 mb-2"></i>
+            <h4 class="text-xs font-bold text-slate-700">該區域醫療與藥局資料更新中</h4>
+            <p class="text-[11px] text-slate-400 mt-1">${dict.noResultSub}</p>
+          </div>
+        `;
+        return;
+      }
+
+      listEl.innerHTML = filtered.map((item, idx) => {
+        const name = getLocalizedText(item, 'name', currentShortLang) || item.name_en || item.name_zh || '急救醫療機構';
+        const smartLink = getSmartLink(item.name_en || name, item.city, item.website);
+        const cleanPhone = getCleanPhone(item.phone);
+        
+        let catBadge = '🏥 醫院';
+        if (item.category === 'clinic') catBadge = '🩺 診所';
+        if (item.category === 'pharmacy') catBadge = '💊 藥局';
+
+        return `
+          <article class="bg-white rounded-2xl overflow-hidden shadow-xs hover:shadow-md border border-slate-200/80 flex flex-col transition">
+            <div class="relative w-full overflow-hidden">
+              ${buildCarouselHtml(item.images, `med-${idx}`, name)}
+              <div class="absolute top-2.5 left-2.5 z-10">
+                <span class="bg-emerald-600/95 text-white text-[11px] font-bold px-2.5 py-1 rounded-full shadow-md backdrop-blur-md">${catBadge}</span>
+              </div>
+            </div>
+
+            <div class="p-3.5 flex flex-col flex-1">
+              <h2 class="font-extrabold text-sm text-slate-900 mb-1 leading-snug">
+                <a href="${smartLink}" target="_blank" rel="noopener noreferrer" class="hover:text-orange-600 transition inline-flex items-center gap-1.5 group" title="前往官方網站或 Google 搜尋">
+                  <span>${name}</span>
+                  <i class="fa-solid fa-arrow-up-right-from-square text-[10px] text-slate-400 group-hover:text-orange-600 transition"></i>
+                </a>
+              </h2>
+
+              <div class="space-y-1 text-[11px] text-slate-500 border-t border-slate-100 pt-2 mb-3 font-medium">
+                <p class="flex items-center gap-1.5 truncate">
+                  <i class="fa-solid fa-location-dot text-orange-500 w-3"></i>
+                  <span class="truncate">${item.address || dict.addressEmpty}</span>
+                </p>
+                <p class="flex items-center gap-1.5 font-mono">
+                  <i class="fa-solid fa-phone text-slate-400 w-3"></i>
+                  <span>${cleanPhone ? `<a href="tel:${cleanPhone}" class="hover:text-orange-600 underline font-bold">${item.phone}</a>` : dict.phoneEmpty}</span>
+                </p>
+              </div>
+
+              <div class="mt-auto grid grid-cols-2 gap-2 pt-1 border-t border-slate-100">
+                <a href="${cleanPhone ? `tel:${cleanPhone}` : '#'}" class="bg-emerald-500 hover:bg-emerald-600 text-white active:scale-95 text-xs font-bold py-2 rounded-xl text-center flex items-center justify-center gap-1.5 transition ${!cleanPhone ? 'opacity-50 pointer-events-none' : ''}">
+                  <i class="fa-solid fa-phone"></i> 急救電話直撥
+                </a>
+                <a href="${item.nav_link || ('https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(name + ' ' + (item.address || '')))}" target="_blank" rel="noopener noreferrer" class="bg-slate-900 hover:bg-slate-800 active:scale-95 text-white text-xs font-bold py-2 rounded-xl text-center flex items-center justify-center gap-1.5 shadow-xs transition">
+                  <i class="fa-solid fa-location-arrow"></i> ${dict.btnNav}
+                </a>
+              </div>
+            </div>
+          </article>
+        `;
+      }).join('');
+    }
+
+    // 4. 精選優惠卡片渲染 (標準黃金視覺動線升級版)
     function renderNews() {
       const listEl = document.getElementById('news-list');
       const dict = I18N_DICT[currentLang] || I18N_DICT['zh-TW'];
       const currentShortLang = currentLang === 'zh-TW' ? 'zh' : currentLang;
 
       let filtered = allNews.filter(item => {
-        // 優惠城市放行：若為 all 或符合當前城市即放行
         const matchC = !item.city || (item.city === 'all') || (currentCity === 'all') || isCityMatch(item, currentCity);
         const matchS = (!currentSubFilter || currentSubFilter === 'all') || (item.type === currentSubFilter);
         return matchC && matchS;
@@ -1472,16 +1688,13 @@
             type === 'exclusive' ? 'border-amber-400 ring-2 ring-amber-400/20' : 'border-slate-200/80'
           } flex flex-col transition">
             
-            <!-- 1. 頂部多圖輪播相簿 (支援 Touch Snap & 指示圓點) -->
             <div class="relative w-full overflow-hidden">
               ${buildCarouselHtml(item.images, `promo-${idx}`, title)}
               
-              <!-- 左上角子分類標籤 -->
               <div class="absolute top-2.5 left-2.5 z-10 flex flex-col gap-1">
                 ${badgeHtml}
               </div>
 
-              <!-- 右上角有效期膠囊 -->
               <div class="absolute top-2.5 right-2.5 z-10">
                 <span class="bg-neutral-900/80 text-white text-[10px] px-2 py-0.5 rounded-full backdrop-blur-xs font-mono">
                   ${validUntil}
@@ -1495,9 +1708,7 @@
               </div>
             </div>
 
-            <!-- 卡片內容主體 (標準視覺動線) -->
             <div class="p-4 flex flex-col flex-1">
-              <!-- 2. 店家大標置頂（智慧連結） -->
               <h2 class="font-extrabold text-base text-slate-900 leading-tight mb-1 flex items-center gap-1.5">
                 <i class="fa-solid fa-store text-orange-500 text-xs"></i>
                 <a href="${getSmartLink(storeName, item.city, item.website)}" target="_blank" rel="noopener noreferrer" class="hover:text-orange-600 transition inline-flex items-center gap-1 group">
@@ -1506,17 +1717,14 @@
                 </a>
               </h2>
 
-              <!-- 3. 優惠主標 -->
               <h3 class="font-bold text-xs text-orange-600 mb-2 leading-snug">
                 ${title}
               </h3>
 
-              <!-- 詳細活動說明文 -->
               <div class="bg-slate-50 border-l-3 border-orange-400 p-2.5 rounded-r-lg text-xs text-slate-600 leading-relaxed mb-3">
                 ${description}
               </div>
 
-              <!-- 4. 門市地址與電話 -->
               <div class="space-y-1 text-[11px] text-slate-500 border-t border-slate-100 pt-2 mb-3 font-medium">
                 ${item.address ? `
                   <p class="flex items-center gap-1.5 truncate">
@@ -1532,7 +1740,6 @@
                 ` : ''}
               </div>
 
-              <!-- 5. 底部 CTA 一鍵導航按鈕 -->
               <div class="mt-auto grid ${item.phone ? 'grid-cols-2' : 'grid-cols-1'} gap-2 pt-1 border-t border-slate-100">
                 ${item.phone ? `
                   <a href="tel:${getCleanPhone(item.phone)}" class="bg-slate-100 hover:bg-slate-200 active:scale-95 text-slate-700 text-xs font-bold py-2.5 rounded-xl text-center flex items-center justify-center gap-1.5 transition">
@@ -1551,157 +1758,152 @@
       }).join('');
     }
 
-    function renderUI() {
-      renderRegionPills();
-      renderSubFilterBar();
-      renderContent();
+    // ====== 即時留言板 (Firestore Realtime Integration) ======
+    let activeCommentTarget = null;
+    let selectedRating = 5;
+
+    function bindCommentButtons() {
+      document.querySelectorAll('.btn-open-comment').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const targetId = btn.getAttribute('data-comment-id');
+          const targetName = btn.getAttribute('data-comment-name');
+          openCommentModal(targetId, targetName);
+        });
+      });
     }
 
-    function updateUiLanguage() {
-      document.documentElement.lang = currentLang;
-      const dict = I18N_DICT[currentLang] || I18N_DICT['zh-TW'];
-      
-      const searchInput = document.getElementById('search-input');
-      if (searchInput) searchInput.placeholder = dict.searchPlaceholder;
+    async function openCommentModal(targetId, targetName) {
+      activeCommentTarget = { id: targetId, name: targetName };
+      document.getElementById('comment-modal-title').innerText = `${targetName} · 討論留言`;
+      document.getElementById('comment-modal').classList.remove('hidden');
+      loadComments(targetId);
+    }
 
-      const chatWelcome = document.getElementById('chat-welcome-bubble');
-      if (chatWelcome && dict.aiChatWelcome) chatWelcome.textContent = dict.aiChatWelcome;
+    async function loadComments(targetId) {
+      const container = document.getElementById('comment-list-container');
+      container.innerHTML = '<p class="text-center text-slate-400 py-6">載入留言中...</p>';
 
-      const chatInputEl = document.getElementById('chat-input');
-      if (chatInputEl && dict.aiChatPlaceholder) chatInputEl.placeholder = dict.aiChatPlaceholder;
-
-      document.querySelectorAll('[data-i18n]').forEach(el => {
-        const key = el.getAttribute('data-i18n');
-        if (dict[key]) {
-          el.textContent = dict[key];
+      try {
+        const q = query(collection(db, "comments"), where("targetId", "==", targetId), orderBy("createdAt", "desc"));
+        const snap = await getDocs(q);
+        if (snap.empty) {
+          container.innerHTML = `
+            <div class="text-center py-8 text-slate-400">
+              <i class="fa-regular fa-comment-dots text-2xl mb-1 block text-slate-300"></i>
+              還沒有人留下評價，快來搶頭香發表心得！
+            </div>
+          `;
+          return;
         }
-      });
 
-      const authBtn = document.getElementById('auth-btn-text');
-      if (authBtn && !currentUser) {
-        authBtn.textContent = dict.btnLogin;
+        container.innerHTML = snap.docs.map(d => {
+          const c = d.data();
+          const stars = '★'.repeat(c.rating || 5) + '☆'.repeat(5 - (c.rating || 5));
+          return `
+            <div class="bg-slate-50 border border-slate-100 rounded-xl p-2.5 flex flex-col gap-1">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-1.5">
+                  <img src="${c.userPhoto || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=50'}" class="w-4 h-4 rounded-full object-cover" />
+                  <span class="font-bold text-slate-800 text-[11px]">${c.userName || '探店好友'}</span>
+                </div>
+                <span class="text-amber-500 text-[10px] font-mono tracking-tighter">${stars}</span>
+              </div>
+              <p class="text-slate-700 text-xs leading-relaxed pl-5">${c.content}</p>
+            </div>
+          `;
+        }).join('');
+      } catch (e) {
+        container.innerHTML = '<p class="text-center text-rose-500 py-6 text-xs">暫無法載入留言，請先登入帳號！</p>';
+      }
+    }
+
+    document.getElementById('close-comment-btn').addEventListener('click', () => {
+      document.getElementById('comment-modal').classList.add('hidden');
+    });
+
+    // 星星打分選擇
+    document.querySelectorAll('#star-rating-select i').forEach(star => {
+      star.addEventListener('click', () => {
+        selectedRating = parseInt(star.getAttribute('data-star'));
+        document.querySelectorAll('#star-rating-select i').forEach((s, idx) => {
+          s.className = idx < selectedRating ? 'fa-solid fa-star' : 'fa-regular fa-star';
+        });
+      });
+    });
+
+    // 發表留言並累加 20 積分
+    document.getElementById('btn-submit-comment').addEventListener('click', async () => {
+      if (!currentUser) {
+        document.getElementById('comment-modal').classList.add('hidden');
+        document.getElementById('auth-modal').classList.remove('hidden');
+        showToast('請先登入 Google 帳號再發表留言！', 'fa-user-lock');
+        return;
       }
 
-      renderUI();
-    }
+      const input = document.getElementById('comment-input-text');
+      const text = input.value.trim();
+      if (!text) {
+        showToast('請輸入留言內容');
+        return;
+      }
 
-    window.updateUiLanguage = updateUiLanguage;
-
-    function enableHorizontalScroll() {
-      const scrollContainers = [
-        document.getElementById('regionPillsNav'),
-        document.getElementById('subFilterContainer')
-      ];
-
-      scrollContainers.forEach(container => {
-        if (!container) return;
-
-        container.addEventListener('wheel', (e) => {
-          if (e.deltaY !== 0) {
-            e.preventDefault();
-            container.scrollLeft += e.deltaY;
-          }
-        }, { passive: false });
-
-        let isDown = false;
-        let startX, scrollLeft;
-
-        container.addEventListener('mousedown', (e) => {
-          isDown = true;
-          container.classList.add('drag-scroll-active');
-          startX = e.pageX - container.offsetLeft;
-          scrollLeft = container.scrollLeft;
+      try {
+        await addDoc(collection(db, "comments"), {
+          targetId: activeCommentTarget.id,
+          targetName: activeCommentTarget.name,
+          userId: currentUser.uid,
+          userName: currentUser.displayName || '探店會員',
+          userPhoto: currentUser.photoURL || '',
+          rating: selectedRating,
+          content: text,
+          createdAt: serverTimestamp()
         });
 
-        window.addEventListener('mouseup', () => {
-          if (!isDown) return;
-          isDown = false;
-          container.classList.remove('drag-scroll-active');
-        });
+        const userRef = doc(db, "users", currentUser.uid);
+        await updateDoc(userRef, { points: increment(20) });
+        currentUserProfile.points = (currentUserProfile.points || 50) + 20;
 
-        container.addEventListener('mousemove', (e) => {
-          if (!isDown) return;
-          e.preventDefault();
-          const x = e.pageX - container.offsetLeft;
-          const walk = (x - startX) * 1.5;
-          container.scrollLeft = scrollLeft - walk;
-        });
-      });
-    }
-
-    const langSelect = document.getElementById('lang-select');
-    if (langSelect) {
-      langSelect.value = currentLang;
-      langSelect.addEventListener('change', (e) => {
-        currentLang = e.target.value;
-        localStorage.setItem('ph_app_lang', currentLang);
-        updateUiLanguage();
-        const dict = I18N_DICT[currentLang] || I18N_DICT['zh-TW'];
-        showToast(`${dict.toastSwitch}${e.target.options[e.target.selectedIndex].text}`);
-      });
-    }
-
-    typeCityBtn.addEventListener('click', () => {
-      currentDimension = 'cities';
-      sessionStorage.setItem('ph_dim', 'cities');
-      currentCity = 'manila';
-      currentSubFilter = 'all';
-      sessionStorage.setItem('ph_nav_sub', 'all');
-      localStorage.setItem('ph_app_city', currentCity);
-      renderUI();
+        input.value = '';
+        showToast('留言發布成功！獲得 20 積分 🎁', 'fa-award');
+        loadComments(activeCommentTarget.id);
+      } catch (err) {
+        console.error("發布留言失敗:", err);
+        showToast('留言發表失敗，請稍候再試');
+      }
     });
 
-    typeIslandBtn.addEventListener('click', () => {
-      currentDimension = 'islands';
-      sessionStorage.setItem('ph_dim', 'islands');
-      currentCity = 'boracay';
-      currentSubFilter = 'all';
-      sessionStorage.setItem('ph_nav_sub', 'all');
-      localStorage.setItem('ph_app_city', currentCity);
-      renderUI();
-    });
-
-    document.querySelectorAll('.main-tab-pill').forEach(btn => {
-      btn.addEventListener('click', () => {
-        currentMainTab = btn.getAttribute('data-maintab');
-        sessionStorage.setItem('ph_nav_tab', currentMainTab);
-        currentSubFilter = 'all';
-        sessionStorage.setItem('ph_nav_sub', 'all');
-        renderSubFilterBar();
-        renderContent();
-      });
-    });
-
-    const searchInput = document.getElementById('search-input');
-    const searchClearBtn = document.getElementById('search-clear-btn');
-
-    searchInput.addEventListener('input', (e) => {
-      currentSearchQuery = e.target.value.trim();
-      searchClearBtn.classList.toggle('hidden', !currentSearchQuery);
-      renderContent();
-    });
-
-    searchClearBtn.addEventListener('click', () => {
-      searchInput.value = '';
-      currentSearchQuery = '';
-      searchClearBtn.classList.add('hidden');
-      renderContent();
-    });
-
+    // ====== 會員彈窗互動 ======
     const authModal = document.getElementById('auth-modal');
     document.getElementById('auth-state-btn').addEventListener('click', () => {
       if (currentUser) {
-        signOut(auth).then(() => showToast('已成功登出'));
+        document.getElementById('auth-modal-login-view').classList.add('hidden');
+        document.getElementById('auth-modal-user-view').classList.remove('hidden');
+        document.getElementById('user-modal-name').innerText = currentUser.displayName || '吃貨好友';
+        document.getElementById('user-modal-avatar').src = currentUser.photoURL || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200';
+        document.getElementById('user-modal-points').innerHTML = `${currentUserProfile.points || 50} <span class="text-xs font-normal text-slate-500">PTS</span>`;
       } else {
-        authModal.classList.remove('hidden');
+        document.getElementById('auth-modal-login-view').classList.remove('hidden');
+        document.getElementById('auth-modal-user-view').classList.add('hidden');
       }
+      authModal.classList.remove('hidden');
     });
 
     document.getElementById('close-auth-btn').addEventListener('click', () => authModal.classList.add('hidden'));
+
     document.getElementById('btn-google-login').addEventListener('click', () => {
       signInWithPopup(auth, googleProvider).then(() => {
         authModal.classList.add('hidden');
         showToast('Google 帳號登入成功！');
+      }).catch(err => {
+        console.error("登入失敗:", err);
+        showToast('登入取消或發生異常');
+      });
+    });
+
+    document.getElementById('btn-logout').addEventListener('click', () => {
+      signOut(auth).then(() => {
+        authModal.classList.add('hidden');
+        showToast('已成功登出');
       });
     });
 
@@ -1800,14 +2002,151 @@
         if (loadEl) {
           loadEl.className = 'bg-white p-2.5 rounded-xl rounded-tl-sm border border-slate-200/70 text-slate-800 text-xs self-start max-w-[88%] leading-relaxed shadow-2xs';
           loadEl.innerText = targetLang === 'en'
-            ? "Quick tip: Check out our top-rated local dining spots and pristine island beaches!"
+            ? "Quick tip: Check out our top-rated local dining spots, medical facilities, and island beaches!"
             : targetLang === 'tl'
-            ? "Mabilisang tip: Bisitahin ang mga tanyag na kainan at magagandang isla sa Pilipinas!"
-            : "已為您快速查詢！推薦造訪在地人氣嚴選私房餐廳與精選海島景點。";
+            ? "Mabilisang tip: Bisitahin ang mga tanyag na kainan, ospital, at mga isla sa Pilipinas!"
+            : "已為您快速查詢！推薦造訪在地人氣嚴選私房餐廳、醫療機構與精選海島景點。";
         }
       }
       chatMessages.scrollTop = chatMessages.scrollHeight;
     }
+
+    function renderUI() {
+      renderRegionPills();
+      renderSubFilterBar();
+      renderContent();
+    }
+
+    function updateUiLanguage() {
+      document.documentElement.lang = currentLang;
+      const dict = I18N_DICT[currentLang] || I18N_DICT['zh-TW'];
+      
+      const searchInput = document.getElementById('search-input');
+      if (searchInput) searchInput.placeholder = dict.searchPlaceholder;
+
+      const chatWelcome = document.getElementById('chat-welcome-bubble');
+      if (chatWelcome && dict.aiChatWelcome) chatWelcome.textContent = dict.aiChatWelcome;
+
+      const chatInputEl = document.getElementById('chat-input');
+      if (chatInputEl && dict.aiChatPlaceholder) chatInputEl.placeholder = dict.aiChatPlaceholder;
+
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (dict[key]) {
+          el.textContent = dict[key];
+        }
+      });
+
+      const authBtn = document.getElementById('auth-btn-text');
+      if (authBtn && !currentUser) {
+        authBtn.textContent = dict.btnLogin;
+      }
+
+      renderUI();
+    }
+
+    window.updateUiLanguage = updateUiLanguage;
+
+    function enableHorizontalScroll() {
+      const scrollContainers = [
+        document.getElementById('regionPillsNav'),
+        document.getElementById('subFilterContainer')
+      ];
+
+      scrollContainers.forEach(container => {
+        if (!container) return;
+
+        container.addEventListener('wheel', (e) => {
+          if (e.deltaY !== 0) {
+            e.preventDefault();
+            container.scrollLeft += e.deltaY;
+          }
+        }, { passive: false });
+
+        let isDown = false;
+        let startX, scrollLeft;
+
+        container.addEventListener('mousedown', (e) => {
+          isDown = true;
+          container.classList.add('drag-scroll-active');
+          startX = e.pageX - container.offsetLeft;
+          scrollLeft = container.scrollLeft;
+        });
+
+        window.addEventListener('mouseup', () => {
+          if (!isDown) return;
+          isDown = false;
+          container.classList.remove('drag-scroll-active');
+        });
+
+        container.addEventListener('mousemove', (e) => {
+          if (!isDown) return;
+          e.preventDefault();
+          const x = e.pageX - container.offsetLeft;
+          const walk = (x - startX) * 1.5;
+          container.scrollLeft = scrollLeft - walk;
+        });
+      });
+    }
+
+    const langSelect = document.getElementById('lang-select');
+    if (langSelect) {
+      langSelect.value = currentLang;
+      langSelect.addEventListener('change', (e) => {
+        currentLang = e.target.value;
+        localStorage.setItem('ph_app_lang', currentLang);
+        updateUiLanguage();
+        const dict = I18N_DICT[currentLang] || I18N_DICT['zh-TW'];
+        showToast(`${dict.toastSwitch}${e.target.options[e.target.selectedIndex].text}`);
+      });
+    }
+
+    typeCityBtn.addEventListener('click', () => {
+      currentDimension = 'cities';
+      sessionStorage.setItem('ph_dim', 'cities');
+      currentCity = 'davao';
+      currentSubFilter = 'all';
+      sessionStorage.setItem('ph_nav_sub', 'all');
+      localStorage.setItem('ph_app_city', currentCity);
+      renderUI();
+    });
+
+    typeIslandBtn.addEventListener('click', () => {
+      currentDimension = 'islands';
+      sessionStorage.setItem('ph_dim', 'islands');
+      currentCity = 'boracay';
+      currentSubFilter = 'all';
+      sessionStorage.setItem('ph_nav_sub', 'all');
+      localStorage.setItem('ph_app_city', currentCity);
+      renderUI();
+    });
+
+    document.querySelectorAll('.main-tab-pill').forEach(btn => {
+      btn.addEventListener('click', () => {
+        currentMainTab = btn.getAttribute('data-maintab');
+        sessionStorage.setItem('ph_nav_tab', currentMainTab);
+        currentSubFilter = 'all';
+        sessionStorage.setItem('ph_nav_sub', 'all');
+        renderSubFilterBar();
+        renderContent();
+      });
+    });
+
+    const searchInput = document.getElementById('search-input');
+    const searchClearBtn = document.getElementById('search-clear-btn');
+
+    searchInput.addEventListener('input', (e) => {
+      currentSearchQuery = e.target.value.trim();
+      searchClearBtn.classList.toggle('hidden', !currentSearchQuery);
+      renderContent();
+    });
+
+    searchClearBtn.addEventListener('click', () => {
+      searchInput.value = '';
+      currentSearchQuery = '';
+      searchClearBtn.classList.add('hidden');
+      renderContent();
+    });
 
     initVisitorCounter();
     enableHorizontalScroll();
