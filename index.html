@@ -440,11 +440,25 @@
     }
 
     function getGrabLink(item, name, city) {
+      // 1. 如果試算表有填寫該店專屬的 Grab 網址，100% 優先直達店家頁面
       if (item.grab_url && typeof item.grab_url === 'string' && item.grab_url.trim().startsWith('http')) {
         return item.grab_url.trim();
       }
-      const q = encodeURIComponent(((name || '') + ' ' + (city || '')).trim());
-      return `https://food.grab.com/ph/en/search?q=${q}`;
+
+      // 2. 清理店名：優先使用英文名，移除中文、特殊符號與括號，確保菲律賓 Grab 系統能搜到
+      let cleanQuery = (item.name_en || name || item.id || '').trim();
+      // 去除括號與括號內文字 (例如: "(Davao Branch)")
+      cleanQuery = cleanQuery.replace(/\(.*?\)|（.*?）/g, '').trim();
+      // 如果包含中文且有英文部分，優先保留英文部分
+      const englishMatch = cleanQuery.match(/[a-zA-Z0-9\s'&]+/);
+      if (englishMatch && englishMatch[0].trim().length >= 2) {
+        cleanQuery = englishMatch[0].trim();
+      }
+
+      const q = encodeURIComponent(cleanQuery);
+
+      // 3. GrabFood 菲律賓官方精準搜尋網址 (支援網頁端直接帶入關鍵字列表)
+      return `https://food.grab.com/ph/en/restaurants?search=${q}`;
     }
 
     function getCleanPhone(phone) {
