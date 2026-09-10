@@ -1650,7 +1650,17 @@
       let filtered = allMedical.filter(item => {
         if (!isCityMatch(item, currentCity)) return false;
         if (!currentSubFilter || currentSubFilter === 'all') return true;
-        return (item.category || '').toLowerCase() === currentSubFilter.toLowerCase();
+
+        const sub = currentSubFilter.toLowerCase();
+        const cat = (item.category || '').toLowerCase();
+        const type = (item.type || '').toLowerCase();
+        const allText = `${cat} ${type}`;
+
+        if (sub === 'hospital') return allText.includes('hospital') || allText.includes('綜合醫院') || allText.includes('醫院');
+        if (sub === 'clinic') return allText.includes('clinic') || allText.includes('專科診所') || allText.includes('診所');
+        if (sub === 'pharmacy') return allText.includes('pharmacy') || allText.includes('連鎖藥局') || allText.includes('藥局') || allText.includes('mercury');
+
+        return allText.includes(sub);
       });
 
       if (currentSearchQuery) {
