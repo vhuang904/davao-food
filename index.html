@@ -287,8 +287,8 @@
         </div>
         <div class="flex items-center gap-1.5">
           <input type="text" id="comment-input-text" placeholder="寫下您的真實體驗與點評..." class="flex-1 bg-slate-900 border border-slate-800 text-white rounded-xl px-3 py-2 text-xs focus:border-amber-400 outline-none placeholder-slate-500" />
-          <button id="btn-submit-comment" class="bg-gradient-to-r from-amber-400 to-amber-500 text-slate-950 font-black text-xs px-3.5 py-2 rounded-xl transition active:scale-95 shadow-sm whitespace-nowrap">
-            發表 (+20分)
+          <button id="btn-submit-comment" type="button" class="relative z-30 bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 active:from-amber-500 active:to-amber-600 text-slate-950 font-black text-xs px-4 py-2.5 rounded-xl transition active:scale-95 shadow-md shadow-amber-500/20 whitespace-nowrap cursor-pointer touch-manipulation">
+          發表 (+20分)
           </button>
         </div>
       </div>
@@ -1835,6 +1835,62 @@
       }
     }
 
+    // ====== 發表留言核心邏輯 (支援電腦點擊與手機觸控) ======
+    async function submitCommentAction(e) {
+      if (e) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+
+      if (!currentUser) {
+        document.getElementById('comment-modal').classList.add('hidden');
+        document.getElementById('auth-modal').classList.remove('hidden');
+        showToast('請先登入 Google 帳號再發表留言！', 'fa-user-lock');
+        return;
+      }
+
+      const input = document.getElementById('comment-input-text');
+      const text = input ? input.value.trim() : '';
+      if (!text) {
+        showToast('請輸入留言內容');
+        return;
+      }
+
+      const submitBtn = document.getElementById('btn-submit-comment');
+      try {
+        if (submitBtn) {
+          submitBtn.disabled = true;
+          submitBtn.innerText = '送出中...';
+        }
+
+        await addStoreComment(activeCommentTarget.id, {
+          rating: selectedRating,
+          comment: text
+        });
+
+        if (input) {
+          input.value = '';
+          input.blur(); // 收起手機鍵盤
+        }
+        showToast('留言發布成功！獲得 20 積分 🎁', 'fa-award');
+        loadComments(activeCommentTarget.id);
+      } catch (err) {
+        console.error("發布留言失敗:", err);
+        showToast(err.message || '留言發表失敗，請稍候再試');
+      } finally {
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.innerText = '發表 (+20分)';
+        }
+      }
+    }
+
+    const submitCommentBtn = document.getElementById('btn-submit-comment');
+    if (submitCommentBtn) {
+      submitCommentBtn.addEventListener('click', submitCommentAction);
+      submitCommentBtn.addEventListener('touchend', submitCommentAction);
+    }
+    
     // ====== 會員個人中心彈窗 ======
     const authModal = document.getElementById('auth-modal');
     document.getElementById('auth-state-btn').addEventListener('click', () => {
