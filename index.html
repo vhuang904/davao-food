@@ -727,12 +727,46 @@
       `;
     }
 
+    // ====== 解決橫向滾動與卡片相簿拖曳衝突核心引擎 ======
+    function makeScrollable(element) {
+      if (!element) return;
+      let isDown = false;
+      let startX = 0;
+      let scrollLeft = 0;
+
+      element.addEventListener('mousedown', (e) => {
+        isDown = true;
+        element.classList.add('drag-scroll-active');
+        startX = e.pageX - element.offsetLeft;
+        scrollLeft = element.scrollLeft;
+      });
+
+      element.addEventListener('mouseleave', () => {
+        isDown = false;
+        element.classList.remove('drag-scroll-active');
+      });
+
+      element.addEventListener('mouseup', () => {
+        isDown = false;
+        element.classList.remove('drag-scroll-active');
+      });
+
+      element.addEventListener('mousemove', (e) => {
+        if (!isDown) return;
+        e.preventDefault();
+        const x = e.pageX - element.offsetLeft;
+        const walk = (x - startX) * 1.5; // 滑動靈敏度
+        element.scrollLeft = scrollLeft - walk;
+      });
+    }
+
     function bindCarouselControls() {
       document.querySelectorAll('.carousel-track').forEach(track => {
         const id = track.id.replace('track-', '');
         const dotsContainer = document.getElementById(`dots-${id}`);
         const dots = dotsContainer ? dotsContainer.querySelectorAll('.dot-indicator') : [];
         
+        // 監聽滾動更新指示點 (小圓點)
         track.addEventListener('scroll', () => {
           const slideWidth = track.offsetWidth;
           if (slideWidth === 0) return;
@@ -742,36 +776,8 @@
           });
         }, { passive: true });
 
-        track.addEventListener('wheel', (e) => {
-          if (e.deltaY !== 0) {
-            e.preventDefault();
-            track.scrollLeft += e.deltaY;
-          }
-        }, { passive: false });
-
-        let isDown = false;
-        let startX, scrollLeft;
-
-        track.addEventListener('mousedown', (e) => {
-          isDown = true;
-          track.classList.add('drag-scroll-active');
-          startX = e.pageX - track.offsetLeft;
-          scrollLeft = track.scrollLeft;
-        });
-
-        window.addEventListener('mouseup', () => {
-          if (!isDown) return;
-          isDown = false;
-          track.classList.remove('drag-scroll-active');
-        });
-
-        track.addEventListener('mousemove', (e) => {
-          if (!isDown) return;
-          e.preventDefault();
-          const x = e.pageX - track.offsetLeft;
-          const walk = (x - startX) * 1.5;
-          track.scrollLeft = scrollLeft - walk;
-        });
+        // 套用平滑拖曳，不再全域 preventDefault 鎖死滾動
+        makeScrollable(track);
       });
     }
 
@@ -1634,11 +1640,18 @@
     });
 
     function enableHorizontalScroll() {
+      // 為頂部兩大橫向標籤列啟用滑鼠拖曳與滾輪支援
       ['regionPillsNav', 'subFilterContainer'].forEach(id => {
         const c = document.getElementById(id);
         if (!c) return;
+
+        makeScrollable(c);
+
         c.addEventListener('wheel', (e) => {
-          if (e.deltaY !== 0) { e.preventDefault(); c.scrollLeft += e.deltaY; }
+          if (e.deltaY !== 0) {
+            e.preventDefault();
+            c.scrollLeft += e.deltaY;
+          }
         }, { passive: false });
       });
     }
