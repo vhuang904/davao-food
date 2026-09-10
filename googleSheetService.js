@@ -230,22 +230,25 @@ function normalizeAutoDiscovered(rows) {
 function normalizeMedical(rows) {
   return rows
     .filter(row => !row.isactive || String(row.isactive).trim().toUpperCase() !== 'FALSE')
-    .map(row => ({
-      id: row.id,
-      city: (row.city || '').toLowerCase().trim(),
-      type: 'medical',
-      name: row.namezh || row.nameen || row.name || row.id,
-      name_zh: row.namezh || '',
-      name_en: row.nameen || '',
-      name_tl: row.nametl || '',
-      category: (row.category || 'clinic').toLowerCase().trim(), // hospital | clinic | pharmacy
-      address: row.address || '',
-      phone: cleanPhoneNumber(row.phone),
-      website: row.website || '',
-      image_url: row.imageurl || row.image || '',
-      nav_link: row.navlink || '',
-      is_active: true
-    }));
+    .map(row => {
+      const p = row.phone || row.telephone || row.contact || row.col_8 || row.col_9 || '';
+      return {
+        id: row.id || `med_${Math.random()}`,
+        city: (row.city || '').toLowerCase().trim(),
+        type: 'medical',
+        name: row.namezh || row.nameen || row.name || row.id,
+        name_zh: row.namezh || '',
+        name_en: row.nameen || '',
+        name_tl: row.nametl || '',
+        category: (row.category || 'clinic').toLowerCase().trim(), // hospital | clinic | pharmacy
+        address: row.address || '',
+        phone: cleanPhoneNumber(p),
+        website: row.website || '',
+        image_url: row.imageurl || row.image || '',
+        nav_link: row.navlink || '',
+        is_active: true
+      };
+    });
 }
 
 /**
