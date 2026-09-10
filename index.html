@@ -7,8 +7,9 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
-  <meta name="app-version" content="20260910-v18.2-master" />
+  <meta name="app-version" content="20260910-v18.3-master" />
   <meta name="theme-color" content="#ea580c" />
+  <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="大V的旅遊窩" />
@@ -54,6 +55,7 @@
 
   .carousel-track { display: flex; width: 100%; height: 100%; overflow-x: auto; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; }
   .carousel-slide { flex: 0 0 100%; width: 100%; height: 100%; scroll-snap-align: center; position: relative; }
+  .carousel-slide img { pointer-events: none; -webkit-user-drag: none; user-select: none; }
   .drag-scroll-active { cursor: grabbing !important; cursor: -webkit-grabbing !important; }
   .dot-indicator.active { width: 14px; border-radius: 4px; background: #FFFFFF; }
   </style>
@@ -779,20 +781,6 @@
       });
     }
 
-    const searchInput = document.getElementById('search-input');
-    const searchClearBtn = document.getElementById('search-clear-btn');
-    searchInput.addEventListener('input', (e) => {
-      currentSearchQuery = e.target.value.trim();
-      searchClearBtn.classList.toggle('hidden', !currentSearchQuery);
-      renderContent();
-    });
-    searchClearBtn.addEventListener('click', () => {
-      searchInput.value = '';
-      currentSearchQuery = '';
-      searchClearBtn.classList.add('hidden');
-      renderContent();
-    });
-
     function enableHorizontalScroll() {
       ['regionPillsNav', 'subFilterContainer'].forEach(id => {
         const c = document.getElementById(id);
@@ -806,17 +794,6 @@
             c.scrollLeft += e.deltaY;
           }
         }, { passive: false });
-      });
-    }
-
-    const langSelect = document.getElementById('lang-select');
-    if (langSelect) {
-      langSelect.value = currentLang;
-      langSelect.addEventListener('change', (e) => {
-        currentLang = e.target.value;
-        localStorage.setItem('ph_app_lang', currentLang);
-        updateUiLanguage();
-        showToast(`${I18N_DICT[currentLang].toastSwitch}${e.target.options[e.target.selectedIndex].text}`);
       });
     }
 
@@ -1184,6 +1161,7 @@
           if (currentSubFilter === 'bbq_seafood') return cat.includes('炭烤') || cat.includes('海鮮') || cat.includes('bbq') || cat.includes('steak');
           if (currentSubFilter === 'dessert_cafe') return cat.includes('甜點') || cat.includes('咖啡') || cat.includes('cafe');
           return cat.includes(currentSubFilter.toLowerCase());
+        }
       });
 
       if (currentSearchQuery) {
@@ -1210,7 +1188,6 @@
         const reviewCount = item.googleReviewCount || 50;
         const rating = item.googleRating || 4.5;
 
-        // 智慧簡介生成邏輯：絕不顯示暫無詳細介紹
         let desc = getLocalizedText(item, 'desc', currentShortLang) || getText(item.description);
         if (!desc || desc.trim() === '') {
           if (isCurated && curatedNote) {
@@ -1224,7 +1201,6 @@
           }
         }
 
-        const isFoodOnly = (item.islandType === 'food') || (!item.islandType && item.categoryKey !== 'hotel_villa' && item.categoryKey !== 'hotel' && item.categoryKey !== 'villa');
         const smartLink = getSmartLink(item.name_en || name, item.city, item.website);
         const cleanPhone = getCleanPhone(item.phone);
 
@@ -1260,7 +1236,6 @@
                 <p class="flex items-center gap-1.5 font-mono"><i class="fa-solid fa-phone text-slate-400 w-3"></i><span>${cleanPhone ? `<a href="tel:${cleanPhone}" class="hover:text-orange-600 underline">${item.phone}</a>` : dict.phoneEmpty}</span></p>
               </div>
 
-              <!-- 底部操作三按鈕：討論留言、一鍵撥號、導航地圖 -->
               <div class="mt-auto grid grid-cols-3 gap-1.5 pt-1 border-t border-slate-100">
                 <button data-comment-id="${item.id}" data-comment-name="${name}" class="btn-open-comment bg-slate-100 hover:bg-slate-200 active:scale-95 text-slate-700 text-[11px] font-bold py-2 rounded-xl text-center flex items-center justify-center gap-1 transition">
                   <i class="fa-regular fa-comment-dots text-orange-500"></i> ${dict.btnComment}
@@ -1346,7 +1321,6 @@
                 <p class="flex items-center gap-1.5 font-mono"><i class="fa-solid fa-phone text-slate-400 w-3"></i><span>${cleanPhone ? `<a href="tel:${cleanPhone}" class="hover:text-orange-600 underline">${item.phone}</a>` : dict.phoneEmpty}</span></p>
               </div>
 
-              <!-- 底部操作按鈕 -->
               <div class="mt-auto grid grid-cols-3 gap-1.5 pt-1 border-t border-slate-100">
                 <button data-comment-id="${item.id}" data-comment-name="${name}" class="btn-open-comment bg-slate-100 hover:bg-slate-200 active:scale-95 text-slate-700 text-[11px] font-bold py-2 rounded-xl text-center flex items-center justify-center gap-1 transition">
                   <i class="fa-regular fa-comment-dots text-orange-500"></i> ${dict.btnComment}
@@ -1683,23 +1657,6 @@
       searchClearBtn.classList.add('hidden');
       renderContent();
     });
-
-    function enableHorizontalScroll() {
-      // 為頂部兩大橫向標籤列啟用滑鼠拖曳與滾輪支援
-      ['regionPillsNav', 'subFilterContainer'].forEach(id => {
-        const c = document.getElementById(id);
-        if (!c) return;
-
-        makeScrollable(c);
-
-        c.addEventListener('wheel', (e) => {
-          if (e.deltaY !== 0) {
-            e.preventDefault();
-            c.scrollLeft += e.deltaY;
-          }
-        }, { passive: false });
-      });
-    }
 
     const langSelect = document.getElementById('lang-select');
     if (langSelect) {
