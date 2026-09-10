@@ -170,28 +170,27 @@ export async function loginWithGoogle() {
   }
 }
 
-// 2. Email 魔法精靈登入（加入 Google 用戶前置檢查）
+// 2. Email 魔法精靈登入（直接向 Firestore 驗證是否已是 Google 用戶）
 export async function sendMagicEmailLink(email) {
   const cleanEmail = (email || "").trim().toLowerCase();
   if (!cleanEmail || !cleanEmail.includes("@")) {
     throw new Error("請輸入正確的電子郵件信箱。");
   }
 
-  // 前置檢查：確認此信箱是否先前已用 Google 註冊
+  // 直接向 Firestore users 集合查詢該信箱是否已註冊過
   try {
-    const signInMethods = await fetchSignInMethodsForEmail(auth, cleanEmail);
-    console.log("[AuthService] 該信箱已有登入方式:", signInMethods);
+    const emailQuery = query(collection(db, "users"), where("email", "==", cleanEmail));
+    const querySnap = await getDocs(emailQuery);
 
-    // 若包含 google.com，直接拋出友善提示，絕不寄送無效郵件
-    if (signInMethods.includes("google.com")) {
-      throw new Error("此信箱已綁定 Google 帳號！請直接點擊上方「使用 Google 帳號一鍵登入」。");
+    if (!querySnap.empty) {
+      // 只要先前已經用 Google 登入並建立了資料庫檔案，直接阻擋並引導！
+      throw new Error("此信箱已註冊過！請直接點擊上方「使用 Google 帳號一鍵登入」。");
     }
   } catch (err) {
-    // 若為自訂的 Google 阻擋提示，向外傳遞給 UI 顯示
     if (err.message && err.message.includes("Google")) {
       throw err;
     }
-    console.warn("[AuthService] 檢查信箱狀態略過:", err);
+    console.warn("[AuthService] 檢查歷史用戶略過:", err);
   }
 
   const actionCodeSettings = {
