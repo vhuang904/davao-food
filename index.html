@@ -1022,8 +1022,14 @@
               nav_link: autoItem.nav_link || '',
               images: parseImages(autoItem, 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&auto=format&fit=crop')
             });
-          } else {
-            if (!mergedMap.has(autoKey)) {
+        
+            } else {
+            // 👉 如果大V名單裡已經有這家店，自動把 Google 的真實評分與評論數補進去！
+            if (mergedMap.has(autoKey)) {
+              const existingItem = mergedMap.get(autoKey);
+              if (autoItem.googleRating) existingItem.googleRating = Number(autoItem.googleRating);
+              if (autoItem.googleReviewCount) existingItem.googleReviewCount = Number(autoItem.googleReviewCount);
+            } else {
               const r = autoItem.googleRating || 4.5;
               const c = autoItem.googleReviewCount || 50;
               const isResort = categoryStr.includes('hotel') || categoryStr.includes('resort') || categoryStr.includes('villa');
