@@ -101,3 +101,66 @@ self.addEventListener('fetch', (event) => {
     })
   );
 });
+
+// ==========================================
+// Web Push 推播通知與點擊處理邏輯
+// ==========================================
+
+// 1. 監聽推播訊息 (背景接收)
+self.addEventListener('push', (event) => {
+  let data = {};
+  if (event.data) {
+    try {
+      data = event.data.json();
+    } catch (e) {
+      data = {
+        notification: {
+          title: '大V的旅遊窩',
+          body: event.data.text()
+        }
+      };
+    }
+  }
+
+  const notificationTitle = (data.notification && data.notification.title) || data.title || '大V的旅遊窩 精選通知';
+  const notificationOptions = {
+    body: (data.notification && data.notification.body) || data.body || '有全新的菲律賓美食與特惠推薦！點此查看。',
+    icon: (data.notification && data.notification.icon) || data.icon || './icons/icon-192.png',
+    badge: './icons/icon-192.png',
+    data: {
+      url: (data.data && data.data.url) || data.url || '/'
+    },
+    vibrate: [100, 50, 100],
+    tag: 'bigv-push-notification',
+    renotify: true
+  };
+
+  event.waitUntil(
+    self.registration.showNotification(notificationTitle, notificationOptions)
+  );
+});
+
+// 2. 監聽使用者點擊通知卡片
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close();
+
+  const targetUrl = (event.notification.data && event.notification.data.url) || '/';
+
+  event.waitUntil(
+    clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
+      // 若已有開啟的 PWA 視窗，直接切換過去並聚焦
+      for (const client of clientList) {
+        if ('focus' in client) {
+          if (client.url.includes(self.location.origin)) {
+            client.navigate(targetUrl);
+            return client.focus();
+          }
+        }
+      }
+      // 若尚未開啟，則新開視窗載入
+      if (clients.openWindow) {
+        return clients.openWindow(targetUrl);
+      }
+    })
+  );
+});
