@@ -234,20 +234,46 @@
 
       <!-- 已登入個人中心畫面 -->
       <div id="auth-modal-user-view" class="hidden text-left space-y-3">
+        <!-- 頂部個人資訊：頭像 + 暱稱/等級 + 登入 Email -->
         <div class="flex items-center gap-3 border-b border-slate-800/80 pb-3">
-          <img id="user-modal-avatar" src="" class="w-12 h-12 rounded-2xl ring-2 ring-amber-400 object-cover" />
-          <div>
-            <h4 id="user-modal-name" class="font-bold text-sm text-white"></h4>
-            <span id="user-modal-level" class="inline-block bg-amber-400/20 border border-amber-400/40 text-amber-300 text-[10px] font-bold px-2 py-0.5 rounded-md mt-0.5">LV.1 探店初心者</span>
+          <img id="user-modal-avatar" src="" class="w-12 h-12 rounded-2xl ring-2 ring-amber-400 object-cover flex-shrink-0" />
+          <div class="min-w-0 flex-1">
+            <div class="flex items-center gap-2 flex-wrap">
+              <h4 id="user-modal-name" class="font-bold text-sm text-white truncate"></h4>
+              <span id="user-modal-level" class="inline-block bg-amber-400/20 border border-amber-400/40 text-amber-300 text-[10px] font-bold px-2 py-0.5 rounded-md">LV.1 探店初心者</span>
+            </div>
+            <!-- 顯示玩家登入 Email -->
+            <p class="text-[11px] text-slate-400 flex items-center gap-1.5 mt-1 truncate">
+              <i class="fa-regular fa-envelope text-amber-400/80 text-[10px]"></i>
+              <span id="user-modal-email" class="truncate font-mono">載入中...</span>
+            </p>
           </div>
         </div>
         
+        <!-- 積分卡片 -->
         <div class="bg-gradient-to-br from-slate-900 via-slate-900 to-black border border-amber-400/40 rounded-2xl p-3.5 flex items-center justify-between shadow-md">
           <div>
             <p class="text-[11px] text-slate-300 font-medium">累積探店吃貨積分</p>
             <p id="user-modal-points" class="text-2xl font-black text-amber-300">50 <span class="text-xs font-normal text-slate-400">PTS</span></p>
           </div>
           <span class="text-xs text-amber-400 font-bold">每則留言 +20 分 🎁</span>
+        </div>
+
+        <!-- 推播通知自主開關列 -->
+        <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-3 flex items-center justify-between">
+          <div class="flex items-center gap-2.5">
+            <div class="w-7 h-7 rounded-xl bg-amber-400/10 border border-amber-400/30 flex items-center justify-center text-amber-400 text-xs">
+              <i class="fa-regular fa-bell"></i>
+            </div>
+            <div>
+              <p class="text-xs font-bold text-slate-200 leading-tight">即時優惠與新店推播</p>
+              <p class="text-[10px] text-slate-400">第一時間獲取大V私房探店指南</p>
+            </div>
+          </div>
+          <!-- Toggle 按鈕 -->
+          <button id="push-toggle-btn" type="button" class="relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent bg-slate-800 transition-colors duration-200 ease-in-out focus:outline-none" role="switch" aria-checked="false">
+            <span id="push-toggle-thumb" aria-hidden="true" class="pointer-events-none inline-block h-5 w-5 transform rounded-full bg-slate-400 shadow ring-0 transition duration-200 ease-in-out translate-x-0"></span>
+          </button>
         </div>
 
         <button id="btn-logout" class="w-full bg-rose-950/40 border border-rose-800/40 hover:bg-rose-900/40 text-rose-300 font-bold text-xs py-2.5 rounded-xl transition">
@@ -2020,7 +2046,7 @@
     
     // ====== 會員個人中心彈窗 ======
     const authModal = document.getElementById('auth-modal');
-    document.getElementById('auth-state-btn').addEventListener('click', () => {
+        document.getElementById('auth-state-btn').addEventListener('click', async () => {
       if (currentUser) {
         document.getElementById('auth-modal-login-view').classList.add('hidden');
         document.getElementById('auth-modal-user-view').classList.remove('hidden');
@@ -2028,6 +2054,25 @@
         document.getElementById('user-modal-avatar').src = currentUserProfile.photoURL || currentUser.photoURL || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200';
         document.getElementById('user-modal-points').innerHTML = `${currentUserProfile.points || 50} <span class="text-xs font-normal text-slate-400">PTS</span>`;
         document.getElementById('user-modal-level').innerText = currentUserProfile.level || 'LV.1 探店初心者';
+        
+        // 帶入登入信箱
+        const emailEl = document.getElementById('user-modal-email');
+        if (emailEl) {
+          emailEl.innerText = currentUser.email || '未提供電子信箱';
+        }
+
+        // 同步檢查推播開關狀態
+        syncPushToggleUI(false);
+        try {
+          const subSnap = await getDoc(doc(db, "push_subscriptions", currentUser.uid));
+          if (subSnap.exists() && subSnap.data().enabled !== false && Notification.permission === 'granted') {
+            syncPushToggleUI(true);
+          } else {
+            syncPushToggleUI(false);
+          }
+        } catch (e) {
+          syncPushToggleUI(false);
+        }
       } else {
         document.getElementById('auth-modal-login-view').classList.remove('hidden');
         document.getElementById('auth-modal-user-view').classList.add('hidden');
@@ -2036,6 +2081,60 @@
     });
 
     document.getElementById('close-auth-btn').addEventListener('click', () => authModal.classList.add('hidden'));
+    // ====== 推播開關 UI 渲染與事件綁定 ======
+    function syncPushToggleUI(isEnabled) {
+      const toggleBtn = document.getElementById('push-toggle-btn');
+      const toggleThumb = document.getElementById('push-toggle-thumb');
+      if (!toggleBtn || !toggleThumb) return;
+
+      if (isEnabled) {
+        toggleBtn.className = "relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent bg-amber-400 transition-colors duration-200 ease-in-out focus:outline-none";
+        toggleThumb.className = "pointer-events-none inline-block h-5 w-5 transform rounded-full bg-slate-950 shadow ring-0 transition duration-200 ease-in-out translate-x-5";
+        toggleBtn.setAttribute('aria-checked', 'true');
+      } else {
+        toggleBtn.className = "relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent bg-slate-800 transition-colors duration-200 ease-in-out focus:outline-none";
+        toggleThumb.className = "pointer-events-none inline-block h-5 w-5 transform rounded-full bg-slate-400 shadow ring-0 transition duration-200 ease-in-out translate-x-0";
+        toggleBtn.setAttribute('aria-checked', 'false');
+      }
+    }
+
+    const pushToggleBtn = document.getElementById('push-toggle-btn');
+    if (pushToggleBtn) {
+      pushToggleBtn.addEventListener('click', async () => {
+        if (!currentUser) return;
+        const isCurrentlyChecked = pushToggleBtn.getAttribute('aria-checked') === 'true';
+        const targetState = !isCurrentlyChecked;
+
+        if (targetState) {
+          // 使用者主動開啟推播
+          if (!('Notification' in window)) {
+            showToast('此瀏覽器不支援推播通知', 'fa-triangle-exclamation');
+            return;
+          }
+          const permission = await Notification.requestPermission();
+          if (permission !== 'granted') {
+            showToast('請在系統設定中允許通知權限', 'fa-triangle-exclamation');
+            return;
+          }
+
+          syncPushToggleUI(true);
+          await requestPushNotificationPermission(currentUser);
+          await updateDoc(doc(db, "push_subscriptions", currentUser.uid), { 
+            enabled: true, 
+            updatedAt: new Date().toISOString() 
+          }).catch(() => {});
+          showToast('🔔 已開啟推播通知！', 'fa-bell');
+        } else {
+          // 使用者主動關閉推播
+          syncPushToggleUI(false);
+          await updateDoc(doc(db, "push_subscriptions", currentUser.uid), { 
+            enabled: false, 
+            updatedAt: new Date().toISOString() 
+          }).catch(() => {});
+          showToast('🔕 已暫停推播通知', 'fa-bell-slash');
+        }
+      });
+    }
 
     document.getElementById('btn-google-login').addEventListener('click', async () => {
       try {
