@@ -381,11 +381,11 @@
     const SUB_FILTERS = {
       food_urban: [
         { key: 'all', label: { 'zh-TW': '全部', 'en': 'All', 'tl': 'Lahat' } },
-        { key: 'japanese_korean', label: { 'zh-TW': '日料生魚片/燒肉', 'en': 'Japanese/Korean BBQ', 'tl': 'Hapones/Koreano' } },
-        { key: 'chinese', label: { 'zh-TW': '精選中餐/火鍋', 'en': 'Chinese/Hotpot', 'tl': 'Tsino/Hotpot' } },
-        { key: 'bbq_seafood', label: { 'zh-TW': '炭烤排餐/海鮮', 'en': 'BBQ & Seafood', 'tl': 'Inihaw at Seafood' } },
-        { key: 'fast_food', label: { 'zh-TW': '美式速食', 'en': 'Fast Food', 'tl': 'Fast Food' } },
-        { key: 'coffee_drinks', label: { 'zh-TW': '手搖咖啡', 'en': 'Coffee & Drinks', 'tl': 'Kape at Inumin' } }
+        { key: 'filipino', label: { 'zh-TW': '菲餐', 'en': 'Filipino', 'tl': 'Pagkaing Pinoy' } },
+        { key: 'japanese', label: { 'zh-TW': '日式料理', 'en': 'Japanese', 'tl': 'Hapones' } },
+        { key: 'chinese', label: { 'zh-TW': '精選中餐', 'en': 'Chinese', 'tl': 'Tsino' } },
+        { key: 'bbq_seafood', label: { 'zh-TW': '炭烤/海鮮', 'en': 'BBQ & Seafood', 'tl': 'Inihaw at Seafood' } },
+        { key: 'dessert_cafe', label: { 'zh-TW': '甜點/咖啡', 'en': 'Dessert & Café', 'tl': 'Panghimagas at Kape' } }
       ],
       food_island: [
         { key: 'all', label: { 'zh-TW': '🏝️ 全部推薦', 'en': '🏝️ All Spots', 'tl': '🏝️ Lahat' } },
@@ -1097,11 +1097,21 @@
           return true;
         } else {
           const cat = (safeStr(item.categoryKey) + ' ' + safeStr(item.category)).toLowerCase();
-          if (currentSubFilter === 'japanese_korean') return cat.includes('japanese') || cat.includes('korean') || cat.includes('日料') || cat.includes('燒肉') || cat.includes('生魚片');
-          if (currentSubFilter === 'chinese') return cat.includes('chinese') || cat.includes('中餐') || cat.includes('火鍋') || cat.includes('hotpot');
-          if (currentSubFilter === 'bbq_seafood') return cat.includes('bbq') || cat.includes('seafood') || cat.includes('炭烤') || cat.includes('海鮮') || cat.includes('排餐');
-          if (currentSubFilter === 'fast_food') return cat.includes('fast') || cat.includes('速食') || cat.includes('美式');
-          if (currentSubFilter === 'coffee_drinks') return cat.includes('coffee') || cat.includes('drinks') || cat.includes('咖啡') || cat.includes('手搖');
+          if (currentSubFilter === 'filipino') {
+            return cat.includes('菲餐') || cat.includes('filipino') || cat.includes('lechon') || cat.includes('inasal');
+          }
+          if (currentSubFilter === 'japanese') {
+            return cat.includes('日式') || cat.includes('日料') || cat.includes('燒肉') || cat.includes('生魚片') || cat.includes('japanese') || cat.includes('korean');
+          }
+          if (currentSubFilter === 'chinese') {
+            return cat.includes('中餐') || cat.includes('火鍋') || cat.includes('chinese') || cat.includes('hotpot');
+          }
+          if (currentSubFilter === 'bbq_seafood') {
+            return cat.includes('炭烤') || cat.includes('海鮮') || cat.includes('bbq') || cat.includes('seafood') || cat.includes('steak');
+          }
+          if (currentSubFilter === 'dessert_cafe') {
+            return cat.includes('甜點') || cat.includes('咖啡') || cat.includes('cafe') || cat.includes('coffee') || cat.includes('dessert') || cat.includes('bakery') || cat.includes('手搖');
+          }
           return cat.includes(currentSubFilter.toLowerCase());
         }
       });
