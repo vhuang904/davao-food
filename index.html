@@ -1254,6 +1254,7 @@
         if (currentSubFilter === 'shopping') return cat.includes('mall') || cat.includes('商場') || cat.includes('shop');
         if (currentSubFilter === 'history') return cat.includes('history') || cat.includes('歷史') || cat.includes('教堂');
         if (currentSubFilter === 'nature') return cat.includes('nature') || cat.includes('自然') || cat.includes('公園') || cat.includes('park') || cat.includes('農莊') || cat.includes('園區') || cat.includes('eden');
+        if (currentSubFilter === 'casino') return cat.includes('casino') || cat.includes('賭場') || cat.includes('resort') || cat.includes('okada') || cat.includes('solaire') || cat.includes('city of dreams') || cat.includes('newport');
         return cat.includes(currentSubFilter.toLowerCase());
       });
 
