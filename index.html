@@ -1700,7 +1700,7 @@
 
               <div class="mt-auto grid grid-cols-2 gap-2 pt-1 border-t border-slate-800">
                 <a href="${cleanPhone ? `tel:${cleanPhone}` : '#'}" class="bg-emerald-600 hover:bg-emerald-500 text-white active:scale-95 text-xs font-bold py-2 rounded-xl text-center flex items-center justify-center gap-1.5 transition ${!cleanPhone ? 'opacity-40 pointer-events-none' : ''}">
-                  <i class="fa-solid fa-phone"></i> 急救電話直撥
+                  <i class="fa-solid fa-phone"></i> ${cleanPhone ? dict.btnCall : dict.phoneEmpty}
                 </a>
                 <a href="${item.nav_link || ('https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(name + ' ' + (item.address || '')))}" target="_blank" rel="noopener noreferrer" class="bg-slate-900 hover:bg-slate-800 active:scale-95 text-slate-200 border border-slate-700 text-xs font-bold py-2 rounded-xl text-center flex items-center justify-center gap-1.5 shadow-xs transition">
                   <i class="fa-solid fa-location-arrow text-amber-400"></i> ${dict.btnNav}
