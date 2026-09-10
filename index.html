@@ -1093,9 +1093,16 @@
     }
 
     function isCityMatch(item, targetCity) {
-      if (!item || !targetCity || targetCity === 'all') return true;
-      const c = safeStr(item.city);
+      if (!item) return false;
+
+      // 👉 第一道防線：徹底排除美國、紐約等海外誤爬資料
       const a = safeStr(item.address);
+      if (a.includes('usa') || a.includes('ny ') || a.includes('10550') || a.includes('united states')) {
+        return false;
+      }
+
+      if (!targetCity || targetCity === 'all') return true;
+      const c = safeStr(item.city);
       if (targetCity === 'samal') return c === 'samal' || a.includes('samal');
       if (targetCity === 'davao') return (c === 'davao' || a.includes('davao')) && !c.includes('samal') && !a.includes('samal');
       if (targetCity === 'manila') return c === 'manila' || a.includes('manila') || a.includes('makati') || a.includes('taguig') || a.includes('pasay') || a.includes('bgc');
