@@ -7,8 +7,8 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
-  <meta name="app-version" content="20260910-v18.3-master" />
-  <meta name="theme-color" content="#ea580c" />
+  <meta name="app-version" content="20260910-v19.1-blackgold-master" />
+  <meta name="theme-color" content="#020617" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -50,58 +50,57 @@
   .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
   .line-clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
   .line-clamp-3 { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
-  .glass-header { background: linear-gradient(135deg, #f97316 0%, #ea580c 100%); box-shadow: 0 4px 20px -2px rgba(234, 88, 12, 0.25); }
-  .glass-modal { background: rgba(15, 23, 42, 0.65); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+  .glass-header { background: rgba(2, 6, 23, 0.92); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-bottom: 1px solid rgba(245, 158, 11, 0.2); }
+  .glass-modal { background: rgba(0, 0, 0, 0.82); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
 
   .carousel-track { display: flex; width: 100%; height: 100%; overflow-x: auto; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; }
   .carousel-slide { flex: 0 0 100%; width: 100%; height: 100%; scroll-snap-align: center; position: relative; }
   .carousel-slide img { pointer-events: none; -webkit-user-drag: none; user-select: none; }
   .drag-scroll-active { cursor: grabbing !important; cursor: -webkit-grabbing !important; }
-  .dot-indicator.active { width: 14px; border-radius: 4px; background: #FFFFFF; }
+  .dot-indicator.active { width: 14px; border-radius: 4px; background: #fbbf24; }
   </style>
 </head>
-<body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col antialiased pb-16">
+<body class="bg-slate-900 text-slate-100 font-sans min-h-screen flex flex-col antialiased pb-20 selection:bg-amber-400 selection:text-black">
 
-  <!-- 全域 Toast 訊息提示元件 -->
-  <div id="toastNotification" class="fixed top-14 left-1/2 -translate-x-1/2 z-50 transition-all duration-300 pointer-events-none opacity-0 translate-y-[-10px]">
-    <div class="bg-neutral-900/95 text-white text-xs font-semibold px-4 py-2 rounded-full shadow-2xl flex items-center gap-2 border border-slate-700/60 backdrop-blur-md">
-      <i id="toastIcon" class="fa-solid fa-check text-emerald-400"></i>
+  <!-- 全域 Toast 訊息提示元件 (最高層級 z-[99999]) -->
+  <div id="toastNotification" class="fixed top-5 left-1/2 -translate-x-1/2 z-[99999] transition-all duration-300 pointer-events-none opacity-0 translate-y-[-10px] w-full max-w-sm px-4">
+    <div class="bg-slate-950/95 text-white text-xs font-bold px-4 py-2.5 rounded-2xl shadow-2xl flex items-center justify-center gap-2 border border-amber-400/50 backdrop-blur-md">
+      <i id="toastIcon" class="fa-solid fa-check text-amber-400"></i>
       <span id="toastMessage">已完成操作</span>
     </div>
   </div>
 
-  <!-- 頂部 Header -->
+  <!-- 頂部 Header (全黑金高規質感) -->
   <header class="sticky top-0 z-40 glass-header text-white transition-all">
-    <div class="max-w-md mx-auto px-3.5 pt-2.5 pb-1 flex flex-col gap-2">
+    <div class="max-w-md mx-auto px-3.5 pt-2.5 pb-1.5 flex flex-col gap-2">
       
-      <!-- 第一列：標題 + 瀏覽計數 + 登入與分享 -->
+      <!-- 第一列：品牌 Logo + 瀏覽計數 + 會員與分享 -->
       <div class="flex items-center justify-between gap-1.5">
         <div class="flex items-center gap-2 min-w-0 flex-1">
-          <div class="w-7 h-7 rounded-full bg-white/20 flex items-center justify-center shadow-inner flex-shrink-0">
-            <i class="fa-solid fa-compass text-amber-100 text-sm"></i>
+          <div class="w-8 h-8 rounded-xl bg-gradient-to-tr from-amber-400 to-amber-600 flex items-center justify-center text-slate-950 shadow-md shadow-amber-500/30 flex-shrink-0">
+            <i class="fa-solid fa-crown text-xs"></i>
           </div>
           <div class="min-w-0 flex-1">
             <div class="flex items-center gap-2 flex-wrap">
-              <h1 data-i18n="appTitle" class="text-xs sm:text-sm font-extrabold tracking-tight truncate leading-none">大V的旅遊窩</h1>
-              <div class="bg-white/25 border border-white/40 rounded-full px-2 py-0.5 text-[9px] sm:text-[10px] font-bold text-white flex items-center gap-1 shadow-inner flex-shrink-0">
-                <i class="fa-solid fa-fire text-amber-300 text-[10px]"></i>
+              <h1 data-i18n="appTitle" class="text-xs sm:text-sm font-black tracking-tight text-white truncate leading-none">大V的旅遊窩</h1>
+              <div class="bg-slate-800 border border-amber-400/30 rounded-full px-2 py-0.5 text-[9px] sm:text-[10px] font-bold text-amber-300 flex items-center gap-1 shadow-inner flex-shrink-0">
+                <i class="fa-solid fa-fire text-amber-400 text-[10px]"></i>
                 <span id="visit-count-val">3,856</span>
               </div>
             </div>
-            <p data-i18n="appSubtitle" class="text-[9px] text-amber-100/80 font-medium tracking-tight truncate mt-0.5">菲律賓精緻生活 & 海島漫遊地圖</p>
+            <p data-i18n="appSubtitle" class="text-[9px] text-amber-400/80 font-bold tracking-tight truncate mt-0.5">菲律賓精緻生活 & 海島漫遊地圖</p>
           </div>
         </div>
 
         <div class="flex items-center gap-1.5 flex-shrink-0">
-          <button id="auth-state-btn" class="bg-white/20 hover:bg-white/30 border border-white/30 text-white rounded-lg px-2.5 py-1 text-[11px] font-bold flex items-center gap-1.5 transition active:scale-95 whitespace-nowrap">
+          <button id="auth-state-btn" class="bg-slate-900 hover:bg-slate-800 border border-amber-400/50 text-amber-300 rounded-full px-2.5 py-1 text-[11px] font-bold flex items-center gap-1.5 transition active:scale-95 whitespace-nowrap shadow-sm">
             <span id="user-avatar-container" class="inline-flex items-center justify-center">
               <i id="user-avatar-icon" class="fa-regular fa-user text-[10px]"></i>
             </span>
             <span id="auth-btn-text" data-i18n="btnLogin">登入</span>
           </button>
-          <button id="share-btn" class="bg-white/20 hover:bg-white/30 border border-white/30 text-white rounded-lg px-2.5 py-1 text-[11px] font-bold flex items-center gap-1 transition active:scale-95 whitespace-nowrap">
-            <i class="fa-solid fa-share-nodes text-[10px]"></i>
-            <span data-i18n="shareBtn">分享</span>
+          <button id="share-btn" class="w-8 h-8 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 flex items-center justify-center transition active:scale-95 shadow-sm">
+            <i class="fa-solid fa-share-nodes text-[11px]"></i>
           </button>
         </div>
       </div>
@@ -109,49 +108,49 @@
       <!-- 第二列：搜尋欄 + 語言切換選單 -->
       <div class="flex items-center gap-1.5">
         <div class="relative flex-1 flex items-center">
-          <i class="fa-solid fa-magnifying-glass absolute left-3 text-slate-400 text-xs pointer-events-none"></i>
-          <input id="search-input" type="text" placeholder="搜尋燒肉、火鍋、景點、Villa、飯店、醫院、藥局..." class="w-full bg-white text-slate-800 placeholder-slate-400 text-xs rounded-xl pl-8 pr-7 py-2 focus:outline-none focus:ring-2 focus:ring-amber-300 shadow-inner" />
-          <button id="search-clear-btn" class="absolute right-2 text-slate-400 hover:text-slate-600 hidden text-xs p-1">
+          <i class="fa-solid fa-magnifying-glass absolute left-3 text-slate-500 text-xs pointer-events-none"></i>
+          <input id="search-input" type="text" placeholder="搜尋燒肉、海鮮、景點、Villa、飯店、急診..." class="w-full bg-slate-950 border border-slate-800 text-slate-100 placeholder-slate-500 text-xs rounded-xl pl-8 pr-7 py-2 focus:outline-none focus:border-amber-400/70 shadow-inner transition" />
+          <button id="search-clear-btn" class="absolute right-2 text-slate-500 hover:text-slate-300 hidden text-xs p-1">
             <i class="fa-solid fa-circle-xmark"></i>
           </button>
         </div>
-        <select id="lang-select" class="bg-white/20 border border-white/30 text-white text-[11px] font-bold rounded-xl px-2 py-2 focus:outline-none cursor-pointer flex-shrink-0">
-          <option value="zh-TW" class="text-slate-800">繁體中文</option>
-          <option value="en" class="text-slate-800">English</option>
-          <option value="tl" class="text-slate-800">Tagalog</option>
+        <select id="lang-select" class="bg-slate-950 border border-slate-800 text-amber-300 text-[11px] font-bold rounded-xl px-2 py-2 focus:outline-none cursor-pointer flex-shrink-0">
+          <option value="zh-TW" class="bg-slate-900 text-white">繁體中文</option>
+          <option value="en" class="bg-slate-900 text-white">English</option>
+          <option value="tl" class="bg-slate-900 text-white">Tagalog</option>
         </select>
       </div>
 
       <!-- 第三列：探索主維度（都會生活圈 vs 渡假海島專區） -->
-      <div class="flex gap-2">
-        <button id="typeCityBtn" class="flex-1 py-1.5 text-xs font-bold rounded-xl transition text-center shadow-sm flex items-center justify-center gap-1.5 bg-white text-orange-700">
+      <div class="bg-slate-950 p-1 rounded-2xl border border-slate-800 flex gap-1 shadow-inner">
+        <button id="typeCityBtn" class="flex-1 py-1.5 text-xs font-bold rounded-xl transition text-center shadow-md flex items-center justify-center gap-1.5 bg-gradient-to-r from-amber-400 to-amber-500 text-slate-950 font-black">
           <i class="fa-solid fa-city"></i> <span data-i18n="tabMetro">都會生活圈</span>
         </button>
-        <button id="typeIslandBtn" class="flex-1 py-1.5 text-xs font-bold rounded-xl transition text-center shadow-sm flex items-center justify-center gap-1.5 bg-orange-700/60 text-amber-100">
+        <button id="typeIslandBtn" class="flex-1 py-1.5 text-xs font-bold rounded-xl transition text-center flex items-center justify-center gap-1.5 text-slate-400 hover:text-slate-200">
           <i class="fa-solid fa-umbrella-beach"></i> <span data-i18n="tabIsland">渡假海島專區</span>
         </button>
       </div>
 
       <!-- 第四列：橫向地區膠囊 -->
-      <nav id="regionPillsNav" class="overflow-x-auto hide-scrollbar flex gap-1.5 pb-1 items-center cursor-grab"></nav>
+      <nav id="regionPillsNav" class="overflow-x-auto hide-scrollbar flex gap-1.5 pb-0.5 items-center cursor-grab"></nav>
     </div>
 
     <!-- 第五列：四大核心主分頁 Tab (美食、景點、醫療、特惠) -->
     <div class="max-w-md mx-auto px-3.5 pt-1">
-      <div class="grid grid-cols-4 gap-1 bg-orange-800/40 p-1 rounded-xl text-xs font-bold text-amber-100">
-        <button data-maintab="map" id="tab-btn-map" class="main-tab-pill py-1.5 rounded-lg text-center transition flex items-center justify-center gap-1 bg-white text-orange-600 shadow-sm font-bold">
+      <div class="grid grid-cols-4 gap-1 bg-slate-950 p-1 rounded-xl text-xs font-bold border border-slate-800/80">
+        <button data-maintab="map" id="tab-btn-map" class="main-tab-pill py-1.5 rounded-lg text-center transition flex items-center justify-center gap-1 bg-gradient-to-r from-amber-400 to-amber-500 text-slate-950 shadow-sm font-black">
           <i class="fa-solid fa-utensils text-[10px]"></i>
           <span id="tab-label-map" data-i18n="navFood">美食饗宴</span>
         </button>
-        <button data-maintab="attraction" id="tab-btn-attraction" class="main-tab-pill py-1.5 rounded-lg text-center transition flex items-center justify-center gap-1 hover:text-white">
+        <button data-maintab="attraction" id="tab-btn-attraction" class="main-tab-pill py-1.5 rounded-lg text-center transition flex items-center justify-center gap-1 text-slate-400 hover:text-white">
           <i class="fa-solid fa-camera-retro text-[10px]"></i>
           <span data-i18n="navSpot">景點導覽</span>
         </button>
-        <button data-maintab="medical" id="tab-btn-medical" class="main-tab-pill py-1.5 rounded-lg text-center transition flex items-center justify-center gap-1 hover:text-white">
+        <button data-maintab="medical" id="tab-btn-medical" class="main-tab-pill py-1.5 rounded-lg text-center transition flex items-center justify-center gap-1 text-slate-400 hover:text-white">
           <i class="fa-solid fa-notes-medical text-[10px]"></i>
           <span data-i18n="navMedical">醫療藥局</span>
         </button>
-        <button data-maintab="news" id="tab-btn-news" class="main-tab-pill py-1.5 rounded-lg text-center transition flex items-center justify-center gap-1 hover:text-white">
+        <button data-maintab="news" id="tab-btn-news" class="main-tab-pill py-1.5 rounded-lg text-center transition flex items-center justify-center gap-1 text-slate-400 hover:text-white">
           <i class="fa-solid fa-tags text-[10px]"></i>
           <span id="tab-label-news" data-i18n="navNews">精選優惠</span>
         </button>
@@ -159,8 +158,8 @@
     </div>
 
     <!-- 第六列：子分類標籤過濾列 -->
-    <div class="bg-white border-b border-slate-200/80 shadow-xs">
-      <div class="max-w-md mx-auto px-3.5 py-2">
+    <div class="bg-slate-950/90 border-t border-slate-800/80 mt-1">
+      <div class="max-w-md mx-auto px-3.5 py-1.5">
         <div id="subFilterContainer" class="flex items-center gap-2 overflow-x-auto hide-scrollbar py-0.5 cursor-grab"></div>
       </div>
     </div>
@@ -168,18 +167,18 @@
 
   <!-- 主內容容器 -->
   <main class="max-w-md mx-auto w-full px-3.5 flex-1 pt-3">
-    <div class="flex justify-between items-center mb-2.5 px-0.5 text-xs text-slate-500 font-medium">
+    <div class="flex justify-between items-center mb-3 px-0.5 text-xs text-slate-400 font-medium">
       <span id="currentFilterSummary" class="flex items-center gap-1">
-        <i class="fa-solid fa-location-dot text-orange-500"></i>
+        <i class="fa-solid fa-location-dot text-amber-400"></i>
         <span id="filterSummaryText">載入中...</span>
       </span>
-      <span id="itemCountBadge" class="bg-slate-200 text-slate-700 px-2 py-0.5 rounded-full text-[11px] font-mono font-bold">0</span>
+      <span id="itemCountBadge" class="bg-slate-950 border border-slate-800 text-amber-400 px-2 py-0.5 rounded-full text-[11px] font-mono font-bold">0</span>
     </div>
 
     <!-- 1. 美食清單 -->
     <div id="section-map" class="tab-panel flex flex-col gap-4">
-      <div id="loading" class="text-center py-12 text-slate-400 text-xs">
-        <i class="fa-solid fa-spinner fa-spin text-orange-500 text-base mb-2 block"></i>
+      <div id="loading" class="text-center py-12 text-slate-500 text-xs">
+        <i class="fa-solid fa-spinner fa-spin text-amber-400 text-base mb-2 block"></i>
         載入最新美食與嚴選清單中...
       </div>
       <div id="restaurant-list" class="flex flex-col gap-4"></div>
@@ -201,58 +200,59 @@
     </div>
   </main>
 
-  <!-- 會員登入 / 個人中心彈窗 -->
+  <!-- 會員登入 / 個人中心彈窗 (全黑金尊榮規格) -->
   <div id="auth-modal" class="fixed inset-0 z-50 glass-modal hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl w-full max-w-sm p-5 shadow-2xl relative text-center">
-      <button id="close-auth-btn" class="absolute top-3.5 right-3.5 w-7 h-7 bg-slate-100 rounded-full text-slate-400 hover:text-slate-700 flex items-center justify-center text-xs">✕</button>
+    <div class="bg-slate-950 border border-amber-400/40 rounded-3xl w-full max-w-sm p-5 shadow-2xl relative text-center">
+      <button id="close-auth-btn" class="absolute top-3.5 right-3.5 w-7 h-7 bg-slate-900 rounded-full text-slate-400 hover:text-white flex items-center justify-center text-xs">✕</button>
       
       <!-- 未登入畫面 -->
       <div id="auth-modal-login-view">
-        <div class="w-10 h-10 bg-orange-100 text-orange-600 rounded-full flex items-center justify-center mx-auto mb-2 text-base">
+        <div class="w-12 h-12 bg-amber-400/10 border border-amber-400/30 text-amber-400 rounded-2xl flex items-center justify-center mx-auto mb-2 text-xl shadow-md">
           <i class="fa-solid fa-crown"></i>
         </div>
-        <h3 class="text-sm font-bold text-slate-900 mb-1">加入大V會員</h3>
-        <p class="text-xs text-slate-500 mb-4 leading-relaxed">解鎖私房探店評語、發表評論累積吃貨積分！</p>
+        <h3 class="text-base font-black text-white mb-0.5">加入大V會員</h3>
+        <p class="text-xs text-slate-400 mb-4 leading-relaxed">解鎖私房探店評語、發表評論累積吃貨積分！</p>
         
         <!-- 登入方式 1: Google 一鍵登入 -->
-        <button id="btn-google-login" class="w-full bg-white border border-slate-200 hover:bg-slate-50 py-2.5 px-3 rounded-xl font-bold text-xs text-slate-800 flex items-center justify-center gap-2 shadow-xs transition mb-3">
+        <button id="btn-google-login" class="w-full bg-white hover:bg-slate-100 text-slate-900 py-2.5 px-3 rounded-xl font-bold text-xs flex items-center justify-center gap-2 shadow-sm transition mb-3">
           <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" class="w-4 h-4" alt="Google">
           使用 Google 帳號一鍵登入
         </button>
 
-        <!-- 分隔線 -->
         <div class="flex items-center my-3">
-          <div class="flex-grow border-t border-slate-200"></div>
-          <span class="px-2 text-[10px] text-slate-400 font-bold">或使用 Email 魔法精靈</span>
-          <div class="flex-grow border-t border-slate-200"></div>
+          <div class="flex-grow border-t border-slate-800"></div>
+          <span class="px-2 text-[10px] text-slate-500 font-bold">或使用 Email 魔法精靈</span>
+          <div class="flex-grow border-t border-slate-800"></div>
         </div>
 
         <!-- 登入方式 2: Email 魔法精靈 -->
         <div class="space-y-2">
-          <input type="email" id="magic-email-input" placeholder="輸入電子信箱（免記密碼）" class="w-full bg-slate-100 text-slate-800 placeholder-slate-400 text-xs rounded-xl px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-orange-500" />
-          <button id="btn-magic-email" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs py-2.5 rounded-xl transition flex items-center justify-center gap-1.5 shadow-xs">
-            <i class="fa-solid fa-wand-magic-sparkles text-amber-300"></i> 發送魔法登入連結
+          <input type="email" id="magic-email-input" placeholder="輸入電子信箱（免記密碼）" class="w-full bg-slate-900 border border-slate-800 text-white placeholder-slate-500 text-xs rounded-xl px-3 py-2.5 focus:outline-none focus:border-amber-400" />
+          <button id="btn-magic-email" class="w-full bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-slate-950 font-black text-xs py-2.5 rounded-xl transition flex items-center justify-center gap-1.5 shadow-md">
+            <i class="fa-solid fa-wand-magic-sparkles text-slate-950"></i> 發送魔法登入連結
           </button>
         </div>
       </div>
 
       <!-- 已登入個人中心畫面 -->
-      <div id="auth-modal-user-view" class="hidden text-left">
-        <div class="flex items-center gap-3 border-b border-slate-100 pb-3 mb-3">
-          <img id="user-modal-avatar" src="" class="w-12 h-12 rounded-full border border-orange-200 object-cover" />
+      <div id="auth-modal-user-view" class="hidden text-left space-y-3">
+        <div class="flex items-center gap-3 border-b border-slate-800/80 pb-3">
+          <img id="user-modal-avatar" src="" class="w-12 h-12 rounded-2xl ring-2 ring-amber-400 object-cover" />
           <div>
-            <h4 id="user-modal-name" class="font-bold text-sm text-slate-800"></h4>
-            <span id="user-modal-level" class="inline-block bg-orange-100 text-orange-700 text-[10px] font-bold px-2 py-0.5 rounded-full mt-0.5">LV.1 探店初心者</span>
+            <h4 id="user-modal-name" class="font-bold text-sm text-white"></h4>
+            <span id="user-modal-level" class="inline-block bg-amber-400/20 border border-amber-400/40 text-amber-300 text-[10px] font-bold px-2 py-0.5 rounded-md mt-0.5">LV.1 探店初心者</span>
           </div>
         </div>
-        <div class="bg-orange-50/70 border border-orange-200/60 rounded-xl p-3 mb-4 flex items-center justify-between">
+        
+        <div class="bg-gradient-to-br from-slate-900 via-slate-900 to-black border border-amber-400/40 rounded-2xl p-3.5 flex items-center justify-between shadow-md">
           <div>
-            <p class="text-[11px] text-orange-950 font-medium">累積探店積分</p>
-            <p id="user-modal-points" class="text-xl font-black text-orange-600">50 <span class="text-xs font-normal text-slate-500">PTS</span></p>
+            <p class="text-[11px] text-slate-300 font-medium">累積探店吃貨積分</p>
+            <p id="user-modal-points" class="text-2xl font-black text-amber-300">50 <span class="text-xs font-normal text-slate-400">PTS</span></p>
           </div>
-          <span class="text-xs text-orange-600 font-bold">每則留言 +20 分 🎁</span>
+          <span class="text-xs text-amber-400 font-bold">每則留言 +20 分 🎁</span>
         </div>
-        <button id="btn-logout" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs py-2.5 rounded-xl transition">
+
+        <button id="btn-logout" class="w-full bg-rose-950/40 border border-rose-800/40 hover:bg-rose-900/40 text-rose-300 font-bold text-xs py-2.5 rounded-xl transition">
           登出帳號
         </button>
       </div>
@@ -261,24 +261,24 @@
 
   <!-- 即時留言彈窗 (Comments Modal) -->
   <div id="comment-modal" class="fixed inset-0 z-50 glass-modal hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
-    <div class="bg-white rounded-t-3xl sm:rounded-2xl w-full max-w-md h-[80vh] max-h-[600px] p-4 shadow-2xl flex flex-col relative">
-      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+    <div class="bg-slate-950 border border-amber-400/40 rounded-t-3xl sm:rounded-2xl w-full max-w-md h-[80vh] max-h-[600px] p-4 shadow-2xl flex flex-col relative text-slate-100">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-3">
         <div>
-          <h3 id="comment-modal-title" class="font-bold text-sm text-slate-900 truncate">店家留言討論</h3>
-          <p class="text-[10px] text-slate-400">分享您的真實探店評語與心得</p>
+          <h3 id="comment-modal-title" class="font-bold text-sm text-white truncate">店家留言討論</h3>
+          <p class="text-[10px] text-amber-400/80">分享您的真實探店評語與心得</p>
         </div>
-        <button id="close-comment-btn" class="w-7 h-7 bg-slate-100 rounded-full text-slate-400 hover:text-slate-700 flex items-center justify-center text-xs">✕</button>
+        <button id="close-comment-btn" class="w-7 h-7 bg-slate-900 rounded-full text-slate-400 hover:text-white flex items-center justify-center text-xs">✕</button>
       </div>
 
       <!-- 留言清單區 -->
       <div id="comment-list-container" class="flex-1 overflow-y-auto hide-scrollbar py-3 space-y-2.5 text-xs">
-        <p class="text-center text-slate-400 py-6">載入留言中...</p>
+        <p class="text-center text-slate-500 py-6">載入留言中...</p>
       </div>
 
       <!-- 發表留言輸入區 -->
-      <div class="border-t border-slate-100 pt-3 flex flex-col gap-2 bg-white">
+      <div class="border-t border-slate-800 pt-3 flex flex-col gap-2 bg-slate-950">
         <div class="flex items-center gap-2">
-          <span class="text-xs text-slate-500 font-medium">打分：</span>
+          <span class="text-xs text-slate-400 font-medium">打分：</span>
           <div id="star-rating-select" class="flex items-center gap-1 text-amber-400 cursor-pointer text-sm">
             <i class="fa-solid fa-star" data-star="1"></i>
             <i class="fa-solid fa-star" data-star="2"></i>
@@ -288,8 +288,8 @@
           </div>
         </div>
         <div class="flex items-center gap-1.5">
-          <input type="text" id="comment-input-text" placeholder="寫下您的真實體驗與點評..." class="flex-1 bg-slate-100 border-none rounded-xl px-3 py-2 text-xs focus:ring-2 focus:ring-orange-500 outline-none text-slate-800" />
-          <button id="btn-submit-comment" class="bg-orange-500 hover:bg-orange-600 text-white font-bold text-xs px-3.5 py-2 rounded-xl transition active:scale-95 shadow-xs whitespace-nowrap">
+          <input type="text" id="comment-input-text" placeholder="寫下您的真實體驗與點評..." class="flex-1 bg-slate-900 border border-slate-800 text-white rounded-xl px-3 py-2 text-xs focus:border-amber-400 outline-none placeholder-slate-500" />
+          <button id="btn-submit-comment" class="bg-gradient-to-r from-amber-400 to-amber-500 text-slate-950 font-black text-xs px-3.5 py-2 rounded-xl transition active:scale-95 shadow-sm whitespace-nowrap">
             發表 (+20分)
           </button>
         </div>
@@ -298,32 +298,32 @@
   </div>
 
   <!-- 右下角專屬大V圓形懸浮 AI 頭像球 -->
-  <button id="chat-fab" class="fixed bottom-5 right-4 rounded-full bg-white border-2 border-orange-500 shadow-xl overflow-hidden flex items-center justify-center cursor-pointer z-40 active:scale-95 transition" style="width:52px; height:52px;" title="大V旅遊管家">
+  <button id="chat-fab" class="fixed bottom-5 right-4 rounded-full bg-slate-950 border-2 border-amber-400 shadow-[0_0_20px_-3px_rgba(245,158,11,0.6)] overflow-hidden flex items-center justify-center cursor-pointer z-40 active:scale-95 transition" style="width:52px; height:52px;" title="大V旅遊管家">
     <img src="ai-avatar.jpg" alt="AI 管家" class="w-full h-full object-cover" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop';" />
   </button>
 
   <!-- AI 管家面板 -->
-  <div id="chat-modal" class="fixed bottom-20 right-4 w-80 max-w-[calc(100vw-32px)] h-112 max-h-[calc(100vh-110px)] bg-white rounded-2xl shadow-2xl border border-slate-200/80 flex flex-col z-50 overflow-hidden hidden">
-    <div class="bg-orange-500 text-white p-3 flex justify-between items-center">
+  <div id="chat-modal" class="fixed bottom-20 right-4 w-80 max-w-[calc(100vw-32px)] h-112 max-h-[calc(100vh-110px)] bg-slate-950 rounded-2xl shadow-2xl border border-amber-400/40 flex flex-col z-50 overflow-hidden hidden">
+    <div class="bg-slate-900 border-b border-amber-500/20 text-white p-3 flex justify-between items-center">
       <div class="flex items-center gap-2">
-        <div class="w-7 h-7 rounded-full overflow-hidden border border-white bg-white">
+        <div class="w-7 h-7 rounded-full overflow-hidden border border-amber-400 bg-slate-950">
           <img src="ai-avatar.jpg" class="w-full h-full object-cover" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop';" />
         </div>
         <div>
-          <h3 class="text-xs font-bold leading-tight">大V旅遊窩管家</h3>
-          <span class="text-[9px] text-amber-200">Powered by Gemini</span>
+          <h3 class="text-xs font-bold leading-tight text-white">大V旅遊窩管家</h3>
+          <span class="text-[9px] text-amber-300">Powered by Gemini</span>
         </div>
       </div>
-      <button id="btn-close-chat" class="text-white/80 hover:text-white text-base p-1">✕</button>
+      <button id="btn-close-chat" class="text-slate-400 hover:text-white text-base p-1">✕</button>
     </div>
-    <div id="chat-messages" class="flex-1 p-3 overflow-y-auto space-y-2.5 text-xs bg-slate-50 hide-scrollbar">
-      <div id="chat-welcome-bubble" class="bg-white p-2.5 rounded-xl rounded-tl-sm border border-slate-200/70 text-slate-800 leading-relaxed shadow-2xs self-start max-w-[88%]">
+    <div id="chat-messages" class="flex-1 p-3 overflow-y-auto space-y-2.5 text-xs bg-slate-950 hide-scrollbar">
+      <div id="chat-welcome-bubble" class="bg-slate-900 p-2.5 rounded-xl rounded-tl-sm border border-slate-800 text-slate-200 leading-relaxed shadow-xs self-start max-w-[88%]">
         嗨！我是大V旅遊窩管家 👋 歡迎來到菲律賓！想尋找在地特色私房美食、海島渡假村、急救醫療藥局或行程安排，隨時問我喔！
       </div>
     </div>
-    <div class="p-2 bg-white border-t border-slate-100 flex gap-1.5 items-center">
-      <input type="text" id="chat-input" placeholder="問點什麼吧（例：達沃必吃生魚片...）" class="flex-1 bg-slate-100 border-none rounded-xl px-3 py-2 text-xs focus:ring-2 focus:ring-orange-500 outline-none text-slate-800" />
-      <button id="btn-send-chat" class="w-8 h-8 rounded-full bg-orange-500 hover:bg-orange-600 text-white flex items-center justify-center text-xs transition active:scale-95 shadow-sm">
+    <div class="p-2 bg-slate-900 border-t border-slate-800 flex gap-1.5 items-center">
+      <input type="text" id="chat-input" placeholder="問點什麼吧（例：達沃必吃生魚片...）" class="flex-1 bg-slate-950 border border-slate-700 text-white rounded-xl px-3 py-2 text-xs focus:border-amber-400 outline-none placeholder-slate-500" />
+      <button id="btn-send-chat" class="w-8 h-8 rounded-full bg-amber-400 hover:bg-amber-300 text-slate-950 flex items-center justify-center text-xs font-black transition active:scale-95 shadow-sm">
         <i class="fa-solid fa-paper-plane"></i>
       </button>
     </div>
@@ -335,15 +335,15 @@
     import { getFirestore, collection, getDocs, doc, getDoc, setDoc, updateDoc, increment, query, where, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
     import { loadMasterDatabase, getLocalizedText } from './googleSheetService.js';
     import { 
-  initAuthService, 
-  loginWithGoogle, 
-  sendMagicEmailLink,
-  logoutUser, 
-  getCurrentProfile, 
-  addStoreComment 
-} from './authService.js';
+      initAuthService, 
+      loginWithGoogle, 
+      sendMagicEmailLink,
+      logoutUser, 
+      getCurrentProfile, 
+      addStoreComment 
+    } from './authService.js';
 
-    // 啟動 PWA / Web 雙軌認證服務模組
+    // 啟動認證服務
     initAuthService();
 
     const firebaseConfig = {
@@ -442,13 +442,21 @@
     let allMedical = [];
     let allNews = [];
 
-    // ====== 智慧跳轉與一鍵撥號核心工具函式 ======
+    // ====== 工具函式 ======
     function getSmartLink(name, city, website) {
       if (website && typeof website === 'string' && website.trim().startsWith('http')) {
         return website.trim();
       }
       const q = encodeURIComponent(((name || '') + ' ' + (city || '')).trim());
       return `https://www.google.com/search?q=${q}`;
+    }
+
+    function getGrabLink(item, name, city) {
+      if (item.grab_url && typeof item.grab_url === 'string' && item.grab_url.trim().startsWith('http')) {
+        return item.grab_url.trim();
+      }
+      const q = encodeURIComponent(((name || '') + ' ' + (city || '')).trim());
+      return `https://food.grab.com/ph/en/search?q=${q}`;
     }
 
     function getCleanPhone(phone) {
@@ -502,7 +510,7 @@
       }
     }
 
-    // ====== 會員狀態全域廣播監聽（秒級響應） ======
+    // ====== 會員狀態全域廣播監聽 ======
     window.addEventListener("auth-user-changed", (e) => {
       const { user, profile, isLoggedIn } = e.detail;
       currentUser = user;
@@ -513,11 +521,11 @@
       const avatarContainer = document.getElementById('user-avatar-container');
 
       if (isLoggedIn && user) {
-        authBtnText.innerText = user.displayName ? user.displayName.split(' ')[0] : dict.btnMember;
+        authBtnText.innerText = user.displayName ? `${user.displayName.split(' ')[0]} · ${currentUserProfile.points || 50}分` : `${dict.btnMember} · ${currentUserProfile.points || 50}分`;
         if (user.photoURL) {
-          avatarContainer.innerHTML = `<img id="user-avatar-icon" src="${user.photoURL}" class="w-3.5 h-3.5 rounded-full object-cover inline-block" />`;
+          avatarContainer.innerHTML = `<img id="user-avatar-icon" src="${user.photoURL}" class="w-4 h-4 rounded-full ring-1 ring-amber-400 object-cover inline-block" />`;
         } else {
-          avatarContainer.innerHTML = `<i id="user-avatar-icon" class="fa-solid fa-circle-user text-[11px] text-amber-200"></i>`;
+          avatarContainer.innerHTML = `<i id="user-avatar-icon" class="fa-solid fa-crown text-[11px] text-amber-400"></i>`;
         }
       } else {
         authBtnText.innerText = dict.btnLogin;
@@ -531,7 +539,7 @@
         appSubtitle: '菲律賓精緻生活 & 海島漫遊地圖',
         btnLogin: '登入',
         btnMember: '會員',
-        searchPlaceholder: '搜尋燒肉、火鍋、景點、Villa、飯店、醫院、藥局...',
+        searchPlaceholder: '搜尋燒肉、海鮮、景點、Villa、飯店、急診...',
         shareBtn: '分享',
         tabMetro: '都會生活圈',
         tabIsland: '渡假海島專區',
@@ -545,12 +553,14 @@
         filterAllSpot: '全部景點',
         filterAllMedical: '全部醫療資源',
         filterAllNews: '全部優惠',
-        btnGrab: 'Grab外送',
+        btnGrab: 'Grab 點餐外送',
+        btnWebsite: '官網 / 粉專',
         btnCall: '撥打電話',
-        btnNav: '導航地圖',
-        btnComment: '討論/點評',
-        badgeCurated: '👑 站長私房嚴選',
-        badgeGoogleTop: '🔥 Google Top',
+        btnNav: '路線導航',
+        btnComment: '寫評論 +20',
+        badgeCurated: '站長私房嚴選',
+        badgeGoogleTop: 'Google 高分嚴選',
+        badgeCommunity: '社群大眾口碑',
         mustTryBadge: '必點招牌',
         curatedNotePrefix: '站長私房點評：',
         googleTopNotePrefix: '饕客點評：',
@@ -600,11 +610,13 @@
         filterAllMedical: 'All Medical',
         filterAllNews: 'All Deals',
         btnGrab: 'GrabFood',
+        btnWebsite: 'Website / FB',
         btnCall: 'Call Now',
         btnNav: 'Directions',
-        btnComment: 'Reviews',
-        badgeCurated: '👑 Curator Pick',
-        badgeGoogleTop: '🔥 Google Top',
+        btnComment: 'Review +20',
+        badgeCurated: 'Curator Pick',
+        badgeGoogleTop: 'Google Top Pick',
+        badgeCommunity: 'Community Pick',
         mustTryBadge: 'Must Try',
         curatedNotePrefix: "Curator's Note: ",
         googleTopNotePrefix: 'Review: ',
@@ -654,11 +666,13 @@
         filterAllMedical: 'Lahat ng Medikal',
         filterAllNews: 'Lahat ng Alok',
         btnGrab: 'GrabFood',
+        btnWebsite: 'Website / FB',
         btnCall: 'Tawagan',
         btnNav: 'Direksyon',
-        btnComment: 'Kumento',
-        badgeCurated: '👑 Pili ng Admin',
-        badgeGoogleTop: '🔥 Google Top',
+        btnComment: 'Kumento +20',
+        badgeCurated: 'Pili ng Admin',
+        badgeGoogleTop: 'Google Top',
+        badgeCommunity: 'Komunidad',
         mustTryBadge: 'Dapat Tikman',
         curatedNotePrefix: 'Kumento ng Admin: ',
         googleTopNotePrefix: 'Komento ng Bisita: ',
@@ -713,7 +727,7 @@
       const hasMultiple = images.length > 1;
 
       return `
-        <div class="relative h-48 w-full bg-slate-100 overflow-hidden select-none">
+        <div class="relative h-48 w-full bg-slate-900 overflow-hidden select-none">
           <div id="track-${uniqueId}" class="carousel-track flex w-full h-full overflow-x-auto hide-scrollbar cursor-grab active:cursor-grabbing">
             ${images.map(img => `
               <div class="carousel-slide flex-shrink-0 w-full h-full pointer-events-none">
@@ -728,9 +742,10 @@
               </div>
             `).join('')}
           </div>
+          <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent pointer-events-none"></div>
           ${hasMultiple ? `
-            <span class="absolute top-2.5 right-2.5 bg-neutral-900/60 text-white text-[10px] px-2 py-0.5 rounded-full backdrop-blur-xs pointer-events-none z-10">👈 左右滑動</span>
-            <div id="dots-${uniqueId}" class="absolute bottom-2.5 right-2.5 flex items-center gap-1 z-10 bg-black/40 backdrop-blur-xs px-2 py-1 rounded-full">
+            <span class="absolute top-2.5 right-2.5 bg-slate-950/70 text-amber-300 text-[10px] px-2 py-0.5 rounded-full backdrop-blur-xs pointer-events-none z-10 border border-slate-700">👈 左右滑動</span>
+            <div id="dots-${uniqueId}" class="absolute bottom-2.5 right-2.5 flex items-center gap-1 z-10 bg-black/50 backdrop-blur-xs px-2 py-1 rounded-full border border-slate-700">
               ${images.map((_, i) => `<span class="dot-indicator inline-block w-1.5 h-1.5 rounded-full bg-white/40 transition-all ${i === 0 ? 'active' : ''}"></span>`).join('')}
             </div>
           ` : ''}
@@ -738,7 +753,6 @@
       `;
     }
 
-    // ====== 解決橫向滾動與卡片相簿拖曳衝突核心引擎 ======
     function makeScrollable(element) {
       if (!element) return;
       let isDown = false;
@@ -806,23 +820,17 @@
       });
     }
 
-    // 核心資料聚合整合（加入 6 秒逾時保護與防呆渲染）
+    // 核心資料聚合整合
     async function fetchData() {
       const loadingEl = document.getElementById('loading');
-      console.log("[App] 開始取得資料庫內容...");
-
-      // 建立 6 秒逾時機制，避免 Google Sheet 網路卡死導致無限轉圈
       const timeoutPromise = new Promise((_, reject) => 
         setTimeout(() => reject(new Error("Google Sheets 連線逾時")), 6000)
       );
 
       try {
         let sheetMaster = { bigVPicks: [], attractions: [], promotions: [], autoDiscovered: [], medical: [] };
-        
         try {
-          // 競速機制：6 秒內取得資料即正常解析，超時則進入備援容錯
           sheetMaster = await Promise.race([loadMasterDatabase(), timeoutPromise]);
-          console.log("[App] Google Sheets 資料讀取成功！", sheetMaster);
         } catch (e) {
           console.warn("[App] Google Sheets 讀取異常或逾時，啟動備援模式:", e);
         }
@@ -870,6 +878,7 @@
             if (matchedBigV.phone) item.phone = String(matchedBigV.phone).replace(/^['"]/, '').trim();
             if (matchedBigV.website) item.website = matchedBigV.website;
             if (matchedBigV.nav_link) item.nav_link = matchedBigV.nav_link;
+            if (matchedBigV.grab_url) item.grab_url = matchedBigV.grab_url;
             item.images = parseImages(matchedBigV, 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=800&auto=format&fit=crop');
             bigVLookup.delete(matchedBigV.id.toLowerCase().trim());
           } else {
@@ -921,6 +930,7 @@
             phone: String(bigVItem.phone || "").replace(/^['"]/, '').trim(),
             website: bigVItem.website || "",
             nav_link: bigVItem.nav_link || "",
+            grab_url: bigVItem.grab_url || "",
             googleRating: 5.0,
             googleReviewCount: 50,
             images: parseImages(bigVItem, 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=800&auto=format&fit=crop')
@@ -968,12 +978,11 @@
                 city: autoItem.city,
                 islandType: isResort ? 'hotel_villa' : 'food',
                 isCurated: false,
-                isGoogleTop: r >= 4.6 && c >= 100,
-                googleTopNote: `Google 饕客探索推薦：累積逾 ${c} 則好評，在地極高評分熱點！`,
                 address: autoItem.address || '',
                 phone: String(autoItem.phone || "").replace(/^['"]/, '').trim(),
                 website: autoItem.website || '',
                 nav_link: autoItem.nav_link || '',
+                grab_url: autoItem.grab_url || '',
                 googleRating: r,
                 googleReviewCount: c,
                 images: parseImages(autoItem, 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=800&auto=format&fit=crop')
@@ -982,25 +991,19 @@
           }
         });
 
+        // 核心排序：Level 1 大V最優先 -> Level 2 Google嚴選(>=4.8 & >=100) -> 依評分排序
         allRestaurants = Array.from(mergedMap.values())
-          .map(item => {
-            const r = item.googleRating || 0;
-            const c = item.googleReviewCount || 0;
-            if (!item.isCurated && r >= 4.6 && c >= 100) {
-              item.isGoogleTop = true;
-              if (!item.googleTopNote) {
-                item.googleTopNote = `Google 饕客高頻推薦：累積逾 ${c} 則好評，在地極高人氣指標！`;
-              }
-            } else if (!item.isCurated) {
-              item.isGoogleTop = false;
-            }
-            return item;
-          })
           .sort((a, b) => {
-            if (a.isCurated && !b.isCurated) return -1;
-            if (!a.isCurated && b.isCurated) return 1;
-            if (a.isGoogleTop && !b.isGoogleTop) return -1;
-            if (!a.isGoogleTop && b.isGoogleTop) return 1;
+            const aIsCurated = !!a.isCurated;
+            const bIsCurated = !!b.isCurated;
+            if (aIsCurated && !bIsCurated) return -1;
+            if (!aIsCurated && bIsCurated) return 1;
+
+            const aIsTop = (a.googleRating || 0) >= 4.8 && (a.googleReviewCount || 0) >= 100;
+            const bIsTop = (b.googleRating || 0) >= 4.8 && (b.googleReviewCount || 0) >= 100;
+            if (aIsTop && !bIsTop) return -1;
+            if (!aIsTop && bIsTop) return 1;
+
             return (b.googleRating || 0) - (a.googleRating || 0);
           });
 
@@ -1023,10 +1026,8 @@
       } catch (err) {
         console.error("[App] 載入資料遭遇非預期錯誤:", err);
       } finally {
-        // 核心防呆：無論成功或逾時，必定關閉轉圈，並保證執行介面渲染
         if (loadingEl) loadingEl.style.display = 'none';
         updateUiLanguage();
-        console.log("[App] 介面初始化渲染完畢！");
       }
     }
 
@@ -1049,11 +1050,11 @@
 
     function renderRegionPills() {
       const isCity = currentDimension === 'cities';
-      typeCityBtn.className = `flex-1 py-1.5 text-xs font-bold rounded-xl transition text-center shadow-sm flex items-center justify-center gap-1.5 ${
-        isCity ? 'bg-white text-orange-700' : 'bg-orange-700/60 text-amber-100 hover:bg-orange-700'
+      typeCityBtn.className = `flex-1 py-1.5 text-xs font-bold rounded-xl transition text-center shadow-md flex items-center justify-center gap-1.5 ${
+        isCity ? 'bg-gradient-to-r from-amber-400 to-amber-500 text-slate-950 font-black' : 'text-slate-400 hover:text-slate-200'
       }`;
-      typeIslandBtn.className = `flex-1 py-1.5 text-xs font-bold rounded-xl transition text-center shadow-sm flex items-center justify-center gap-1.5 ${
-        !isCity ? 'bg-white text-orange-700' : 'bg-orange-700/60 text-amber-100 hover:bg-orange-700'
+      typeIslandBtn.className = `flex-1 py-1.5 text-xs font-bold rounded-xl transition text-center shadow-md flex items-center justify-center gap-1.5 ${
+        !isCity ? 'bg-gradient-to-r from-amber-400 to-amber-500 text-slate-950 font-black' : 'text-slate-400 hover:text-slate-200'
       }`;
 
       const list = isCity ? REGION_CONFIG.cities : REGION_CONFIG.islands;
@@ -1068,8 +1069,8 @@
           ? I18N_DICT[currentLang]['city_' + r.id] 
           : (r.name_en && currentLang === 'en' ? r.name_en : r.name);
         return `
-          <button data-city="${r.id}" class="region-pill px-3.5 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-all duration-200 select-none ${
-            active ? 'bg-slate-900 text-white shadow-md scale-105' : 'bg-orange-800/40 text-amber-100 hover:bg-orange-800/80'
+          <button data-city="${r.id}" class="region-pill px-3.5 py-1 rounded-full text-xs font-bold whitespace-nowrap transition-all duration-200 select-none ${
+            active ? 'bg-amber-400 text-slate-950 shadow-md scale-105 font-black' : 'bg-slate-950 border border-slate-800 text-slate-300 hover:border-amber-400/40'
           }">
             ${cityName}
           </button>
@@ -1113,7 +1114,7 @@
         let label = (typeof f.label === 'object') ? (f.label[currentLang] || f.label['zh-TW']) : f.label;
         return `
           <button data-subkey="${f.key}" class="sub-pill px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap transition select-none ${
-            active ? 'bg-orange-500 text-white shadow-xs font-bold' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+            active ? 'bg-amber-400/20 border border-amber-400 text-amber-300 font-bold shadow-xs' : 'bg-slate-950 border border-slate-800 text-slate-400 hover:text-slate-200'
           }">
             ${label}
           </button>
@@ -1138,9 +1139,9 @@
         document.getElementById(`section-${tab}`).classList.toggle('hidden', tab !== currentMainTab);
         const btn = document.getElementById(`tab-btn-${tab}`);
         if (tab === currentMainTab) {
-          btn.className = 'main-tab-pill py-1.5 rounded-lg text-center transition flex items-center justify-center gap-1 bg-white text-orange-600 shadow-sm font-bold';
+          btn.className = 'main-tab-pill py-1.5 rounded-lg text-center transition flex items-center justify-center gap-1 bg-gradient-to-r from-amber-400 to-amber-500 text-slate-950 shadow-sm font-black';
         } else {
-          btn.className = 'main-tab-pill py-1.5 rounded-lg text-center transition flex items-center justify-center gap-1 text-amber-100 hover:text-white';
+          btn.className = 'main-tab-pill py-1.5 rounded-lg text-center transition flex items-center justify-center gap-1 text-slate-400 hover:text-white';
         }
       });
 
@@ -1159,7 +1160,9 @@
       bindCommentButtons();
     }
 
-    // 1. 餐廳渲染 (智慧合成介紹 + 討論按鈕)
+    // ==========================================================
+    // 核心渲染：美食卡片三大階層 (都會區 Grab ｜ 海島區 官網/粉專)
+    // ==========================================================
     function renderRestaurants() {
       const listEl = document.getElementById('restaurant-list');
       document.getElementById('loading').style.display = 'none';
@@ -1198,18 +1201,23 @@
       itemCountBadge.textContent = `${filtered.length} ${dict.placesCountUnit}`;
 
       if (filtered.length === 0) {
-        listEl.innerHTML = `<div class="bg-white rounded-2xl p-8 text-center border border-slate-200/80 shadow-xs mt-2"><h4 class="text-xs font-bold text-slate-700">${dict.noResult}</h4><p class="text-[11px] text-slate-400 mt-1">${dict.noResultSub}</p></div>`;
+        listEl.innerHTML = `<div class="bg-slate-950 rounded-2xl p-8 text-center border border-slate-800 shadow-xs mt-2"><h4 class="text-xs font-bold text-slate-400">${dict.noResult}</h4><p class="text-[11px] text-slate-600 mt-1">${dict.noResultSub}</p></div>`;
         return;
       }
 
       listEl.innerHTML = filtered.map((item, idx) => {
         const name = getLocalizedText(item, 'name', currentShortLang) || item.name || item.name_en || '特色名店';
         const isCurated = !!item.isCurated;
-        const isGoogleTop = !!item.isGoogleTop;
+        const rating = item.googleRating || 4.5;
+        const reviewCount = item.googleReviewCount || 50;
+
+        // 判定 Level 2 (Google 高分嚴選：4.8分以上且100則以上)
+        const isGoogleTop = !isCurated && rating >= 4.8 && reviewCount >= 100;
+        // 判定 Level 3 (大眾口碑：4.0分以上且25則以上)
+        const isCommunity = !isCurated && !isGoogleTop && rating >= 4.0 && reviewCount >= 25;
+
         const curatedNote = getLocalizedText(item, 'bigv_comment', currentShortLang) || item.curatedNote || '';
         const mustTry = getLocalizedText(item, 'must_try', currentShortLang) || item.mustTry || '';
-        const reviewCount = item.googleReviewCount || 50;
-        const rating = item.googleRating || 4.5;
 
         let desc = getLocalizedText(item, 'desc', currentShortLang) || getText(item.description);
         if (!desc || desc.trim() === '') {
@@ -1225,49 +1233,209 @@
         }
 
         const smartLink = getSmartLink(item.name_en || name, item.city, item.website);
+        const grabLink = getGrabLink(item, item.name_en || name, item.city);
         const cleanPhone = getCleanPhone(item.phone);
+        const navUrl = item.nav_link || ('https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(name + ' ' + (item.address || '')));
 
+        // 判定右上角按鈕：海島顯示官網粉專，都會生活圈顯示 Grab
+        const isIsland = isIslandMode(item.city || currentCity);
+        const rightTopActionBtn = !isIsland ? `
+          <a href="${grabLink}" target="_blank" rel="noopener noreferrer" class="flex items-center justify-center gap-1.5 py-2 rounded-xl bg-[#00B14F]/15 hover:bg-[#00B14F]/25 text-[#00B14F] border border-[#00B14F]/40 font-bold transition active:scale-95 shadow-sm">
+            <i class="fa-solid fa-bag-shopping text-xs"></i>
+            <span class="text-[11px]">${dict.btnGrab}</span>
+          </a>
+        ` : `
+          <a href="${smartLink}" target="_blank" rel="noopener noreferrer" class="flex items-center justify-center gap-1.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-amber-300 border border-slate-700 font-bold transition active:scale-95 shadow-sm">
+            <i class="fa-solid fa-globe text-xs"></i>
+            <span class="text-[11px]">${dict.btnWebsite}</span>
+          </a>
+        `;
+
+        // ================= LEVEL 1: 大V站長私房嚴選黑金卡 =================
+        if (isCurated) {
+          return `
+            <article class="rounded-2xl overflow-hidden border-2 border-amber-400 bg-slate-950 shadow-[0_0_25px_-3px_rgba(245,158,11,0.5)] flex flex-col transition-all duration-300">
+              <div class="relative w-full overflow-hidden">
+                ${buildCarouselHtml(item.images, `res-${idx}`, name)}
+                
+                <div class="absolute top-3 left-3 bg-amber-400 text-slate-950 text-[11px] font-black px-2.5 py-1 rounded-lg shadow-md flex items-center gap-1.5 z-20">
+                  <i class="fa-solid fa-crown text-slate-950 text-xs"></i>
+                  <span>${dict.badgeCurated}</span>
+                </div>
+
+                <span class="absolute bottom-3 left-3.5 text-white text-lg font-black tracking-wide drop-shadow-md z-20">${name}</span>
+              </div>
+
+              <div class="h-[2px] w-full bg-amber-400"></div>
+
+              <div class="p-3.5 space-y-2.5 bg-slate-950">
+                <div class="flex items-center justify-between text-xs">
+                  <span class="px-2.5 py-1 rounded-md bg-amber-400/10 border border-amber-400/40 text-amber-300 font-semibold flex items-center gap-1">
+                    <i class="fa-solid fa-location-dot text-[10px]"></i>
+                    <span>${dict['city_' + item.city] || item.city} · 站長嚴選</span>
+                  </span>
+
+                  <div class="flex items-center gap-1 bg-amber-400 text-slate-950 font-black px-2.5 py-0.5 rounded-md shadow-sm">
+                    <i class="fa-solid fa-star text-[10px]"></i>
+                    <span>私房評分 9.8</span>
+                  </div>
+                </div>
+
+                ${mustTry ? `
+                  <div class="flex items-center gap-1.5 text-xs text-amber-300/90 font-medium">
+                    <span class="px-1.5 py-0.5 rounded bg-amber-400/20 text-amber-300 text-[10px] font-bold border border-amber-400/30">${dict.mustTryBadge}</span>
+                    <span>${mustTry}</span>
+                  </div>
+                ` : ''}
+
+                <div class="pl-2.5 border-l-2 border-amber-400">
+                  <p class="text-xs text-slate-200 leading-relaxed font-normal">
+                    ${curatedNote || desc}
+                  </p>
+                </div>
+              </div>
+
+              <div class="px-3.5 py-2 bg-slate-900/90 border-t border-slate-800/80 flex items-center justify-between text-xs">
+                <div class="flex items-center gap-2">
+                  <span class="w-4 h-4 rounded bg-white text-slate-900 font-bold flex items-center justify-center text-[9px]">G</span>
+                  <span class="text-slate-400 text-[11px]">Google 大眾評分</span>
+                </div>
+                <div class="flex items-center gap-1 text-slate-300 font-bold">
+                  <i class="fa-solid fa-star text-amber-400 text-[11px]"></i>
+                  <span>${rating}</span>
+                  <span class="text-slate-500 text-[10px] font-normal">(${reviewCount}則評價)</span>
+                </div>
+              </div>
+
+              <!-- 四大操作按鈕區 (對角佈局) -->
+              <div class="p-2.5 bg-slate-900 border-t border-slate-800 space-y-2 text-xs">
+                <div class="grid grid-cols-2 gap-2">
+                  <button data-comment-id="${item.id}" data-comment-name="${name}" class="btn-open-comment flex items-center justify-center gap-1.5 py-2 rounded-xl bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-slate-950 font-black shadow-md shadow-amber-500/20 transition active:scale-95">
+                    <i class="fa-solid fa-pen text-slate-950 text-xs"></i>
+                    <span class="text-[11px]">${dict.btnComment}</span>
+                  </button>
+                  ${rightTopActionBtn}
+                </div>
+
+                <div class="grid grid-cols-2 gap-2">
+                  <a href="${cleanPhone ? `tel:${cleanPhone}` : '#'}" class="flex items-center justify-center gap-1.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700/60 transition active:scale-95 ${!cleanPhone ? 'opacity-40 pointer-events-none' : ''}">
+                    <i class="fa-solid fa-phone text-emerald-400 text-xs"></i>
+                    <span class="font-medium text-[11px]">${cleanPhone ? dict.btnCall : dict.phoneEmpty}</span>
+                  </a>
+                  <a href="${navUrl}" target="_blank" rel="noopener noreferrer" class="flex items-center justify-center gap-1.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700/60 transition active:scale-95">
+                    <i class="fa-solid fa-diamond-turn-right text-sky-400 text-xs"></i>
+                    <span class="font-bold text-[11px]">${dict.btnNav}</span>
+                  </a>
+                </div>
+              </div>
+            </article>
+          `;
+        }
+
+        // ================= LEVEL 2: Google 高分嚴選推薦 (門檻：4.8分且百則以上) =================
+        if (isGoogleTop) {
+          return `
+            <article class="rounded-2xl overflow-hidden border border-sky-400/60 bg-slate-950 shadow-[0_0_15px_-3px_rgba(56,189,248,0.25)] flex flex-col transition-all">
+              <div class="relative w-full overflow-hidden">
+                ${buildCarouselHtml(item.images, `res-${idx}`, name)}
+                
+                <div class="absolute top-3 left-3 bg-white text-slate-900 text-[11px] font-bold px-2.5 py-1 rounded-lg shadow-md flex items-center gap-1.5 border border-slate-200 z-20">
+                  <i class="fa-brands fa-google text-blue-600 text-xs"></i>
+                  <span>${dict.badgeGoogleTop}</span>
+                </div>
+
+                <span class="absolute bottom-3 left-3.5 text-white text-lg font-black tracking-wide drop-shadow-md z-20">${name}</span>
+              </div>
+
+              <div class="h-[1.5px] w-full bg-sky-500/40"></div>
+
+              <div class="p-3.5 space-y-2 bg-slate-950">
+                <div class="flex items-center justify-between text-xs">
+                  <span class="px-2.5 py-0.5 rounded-md bg-slate-800 text-slate-300 font-medium text-[11px] border border-slate-700">
+                    ${dict['city_' + item.city] || item.city} · 口碑指標
+                  </span>
+                  <div class="flex items-center gap-1 bg-sky-950/80 border border-sky-400/40 text-sky-300 px-2 py-0.5 rounded-md text-[11px] font-bold">
+                    <i class="fa-solid fa-star text-amber-400 text-[10px]"></i>
+                    <span>${rating} (${reviewCount}則好評)</span>
+                  </div>
+                </div>
+
+                <p class="text-xs text-slate-400 line-clamp-2 leading-relaxed">
+                  ${desc}
+                </p>
+              </div>
+
+              <div class="p-2.5 bg-slate-900 border-t border-slate-800 space-y-2 text-xs">
+                <div class="grid grid-cols-2 gap-2">
+                  <button data-comment-id="${item.id}" data-comment-name="${name}" class="btn-open-comment flex items-center justify-center gap-1.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 font-bold transition active:scale-95">
+                    <i class="fa-solid fa-pen text-amber-400 text-xs"></i>
+                    <span class="text-[11px]">${dict.btnComment}</span>
+                  </button>
+                  ${rightTopActionBtn}
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                  <a href="${cleanPhone ? `tel:${cleanPhone}` : '#'}" class="flex items-center justify-center gap-1.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700/60 transition active:scale-95 ${!cleanPhone ? 'opacity-40 pointer-events-none' : ''}">
+                    <i class="fa-solid fa-phone text-emerald-400 text-xs"></i>
+                    <span class="font-medium text-[11px]">${cleanPhone ? dict.btnCall : dict.phoneEmpty}</span>
+                  </a>
+                  <a href="${navUrl}" target="_blank" rel="noopener noreferrer" class="flex items-center justify-center gap-1.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700/60 transition active:scale-95">
+                    <i class="fa-solid fa-diamond-turn-right text-sky-400 text-xs"></i>
+                    <span class="font-bold text-[11px]">${dict.btnNav}</span>
+                  </a>
+                </div>
+              </div>
+            </article>
+          `;
+        }
+
+        // ================= LEVEL 3: 社會大眾口碑店 (門檻：4.0分且25則以上) =================
         return `
-          <article class="bg-white rounded-2xl overflow-hidden shadow-xs hover:shadow-md border ${
-            isCurated ? 'border-amber-400 ring-2 ring-amber-400/20' : isGoogleTop ? 'border-sky-300 ring-2 ring-sky-300/20' : 'border-slate-200/80'
-          } flex flex-col transition">
+          <article class="rounded-2xl overflow-hidden border border-slate-800 bg-slate-950 shadow-sm flex flex-col transition-all">
             <div class="relative w-full overflow-hidden">
               ${buildCarouselHtml(item.images, `res-${idx}`, name)}
-              ${isCurated ? `<div class="absolute top-2.5 left-2.5 bg-neutral-900/95 text-amber-300 text-[11px] font-extrabold px-2.5 py-1 rounded-full shadow-lg flex items-center gap-1.5 border border-amber-400/60 backdrop-blur-md z-10"><i class="fa-solid fa-crown text-amber-400"></i> ${dict.badgeCurated}</div>` : ''}
-              ${(!isCurated && isGoogleTop) ? `<div class="absolute top-2.5 left-2.5 bg-sky-900/95 text-sky-200 text-[11px] font-extrabold px-2.5 py-1 rounded-full shadow-lg flex items-center gap-1 border border-sky-400/60 backdrop-blur-md z-10"><i class="fa-solid fa-fire text-amber-300"></i> ${dict.badgeGoogleTop}</div>` : ''}
-              <div class="absolute bottom-2.5 left-2.5 flex items-center gap-1.5 z-10">
-                <span class="bg-slate-900/80 backdrop-blur-xs text-white text-[10px] px-2 py-0.5 rounded font-medium">${dict['city_' + item.city] || item.city}</span>
-                <span class="bg-amber-500 text-white text-[10px] px-2 py-0.5 rounded font-bold flex items-center gap-0.5 shadow-xs"><i class="fa-solid fa-star text-[9px]"></i> ${rating} (${reviewCount})</span>
+
+              <div class="absolute top-3 left-3 bg-slate-900/80 backdrop-blur-md text-slate-300 text-[10px] font-bold px-2 py-0.5 rounded-md border border-slate-700 z-20">
+                ${dict.badgeCommunity}
               </div>
+
+              <span class="absolute bottom-3 left-3.5 text-white text-lg font-black tracking-wide drop-shadow-md z-20">${name}</span>
             </div>
 
-            <div class="p-3.5 flex flex-col flex-1">
-              <h2 class="font-extrabold text-sm text-slate-900 leading-snug mb-1">
-                <a href="${smartLink}" target="_blank" rel="noopener noreferrer" class="hover:text-orange-600 transition inline-flex items-center gap-1.5 group" title="前往官網或 Google 搜尋">
-                  <span>${name}</span>
-                  <i class="fa-solid fa-arrow-up-right-from-square text-[10px] text-slate-400 group-hover:text-orange-600 transition"></i>
-                </a>
-              </h2>
+            <div class="h-[1px] w-full bg-slate-800"></div>
 
-              ${(isCurated && curatedNote) ? `<div class="bg-amber-50/90 border-l-3 border-amber-500 p-2 rounded-r-lg text-xs text-amber-950 font-medium leading-relaxed mb-2">💡 <b>${dict.curatedNotePrefix}</b>${curatedNote}</div>` : ''}
-              ${(isCurated && mustTry) ? `<div class="flex items-start gap-1.5 p-1.5 mb-2 rounded-lg bg-amber-50/60 border border-amber-200/80 text-xs text-amber-900"><span class="shrink-0 px-1.5 py-0.5 rounded bg-amber-500 text-white font-bold text-[10px] leading-none mt-0.5">${dict.mustTryBadge}</span><span class="font-medium leading-tight">${mustTry}</span></div>` : ''}
-
-              <p class="text-xs text-slate-600 line-clamp-2 leading-relaxed mb-3">${desc}</p>
-
-              <div class="space-y-1 text-[11px] text-slate-500 border-t border-slate-100 pt-2 mb-3 font-medium">
-                <p class="flex items-center gap-1.5 truncate"><i class="fa-solid fa-location-dot text-orange-500 w-3"></i><span class="truncate">${item.address || dict.addressEmpty}</span></p>
-                <p class="flex items-center gap-1.5 font-mono"><i class="fa-solid fa-phone text-slate-400 w-3"></i><span>${cleanPhone ? `<a href="tel:${cleanPhone}" class="hover:text-orange-600 underline">${item.phone}</a>` : dict.phoneEmpty}</span></p>
+            <div class="p-3.5 space-y-2 bg-slate-950">
+              <div class="flex items-center justify-between text-xs">
+                <span class="px-2.5 py-1 rounded-md bg-slate-900 text-slate-400 font-medium text-[11px] border border-slate-800">
+                  ${dict['city_' + item.city] || item.city}
+                </span>
+                <div class="flex items-center gap-1 text-slate-300 text-[11px]">
+                  <i class="fa-solid fa-star text-amber-400 text-[10px]"></i>
+                  <span class="font-bold">${rating}</span>
+                  <span class="text-slate-500 text-[10px]">(${reviewCount}則評價)</span>
+                </div>
               </div>
 
-              <div class="mt-auto grid grid-cols-3 gap-1.5 pt-1 border-t border-slate-100">
-                <button data-comment-id="${item.id}" data-comment-name="${name}" class="btn-open-comment bg-slate-100 hover:bg-slate-200 active:scale-95 text-slate-700 text-[11px] font-bold py-2 rounded-xl text-center flex items-center justify-center gap-1 transition">
-                  <i class="fa-regular fa-comment-dots text-orange-500"></i> ${dict.btnComment}
+              <p class="text-xs text-slate-400 line-clamp-2 leading-relaxed">
+                ${desc}
+              </p>
+            </div>
+
+            <div class="p-2.5 bg-slate-900 border-t border-slate-800 space-y-2 text-xs">
+              <div class="grid grid-cols-2 gap-2">
+                <button data-comment-id="${item.id}" data-comment-name="${name}" class="btn-open-comment flex items-center justify-center gap-1.5 py-2 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-slate-300 border border-slate-700/60 transition active:scale-95">
+                  <i class="fa-solid fa-pen text-amber-400 text-xs"></i>
+                  <span class="text-[11px]">${dict.btnComment}</span>
                 </button>
-                <a href="${cleanPhone ? `tel:${cleanPhone}` : '#'}" class="bg-emerald-50 hover:bg-emerald-100 text-emerald-700 active:scale-95 text-[11px] font-bold py-2 rounded-xl text-center flex items-center justify-center gap-1 transition ${!cleanPhone ? 'opacity-50 pointer-events-none' : ''}">
-                  <i class="fa-solid fa-phone text-emerald-600"></i> ${dict.btnCall}
+                ${rightTopActionBtn}
+              </div>
+              <div class="grid grid-cols-2 gap-2">
+                <a href="${cleanPhone ? `tel:${cleanPhone}` : '#'}" class="flex items-center justify-center gap-1.5 py-2 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-slate-300 border border-slate-700/60 transition active:scale-95 ${!cleanPhone ? 'opacity-40 pointer-events-none' : ''}">
+                  <i class="fa-solid fa-phone text-emerald-400 text-xs"></i>
+                  <span class="font-medium text-[11px]">${cleanPhone ? dict.btnCall : dict.phoneEmpty}</span>
                 </a>
-                <a href="${item.nav_link || ('https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(name + ' ' + (item.address || '')))}" target="_blank" rel="noopener noreferrer" class="bg-orange-500 hover:bg-orange-600 active:scale-95 text-white text-[11px] font-bold py-2 rounded-xl text-center flex items-center justify-center gap-1 shadow-xs transition">
-                  <i class="fa-solid fa-location-arrow"></i> ${dict.btnNav}
+                <a href="${navUrl}" target="_blank" rel="noopener noreferrer" class="flex items-center justify-center gap-1.5 py-2 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-slate-300 border border-slate-700/60 transition active:scale-95">
+                  <i class="fa-solid fa-diamond-turn-right text-sky-400 text-xs"></i>
+                  <span class="font-bold text-[11px]">${dict.btnNav}</span>
                 </a>
               </div>
             </div>
@@ -1293,9 +1461,8 @@
         if (currentSubFilter === 'casino') {
           const isResidential = cat.includes('residences') || cat.includes('condo') || cat.includes('apartment');
           if (isResidential) return false;
-          const isRealCasino = cat.includes('casino') || cat.includes('賭場') || cat.includes('pagcor') || 
-                               cat.includes('okada') || cat.includes('solaire') || cat.includes('dreams') || cat.includes('newport');
-          return isRealCasino;
+          return cat.includes('casino') || cat.includes('賭場') || cat.includes('pagcor') || 
+                 cat.includes('okada') || cat.includes('solaire') || cat.includes('dreams') || cat.includes('newport');
         }
         return cat.includes(currentSubFilter.toLowerCase());
       });
@@ -1309,7 +1476,7 @@
       itemCountBadge.textContent = `${filtered.length} ${dict.spotsCountUnit}`;
 
       if (filtered.length === 0) {
-        listEl.innerHTML = `<div class="bg-white rounded-2xl p-8 text-center border border-slate-200/80 shadow-xs mt-2"><h4 class="text-xs font-bold text-slate-700">${dict.noResult}</h4></div>`;
+        listEl.innerHTML = `<div class="bg-slate-950 rounded-2xl p-8 text-center border border-slate-800 shadow-xs mt-2"><h4 class="text-xs font-bold text-slate-400">${dict.noResult}</h4></div>`;
         return;
       }
 
@@ -1320,38 +1487,38 @@
         const cleanPhone = getCleanPhone(item.phone);
 
         return `
-          <article class="bg-white rounded-2xl overflow-hidden shadow-xs hover:shadow-md border border-slate-200/80 flex flex-col transition">
+          <article class="bg-slate-950 rounded-2xl overflow-hidden shadow-xs border border-slate-800 flex flex-col transition">
             <div class="relative w-full overflow-hidden">
               ${buildCarouselHtml(item.images, `attr-${idx}`, name)}
               <div class="absolute bottom-2.5 left-2.5 flex items-center gap-1.5 z-10">
                 <span class="bg-slate-900/80 backdrop-blur-xs text-white text-[10px] px-2 py-0.5 rounded font-medium">${dict['city_' + item.city] || item.city}</span>
-                ${item.category ? `<span class="bg-orange-600/90 backdrop-blur-xs text-white text-[10px] px-2 py-0.5 rounded font-medium">${item.category}</span>` : ''}
+                ${item.category ? `<span class="bg-amber-500/90 text-slate-950 text-[10px] font-bold px-2 py-0.5 rounded">${item.category}</span>` : ''}
               </div>
             </div>
 
             <div class="p-3.5 flex flex-col flex-1">
-              <h2 class="font-extrabold text-sm text-slate-900 mb-1 leading-snug">
-                <a href="${smartLink}" target="_blank" rel="noopener noreferrer" class="hover:text-orange-600 transition inline-flex items-center gap-1.5 group" title="前往官網或 Google 搜尋">
+              <h2 class="font-bold text-sm text-white mb-1 leading-snug">
+                <a href="${smartLink}" target="_blank" rel="noopener noreferrer" class="hover:text-amber-400 transition inline-flex items-center gap-1.5 group">
                   <span>${name}</span>
-                  <i class="fa-solid fa-arrow-up-right-from-square text-[10px] text-slate-400 group-hover:text-orange-600 transition"></i>
+                  <i class="fa-solid fa-arrow-up-right-from-square text-[10px] text-slate-500 group-hover:text-amber-400 transition"></i>
                 </a>
               </h2>
 
-              <p class="text-xs text-slate-600 line-clamp-2 leading-relaxed mb-3">${desc}</p>
+              <p class="text-xs text-slate-400 line-clamp-2 leading-relaxed mb-3">${desc}</p>
               
-              <div class="space-y-1 text-[11px] text-slate-500 border-t border-slate-100 pt-2 mb-3 font-medium">
-                <p class="flex items-center gap-1.5 truncate"><i class="fa-solid fa-location-dot text-orange-500 w-3"></i><span class="truncate">${item.address || dict.addressEmpty}</span></p>
-                <p class="flex items-center gap-1.5 font-mono"><i class="fa-solid fa-phone text-slate-400 w-3"></i><span>${cleanPhone ? `<a href="tel:${cleanPhone}" class="hover:text-orange-600 underline">${item.phone}</a>` : dict.phoneEmpty}</span></p>
+              <div class="space-y-1 text-[11px] text-slate-500 border-t border-slate-800/80 pt-2 mb-3 font-medium">
+                <p class="flex items-center gap-1.5 truncate"><i class="fa-solid fa-location-dot text-amber-400 w-3"></i><span class="truncate">${item.address || dict.addressEmpty}</span></p>
+                <p class="flex items-center gap-1.5 font-mono"><i class="fa-solid fa-phone text-slate-500 w-3"></i><span>${cleanPhone ? `<a href="tel:${cleanPhone}" class="hover:text-amber-400 underline">${item.phone}</a>` : dict.phoneEmpty}</span></p>
               </div>
 
-              <div class="mt-auto grid grid-cols-3 gap-1.5 pt-1 border-t border-slate-100">
-                <button data-comment-id="${item.id}" data-comment-name="${name}" class="btn-open-comment bg-slate-100 hover:bg-slate-200 active:scale-95 text-slate-700 text-[11px] font-bold py-2 rounded-xl text-center flex items-center justify-center gap-1 transition">
-                  <i class="fa-regular fa-comment-dots text-orange-500"></i> ${dict.btnComment}
+              <div class="mt-auto grid grid-cols-3 gap-1.5 pt-1 border-t border-slate-800">
+                <button data-comment-id="${item.id}" data-comment-name="${name}" class="btn-open-comment bg-slate-900 hover:bg-slate-800 active:scale-95 text-slate-300 text-[11px] font-bold py-2 rounded-xl text-center flex items-center justify-center gap-1 transition border border-slate-800">
+                  <i class="fa-regular fa-comment-dots text-amber-400"></i> ${dict.btnComment}
                 </button>
-                <a href="${cleanPhone ? `tel:${cleanPhone}` : '#'}" class="bg-emerald-50 hover:bg-emerald-100 text-emerald-700 active:scale-95 text-[11px] font-bold py-2 rounded-xl text-center flex items-center justify-center gap-1 transition ${!cleanPhone ? 'opacity-50 pointer-events-none' : ''}">
-                  <i class="fa-solid fa-phone text-emerald-600"></i> ${dict.btnCall}
+                <a href="${cleanPhone ? `tel:${cleanPhone}` : '#'}" class="bg-slate-900 hover:bg-slate-800 text-emerald-400 active:scale-95 text-[11px] font-bold py-2 rounded-xl text-center flex items-center justify-center gap-1 transition border border-slate-800 ${!cleanPhone ? 'opacity-40 pointer-events-none' : ''}">
+                  <i class="fa-solid fa-phone"></i> ${dict.btnCall}
                 </a>
-                <a href="${item.nav_link || ('https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(name + ' ' + (item.address || '')))}" target="_blank" rel="noopener noreferrer" class="bg-orange-500 hover:bg-orange-600 active:scale-95 text-white text-[11px] font-bold py-2 rounded-xl text-center flex items-center justify-center gap-1 shadow-xs transition">
+                <a href="${item.nav_link || ('https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(name + ' ' + (item.address || '')))}" target="_blank" rel="noopener noreferrer" class="bg-gradient-to-r from-amber-400 to-amber-500 text-slate-950 font-bold active:scale-95 text-[11px] py-2 rounded-xl text-center flex items-center justify-center gap-1 shadow-xs transition">
                   <i class="fa-solid fa-location-arrow"></i> ${dict.btnNav}
                 </a>
               </div>
@@ -1361,7 +1528,7 @@
       }).join('');
     }
 
-    // 3. 醫療藥局渲染 (多欄位電話防呆)
+    // 3. 醫療藥局渲染
     function renderMedical() {
       const listEl = document.getElementById('medical-list');
       const dict = I18N_DICT[currentLang] || I18N_DICT['zh-TW'];
@@ -1382,7 +1549,7 @@
       itemCountBadge.textContent = `${filtered.length} ${dict.medicalCountUnit}`;
 
       if (filtered.length === 0) {
-        listEl.innerHTML = `<div class="bg-white rounded-2xl p-8 text-center border border-slate-200/80 shadow-xs mt-2"><h4 class="text-xs font-bold text-slate-700">該區域醫療與藥局資料更新中</h4></div>`;
+        listEl.innerHTML = `<div class="bg-slate-950 rounded-2xl p-8 text-center border border-slate-800 shadow-xs mt-2"><h4 class="text-xs font-bold text-slate-400">該區域醫療與藥局資料更新中</h4></div>`;
         return;
       }
 
@@ -1397,33 +1564,33 @@
         if (item.category === 'pharmacy') catBadge = '💊 連鎖藥局';
 
         return `
-          <article class="bg-white rounded-2xl overflow-hidden shadow-xs hover:shadow-md border border-slate-200/80 flex flex-col transition">
+          <article class="bg-slate-950 rounded-2xl overflow-hidden shadow-xs border border-slate-800 flex flex-col transition">
             <div class="relative w-full overflow-hidden">
               ${buildCarouselHtml(item.images, `med-${idx}`, name)}
               <div class="absolute top-2.5 left-2.5 z-10">
-                <span class="bg-emerald-600/95 text-white text-[11px] font-bold px-2.5 py-1 rounded-full shadow-md backdrop-blur-md">${catBadge}</span>
+                <span class="bg-emerald-600 text-white text-[11px] font-bold px-2.5 py-1 rounded-full shadow-md">${catBadge}</span>
               </div>
             </div>
 
             <div class="p-3.5 flex flex-col flex-1">
-              <h2 class="font-extrabold text-sm text-slate-900 mb-1 leading-snug">
-                <a href="${smartLink}" target="_blank" rel="noopener noreferrer" class="hover:text-orange-600 transition inline-flex items-center gap-1.5 group" title="前往官方網站或 Google 搜尋">
+              <h2 class="font-bold text-sm text-white mb-1 leading-snug">
+                <a href="${smartLink}" target="_blank" rel="noopener noreferrer" class="hover:text-amber-400 transition inline-flex items-center gap-1.5 group">
                   <span>${name}</span>
-                  <i class="fa-solid fa-arrow-up-right-from-square text-[10px] text-slate-400 group-hover:text-orange-600 transition"></i>
+                  <i class="fa-solid fa-arrow-up-right-from-square text-[10px] text-slate-500 group-hover:text-amber-400 transition"></i>
                 </a>
               </h2>
 
-              <div class="space-y-1 text-[11px] text-slate-500 border-t border-slate-100 pt-2 mb-3 font-medium">
-                <p class="flex items-center gap-1.5 truncate"><i class="fa-solid fa-location-dot text-orange-500 w-3"></i><span class="truncate">${item.address || dict.addressEmpty}</span></p>
-                <p class="flex items-center gap-1.5 font-mono"><i class="fa-solid fa-phone text-slate-400 w-3"></i><span>${cleanPhone ? `<a href="tel:${cleanPhone}" class="hover:text-orange-600 underline font-bold">${rawPhone}</a>` : dict.phoneEmpty}</span></p>
+              <div class="space-y-1 text-[11px] text-slate-500 border-t border-slate-800/80 pt-2 mb-3 font-medium">
+                <p class="flex items-center gap-1.5 truncate"><i class="fa-solid fa-location-dot text-amber-400 w-3"></i><span class="truncate">${item.address || dict.addressEmpty}</span></p>
+                <p class="flex items-center gap-1.5 font-mono"><i class="fa-solid fa-phone text-slate-500 w-3"></i><span>${cleanPhone ? `<a href="tel:${cleanPhone}" class="hover:text-emerald-400 underline font-bold">${rawPhone}</a>` : dict.phoneEmpty}</span></p>
               </div>
 
-              <div class="mt-auto grid grid-cols-2 gap-2 pt-1 border-t border-slate-100">
-                <a href="${cleanPhone ? `tel:${cleanPhone}` : '#'}" class="bg-emerald-500 hover:bg-emerald-600 text-white active:scale-95 text-xs font-bold py-2 rounded-xl text-center flex items-center justify-center gap-1.5 transition ${!cleanPhone ? 'opacity-50 pointer-events-none' : ''}">
+              <div class="mt-auto grid grid-cols-2 gap-2 pt-1 border-t border-slate-800">
+                <a href="${cleanPhone ? `tel:${cleanPhone}` : '#'}" class="bg-emerald-600 hover:bg-emerald-500 text-white active:scale-95 text-xs font-bold py-2 rounded-xl text-center flex items-center justify-center gap-1.5 transition ${!cleanPhone ? 'opacity-40 pointer-events-none' : ''}">
                   <i class="fa-solid fa-phone"></i> 急救電話直撥
                 </a>
-                <a href="${item.nav_link || ('https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(name + ' ' + (item.address || '')))}" target="_blank" rel="noopener noreferrer" class="bg-slate-900 hover:bg-slate-800 active:scale-95 text-white text-xs font-bold py-2 rounded-xl text-center flex items-center justify-center gap-1.5 shadow-xs transition">
-                  <i class="fa-solid fa-location-arrow"></i> ${dict.btnNav}
+                <a href="${item.nav_link || ('https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(name + ' ' + (item.address || '')))}" target="_blank" rel="noopener noreferrer" class="bg-slate-900 hover:bg-slate-800 active:scale-95 text-slate-200 border border-slate-700 text-xs font-bold py-2 rounded-xl text-center flex items-center justify-center gap-1.5 shadow-xs transition">
+                  <i class="fa-solid fa-location-arrow text-amber-400"></i> ${dict.btnNav}
                 </a>
               </div>
             </div>
@@ -1448,7 +1615,7 @@
       itemCountBadge.textContent = `${filtered.length} ${dict.newsCountUnit}`;
 
       if (filtered.length === 0) {
-        listEl.innerHTML = `<div class="bg-white rounded-2xl p-8 text-center border border-slate-200/80 shadow-xs mt-2"><h4 class="text-xs font-bold text-slate-700">${dict.noResult}</h4></div>`;
+        listEl.innerHTML = `<div class="bg-slate-950 rounded-2xl p-8 text-center border border-slate-800 shadow-xs mt-2"><h4 class="text-xs font-bold text-slate-400">${dict.noResult}</h4></div>`;
         return;
       }
 
@@ -1460,25 +1627,25 @@
         const cleanPhone = getCleanPhone(item.phone);
 
         return `
-          <article class="bg-white rounded-2xl overflow-hidden shadow-xs hover:shadow-md border border-slate-200/80 flex flex-col transition">
+          <article class="bg-slate-950 rounded-2xl overflow-hidden shadow-xs border border-slate-800 flex flex-col transition">
             <div class="relative w-full overflow-hidden">
               ${buildCarouselHtml(item.images, `promo-${idx}`, title)}
             </div>
             <div class="p-4 flex flex-col flex-1">
-              <h2 class="font-extrabold text-base text-slate-900 leading-tight mb-1 flex items-center gap-1.5">
-                <i class="fa-solid fa-store text-orange-500 text-xs"></i>
-                <a href="${smartLink}" target="_blank" rel="noopener noreferrer" class="hover:text-orange-600 transition inline-flex items-center gap-1 group">
+              <h2 class="font-bold text-base text-white leading-tight mb-1 flex items-center gap-1.5">
+                <i class="fa-solid fa-store text-amber-400 text-xs"></i>
+                <a href="${smartLink}" target="_blank" rel="noopener noreferrer" class="hover:text-amber-400 transition inline-flex items-center gap-1 group">
                   <span>${storeName}</span>
-                  <i class="fa-solid fa-arrow-up-right-from-square text-[10px] text-slate-400 group-hover:text-orange-600 transition"></i>
+                  <i class="fa-solid fa-arrow-up-right-from-square text-[10px] text-slate-500 group-hover:text-amber-400 transition"></i>
                 </a>
               </h2>
-              <h3 class="font-bold text-xs text-orange-600 mb-2 leading-snug">${title}</h3>
-              <div class="bg-slate-50 border-l-3 border-orange-400 p-2.5 rounded-r-lg text-xs text-slate-600 leading-relaxed mb-3">${description}</div>
-              <div class="mt-auto grid grid-cols-2 gap-2 pt-1 border-t border-slate-100">
-                <a href="${cleanPhone ? `tel:${cleanPhone}` : '#'}" class="bg-slate-100 hover:bg-slate-200 active:scale-95 text-slate-700 text-xs font-bold py-2.5 rounded-xl text-center flex items-center justify-center gap-1.5 transition ${!cleanPhone ? 'opacity-50 pointer-events-none' : ''}">
+              <h3 class="font-bold text-xs text-amber-300 mb-2 leading-snug">${title}</h3>
+              <div class="bg-slate-900 border-l-2 border-amber-400 p-2.5 rounded-r-lg text-xs text-slate-300 leading-relaxed mb-3">${description}</div>
+              <div class="mt-auto grid grid-cols-2 gap-2 pt-1 border-t border-slate-800">
+                <a href="${cleanPhone ? `tel:${cleanPhone}` : '#'}" class="bg-slate-900 hover:bg-slate-800 active:scale-95 text-slate-300 border border-slate-800 text-xs font-bold py-2 rounded-xl text-center flex items-center justify-center gap-1.5 transition ${!cleanPhone ? 'opacity-40 pointer-events-none' : ''}">
                   <i class="fa-solid fa-phone text-xs"></i> ${dict.btnCall}
                 </a>
-                <a href="${item.nav_link || ('https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(storeName + ' ' + (item.address || '')))}" target="_blank" rel="noopener noreferrer" class="bg-gradient-to-r from-orange-500 to-amber-500 text-white text-xs font-bold py-2.5 rounded-xl text-center flex items-center justify-center gap-1.5 shadow-sm transition">
+                <a href="${item.nav_link || ('https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(storeName + ' ' + (item.address || '')))}" target="_blank" rel="noopener noreferrer" class="bg-gradient-to-r from-amber-400 to-amber-500 text-slate-950 font-black text-xs py-2 rounded-xl text-center flex items-center justify-center gap-1.5 shadow-sm transition">
                   <i class="fa-solid fa-location-arrow text-xs"></i> ${dict.btnNav}
                 </a>
               </div>
@@ -1511,15 +1678,15 @@
 
     async function loadComments(targetId) {
       const container = document.getElementById('comment-list-container');
-      container.innerHTML = '<p class="text-center text-slate-400 py-6">載入留言中...</p>';
+      container.innerHTML = '<p class="text-center text-slate-500 py-6">載入留言中...</p>';
 
       try {
         const q = query(collection(db, "comments"), where("targetId", "==", String(targetId)), orderBy("createdAt", "desc"));
         const snap = await getDocs(q);
         if (snap.empty) {
           container.innerHTML = `
-            <div class="text-center py-8 text-slate-400">
-              <i class="fa-regular fa-comment-dots text-2xl mb-1 block text-slate-300"></i>
+            <div class="text-center py-8 text-slate-500">
+              <i class="fa-regular fa-comment-dots text-2xl mb-1 block text-slate-600"></i>
               還沒有人留下評價，快來搶頭香發表心得！
             </div>
           `;
@@ -1530,21 +1697,21 @@
           const c = d.data();
           const stars = '★'.repeat(c.rating || 5) + '☆'.repeat(5 - (c.rating || 5));
           return `
-            <div class="bg-slate-50 border border-slate-100 rounded-xl p-2.5 flex flex-col gap-1">
+            <div class="bg-slate-900 border border-slate-800 rounded-xl p-2.5 flex flex-col gap-1">
               <div class="flex items-center justify-between">
                 <div class="flex items-center gap-1.5">
                   <img src="${c.userPhoto || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=50'}" class="w-4 h-4 rounded-full object-cover" />
-                  <span class="font-bold text-slate-800 text-[11px]">${c.userName || '探店好友'}</span>
+                  <span class="font-bold text-slate-200 text-[11px]">${c.userName || '探店好友'}</span>
                 </div>
-                <span class="text-amber-500 text-[10px] font-mono tracking-tighter">${stars}</span>
+                <span class="text-amber-400 text-[10px] font-mono tracking-tighter">${stars}</span>
               </div>
-              <p class="text-slate-700 text-xs leading-relaxed pl-5">${c.comment || c.content || ''}</p>
+              <p class="text-slate-300 text-xs leading-relaxed pl-5">${c.comment || c.content || ''}</p>
             </div>
           `;
         }).join('');
       } catch (e) {
         console.warn("載入留言異常:", e);
-        container.innerHTML = '<p class="text-center text-slate-400 py-6 text-xs">歡迎登入後發表第一則評語！</p>';
+        container.innerHTML = '<p class="text-center text-slate-500 py-6 text-xs">歡迎登入後發表第一則評語！</p>';
       }
     }
 
@@ -1599,7 +1766,7 @@
         document.getElementById('auth-modal-user-view').classList.remove('hidden');
         document.getElementById('user-modal-name').innerText = currentUserProfile.displayName || currentUser.displayName || '吃貨好友';
         document.getElementById('user-modal-avatar').src = currentUserProfile.photoURL || currentUser.photoURL || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200';
-        document.getElementById('user-modal-points').innerHTML = `${currentUserProfile.points || 50} <span class="text-xs font-normal text-slate-500">PTS</span>`;
+        document.getElementById('user-modal-points').innerHTML = `${currentUserProfile.points || 50} <span class="text-xs font-normal text-slate-400">PTS</span>`;
         document.getElementById('user-modal-level').innerText = currentUserProfile.level || 'LV.1 探店初心者';
       } else {
         document.getElementById('auth-modal-login-view').classList.remove('hidden');
@@ -1621,7 +1788,6 @@
       }
     });
 
-    // ====== Email 魔法精靈登入按鈕事件（新增在這裡） ======
     const magicEmailBtn = document.getElementById('btn-magic-email');
     if (magicEmailBtn) {
       magicEmailBtn.addEventListener('click', async () => {
@@ -1644,20 +1810,10 @@
           alert(err.message || '寄送失敗，請確認信箱格式');
         } finally {
           magicEmailBtn.disabled = false;
-          magicEmailBtn.innerHTML = '<i class="fa-solid fa-wand-magic-sparkles text-amber-300"></i> 發送魔法登入連結';
+          magicEmailBtn.innerHTML = '<i class="fa-solid fa-wand-magic-sparkles text-slate-950"></i> 發送魔法登入連結';
         }
       });
     }
-
-    document.getElementById('btn-logout').addEventListener('click', async () => {
-      try {
-        await logoutUser();
-        authModal.classList.add('hidden');
-        showToast('已成功登出');
-      } catch (err) {
-        showToast('登出失敗，請稍候再試');
-      }
-    });
 
     document.getElementById('btn-logout').addEventListener('click', async () => {
       try {
@@ -1774,12 +1930,12 @@
       if (!msg) return;
       const targetLang = currentLang === 'zh-TW' ? 'zh' : currentLang;
 
-      chatMessages.innerHTML += `<div class="bg-orange-500 text-white p-2.5 rounded-xl rounded-tr-sm self-end max-w-[85%] ml-auto text-xs leading-relaxed shadow-xs">${msg}</div>`;
+      chatMessages.innerHTML += `<div class="bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 font-bold p-2.5 rounded-xl rounded-tr-sm self-end max-w-[85%] ml-auto text-xs leading-relaxed shadow-xs">${msg}</div>`;
       chatInput.value = '';
       chatMessages.scrollTop = chatMessages.scrollHeight;
 
       const loadId = 'load-' + Date.now();
-      chatMessages.innerHTML += `<div id="${loadId}" class="bg-white p-2.5 rounded-xl rounded-tl-sm border border-slate-200/70 text-slate-500 text-xs self-start max-w-[85%] flex items-center gap-1.5 shadow-2xs"><i class="fa-solid fa-spinner fa-spin text-orange-500"></i> 管家正在為您查詢... ⚡</div>`;
+      chatMessages.innerHTML += `<div id="${loadId}" class="bg-slate-900 p-2.5 rounded-xl rounded-tl-sm border border-slate-800 text-slate-400 text-xs self-start max-w-[85%] flex items-center gap-1.5 shadow-2xs"><i class="fa-solid fa-spinner fa-spin text-amber-400"></i> 管家正在為您查詢... ⚡</div>`;
       chatMessages.scrollTop = chatMessages.scrollHeight;
 
       try {
