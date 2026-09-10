@@ -749,9 +749,8 @@
           console.warn("讀取 Google Sheet 失敗:", e);
         }
 
-        const resSnap = await getDocs(collection(db, "restaurants")).catch(() => ({ forEach: () => {} }));
+        // 停用 Firebase 舊資料讀取，完全只讀 Google 試算表
         const rawList = [];
-        resSnap.forEach(d => rawList.push({ id: d.id, ...d.data() }));
 
         const mergedMap = new Map();
         const bigVLookup = new Map();
