@@ -1671,6 +1671,10 @@
         const smartLink = getSmartLink(item.name_en || name, item.city, item.website);
         const rawPhone = item.phone || item.telephone || item.contact || item.col_8 || item.col_9 || '';
         const cleanPhone = getCleanPhone(rawPhone);
+
+        // 讀取 Google 評分與評論數 (帶容錯預設值)
+        const rating = item.google_rating || item.googlerating || item.rating || 4.5;
+        const reviewCount = item.review_count || item.reviewcount || item.reviews || 50;
         
         let catBadge = '🏥 綜合醫院';
         if (item.category === 'clinic') catBadge = '🩺 專科診所';
@@ -1680,8 +1684,13 @@
           <article class="bg-slate-950 rounded-2xl overflow-hidden shadow-xs border border-slate-800 flex flex-col transition">
             <div class="relative w-full overflow-hidden">
               ${buildCarouselHtml(item.images, `med-${idx}`, name)}
-              <div class="absolute top-2.5 left-2.5 z-10">
+              
+              <!-- 左上角：分類徽章 + Google 評分星級 -->
+              <div class="absolute top-2.5 left-2.5 z-10 flex items-center gap-1.5">
                 <span class="bg-emerald-600 text-white text-[11px] font-bold px-2.5 py-1 rounded-full shadow-md">${catBadge}</span>
+                <span class="bg-slate-950/85 backdrop-blur-xs text-amber-300 border border-slate-700/80 text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1 shadow-sm">
+                  <i class="fa-solid fa-star text-[9px] text-amber-400"></i> ${rating} <span class="text-slate-400 font-normal">(${reviewCount})</span>
+                </span>
               </div>
             </div>
 
@@ -1710,7 +1719,6 @@
           </article>
         `;
       }).join('');
-    }
 
     // 4. 特惠渲染
     function renderNews() {
