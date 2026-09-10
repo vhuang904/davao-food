@@ -320,6 +320,7 @@
   <!-- Firebase SDK 與核心邏輯模組 -->
   <script type="module">
     import { initializeApp, getApps, getApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getMessaging, getToken } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-messaging.js";
     import { getFirestore, collection, getDocs, doc, getDoc, setDoc, updateDoc, increment, query, where, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
     import { loadMasterDatabase, getLocalizedText } from './googleSheetService.js';
     import { 
@@ -346,6 +347,48 @@
 
     const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
     const db = getFirestore(app);
+    // ====== Web Push 推播設定與權限請求函式 ======
+    const VAPID_KEY = "BFcmRKQZhSkc4k6FE3qkr85YevC3aKCSfNKNHi1z_qJJGXVmOoY-WWdx2A6QxFCZFTYqhQR7zSjfO3hYqXEWKXY";
+
+    async function requestPushNotificationPermission(user) {
+      if (!('Notification' in window) || !('serviceWorker' in navigator)) {
+        console.log('[Push] 此瀏覽器或環境不支援推播通知');
+        return;
+      }
+
+      try {
+        const permission = await Notification.requestPermission();
+        if (permission !== 'granted') {
+          console.log('[Push] 使用者未授權通知權限');
+          return;
+        }
+
+        const registration = await navigator.serviceWorker.ready;
+        const messaging = getMessaging(app);
+        const currentToken = await getToken(messaging, {
+          vapidKey: VAPID_KEY,
+          serviceWorkerRegistration: registration
+        });
+
+        if (currentToken) {
+          console.log('[Push] 成功取得推播 Token:', currentToken);
+          // 儲存至 Firestore 的 push_subscriptions 集合
+          const subRef = doc(db, "push_subscriptions", user.uid);
+          await setDoc(subRef, {
+            uid: user.uid,
+            email: user.email || '',
+            displayName: user.displayName || '',
+            pushToken: currentToken,
+            platform: navigator.userAgent || 'unknown',
+            updatedAt: new Date().toISOString()
+          }, { merge: true });
+
+          showToast('已成功開啟最新優惠與探店推播！', 'fa-bell');
+        }
+      } catch (err) {
+        console.warn('[Push] 取得推播 Token 失敗或使用者已忽略:', err);
+      }
+    }
 
     const AI_WORKER_URL = "https://food-ai-assistant.vhuang904.workers.dev";
     let currentUser = null;
@@ -555,6 +598,8 @@
         if (authModalEl && !authModalEl.classList.contains('hidden')) {
           authModalEl.classList.add('hidden');
         }
+
+        requestPushNotificationPermission(user);
 
         authBtnText.innerText = user.displayName ? `${user.displayName.split(' ')[0]} · ${currentUserProfile.points || 50}分` : `${dict.btnMember} · ${currentUserProfile.points || 50}分`;
         if (user.photoURL) {
