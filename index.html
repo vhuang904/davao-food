@@ -1322,10 +1322,14 @@
               <h2 class="font-extrabold text-sm text-slate-900 mb-1">${name}</h2>
               <p class="text-xs text-slate-600 line-clamp-2 leading-relaxed mb-3">${desc}</p>
               
-              <div class="space-y-1 text-[11px] text-slate-500 border-t border-slate-100 pt-2 mb-3">
+              <div class="space-y-1 text-[11px] text-slate-500 border-t border-slate-100 pt-2 mb-3 font-medium">
                 <p class="flex items-center gap-1.5 truncate">
                   <i class="fa-solid fa-location-dot text-orange-500 w-3"></i>
                   <span class="truncate">${item.address || dict.addressEmpty}</span>
+                </p>
+                <p class="flex items-center gap-1.5 font-mono">
+                  <i class="fa-solid fa-phone text-slate-400 w-3"></i>
+                  <span>${item.phone || dict.phoneEmpty}</span>
                 </p>
               </div>
 
