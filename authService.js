@@ -170,11 +170,28 @@ export async function loginWithGoogle() {
   }
 }
 
-// 2. Email 魔法精靈登入（支援多次登入與無縫收信）
+// 2. Email 魔法精靈登入（加入 Google 用戶前置檢查）
 export async function sendMagicEmailLink(email) {
   const cleanEmail = (email || "").trim().toLowerCase();
   if (!cleanEmail || !cleanEmail.includes("@")) {
     throw new Error("請輸入正確的電子郵件信箱。");
+  }
+
+  // 前置檢查：確認此信箱是否先前已用 Google 註冊
+  try {
+    const signInMethods = await fetchSignInMethodsForEmail(auth, cleanEmail);
+    console.log("[AuthService] 該信箱已有登入方式:", signInMethods);
+
+    // 若包含 google.com，直接拋出友善提示，絕不寄送無效郵件
+    if (signInMethods.includes("google.com")) {
+      throw new Error("此信箱已綁定 Google 帳號！請直接點擊上方「使用 Google 帳號一鍵登入」。");
+    }
+  } catch (err) {
+    // 若為自訂的 Google 阻擋提示，向外傳遞給 UI 顯示
+    if (err.message && err.message.includes("Google")) {
+      throw err;
+    }
+    console.warn("[AuthService] 檢查信箱狀態略過:", err);
   }
 
   const actionCodeSettings = {
