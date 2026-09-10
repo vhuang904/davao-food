@@ -1,4 +1,4 @@
-// authService.js - 大V的旅遊窩 PWA 獨立認證模組（整合 Google 雙軌 + Email 魔法登入 + 狀態持久化）
+// authService.js - 大V的旅遊窩 PWA 認證模組（Google + Email 魔法精靈雙軌互通版）
 
 import { initializeApp, getApps, getApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
 import { 
@@ -20,6 +20,9 @@ import {
   setDoc, 
   updateDoc, 
   collection, 
+  getDocs,
+  query,
+  where,
   addDoc, 
   serverTimestamp, 
   increment 
@@ -67,6 +70,7 @@ function broadcastAuthChange(user, profile) {
   window.dispatchEvent(event);
 }
 
+// 核心：雙軌互通會員資料庫讀取（以 Email 跨 UID 繼承積分）
 export async function fetchOrCreateUserProfile(user) {
   if (!user) {
     currentUserProfile = null;
@@ -74,37 +78,60 @@ export async function fetchOrCreateUserProfile(user) {
     return null;
   }
 
+  const userEmail = (user.email || "").toLowerCase().trim();
   const userRef = doc(db, "users", user.uid);
+
   try {
     const docSnap = await getDoc(userRef);
+
     if (docSnap.exists()) {
       const data = docSnap.data();
       currentUserProfile = {
         uid: user.uid,
         displayName: data.displayName || user.displayName || "吃貨食客",
         photoURL: data.photoURL || user.photoURL || "",
-        email: data.email || user.email || "",
+        email: userEmail,
         points: typeof data.points === "number" ? data.points : 50,
         level: data.level || calculateUserLevel(data.points || 50)
       };
     } else {
-      const initialPoints = 50;
-      const initialLevel = calculateUserLevel(initialPoints);
+      // 雙軌繼承機制：檢查此 Email 是否之前用另一種方式登入並已有積分
+      let inheritedPoints = 50;
+      let inheritedLevel = "LV.1 探店初心者";
+
+      if (userEmail) {
+        try {
+          const emailQuery = query(collection(db, "users"), where("email", "==", userEmail));
+          const querySnap = await getDocs(emailQuery);
+          if (!querySnap.empty) {
+            // 找到舊紀錄，無縫繼承既有積分
+            const oldData = querySnap.docs[0].data();
+            inheritedPoints = oldData.points || 50;
+            inheritedLevel = oldData.level || calculateUserLevel(inheritedPoints);
+            console.log(`[AuthService] 雙軌資料自動合併：已從歷史帳號繼承 ${inheritedPoints} 積分！`);
+          }
+        } catch (queryErr) {
+          console.warn("[AuthService] 檢查歷史帳號略過:", queryErr);
+        }
+      }
+
       const newProfile = {
         displayName: user.displayName || "吃貨食客",
         photoURL: user.photoURL || "",
-        email: user.email || "",
-        points: initialPoints,
-        level: initialLevel,
+        email: userEmail,
+        points: inheritedPoints,
+        level: inheritedLevel,
         createdAt: serverTimestamp(),
         lastLoginAt: serverTimestamp()
       };
+
       await setDoc(userRef, newProfile, { merge: true });
       currentUserProfile = {
         uid: user.uid,
         ...newProfile
       };
     }
+
     broadcastAuthChange(user, currentUserProfile);
     return currentUserProfile;
   } catch (error) {
@@ -113,7 +140,7 @@ export async function fetchOrCreateUserProfile(user) {
       uid: user.uid,
       displayName: user.displayName || "吃貨食客",
       photoURL: user.photoURL || "",
-      email: user.email || "",
+      email: userEmail,
       points: 50,
       level: "LV.1 探店初心者"
     };
@@ -122,7 +149,7 @@ export async function fetchOrCreateUserProfile(user) {
   }
 }
 
-// 1. Google 一鍵登入
+// 1. Google 登入
 export async function loginWithGoogle() {
   try {
     if (isPwaStandalone()) {
@@ -133,15 +160,18 @@ export async function loginWithGoogle() {
       return await fetchOrCreateUserProfile(result.user);
     }
   } catch (error) {
-    console.warn("[AuthService] 彈窗登入失敗，降級為 Redirect:", error);
-    await signInWithRedirect(auth, googleProvider);
-    return null;
+    console.error("[AuthService] 登入異常:", error.code, error.message);
+    if (error.code === 'auth/popup-blocked' || error.code === 'auth/cancelled-popup-request') {
+      await signInWithRedirect(auth, googleProvider);
+      return null;
+    }
+    throw error;
   }
 }
 
-// 2. Email 魔法精靈：寄送免密碼驗證信
+// 2. Email 魔法精靈登入（支援多次登入與無縫收信）
 export async function sendMagicEmailLink(email) {
-  const cleanEmail = (email || "").trim();
+  const cleanEmail = (email || "").trim().toLowerCase();
   if (!cleanEmail || !cleanEmail.includes("@")) {
     throw new Error("請輸入正確的電子郵件信箱。");
   }
@@ -156,7 +186,7 @@ export async function sendMagicEmailLink(email) {
   return true;
 }
 
-// 3. 核心功能：登出
+// 3. 登出
 export async function logoutUser() {
   try {
     await signOut(auth);
@@ -173,6 +203,7 @@ export function getCurrentProfile() {
   return currentUserProfile;
 }
 
+// 4. 發表評論累計積分
 export async function addStoreComment(storeId, commentPayload) {
   const currentUser = auth.currentUser;
   if (!currentUser) {
@@ -225,27 +256,26 @@ export async function addStoreComment(storeId, commentPayload) {
   };
 }
 
-// 4. 初始化認證監聽器（處理跳轉回調與 Email 魔法登入驗證）
+// 5. 初始化認證監聽（支援重定向與魔法連結自動完成）
 export function initAuthService() {
-  // A. 處理 Email 魔法連結跳回
+  // 檢查 Email 魔法連結跳回
   if (isSignInWithEmailLink(auth, window.location.href)) {
     let email = window.localStorage.getItem("emailForSignIn");
     if (!email) {
-      email = window.prompt("請再次確認您登入時使用的電子郵件信箱：");
+      email = window.prompt("請輸入登入時所使用的電子郵件信箱：");
     }
     if (email) {
       signInWithEmailLink(auth, email, window.location.href)
         .then(async (result) => {
           window.localStorage.removeItem("emailForSignIn");
           await fetchOrCreateUserProfile(result.user);
-          // 清理 URL 上的授權參數
           window.history.replaceState({}, document.title, window.location.pathname);
         })
-        .catch((err) => console.error("[AuthService] Email 魔法登入失敗:", err));
+        .catch((err) => console.error("[AuthService] Email 魔法登入驗證錯誤:", err));
     }
   }
 
-  // B. 處理 Google Redirect 重定向跳回
+  // 檢查 Google Redirect 跳回
   getRedirectResult(auth)
     .then(async (result) => {
       if (result && result.user) {
@@ -253,10 +283,10 @@ export function initAuthService() {
       }
     })
     .catch((error) => {
-      console.error("[AuthService] Google Redirect 回調錯誤:", error);
+      console.error("[AuthService] Redirect 解析失敗:", error.code, error.message);
     });
 
-  // C. 持續監聽狀態
+  // 全域監聽狀態
   onAuthStateChanged(auth, async (user) => {
     if (user) {
       await fetchOrCreateUserProfile(user);
