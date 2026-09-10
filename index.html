@@ -1308,6 +1308,18 @@
         filtered = filtered.filter(item => (safeStr(item.name) + ' ' + safeStr(item.name_en) + ' ' + safeStr(item.address)).includes(q));
       }
 
+      // 👉 核心排序：依 Google 評分由高至低排序 (分數相同時，則依評論數由多到少)
+      filtered.sort((a, b) => {
+        const ratingA = Number(a.google_rating || a.googlerating || a.rating || 0);
+        const ratingB = Number(b.google_rating || b.googlerating || b.rating || 0);
+        if (ratingB !== ratingA) {
+          return ratingB - ratingA; // 評分高者排前面
+        }
+        const reviewsA = Number(a.review_count || a.reviewcount || 0);
+        const reviewsB = Number(b.review_count || b.reviewcount || 0);
+        return reviewsB - reviewsA; // 評論數多者排前面
+      });
+      
       const curReg = [...REGION_CONFIG.cities, ...REGION_CONFIG.islands].find(r => r.id === currentCity);
       const cityName = dict['city_' + currentCity] || curReg?.name || '';
       filterSummaryText.textContent = `${cityName} · 美食推薦`;
@@ -1668,6 +1680,18 @@
         filtered = filtered.filter(item => (safeStr(item.name_zh) + ' ' + safeStr(item.name_en) + ' ' + safeStr(item.address)).includes(q));
       }
 
+      // 👉 請確保這段排序有放在 renderMedical 裡面！
+      filtered.sort((a, b) => {
+        const ratingA = Number(a.google_rating || a.googlerating || a.rating || 0);
+        const ratingB = Number(b.google_rating || b.googlerating || b.rating || 0);
+        if (ratingB !== ratingA) {
+          return ratingB - ratingA; // 評分高者排前面
+        }
+        const reviewsA = Number(a.review_count || a.reviewcount || 0);
+        const reviewsB = Number(b.review_count || b.reviewcount || 0);
+        return reviewsB - reviewsA; // 評論數多者排前面
+      });
+      
       filterSummaryText.textContent = `${dict['city_' + currentCity] || ''} · ${dict.navMedical}`;
       itemCountBadge.textContent = `${filtered.length} ${dict.medicalCountUnit}`;
 
