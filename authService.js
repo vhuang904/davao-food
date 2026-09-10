@@ -54,10 +54,11 @@ export function calculateUserLevel(points = 0) {
   return "LV.1 探店初心者";
 }
 
-export function isPwaStandalone() {
+export function isMobileOrStandalone() {
   const isStandaloneMatch = window.matchMedia("(display-mode: standalone)").matches;
   const isNavigatorStandalone = window.navigator.standalone === true;
-  return isStandaloneMatch || isNavigatorStandalone;
+  const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+  return isStandaloneMatch || isNavigatorStandalone || isMobile;
 }
 
 function broadcastAuthChange(user, profile) {
@@ -150,10 +151,13 @@ export async function fetchOrCreateUserProfile(user) {
   }
 }
 
-// 1. Google 登入
+// 1. Google 登入（手機端與 PWA 自動採用穩定轉址 Redirect）
 export async function loginWithGoogle() {
+  const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+  const shouldUseRedirect = isPwaStandalone() || isMobile;
+
   try {
-    if (isPwaStandalone()) {
+    if (shouldUseRedirect) {
       await signInWithRedirect(auth, googleProvider);
       return null;
     } else {
@@ -162,11 +166,9 @@ export async function loginWithGoogle() {
     }
   } catch (error) {
     console.error("[AuthService] 登入異常:", error.code, error.message);
-    if (error.code === 'auth/popup-blocked' || error.code === 'auth/cancelled-popup-request') {
-      await signInWithRedirect(auth, googleProvider);
-      return null;
-    }
-    throw error;
+    // 遇到任何彈窗阻擋或跨來源問題，全面降級為轉址登入
+    await signInWithRedirect(auth, googleProvider);
+    return null;
   }
 }
 
