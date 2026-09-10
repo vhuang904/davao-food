@@ -265,7 +265,7 @@
           <h3 id="comment-modal-title" class="font-bold text-sm text-white truncate">店家留言討論</h3>
           <p class="text-[10px] text-amber-400/80">分享您的真實探店評語與心得</p>
         </div>
-        <button id="close-comment-btn" class="w-7 h-7 bg-slate-900 rounded-full text-slate-400 hover:text-white flex items-center justify-center text-xs">✕</button>
+        <button id="close-comment-btn" type="button" onclick="document.getElementById('comment-modal').classList.add('hidden')" class="relative z-50 w-10 h-10 bg-slate-850 hover:bg-slate-800 active:bg-slate-700 rounded-full text-slate-300 active:text-white flex items-center justify-center text-sm font-black cursor-pointer flex-shrink-0 touch-manipulation select-none">✕</button>
       </div>
 
       <!-- 留言清單區 -->
@@ -489,6 +489,33 @@
       setTimeout(() => {
         toast.classList.add('opacity-0', 'translate-y-[-10px]', 'pointer-events-none');
       }, 2000);
+    }
+    // ====== 留言彈窗觸控與關閉邏輯 (支援三星與小米) ======
+    const commentModalEl = document.getElementById('comment-modal');
+    const closeCommentBtn = document.getElementById('close-comment-btn');
+
+    function closeCommentModalAction(e) {
+      if (e) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+      if (commentModalEl) commentModalEl.classList.add('hidden');
+    }
+
+    if (closeCommentBtn) {
+      // 同時監聽 click 與手機觸控結束 touchend，保證秒點秒關！
+      closeCommentBtn.addEventListener('click', closeCommentModalAction);
+      closeCommentBtn.addEventListener('touchend', closeCommentModalAction);
+    }
+
+    // 點擊彈窗外面的深色半透明區域也直接關閉
+    if (commentModalEl) {
+      commentModalEl.addEventListener('click', (e) => {
+        if (e.target === commentModalEl) closeCommentModalAction(e);
+      });
+      commentModalEl.addEventListener('touchend', (e) => {
+        if (e.target === commentModalEl) closeCommentModalAction(e);
+      });
     }
 
     async function initVisitorCounter() {
