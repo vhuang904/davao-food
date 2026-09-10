@@ -8,7 +8,7 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
-  <meta name="app-version" content="20260910-v17.4-master" />
+  <meta name="app-version" content="20260910-v17.5-master" />
   <meta name="theme-color" content="#ea580c" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -430,6 +430,20 @@
     let allAttractions = [];
     let allNews = [];
 
+    // ====== 智慧跳轉與一鍵撥號核心工具函式 ======
+    function getSmartLink(name, city, website) {
+      if (website && typeof website === 'string' && website.trim().startsWith('http')) {
+        return website.trim();
+      }
+      const q = encodeURIComponent(((name || '') + ' ' + (city || '')).trim());
+      return `https://www.google.com/search?q=${q}`;
+    }
+
+    function getCleanPhone(phone) {
+      if (!phone) return '';
+      return String(phone).replace(/[^\d+]/g, '');
+    }
+
     function safeStr(val) {
       if (!val) return '';
       if (typeof val === 'string') return val.toLowerCase().trim();
@@ -589,7 +603,7 @@
         appTitle: 'Big V Travel Nest',
         appSubtitle: 'Gabay sa Pamumuhay at Isla sa Pilipinas',
         btnLogin: 'Login',
-        btnMember: 'Miyembro',
+        btnMember: 'Member',
         searchPlaceholder: 'Maghanap ng pagkain, pasyalan, hotel...',
         shareBtn: 'Ibahagi',
         tabMetro: 'Kalunsuran',
@@ -794,6 +808,7 @@
             item.city = matchedBigV.city;
             if (matchedBigV.address) item.address = matchedBigV.address;
             if (matchedBigV.phone) item.phone = String(matchedBigV.phone).replace(/^['"]/, '').trim();
+            if (matchedBigV.website) item.website = matchedBigV.website;
             if (matchedBigV.nav_link) item.nav_link = matchedBigV.nav_link;
             item.images = parseImages(matchedBigV, 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=800&auto=format&fit=crop');
             bigVLookup.delete(matchedBigV.id.toLowerCase().trim());
@@ -845,6 +860,7 @@
             must_try_tl: bigVItem.must_try_tl,
             address: bigVItem.address || "",
             phone: String(bigVItem.phone || "").replace(/^['"]/, '').trim(),
+            website: bigVItem.website || "",
             nav_link: bigVItem.nav_link || "",
             googleRating: 5.0,
             googleReviewCount: 50,
@@ -873,6 +889,7 @@
               desc_tl: `Google Pick: May markang ${autoItem.googleRating || 4.5} bituin`,
               address: autoItem.address || '',
               phone: String(autoItem.phone || "").replace(/^['"]/, '').trim(),
+              website: autoItem.website || '',
               nav_link: autoItem.nav_link || '',
               images: parseImages(autoItem, 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&auto=format&fit=crop')
             });
@@ -897,6 +914,7 @@
                 googleTopNote: `Google 饕客探索推薦：累積逾 ${c} 則好評，在地極高評分熱點！`,
                 address: autoItem.address || '',
                 phone: String(autoItem.phone || "").replace(/^['"]/, '').trim(),
+                website: autoItem.website || '',
                 nav_link: autoItem.nav_link || '',
                 googleRating: r,
                 googleReviewCount: c,
@@ -1163,6 +1181,9 @@
         const reviewCount = item.googleReviewCount || 0;
         const isFoodOnly = (item.islandType === 'food') || (!item.islandType && item.categoryKey !== 'hotel_villa' && item.categoryKey !== 'hotel' && item.categoryKey !== 'villa');
 
+        const smartLink = getSmartLink(item.name_en || name, item.city, item.website);
+        const cleanPhone = getCleanPhone(item.phone);
+
         return `
           <article class="bg-white rounded-2xl overflow-hidden shadow-xs hover:shadow-md border ${
             isCurated ? 'border-amber-400 ring-2 ring-amber-400/20' : isGoogleTop ? 'border-sky-300 ring-2 ring-sky-300/20' : 'border-slate-200/80'
@@ -1196,7 +1217,13 @@
             </div>
 
             <div class="p-3.5 flex flex-col flex-1">
-              <h2 class="font-extrabold text-sm text-slate-900 leading-snug mb-1">${name}</h2>
+              <!-- 店名升級為智慧連結：有官網開官網，無官網開 Google 搜尋 -->
+              <h2 class="font-extrabold text-sm text-slate-900 leading-snug mb-1">
+                <a href="${smartLink}" target="_blank" rel="noopener noreferrer" class="hover:text-orange-600 transition inline-flex items-center gap-1.5 group" title="點擊前往官方網站或 Google 搜尋">
+                  <span>${name}</span>
+                  <i class="fa-solid fa-arrow-up-right-from-square text-[10px] text-slate-400 group-hover:text-orange-600 transition"></i>
+                </a>
+              </h2>
 
               ${(isCurated && curatedNote) ? `
                 <div class="bg-amber-50/90 border-l-3 border-amber-500 p-2.5 rounded-r-lg text-xs text-amber-950 font-medium leading-relaxed mb-2.5">
@@ -1228,7 +1255,7 @@
                 </p>
                 <p class="flex items-center gap-1.5 font-mono">
                   <i class="fa-solid fa-phone text-slate-400 w-3"></i>
-                  <span>${item.phone || dict.phoneEmpty}</span>
+                  <span>${cleanPhone ? `<a href="tel:${cleanPhone}" class="hover:text-orange-600 underline">${item.phone}</a>` : dict.phoneEmpty}</span>
                 </p>
               </div>
 
@@ -1239,7 +1266,7 @@
                     <i class="fa-solid fa-motorcycle"></i> ${dict.btnGrab}
                   </a>
                 ` : ''}
-                <a href="tel:${item.phone || ''}" class="bg-slate-100 hover:bg-slate-200 active:scale-95 text-slate-700 text-[11px] font-bold py-2 rounded-xl text-center flex items-center justify-center gap-1 transition">
+                <a href="${cleanPhone ? `tel:${cleanPhone}` : '#'}" class="bg-slate-100 hover:bg-slate-200 active:scale-95 text-slate-700 text-[11px] font-bold py-2 rounded-xl text-center flex items-center justify-center gap-1 transition ${!cleanPhone ? 'opacity-50 pointer-events-none' : ''}">
                   <i class="fa-solid fa-phone"></i> ${dict.btnCall}
                 </a>
                 <a href="${item.nav_link || ('https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(name + ' ' + (item.address || '')))}" target="_blank" rel="noopener noreferrer"
@@ -1276,7 +1303,7 @@
           return cat.includes('history') || cat.includes('歷史') || cat.includes('文化') || cat.includes('古蹟') || cat.includes('church') || cat.includes('cathedral') || cat.includes('教堂') || cat.includes('intramuros') || cat.includes('pedro') || cat.includes('santo') || cat.includes('magellan') || cat.includes('museum') || cat.includes('博物館') || cat.includes('leah');
         }
         if (currentSubFilter === 'nature') {
-          return cat.includes('nature') || cat.includes('自然') || cat.includes('公園') || cat.includes('park') || cat.includes('garden') || cat.includes('ocean') || cat.includes('zoo') || cat.includes('tarsier') || cat.includes('hills') || cat.includes('cave') || cat.includes('falls') || cat.includes('tops') || cat.includes('eden') || cat.includes('croc');
+          return cat.includes('nature') || cat.includes('自然') || cat.includes('公園') || cat.includes('park') || cat.includes('garden') || cat.includes('ocean') || cat.includes('zoo') || cat.includes('tarsier') || cat.includes('hills') || cat.includes('cave') || cat.includes('falls') || cat.includes('tops') || cat.includes('eden') || cat.includes('croc') || cat.includes('農莊') || cat.includes('生態');
         }
         if (currentSubFilter === 'beach') {
           return cat.includes('beach') || cat.includes('沙灘') || cat.includes('海灘');
@@ -1315,6 +1342,8 @@
       listEl.innerHTML = filtered.map((item, idx) => {
         const name = getLocalizedText(item, 'name', currentShortLang) || item.name_en || item.name_zh || item.id || '景點地標';
         const desc = getLocalizedText(item, 'desc', currentShortLang) || getText(item.description) || '菲律賓熱門推薦地標。';
+        const smartLink = getSmartLink(item.name_en || name, item.city, item.website);
+        const cleanPhone = getCleanPhone(item.phone);
 
         return `
           <article class="bg-white rounded-2xl overflow-hidden shadow-xs hover:shadow-md border border-slate-200/80 flex flex-col transition">
@@ -1324,11 +1353,23 @@
                 <span class="bg-slate-900/80 backdrop-blur-xs text-white text-[10px] px-2 py-0.5 rounded font-medium">
                   ${dict['city_' + item.city] || item.city}
                 </span>
+                ${item.category ? `
+                  <span class="bg-orange-600/90 backdrop-blur-xs text-white text-[10px] px-2 py-0.5 rounded font-medium">
+                    ${item.category}
+                  </span>
+                ` : ''}
               </div>
             </div>
 
             <div class="p-3.5 flex flex-col flex-1">
-              <h2 class="font-extrabold text-sm text-slate-900 mb-1">${name}</h2>
+              <!-- 景點名稱升級為智慧連結：有官網開官網，無官網開 Google 搜尋 -->
+              <h2 class="font-extrabold text-sm text-slate-900 mb-1 leading-snug">
+                <a href="${smartLink}" target="_blank" rel="noopener noreferrer" class="hover:text-orange-600 transition inline-flex items-center gap-1.5 group" title="點擊前往官方網站或 Google 搜尋">
+                  <span>${name}</span>
+                  <i class="fa-solid fa-arrow-up-right-from-square text-[10px] text-slate-400 group-hover:text-orange-600 transition"></i>
+                </a>
+              </h2>
+
               <p class="text-xs text-slate-600 line-clamp-2 leading-relaxed mb-3">${desc}</p>
               
               <div class="space-y-1 text-[11px] text-slate-500 border-t border-slate-100 pt-2 mb-3 font-medium">
@@ -1338,14 +1379,15 @@
                 </p>
                 <p class="flex items-center gap-1.5 font-mono">
                   <i class="fa-solid fa-phone text-slate-400 w-3"></i>
-                  <span>${item.phone || dict.phoneEmpty}</span>
+                  <span>${cleanPhone ? `<a href="tel:${cleanPhone}" class="hover:text-orange-600 underline">${item.phone}</a>` : dict.phoneEmpty}</span>
                 </p>
               </div>
 
-              <div class="mt-auto grid ${item.phone ? 'grid-cols-2' : 'grid-cols-1'} gap-1.5 pt-1 border-t border-slate-100">
-                ${item.phone ? `
-                  <a href="tel:${item.phone}" class="bg-slate-100 hover:bg-slate-200 active:scale-95 text-slate-700 text-[11px] font-bold py-2 rounded-xl text-center flex items-center justify-center gap-1 transition">
-                    <i class="fa-solid fa-phone"></i> ${dict.btnCall}
+              <!-- 底部操作按鈕：有電話才顯示一鍵撥號 -->
+              <div class="mt-auto grid ${cleanPhone ? 'grid-cols-2' : 'grid-cols-1'} gap-1.5 pt-1 border-t border-slate-100">
+                ${cleanPhone ? `
+                  <a href="tel:${cleanPhone}" class="bg-emerald-50 hover:bg-emerald-100 text-emerald-700 active:scale-95 text-[11px] font-bold py-2 rounded-xl text-center flex items-center justify-center gap-1 transition">
+                    <i class="fa-solid fa-phone text-emerald-600"></i> ${dict.btnCall}
                   </a>
                 ` : ''}
                 <a href="${item.nav_link || ('https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(name + ' ' + (item.address || '')))}" target="_blank" rel="noopener noreferrer"
@@ -1455,10 +1497,13 @@
 
             <!-- 卡片內容主體 (標準視覺動線) -->
             <div class="p-4 flex flex-col flex-1">
-              <!-- 2. 店家大標置頂 -->
+              <!-- 2. 店家大標置頂（智慧連結） -->
               <h2 class="font-extrabold text-base text-slate-900 leading-tight mb-1 flex items-center gap-1.5">
                 <i class="fa-solid fa-store text-orange-500 text-xs"></i>
-                <span>${storeName}</span>
+                <a href="${getSmartLink(storeName, item.city, item.website)}" target="_blank" rel="noopener noreferrer" class="hover:text-orange-600 transition inline-flex items-center gap-1 group">
+                  <span>${storeName}</span>
+                  <i class="fa-solid fa-arrow-up-right-from-square text-[10px] text-slate-400 group-hover:text-orange-600 transition"></i>
+                </a>
               </h2>
 
               <!-- 3. 優惠主標 -->
@@ -1482,7 +1527,7 @@
                 ${item.phone ? `
                   <p class="flex items-center gap-1.5 font-mono">
                     <i class="fa-solid fa-phone text-slate-400 w-3"></i>
-                    <a href="tel:${item.phone}" class="hover:text-orange-600 transition">${item.phone}</a>
+                    <a href="tel:${getCleanPhone(item.phone)}" class="hover:text-orange-600 underline">${item.phone}</a>
                   </p>
                 ` : ''}
               </div>
@@ -1490,7 +1535,7 @@
               <!-- 5. 底部 CTA 一鍵導航按鈕 -->
               <div class="mt-auto grid ${item.phone ? 'grid-cols-2' : 'grid-cols-1'} gap-2 pt-1 border-t border-slate-100">
                 ${item.phone ? `
-                  <a href="tel:${item.phone}" class="bg-slate-100 hover:bg-slate-200 active:scale-95 text-slate-700 text-xs font-bold py-2.5 rounded-xl text-center flex items-center justify-center gap-1.5 transition">
+                  <a href="tel:${getCleanPhone(item.phone)}" class="bg-slate-100 hover:bg-slate-200 active:scale-95 text-slate-700 text-xs font-bold py-2.5 rounded-xl text-center flex items-center justify-center gap-1.5 transition">
                     <i class="fa-solid fa-phone text-xs"></i> ${dict.btnCall}
                   </a>
                 ` : ''}
@@ -1772,10 +1817,7 @@
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
         navigator.serviceWorker.register('./sw.js').then((reg) => {
-          // 每次開啟主動向伺服器檢查更新
           reg.update();
-
-          // 偵測到新版本時自動提示並重整生效
           reg.addEventListener('updatefound', () => {
             const newWorker = reg.installing;
             newWorker.addEventListener('statechange', () => {
