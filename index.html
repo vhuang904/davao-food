@@ -508,7 +508,7 @@
       }
     }
 
-    // ====== 會員狀態全域廣播監聽 ======
+    // ====== 會員狀態全域廣播監聽 (修復：登入後自動關閉彈窗) ======
     window.addEventListener("auth-user-changed", (e) => {
       const { user, profile, isLoggedIn } = e.detail;
       currentUser = user;
@@ -517,8 +517,14 @@
       const dict = I18N_DICT[currentLang] || I18N_DICT['zh-TW'];
       const authBtnText = document.getElementById('auth-btn-text');
       const avatarContainer = document.getElementById('user-avatar-container');
+      const authModalEl = document.getElementById('auth-modal');
 
       if (isLoggedIn && user) {
+        // 👉 核心修正：登入成功時，立刻把彈窗隱藏關閉！
+        if (authModalEl && !authModalEl.classList.contains('hidden')) {
+          authModalEl.classList.add('hidden');
+        }
+
         authBtnText.innerText = user.displayName ? `${user.displayName.split(' ')[0]} · ${currentUserProfile.points || 50}分` : `${dict.btnMember} · ${currentUserProfile.points || 50}分`;
         if (user.photoURL) {
           avatarContainer.innerHTML = `<img id="user-avatar-icon" src="${user.photoURL}" class="w-4 h-4 rounded-full ring-1 ring-amber-400 object-cover inline-block" />`;
