@@ -214,10 +214,26 @@
         <h3 class="text-sm font-bold text-slate-900 mb-1">加入大V會員</h3>
         <p class="text-xs text-slate-500 mb-4 leading-relaxed">解鎖私房探店評語、發表評論累積吃貨積分！</p>
         
+        <!-- 登入方式 1: Google 一鍵登入 -->
         <button id="btn-google-login" class="w-full bg-white border border-slate-200 hover:bg-slate-50 py-2.5 px-3 rounded-xl font-bold text-xs text-slate-800 flex items-center justify-center gap-2 shadow-xs transition mb-3">
           <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" class="w-4 h-4" alt="Google">
           使用 Google 帳號一鍵登入
         </button>
+
+        <!-- 分隔線 -->
+        <div class="flex items-center my-3">
+          <div class="flex-grow border-t border-slate-200"></div>
+          <span class="px-2 text-[10px] text-slate-400 font-bold">或使用 Email 魔法精靈</span>
+          <div class="flex-grow border-t border-slate-200"></div>
+        </div>
+
+        <!-- 登入方式 2: Email 魔法精靈 -->
+        <div class="space-y-2">
+          <input type="email" id="magic-email-input" placeholder="輸入電子信箱（免記密碼）" class="w-full bg-slate-100 text-slate-800 placeholder-slate-400 text-xs rounded-xl px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-orange-500" />
+          <button id="btn-magic-email" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs py-2.5 rounded-xl transition flex items-center justify-center gap-1.5 shadow-xs">
+            <i class="fa-solid fa-wand-magic-sparkles text-amber-300"></i> 發送魔法登入連結
+          </button>
+        </div>
       </div>
 
       <!-- 已登入個人中心畫面 -->
@@ -319,12 +335,13 @@
     import { getFirestore, collection, getDocs, doc, getDoc, setDoc, updateDoc, increment, query, where, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
     import { loadMasterDatabase, getLocalizedText } from './googleSheetService.js';
     import { 
-      initAuthService, 
-      loginWithGoogle, 
-      logoutUser, 
-      getCurrentProfile, 
-      addStoreComment 
-    } from './authService.js';
+  initAuthService, 
+  loginWithGoogle, 
+  sendMagicEmailLink,
+  logoutUser, 
+  getCurrentProfile, 
+  addStoreComment 
+} from './authService.js';
 
     // 啟動 PWA / Web 雙軌認證服務模組
     initAuthService();
@@ -1587,6 +1604,44 @@
       } catch (err) {
         console.error("登入失敗:", err);
         showToast('登入取消或發生異常');
+      }
+    });
+
+    // ====== Email 魔法精靈登入按鈕事件（新增在這裡） ======
+    const magicEmailBtn = document.getElementById('btn-magic-email');
+    if (magicEmailBtn) {
+      magicEmailBtn.addEventListener('click', async () => {
+        const emailInput = document.getElementById('magic-email-input');
+        const email = emailInput ? emailInput.value.trim() : '';
+        if (!email) {
+          showToast('請先輸入電子信箱！', 'fa-envelope');
+          return;
+        }
+
+        try {
+          magicEmailBtn.disabled = true;
+          magicEmailBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> 發送中...';
+          await sendMagicEmailLink(email);
+          showToast('登入信已寄出，請至信箱點擊連結！', 'fa-paper-plane');
+          document.getElementById('auth-modal').classList.add('hidden');
+          emailInput.value = '';
+        } catch (err) {
+          console.error("發送魔法信失敗:", err);
+          showToast(err.message || '寄送失敗，請確認信箱格式', 'fa-circle-exclamation');
+        } finally {
+          magicEmailBtn.disabled = false;
+          magicEmailBtn.innerHTML = '<i class="fa-solid fa-wand-magic-sparkles text-amber-300"></i> 發送魔法登入連結';
+        }
+      });
+    }
+
+    document.getElementById('btn-logout').addEventListener('click', async () => {
+      try {
+        await logoutUser();
+        authModal.classList.add('hidden');
+        showToast('已成功登出');
+      } catch (err) {
+        showToast('登出失敗，請稍候再試');
       }
     });
 
