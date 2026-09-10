@@ -992,8 +992,8 @@
             website: bigVItem.website || "",
             nav_link: bigVItem.nav_link || "",
             grab_url: bigVItem.grab_url || "",
-            googleRating: 5.0,
-            googleReviewCount: 50,
+            googleRating: Number(bigVItem.googleRating || bigVItem.google_rating || bigVItem.rating || 4.7),
+            googleReviewCount: Number(bigVItem.googleReviewCount || bigVItem.reviews_count || bigVItem.reviews || 120),
             images: parseImages(bigVItem, 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=800&auto=format&fit=crop')
           });
         });
