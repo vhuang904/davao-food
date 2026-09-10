@@ -755,7 +755,7 @@
         if (!isDown) return;
         e.preventDefault();
         const x = e.pageX - element.offsetLeft;
-        const walk = (x - startX) * 1.5; // 滑動靈敏度
+        const walk = (x - startX) * 1.5;
         element.scrollLeft = scrollLeft - walk;
       });
     }
@@ -766,7 +766,6 @@
         const dotsContainer = document.getElementById(`dots-${id}`);
         const dots = dotsContainer ? dotsContainer.querySelectorAll('.dot-indicator') : [];
         
-        // 監聽滾動更新指示點 (小圓點)
         track.addEventListener('scroll', () => {
           const slideWidth = track.offsetWidth;
           if (slideWidth === 0) return;
@@ -776,8 +775,48 @@
           });
         }, { passive: true });
 
-        // 套用平滑拖曳，不再全域 preventDefault 鎖死滾動
         makeScrollable(track);
+      });
+    }
+
+    const searchInput = document.getElementById('search-input');
+    const searchClearBtn = document.getElementById('search-clear-btn');
+    searchInput.addEventListener('input', (e) => {
+      currentSearchQuery = e.target.value.trim();
+      searchClearBtn.classList.toggle('hidden', !currentSearchQuery);
+      renderContent();
+    });
+    searchClearBtn.addEventListener('click', () => {
+      searchInput.value = '';
+      currentSearchQuery = '';
+      searchClearBtn.classList.add('hidden');
+      renderContent();
+    });
+
+    function enableHorizontalScroll() {
+      ['regionPillsNav', 'subFilterContainer'].forEach(id => {
+        const c = document.getElementById(id);
+        if (!c) return;
+
+        makeScrollable(c);
+
+        c.addEventListener('wheel', (e) => {
+          if (e.deltaY !== 0) {
+            e.preventDefault();
+            c.scrollLeft += e.deltaY;
+          }
+        }, { passive: false });
+      });
+    }
+
+    const langSelect = document.getElementById('lang-select');
+    if (langSelect) {
+      langSelect.value = currentLang;
+      langSelect.addEventListener('change', (e) => {
+        currentLang = e.target.value;
+        localStorage.setItem('ph_app_lang', currentLang);
+        updateUiLanguage();
+        showToast(`${I18N_DICT[currentLang].toastSwitch}${e.target.options[e.target.selectedIndex].text}`);
       });
     }
 
@@ -1145,7 +1184,6 @@
           if (currentSubFilter === 'bbq_seafood') return cat.includes('炭烤') || cat.includes('海鮮') || cat.includes('bbq') || cat.includes('steak');
           if (currentSubFilter === 'dessert_cafe') return cat.includes('甜點') || cat.includes('咖啡') || cat.includes('cafe');
           return cat.includes(currentSubFilter.toLowerCase());
-        }
       });
 
       if (currentSearchQuery) {
