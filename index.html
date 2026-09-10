@@ -4,11 +4,10 @@
   <meta charset="UTF-8" />
   <meta name="referrer" content="no-referrer" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-  <!-- PWA 與防快取宣告 -->
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
-  <meta name="app-version" content="20260910-v18.0-master" />
+  <meta name="app-version" content="20260910-v18.2-master" />
   <meta name="theme-color" content="#ea580c" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -24,113 +23,39 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 
   <style>
-  /* ============================================================
-      全域多語系排版防護罩 (i18n Anti-Break Layout Guard)
-      ============================================================ */
-  .grid > *, 
-  .flex > * {
-    min-width: 0;
-  }
+  .grid > *, .flex > * { min-width: 0; }
+  button, .region-pill, .main-tab-pill, [data-i18n] { word-break: break-word; overflow-wrap: break-word; }
+  .main-tab-pill { font-size: clamp(10px, 2.5vw, 12px) !important; white-space: nowrap; }
+  .sub-pill { flex-shrink: 0; white-space: nowrap; padding-left: 0.85rem !important; padding-right: 0.85rem !important; user-select: none; }
+  html[lang="en"] body, html[lang="tl"] body { letter-spacing: -0.015em; }
 
-  button, 
-  .region-pill, 
-  .main-tab-pill, 
-  [data-i18n] {
-    word-break: break-word;
-    overflow-wrap: break-word;
+  :root {
+    --sat: env(safe-area-inset-top, 0px);
+    --sab: env(safe-area-inset-bottom, 0px);
+    --sal: env(safe-area-inset-left, 0px);
+    --sar: env(safe-area-inset-right, 0px);
   }
-
-  .main-tab-pill {
-    font-size: clamp(10px, 2.5vw, 12px) !important;
-    white-space: nowrap;
-  }
-
-  /* 子分類膠囊：自動依文字延展寬度，平滑橫向捲動，滑鼠可抓取拖曳 */
-  .sub-pill {
-    flex-shrink: 0;
-    white-space: nowrap;
-    padding-left: 0.85rem !important;
-    padding-right: 0.85rem !important;
+  body {
+    padding-top: var(--sat);
+    padding-bottom: var(--sab);
+    padding-left: var(--sal);
+    padding-right: var(--sar);
+    -webkit-tap-highlight-color: transparent;
     user-select: none;
+    -webkit-font-smoothing: antialiased;
+    overscroll-behavior-y: contain;
   }
+  .hide-scrollbar::-webkit-scrollbar { display: none; }
+  .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+  .line-clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .line-clamp-3 { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+  .glass-header { background: linear-gradient(135deg, #f97316 0%, #ea580c 100%); box-shadow: 0 4px 20px -2px rgba(234, 88, 12, 0.25); }
+  .glass-modal { background: rgba(15, 23, 42, 0.65); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
 
-  html[lang="en"] body,
-  html[lang="tl"] body {
-    letter-spacing: -0.015em;
-  }
-  </style>
-
-  <style>
-    :root {
-      --sat: env(safe-area-inset-top, 0px);
-      --sab: env(safe-area-inset-bottom, 0px);
-      --sal: env(safe-area-inset-left, 0px);
-      --sar: env(safe-area-inset-right, 0px);
-    }
-    body {
-      padding-top: var(--sat);
-      padding-bottom: var(--sab);
-      padding-left: var(--sal);
-      padding-right: var(--sar);
-      -webkit-tap-highlight-color: transparent;
-      user-select: none;
-      -webkit-font-smoothing: antialiased;
-      overscroll-behavior-y: contain;
-    }
-    .hide-scrollbar::-webkit-scrollbar {
-      display: none;
-    }
-    .hide-scrollbar {
-      -ms-overflow-style: none;
-      scrollbar-width: none;
-    }
-    .line-clamp-2 {
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-    }
-    .line-clamp-3 {
-      display: -webkit-box;
-      -webkit-line-clamp: 3;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-    }
-    .glass-header {
-      background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
-      box-shadow: 0 4px 20px -2px rgba(234, 88, 12, 0.25);
-    }
-    .glass-modal {
-      background: rgba(15, 23, 42, 0.65);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-    }
-    
-    /* 第二階段滑動體驗核心引擎 (CSS Scroll Snap) */
-    .carousel-track {
-      display: flex;
-      width: 100%;
-      height: 100%;
-      overflow-x: auto;
-      scroll-snap-type: x mandatory;
-      -webkit-overflow-scrolling: touch;
-    }
-    .carousel-slide {
-      flex: 0 0 100%;
-      width: 100%;
-      height: 100%;
-      scroll-snap-align: center;
-      position: relative;
-    }
-    .drag-scroll-active {
-      cursor: grabbing !important;
-      cursor: -webkit-grabbing !important;
-    }
-    .dot-indicator.active {
-      width: 14px;
-      border-radius: 4px;
-      background: #FFFFFF;
-    }
+  .carousel-track { display: flex; width: 100%; height: 100%; overflow-x: auto; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; }
+  .carousel-slide { flex: 0 0 100%; width: 100%; height: 100%; scroll-snap-align: center; position: relative; }
+  .drag-scroll-active { cursor: grabbing !important; cursor: -webkit-grabbing !important; }
+  .dot-indicator.active { width: 14px; border-radius: 4px; background: #FFFFFF; }
   </style>
 </head>
 <body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col antialiased pb-16">
@@ -147,7 +72,7 @@
   <header class="sticky top-0 z-40 glass-header text-white transition-all">
     <div class="max-w-md mx-auto px-3.5 pt-2.5 pb-1 flex flex-col gap-2">
       
-      <!-- 第一列：標題緊貼人數膠囊 + 右側登入與分享 -->
+      <!-- 第一列：標題 + 瀏覽計數 + 登入與分享 -->
       <div class="flex items-center justify-between gap-1.5">
         <div class="flex items-center gap-2 min-w-0 flex-1">
           <div class="w-7 h-7 rounded-full bg-white/20 flex items-center justify-center shadow-inner flex-shrink-0">
@@ -156,7 +81,6 @@
           <div class="min-w-0 flex-1">
             <div class="flex items-center gap-2 flex-wrap">
               <h1 data-i18n="appTitle" class="text-xs sm:text-sm font-extrabold tracking-tight truncate leading-none">大V的旅遊窩</h1>
-              <!-- 瀏覽人數膠囊 -->
               <div class="bg-white/25 border border-white/40 rounded-full px-2 py-0.5 text-[9px] sm:text-[10px] font-bold text-white flex items-center gap-1 shadow-inner flex-shrink-0">
                 <i class="fa-solid fa-fire text-amber-300 text-[10px]"></i>
                 <span id="visit-count-val">3,856</span>
@@ -167,12 +91,10 @@
         </div>
 
         <div class="flex items-center gap-1.5 flex-shrink-0">
-          <!-- 登入按鈕 -->
           <button id="auth-state-btn" class="bg-white/20 hover:bg-white/30 border border-white/30 text-white rounded-lg px-2.5 py-1 text-[11px] font-bold flex items-center gap-1 transition active:scale-95 whitespace-nowrap">
             <i id="user-avatar-icon" class="fa-regular fa-user text-[10px]"></i>
             <span id="auth-btn-text" data-i18n="btnLogin">登入</span>
           </button>
-          <!-- 分享按鈕 -->
           <button id="share-btn" class="bg-white/20 hover:bg-white/30 border border-white/30 text-white rounded-lg px-2.5 py-1 text-[11px] font-bold flex items-center gap-1 transition active:scale-95 whitespace-nowrap">
             <i class="fa-solid fa-share-nodes text-[10px]"></i>
             <span data-i18n="shareBtn">分享</span>
@@ -206,10 +128,8 @@
         </button>
       </div>
 
-      <!-- 第四列：橫向地區膠囊（支援滑鼠滾輪 + 拖曳滑動） -->
-      <nav id="regionPillsNav" class="overflow-x-auto hide-scrollbar flex gap-1.5 pb-1 items-center cursor-grab">
-        <!-- 由 JS 動態依序渲染 -->
-      </nav>
+      <!-- 第四列：橫向地區膠囊 -->
+      <nav id="regionPillsNav" class="overflow-x-auto hide-scrollbar flex gap-1.5 pb-1 items-center cursor-grab"></nav>
     </div>
 
     <!-- 第五列：四大核心主分頁 Tab (美食、景點、醫療、特惠) -->
@@ -234,19 +154,16 @@
       </div>
     </div>
 
-    <!-- 第六列：子分類標籤過濾列（支援滑鼠滾輪 + 拖曳滑動，中英雙向精準對齊） -->
+    <!-- 第六列：子分類標籤過濾列 -->
     <div class="bg-white border-b border-slate-200/80 shadow-xs">
       <div class="max-w-md mx-auto px-3.5 py-2">
-        <div id="subFilterContainer" class="flex items-center gap-2 overflow-x-auto hide-scrollbar py-0.5 cursor-grab">
-          <!-- 由 JS 動態依主分頁與都會/海島模式變形渲染 -->
-        </div>
+        <div id="subFilterContainer" class="flex items-center gap-2 overflow-x-auto hide-scrollbar py-0.5 cursor-grab"></div>
       </div>
     </div>
   </header>
 
   <!-- 主內容容器 -->
   <main class="max-w-md mx-auto w-full px-3.5 flex-1 pt-3">
-    <!-- 篩選狀態摘要與統計 -->
     <div class="flex justify-between items-center mb-2.5 px-0.5 text-xs text-slate-500 font-medium">
       <span id="currentFilterSummary" class="flex items-center gap-1">
         <i class="fa-solid fa-location-dot text-orange-500"></i>
@@ -255,7 +172,7 @@
       <span id="itemCountBadge" class="bg-slate-200 text-slate-700 px-2 py-0.5 rounded-full text-[11px] font-mono font-bold">0</span>
     </div>
 
-    <!-- 1. 美食/住宿分頁清單 -->
+    <!-- 1. 美食清單 -->
     <div id="section-map" class="tab-panel flex flex-col gap-4">
       <div id="loading" class="text-center py-12 text-slate-400 text-xs">
         <i class="fa-solid fa-spinner fa-spin text-orange-500 text-base mb-2 block"></i>
@@ -264,17 +181,17 @@
       <div id="restaurant-list" class="flex flex-col gap-4"></div>
     </div>
 
-    <!-- 2. 景點導覽分頁清單 -->
+    <!-- 2. 景點清單 -->
     <div id="section-attraction" class="tab-panel hidden flex flex-col gap-4">
       <div id="attraction-list" class="flex flex-col gap-4"></div>
     </div>
 
-    <!-- 3. 醫療藥局分頁清單 -->
+    <!-- 3. 醫療藥局清單 -->
     <div id="section-medical" class="tab-panel hidden flex flex-col gap-4">
       <div id="medical-list" class="flex flex-col gap-4"></div>
     </div>
 
-    <!-- 4. 精選優惠 / 城市動態分頁清單 -->
+    <!-- 4. 特惠清單 -->
     <div id="section-news" class="tab-panel hidden flex flex-col gap-4">
       <div id="news-list" class="flex flex-col gap-4"></div>
     </div>
@@ -296,17 +213,6 @@
         <button id="btn-google-login" class="w-full bg-white border border-slate-200 hover:bg-slate-50 py-2.5 px-3 rounded-xl font-bold text-xs text-slate-800 flex items-center justify-center gap-2 shadow-xs transition mb-3">
           <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" class="w-4 h-4" alt="Google">
           使用 Google 帳號一鍵登入
-        </button>
-
-        <div class="flex items-center gap-2 text-slate-300 text-[11px] my-3">
-          <span class="flex-1 h-px bg-slate-200"></span>
-          <span class="text-slate-400">或使用 Email 無密碼登入</span>
-          <span class="flex-1 h-px bg-slate-200"></span>
-        </div>
-
-        <input type="email" id="magic-email-input" placeholder="請輸入您的 Email 信箱" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs outline-none focus:ring-2 focus:ring-orange-500 mb-2.5" />
-        <button id="btn-send-magic" class="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold text-xs py-2.5 rounded-xl transition shadow-sm">
-          ✉️ 發送魔法登入連結
         </button>
       </div>
 
@@ -376,7 +282,7 @@
     <img src="ai-avatar.jpg" alt="AI 管家" class="w-full h-full object-cover" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop';" />
   </button>
 
-  <!-- AI 管家彈出面板 -->
+  <!-- AI 管家面板 -->
   <div id="chat-modal" class="fixed bottom-20 right-4 w-80 max-w-[calc(100vw-32px)] h-112 max-h-[calc(100vh-110px)] bg-white rounded-2xl shadow-2xl border border-slate-200/80 flex flex-col z-50 overflow-hidden hidden">
     <div class="bg-orange-500 text-white p-3 flex justify-between items-center">
       <div class="flex items-center gap-2">
@@ -384,19 +290,17 @@
           <img src="ai-avatar.jpg" class="w-full h-full object-cover" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop';" />
         </div>
         <div>
-          <h3 id="chat-header-title" class="text-xs font-bold leading-tight">大V旅遊窩管家</h3>
+          <h3 class="text-xs font-bold leading-tight">大V旅遊窩管家</h3>
           <span class="text-[9px] text-amber-200">Powered by Gemini</span>
         </div>
       </div>
       <button id="btn-close-chat" class="text-white/80 hover:text-white text-base p-1">✕</button>
     </div>
-
     <div id="chat-messages" class="flex-1 p-3 overflow-y-auto space-y-2.5 text-xs bg-slate-50 hide-scrollbar">
       <div id="chat-welcome-bubble" class="bg-white p-2.5 rounded-xl rounded-tl-sm border border-slate-200/70 text-slate-800 leading-relaxed shadow-2xs self-start max-w-[88%]">
         嗨！我是大V旅遊窩管家 👋 歡迎來到菲律賓！想尋找在地特色私房美食、海島渡假村、急救醫療藥局或行程安排，隨時問我喔！
       </div>
     </div>
-
     <div class="p-2 bg-white border-t border-slate-100 flex gap-1.5 items-center">
       <input type="text" id="chat-input" placeholder="問點什麼吧（例：達沃必吃生魚片...）" class="flex-1 bg-slate-100 border-none rounded-xl px-3 py-2 text-xs focus:ring-2 focus:ring-orange-500 outline-none text-slate-800" />
       <button id="btn-send-chat" class="w-8 h-8 rounded-full bg-orange-500 hover:bg-orange-600 text-white flex items-center justify-center text-xs transition active:scale-95 shadow-sm">
@@ -409,7 +313,7 @@
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getFirestore, collection, getDocs, doc, getDoc, setDoc, updateDoc, increment, query, where, orderBy, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-    import { getAuth, GoogleAuthProvider, signInWithPopup, sendSignInLinkToEmail, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
     import { loadMasterDatabase, getLocalizedText } from './googleSheetService.js';
 
     const firebaseConfig = {
@@ -580,7 +484,6 @@
       if (user) {
         authBtnText.innerText = user.displayName ? user.displayName.split(' ')[0] : dict.btnMember;
         if (user.photoURL) {
-          avatarIcon.className = 'w-3.5 h-3.5 rounded-full object-cover';
           avatarIcon.outerHTML = `<img id="user-avatar-icon" src="${user.photoURL}" class="w-3.5 h-3.5 rounded-full object-cover inline-block" />`;
         }
         
@@ -776,7 +679,6 @@
       }
     };
 
-    // 解析支援多張照片陣列（支援逗號隔開）
     function parseImages(item, fallback) {
       if (!item) return [fallback];
       const keys = ['image_url', 'imageurl', 'image', 'photo', 'col_14', 'col_7'];
@@ -792,7 +694,6 @@
       return [fallback || 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&auto=format&fit=crop'];
     }
 
-    // 全站多圖輪播相簿產生器 (支援原生滑動、吸附與圓點聯動)
     function buildCarouselHtml(images, uniqueId, altTitle) {
       if (!images || images.length === 0) {
         images = ["https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=800&auto=format&fit=crop"];
@@ -826,14 +727,12 @@
       `;
     }
 
-    // 監聽輪播滑動、圓點聯動與滑鼠抓取拖曳
     function bindCarouselControls() {
       document.querySelectorAll('.carousel-track').forEach(track => {
         const id = track.id.replace('track-', '');
         const dotsContainer = document.getElementById(`dots-${id}`);
         const dots = dotsContainer ? dotsContainer.querySelectorAll('.dot-indicator') : [];
         
-        // 1. 滾動與指示點聯動
         track.addEventListener('scroll', () => {
           const slideWidth = track.offsetWidth;
           if (slideWidth === 0) return;
@@ -843,7 +742,6 @@
           });
         }, { passive: true });
 
-        // 2. 支援滑鼠滾輪橫向滾動
         track.addEventListener('wheel', (e) => {
           if (e.deltaY !== 0) {
             e.preventDefault();
@@ -851,7 +749,6 @@
           }
         }, { passive: false });
 
-        // 3. 支援滑鼠按住左右拖曳 (Mouse Drag-to-Scroll)
         let isDown = false;
         let startX, scrollLeft;
 
@@ -878,7 +775,7 @@
       });
     }
 
-    // 核心資料擷取與聚合整合 (四大分頁真值對齊 + Auto_Discovered 路由 + Medical 分流)
+    // 核心資料聚合整合
     async function fetchData() {
       try {
         let sheetMaster = { bigVPicks: [], attractions: [], promotions: [], autoDiscovered: [], medical: [] };
@@ -892,12 +789,10 @@
         const mergedMap = new Map();
         const bigVLookup = new Map();
 
-        // 1. 建立 BigV 私房嚴選索引 Map
         (sheetMaster.bigVPicks || []).forEach(v => {
           if (v.id) bigVLookup.set(v.id.toLowerCase().trim(), v);
         });
 
-        // 2. 處理 Firebase 資料並與 BigV 私房嚴選去重對齊
         rawList.forEach(item => {
           const nameAll = (safeStr(item.name) + ' ' + safeStr(item.name_en) + ' ' + safeStr(item.id)).toLowerCase();
           let key = item.id;
@@ -961,7 +856,6 @@
           }
         });
 
-        // 3. 注入 Google Sheet 剩餘的站長私房清單
         bigVLookup.forEach(bigVItem => {
           mergedMap.set(bigVItem.id.toLowerCase().trim(), {
             id: bigVItem.id,
@@ -991,7 +885,6 @@
           });
         });
 
-        // 4. Auto_Discovered 資料流
         const autoAttractions = [];
         (sheetMaster.autoDiscovered || []).forEach(autoItem => {
           if (!autoItem.id) return;
@@ -1007,7 +900,7 @@
               name_zh: autoItem.name_zh || autoItem.name_en || autoItem.id,
               name_en: autoItem.name_en || '',
               name_tl: autoItem.name_tl || '',
-              desc_zh: `【Google探索指標】評分 ${autoItem.googleRating || 4.5} 星 (累積 ${autoItem.googleReviewCount || 50}+ 則在地評論)`,
+              desc_zh: `【Google探索指標】評分 ${autoItem.googleRating || 4.5} 星 (累積 ${autoItem.googleReviewCount || 50}+ 則好評)`,
               desc_en: `Google Pick: Rated ${autoItem.googleRating || 4.5} stars (${autoItem.googleReviewCount || 50}+ reviews)`,
               desc_tl: `Google Pick: May markang ${autoItem.googleRating || 4.5} bituin`,
               address: autoItem.address || '',
@@ -1047,7 +940,6 @@
           }
         });
 
-        // 5. 餐廳列表排序
         allRestaurants = Array.from(mergedMap.values())
           .map(item => {
             const r = item.googleRating || 0;
@@ -1070,20 +962,17 @@
             return (b.googleRating || 0) - (a.googleRating || 0);
           });
 
-        // 6. Attractions 整合
         const sheetAttractions = (sheetMaster.attractions || []).map(att => ({
           ...att,
           images: parseImages(att, 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&auto=format&fit=crop')
         }));
         allAttractions = [...sheetAttractions, ...autoAttractions];
 
-        // 7. Medical 醫療專區整合
         allMedical = (sheetMaster.medical || []).map(med => ({
           ...med,
           images: parseImages(med, 'https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=800&auto=format&fit=crop')
         }));
 
-        // 8. Promotions 整合
         allNews = (sheetMaster.promotions || []).map(promo => ({
           ...promo,
           images: parseImages(promo, 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=800&auto=format&fit=crop')
@@ -1211,14 +1100,10 @@
       });
 
       const mapLabel = document.getElementById('tab-label-map');
-      if (mapLabel) {
-        mapLabel.innerText = isIsland ? dict.navFoodIsland : dict.navFood;
-      }
+      if (mapLabel) mapLabel.innerText = isIsland ? dict.navFoodIsland : dict.navFood;
 
       const newsLabel = document.getElementById('tab-label-news');
-      if (newsLabel) {
-        newsLabel.innerText = isIsland ? dict.navNewsIsland : dict.navNews;
-      }
+      if (newsLabel) newsLabel.innerText = isIsland ? dict.navNewsIsland : dict.navNews;
 
       if (currentMainTab === 'map') renderRestaurants();
       if (currentMainTab === 'attraction') renderAttractions();
@@ -1229,6 +1114,7 @@
       bindCommentButtons();
     }
 
+    // 1. 餐廳渲染 (智慧合成介紹 + 討論按鈕)
     function renderRestaurants() {
       const listEl = document.getElementById('restaurant-list');
       document.getElementById('loading').style.display = 'none';
@@ -1247,73 +1133,54 @@
           return true;
         } else {
           const cat = (safeStr(item.categoryKey) + ' ' + safeStr(item.category)).toLowerCase();
-          if (currentSubFilter === 'filipino') {
-            return cat.includes('菲餐') || cat.includes('filipino') || cat.includes('lechon') || cat.includes('inasal');
-          }
-          if (currentSubFilter === 'japanese') {
-            return cat.includes('日式') || cat.includes('日料') || cat.includes('燒肉') || cat.includes('生魚片') || cat.includes('japanese') || cat.includes('korean') || cat.includes('yaki');
-          }
-          if (currentSubFilter === 'chinese') {
-            return cat.includes('中餐') || cat.includes('火鍋') || cat.includes('chinese') || cat.includes('hotpot');
-          }
-          if (currentSubFilter === 'bbq_seafood') {
-            return cat.includes('炭烤') || cat.includes('海鮮') || cat.includes('bbq') || cat.includes('seafood') || cat.includes('steak') || cat.includes('grill');
-          }
-          if (currentSubFilter === 'dessert_cafe') {
-            return cat.includes('甜點') || cat.includes('咖啡') || cat.includes('cafe') || cat.includes('coffee') || cat.includes('dessert') || cat.includes('bakery') || cat.includes('手搖');
-          }
+          if (currentSubFilter === 'filipino') return cat.includes('菲餐') || cat.includes('filipino');
+          if (currentSubFilter === 'japanese') return cat.includes('日式') || cat.includes('japanese') || cat.includes('yaki');
+          if (currentSubFilter === 'chinese') return cat.includes('中餐') || cat.includes('chinese') || cat.includes('hotpot');
+          if (currentSubFilter === 'bbq_seafood') return cat.includes('炭烤') || cat.includes('海鮮') || cat.includes('bbq') || cat.includes('steak');
+          if (currentSubFilter === 'dessert_cafe') return cat.includes('甜點') || cat.includes('咖啡') || cat.includes('cafe');
           return cat.includes(currentSubFilter.toLowerCase());
         }
       });
 
       if (currentSearchQuery) {
         const q = currentSearchQuery.toLowerCase();
-        filtered = filtered.filter(item => {
-          const text = (safeStr(item.name) + ' ' + safeStr(item.name_en) + ' ' + safeStr(item.address)).toLowerCase();
-          return text.includes(q);
-        });
+        filtered = filtered.filter(item => (safeStr(item.name) + ' ' + safeStr(item.name_en) + ' ' + safeStr(item.address)).includes(q));
       }
 
       const curReg = [...REGION_CONFIG.cities, ...REGION_CONFIG.islands].find(r => r.id === currentCity);
       const cityName = dict['city_' + currentCity] || curReg?.name || '';
-      
-      let subName = dict.filterAll;
-      if (currentSubFilter !== 'all') {
-        const currentList = isIslandMode(currentCity) ? SUB_FILTERS.food_island : SUB_FILTERS.food_urban;
-        const targetObj = currentList.find(f => f.key === currentSubFilter);
-        if (targetObj && typeof targetObj.label === 'object') {
-          subName = targetObj.label[currentLang] || targetObj.label['zh-TW'];
-        } else if (targetObj) {
-          subName = targetObj.label;
-        }
-      }
-
-      filterSummaryText.textContent = `${cityName} · ${subName}`;
+      filterSummaryText.textContent = `${cityName} · 美食推薦`;
       itemCountBadge.textContent = `${filtered.length} ${dict.placesCountUnit}`;
 
       if (filtered.length === 0) {
-        listEl.innerHTML = `
-          <div class="bg-white rounded-2xl p-8 text-center border border-slate-200/80 shadow-xs mt-2">
-            <i class="fa-solid fa-compass-drafting text-3xl text-slate-300 mb-2"></i>
-            <h4 class="text-xs font-bold text-slate-700">${dict.noResult}</h4>
-            <p class="text-[11px] text-slate-400 mt-1">${dict.noResultSub}</p>
-          </div>
-        `;
+        listEl.innerHTML = `<div class="bg-white rounded-2xl p-8 text-center border border-slate-200/80 shadow-xs mt-2"><h4 class="text-xs font-bold text-slate-700">${dict.noResult}</h4><p class="text-[11px] text-slate-400 mt-1">${dict.noResultSub}</p></div>`;
         return;
       }
 
       listEl.innerHTML = filtered.map((item, idx) => {
         const name = getLocalizedText(item, 'name', currentShortLang) || item.name || item.name_en || '特色名店';
-        const desc = getLocalizedText(item, 'desc', currentShortLang) || getText(item.description) || '暫無詳細介紹。';
         const isCurated = !!item.isCurated;
         const isGoogleTop = !!item.isGoogleTop;
-
         const curatedNote = getLocalizedText(item, 'bigv_comment', currentShortLang) || item.curatedNote || '';
         const mustTry = getLocalizedText(item, 'must_try', currentShortLang) || item.mustTry || '';
+        const reviewCount = item.googleReviewCount || 50;
+        const rating = item.googleRating || 4.5;
 
-        const reviewCount = item.googleReviewCount || 0;
+        // 智慧簡介生成邏輯：絕不顯示暫無詳細介紹
+        let desc = getLocalizedText(item, 'desc', currentShortLang) || getText(item.description);
+        if (!desc || desc.trim() === '') {
+          if (isCurated && curatedNote) {
+            desc = curatedNote;
+          } else if (currentShortLang === 'en') {
+            desc = `Top-rated hotspot in ${item.city || 'the Philippines'}! Rated ${rating} stars with over ${reviewCount}+ authentic diner reviews.`;
+          } else if (currentShortLang === 'tl') {
+            desc = `Tanyag na kainan sa ${item.city || 'Pilipinas'}! May markang ${rating} bituin mula sa higit ${reviewCount}+ na kumento.`;
+          } else {
+            desc = `在地超人氣推薦名店！Google 評分高達 ${rating} 星，累積逾 ${reviewCount}+ 則真實饕客好評推薦。`;
+          }
+        }
+
         const isFoodOnly = (item.islandType === 'food') || (!item.islandType && item.categoryKey !== 'hotel_villa' && item.categoryKey !== 'hotel' && item.categoryKey !== 'villa');
-
         const smartLink = getSmartLink(item.name_en || name, item.city, item.website);
         const cleanPhone = getCleanPhone(item.phone);
 
@@ -1321,86 +1188,43 @@
           <article class="bg-white rounded-2xl overflow-hidden shadow-xs hover:shadow-md border ${
             isCurated ? 'border-amber-400 ring-2 ring-amber-400/20' : isGoogleTop ? 'border-sky-300 ring-2 ring-sky-300/20' : 'border-slate-200/80'
           } flex flex-col transition">
-            
             <div class="relative w-full overflow-hidden">
               ${buildCarouselHtml(item.images, `res-${idx}`, name)}
-
-              ${isCurated ? `
-                <div class="absolute top-2.5 left-2.5 bg-neutral-900/95 text-amber-300 text-[11px] font-extrabold px-2.5 py-1 rounded-full shadow-lg flex items-center gap-1.5 border border-amber-400/60 backdrop-blur-md z-10">
-                  <i class="fa-solid fa-crown text-amber-400"></i> ${dict.badgeCurated}
-                </div>
-              ` : ''}
-
-              ${(!isCurated && isGoogleTop) ? `
-                <div class="absolute top-2.5 left-2.5 bg-sky-900/95 text-sky-200 text-[11px] font-extrabold px-2.5 py-1 rounded-full shadow-lg flex items-center gap-1 border border-sky-400/60 backdrop-blur-md z-10">
-                  <i class="fa-solid fa-fire text-amber-300"></i> ${dict.badgeGoogleTop}
-                </div>
-              ` : ''}
-
+              ${isCurated ? `<div class="absolute top-2.5 left-2.5 bg-neutral-900/95 text-amber-300 text-[11px] font-extrabold px-2.5 py-1 rounded-full shadow-lg flex items-center gap-1.5 border border-amber-400/60 backdrop-blur-md z-10"><i class="fa-solid fa-crown text-amber-400"></i> ${dict.badgeCurated}</div>` : ''}
+              ${(!isCurated && isGoogleTop) ? `<div class="absolute top-2.5 left-2.5 bg-sky-900/95 text-sky-200 text-[11px] font-extrabold px-2.5 py-1 rounded-full shadow-lg flex items-center gap-1 border border-sky-400/60 backdrop-blur-md z-10"><i class="fa-solid fa-fire text-amber-300"></i> ${dict.badgeGoogleTop}</div>` : ''}
               <div class="absolute bottom-2.5 left-2.5 flex items-center gap-1.5 z-10">
-                <span class="bg-slate-900/80 backdrop-blur-xs text-white text-[10px] px-2 py-0.5 rounded font-medium">
-                  ${dict['city_' + item.city] || item.city}
-                </span>
-                ${item.googleRating ? `
-                  <span class="bg-amber-500 text-white text-[10px] px-2 py-0.5 rounded font-bold flex items-center gap-0.5 shadow-xs">
-                    <i class="fa-solid fa-star text-[9px]"></i> ${item.googleRating} (${reviewCount})
-                  </span>
-                ` : ''}
+                <span class="bg-slate-900/80 backdrop-blur-xs text-white text-[10px] px-2 py-0.5 rounded font-medium">${dict['city_' + item.city] || item.city}</span>
+                <span class="bg-amber-500 text-white text-[10px] px-2 py-0.5 rounded font-bold flex items-center gap-0.5 shadow-xs"><i class="fa-solid fa-star text-[9px]"></i> ${rating} (${reviewCount})</span>
               </div>
             </div>
 
             <div class="p-3.5 flex flex-col flex-1">
-              <!-- 店名升級為智慧連結：有官網開官網，無官網開 Google 搜尋 -->
               <h2 class="font-extrabold text-sm text-slate-900 leading-snug mb-1">
-                <a href="${smartLink}" target="_blank" rel="noopener noreferrer" class="hover:text-orange-600 transition inline-flex items-center gap-1.5 group" title="點擊前往官方網站或 Google 搜尋">
+                <a href="${smartLink}" target="_blank" rel="noopener noreferrer" class="hover:text-orange-600 transition inline-flex items-center gap-1.5 group" title="前往官網或 Google 搜尋">
                   <span>${name}</span>
                   <i class="fa-solid fa-arrow-up-right-from-square text-[10px] text-slate-400 group-hover:text-orange-600 transition"></i>
                 </a>
               </h2>
 
-              ${(isCurated && curatedNote) ? `
-                <div class="bg-amber-50/90 border-l-3 border-amber-500 p-2.5 rounded-r-lg text-xs text-amber-950 font-medium leading-relaxed mb-2.5">
-                  💡 <b>${dict.curatedNotePrefix}</b>${curatedNote}
-                </div>
-              ` : ''}
-              
-              ${(isCurated && mustTry) ? `
-                <div class="flex items-start gap-1.5 p-2 mb-2.5 rounded-lg bg-amber-50/60 border border-amber-200/80 text-xs text-amber-900">
-                  <span class="shrink-0 px-1.5 py-0.5 rounded bg-amber-500 text-white font-bold text-[10px] leading-none mt-0.5">${dict.mustTryBadge}</span>
-                  <span class="font-medium leading-tight">${mustTry}</span>
-                </div>
-              ` : ''}
+              ${(isCurated && curatedNote) ? `<div class="bg-amber-50/90 border-l-3 border-amber-500 p-2 rounded-r-lg text-xs text-amber-950 font-medium leading-relaxed mb-2">💡 <b>${dict.curatedNotePrefix}</b>${curatedNote}</div>` : ''}
+              ${(isCurated && mustTry) ? `<div class="flex items-start gap-1.5 p-1.5 mb-2 rounded-lg bg-amber-50/60 border border-amber-200/80 text-xs text-amber-900"><span class="shrink-0 px-1.5 py-0.5 rounded bg-amber-500 text-white font-bold text-[10px] leading-none mt-0.5">${dict.mustTryBadge}</span><span class="font-medium leading-tight">${mustTry}</span></div>` : ''}
 
-              ${(!isCurated && isGoogleTop && item.googleTopNote) ? `
-                <div class="bg-sky-50/90 border-l-3 border-sky-500 p-2.5 rounded-r-lg text-xs text-sky-950 font-medium leading-relaxed mb-2.5">
-                  💬 <b>${dict.googleTopNotePrefix}</b>${item.googleTopNote}
-                </div>
-              ` : ''}
-
-              <p class="text-xs text-slate-600 line-clamp-2 leading-relaxed mb-3">
-                ${desc}
-              </p>
+              <p class="text-xs text-slate-600 line-clamp-2 leading-relaxed mb-3">${desc}</p>
 
               <div class="space-y-1 text-[11px] text-slate-500 border-t border-slate-100 pt-2 mb-3 font-medium">
-                <p class="flex items-center gap-1.5 truncate">
-                  <i class="fa-solid fa-location-dot text-orange-500 w-3"></i>
-                  <span class="truncate">${item.address || dict.addressEmpty}</span>
-                </p>
-                <p class="flex items-center gap-1.5 font-mono">
-                  <i class="fa-solid fa-phone text-slate-400 w-3"></i>
-                  <span>${cleanPhone ? `<a href="tel:${cleanPhone}" class="hover:text-orange-600 underline">${item.phone}</a>` : dict.phoneEmpty}</span>
-                </p>
+                <p class="flex items-center gap-1.5 truncate"><i class="fa-solid fa-location-dot text-orange-500 w-3"></i><span class="truncate">${item.address || dict.addressEmpty}</span></p>
+                <p class="flex items-center gap-1.5 font-mono"><i class="fa-solid fa-phone text-slate-400 w-3"></i><span>${cleanPhone ? `<a href="tel:${cleanPhone}" class="hover:text-orange-600 underline">${item.phone}</a>` : dict.phoneEmpty}</span></p>
               </div>
 
+              <!-- 底部操作三按鈕：討論留言、一鍵撥號、導航地圖 -->
               <div class="mt-auto grid grid-cols-3 gap-1.5 pt-1 border-t border-slate-100">
                 <button data-comment-id="${item.id}" data-comment-name="${name}" class="btn-open-comment bg-slate-100 hover:bg-slate-200 active:scale-95 text-slate-700 text-[11px] font-bold py-2 rounded-xl text-center flex items-center justify-center gap-1 transition">
-                  <i class="fa-regular fa-comment-dots"></i> ${dict.btnComment}
+                  <i class="fa-regular fa-comment-dots text-orange-500"></i> ${dict.btnComment}
                 </button>
                 <a href="${cleanPhone ? `tel:${cleanPhone}` : '#'}" class="bg-emerald-50 hover:bg-emerald-100 text-emerald-700 active:scale-95 text-[11px] font-bold py-2 rounded-xl text-center flex items-center justify-center gap-1 transition ${!cleanPhone ? 'opacity-50 pointer-events-none' : ''}">
                   <i class="fa-solid fa-phone text-emerald-600"></i> ${dict.btnCall}
                 </a>
-                <a href="${item.nav_link || ('https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(name + ' ' + (item.address || '')))}" target="_blank" rel="noopener noreferrer"
-                   class="bg-orange-500 hover:bg-orange-600 active:scale-95 text-white text-[11px] font-bold py-2 rounded-xl text-center flex items-center justify-center gap-1 shadow-xs transition">
+                <a href="${item.nav_link || ('https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(name + ' ' + (item.address || '')))}" target="_blank" rel="noopener noreferrer" class="bg-orange-500 hover:bg-orange-600 active:scale-95 text-white text-[11px] font-bold py-2 rounded-xl text-center flex items-center justify-center gap-1 shadow-xs transition">
                   <i class="fa-solid fa-location-arrow"></i> ${dict.btnNav}
                 </a>
               </div>
@@ -1410,67 +1234,39 @@
       }).join('');
     }
 
+    // 2. 景點導覽渲染
     function renderAttractions() {
       const listEl = document.getElementById('attraction-list');
       const dict = I18N_DICT[currentLang] || I18N_DICT['zh-TW'];
       const currentShortLang = currentLang === 'zh-TW' ? 'zh' : currentLang;
 
       let filtered = allAttractions.filter(item => {
-        const matchC = !item.city || item.city === 'all' || isCityMatch(item, currentCity);
-        if (!matchC) return false;
+        if (!item.city || item.city === 'all' || !isCityMatch(item, currentCity)) return false;
         if (!currentSubFilter || currentSubFilter === 'all') return true;
 
         const cat = (safeStr(item.category) + ' ' + safeStr(item.id) + ' ' + safeStr(item.name_zh) + ' ' + safeStr(item.name_en)).toLowerCase();
-        
-        if (currentSubFilter === 'shopping') {
-          return cat.includes('shop') || cat.includes('商場') || cat.includes('購物') || cat.includes('mall') || cat.includes('market') || cat.includes('binondo');
-        }
-        if (currentSubFilter === 'casino') {
-          return cat.includes('casino') || cat.includes('賭場') || cat.includes('娛樂') || cat.includes('dreams') || cat.includes('okada') || cat.includes('solaire') || cat.includes('nustar');
-        }
-        if (currentSubFilter === 'history') {
-          return cat.includes('history') || cat.includes('歷史') || cat.includes('文化') || cat.includes('古蹟') || cat.includes('church') || cat.includes('cathedral') || cat.includes('教堂') || cat.includes('intramuros') || cat.includes('pedro') || cat.includes('santo') || cat.includes('magellan') || cat.includes('museum') || cat.includes('博物館') || cat.includes('leah');
-        }
-        if (currentSubFilter === 'nature') {
-          return cat.includes('nature') || cat.includes('自然') || cat.includes('公園') || cat.includes('park') || cat.includes('garden') || cat.includes('ocean') || cat.includes('zoo') || cat.includes('tarsier') || cat.includes('hills') || cat.includes('cave') || cat.includes('falls') || cat.includes('tops') || cat.includes('eden') || cat.includes('croc') || cat.includes('農莊') || cat.includes('生態');
-        }
-        if (currentSubFilter === 'beach') {
-          return cat.includes('beach') || cat.includes('沙灘') || cat.includes('海灘');
-        }
-        if (currentSubFilter === 'island_hopping') {
-          return cat.includes('island') || cat.includes('跳島') || cat.includes('浮潛') || cat.includes('lagoon');
-        }
-
+        if (currentSubFilter === 'shopping') return cat.includes('mall') || cat.includes('商場') || cat.includes('shop');
+        if (currentSubFilter === 'history') return cat.includes('history') || cat.includes('歷史') || cat.includes('教堂');
+        if (currentSubFilter === 'nature') return cat.includes('nature') || cat.includes('自然') || cat.includes('公園') || cat.includes('park') || cat.includes('農莊') || cat.includes('園區') || cat.includes('eden');
         return cat.includes(currentSubFilter.toLowerCase());
       });
 
       if (currentSearchQuery) {
         const q = currentSearchQuery.toLowerCase();
-        filtered = filtered.filter(item => {
-          const name = getLocalizedText(item, 'name', currentShortLang);
-          return (safeStr(name) + ' ' + safeStr(item.address)).includes(q);
-        });
+        filtered = filtered.filter(item => (safeStr(item.name_zh) + ' ' + safeStr(item.name_en) + ' ' + safeStr(item.address)).includes(q));
       }
 
-      const curReg = [...REGION_CONFIG.cities, ...REGION_CONFIG.islands].find(r => r.id === currentCity);
-      const cityName = dict['city_' + currentCity] || curReg?.name || '';
-      filterSummaryText.textContent = `${cityName} · ${dict.navSpot}`;
+      filterSummaryText.textContent = `${dict['city_' + currentCity] || ''} · ${dict.navSpot}`;
       itemCountBadge.textContent = `${filtered.length} ${dict.spotsCountUnit}`;
 
       if (filtered.length === 0) {
-        listEl.innerHTML = `
-          <div class="bg-white rounded-2xl p-8 text-center border border-slate-200/80 shadow-xs mt-2">
-            <i class="fa-solid fa-camera-retro text-3xl text-slate-300 mb-2"></i>
-            <h4 class="text-xs font-bold text-slate-700">${dict.noResult}</h4>
-            <p class="text-[11px] text-slate-400 mt-1">${dict.noResultSub}</p>
-          </div>
-        `;
+        listEl.innerHTML = `<div class="bg-white rounded-2xl p-8 text-center border border-slate-200/80 shadow-xs mt-2"><h4 class="text-xs font-bold text-slate-700">${dict.noResult}</h4></div>`;
         return;
       }
 
       listEl.innerHTML = filtered.map((item, idx) => {
-        const name = getLocalizedText(item, 'name', currentShortLang) || item.name_en || item.name_zh || item.id || '景點地標';
-        const desc = getLocalizedText(item, 'desc', currentShortLang) || getText(item.description) || '菲律賓熱門推薦地標。';
+        const name = getLocalizedText(item, 'name', currentShortLang) || item.name_en || item.name_zh || item.id;
+        const desc = getLocalizedText(item, 'desc', currentShortLang) || getText(item.description) || '熱門推薦地標。';
         const smartLink = getSmartLink(item.name_en || name, item.city, item.website);
         const cleanPhone = getCleanPhone(item.phone);
 
@@ -1479,21 +1275,14 @@
             <div class="relative w-full overflow-hidden">
               ${buildCarouselHtml(item.images, `attr-${idx}`, name)}
               <div class="absolute bottom-2.5 left-2.5 flex items-center gap-1.5 z-10">
-                <span class="bg-slate-900/80 backdrop-blur-xs text-white text-[10px] px-2 py-0.5 rounded font-medium">
-                  ${dict['city_' + item.city] || item.city}
-                </span>
-                ${item.category ? `
-                  <span class="bg-orange-600/90 backdrop-blur-xs text-white text-[10px] px-2 py-0.5 rounded font-medium">
-                    ${item.category}
-                  </span>
-                ` : ''}
+                <span class="bg-slate-900/80 backdrop-blur-xs text-white text-[10px] px-2 py-0.5 rounded font-medium">${dict['city_' + item.city] || item.city}</span>
+                ${item.category ? `<span class="bg-orange-600/90 backdrop-blur-xs text-white text-[10px] px-2 py-0.5 rounded font-medium">${item.category}</span>` : ''}
               </div>
             </div>
 
             <div class="p-3.5 flex flex-col flex-1">
-              <!-- 景點名稱升級為智慧連結：有官網開官網，無官網開 Google 搜尋 -->
               <h2 class="font-extrabold text-sm text-slate-900 mb-1 leading-snug">
-                <a href="${smartLink}" target="_blank" rel="noopener noreferrer" class="hover:text-orange-600 transition inline-flex items-center gap-1.5 group" title="點擊前往官方網站或 Google 搜尋">
+                <a href="${smartLink}" target="_blank" rel="noopener noreferrer" class="hover:text-orange-600 transition inline-flex items-center gap-1.5 group" title="前往官網或 Google 搜尋">
                   <span>${name}</span>
                   <i class="fa-solid fa-arrow-up-right-from-square text-[10px] text-slate-400 group-hover:text-orange-600 transition"></i>
                 </a>
@@ -1502,26 +1291,19 @@
               <p class="text-xs text-slate-600 line-clamp-2 leading-relaxed mb-3">${desc}</p>
               
               <div class="space-y-1 text-[11px] text-slate-500 border-t border-slate-100 pt-2 mb-3 font-medium">
-                <p class="flex items-center gap-1.5 truncate">
-                  <i class="fa-solid fa-location-dot text-orange-500 w-3"></i>
-                  <span class="truncate">${item.address || dict.addressEmpty}</span>
-                </p>
-                <p class="flex items-center gap-1.5 font-mono">
-                  <i class="fa-solid fa-phone text-slate-400 w-3"></i>
-                  <span>${cleanPhone ? `<a href="tel:${cleanPhone}" class="hover:text-orange-600 underline">${item.phone}</a>` : dict.phoneEmpty}</span>
-                </p>
+                <p class="flex items-center gap-1.5 truncate"><i class="fa-solid fa-location-dot text-orange-500 w-3"></i><span class="truncate">${item.address || dict.addressEmpty}</span></p>
+                <p class="flex items-center gap-1.5 font-mono"><i class="fa-solid fa-phone text-slate-400 w-3"></i><span>${cleanPhone ? `<a href="tel:${cleanPhone}" class="hover:text-orange-600 underline">${item.phone}</a>` : dict.phoneEmpty}</span></p>
               </div>
 
-              <!-- 底部操作按鈕：加入留言討論、一鍵撥號與導航 -->
+              <!-- 底部操作按鈕 -->
               <div class="mt-auto grid grid-cols-3 gap-1.5 pt-1 border-t border-slate-100">
                 <button data-comment-id="${item.id}" data-comment-name="${name}" class="btn-open-comment bg-slate-100 hover:bg-slate-200 active:scale-95 text-slate-700 text-[11px] font-bold py-2 rounded-xl text-center flex items-center justify-center gap-1 transition">
-                  <i class="fa-regular fa-comment-dots"></i> ${dict.btnComment}
+                  <i class="fa-regular fa-comment-dots text-orange-500"></i> ${dict.btnComment}
                 </button>
                 <a href="${cleanPhone ? `tel:${cleanPhone}` : '#'}" class="bg-emerald-50 hover:bg-emerald-100 text-emerald-700 active:scale-95 text-[11px] font-bold py-2 rounded-xl text-center flex items-center justify-center gap-1 transition ${!cleanPhone ? 'opacity-50 pointer-events-none' : ''}">
                   <i class="fa-solid fa-phone text-emerald-600"></i> ${dict.btnCall}
                 </a>
-                <a href="${item.nav_link || ('https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(name + ' ' + (item.address || '')))}" target="_blank" rel="noopener noreferrer"
-                   class="bg-orange-500 hover:bg-orange-600 active:scale-95 text-white text-[11px] font-bold py-2 rounded-xl text-center flex items-center justify-center gap-1 shadow-xs transition">
+                <a href="${item.nav_link || ('https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(name + ' ' + (item.address || '')))}" target="_blank" rel="noopener noreferrer" class="bg-orange-500 hover:bg-orange-600 active:scale-95 text-white text-[11px] font-bold py-2 rounded-xl text-center flex items-center justify-center gap-1 shadow-xs transition">
                   <i class="fa-solid fa-location-arrow"></i> ${dict.btnNav}
                 </a>
               </div>
@@ -1531,7 +1313,7 @@
       }).join('');
     }
 
-    // 3. 醫療藥局分頁清單渲染 (Medical Tab)
+    // 3. 醫療藥局渲染 (多欄位電話防呆)
     function renderMedical() {
       const listEl = document.getElementById('medical-list');
       const dict = I18N_DICT[currentLang] || I18N_DICT['zh-TW'];
@@ -1545,36 +1327,26 @@
 
       if (currentSearchQuery) {
         const q = currentSearchQuery.toLowerCase();
-        filtered = filtered.filter(item => {
-          const name = getLocalizedText(item, 'name', currentShortLang);
-          return (safeStr(name) + ' ' + safeStr(item.address)).includes(q);
-        });
+        filtered = filtered.filter(item => (safeStr(item.name_zh) + ' ' + safeStr(item.name_en) + ' ' + safeStr(item.address)).includes(q));
       }
 
-      const curReg = [...REGION_CONFIG.cities, ...REGION_CONFIG.islands].find(r => r.id === currentCity);
-      const cityName = dict['city_' + currentCity] || curReg?.name || '';
-      filterSummaryText.textContent = `${cityName} · ${dict.navMedical}`;
+      filterSummaryText.textContent = `${dict['city_' + currentCity] || ''} · ${dict.navMedical}`;
       itemCountBadge.textContent = `${filtered.length} ${dict.medicalCountUnit}`;
 
       if (filtered.length === 0) {
-        listEl.innerHTML = `
-          <div class="bg-white rounded-2xl p-8 text-center border border-slate-200/80 shadow-xs mt-2">
-            <i class="fa-solid fa-notes-medical text-3xl text-slate-300 mb-2"></i>
-            <h4 class="text-xs font-bold text-slate-700">該區域醫療與藥局資料更新中</h4>
-            <p class="text-[11px] text-slate-400 mt-1">${dict.noResultSub}</p>
-          </div>
-        `;
+        listEl.innerHTML = `<div class="bg-white rounded-2xl p-8 text-center border border-slate-200/80 shadow-xs mt-2"><h4 class="text-xs font-bold text-slate-700">該區域醫療與藥局資料更新中</h4></div>`;
         return;
       }
 
       listEl.innerHTML = filtered.map((item, idx) => {
-        const name = getLocalizedText(item, 'name', currentShortLang) || item.name_en || item.name_zh || '急救醫療機構';
+        const name = getLocalizedText(item, 'name', currentShortLang) || item.name_en || item.name_zh || '醫療急救機構';
         const smartLink = getSmartLink(item.name_en || name, item.city, item.website);
-        const cleanPhone = getCleanPhone(item.phone);
+        const rawPhone = item.phone || item.telephone || item.contact || item.col_8 || item.col_9 || '';
+        const cleanPhone = getCleanPhone(rawPhone);
         
-        let catBadge = '🏥 醫院';
-        if (item.category === 'clinic') catBadge = '🩺 診所';
-        if (item.category === 'pharmacy') catBadge = '💊 藥局';
+        let catBadge = '🏥 綜合醫院';
+        if (item.category === 'clinic') catBadge = '🩺 專科診所';
+        if (item.category === 'pharmacy') catBadge = '💊 連鎖藥局';
 
         return `
           <article class="bg-white rounded-2xl overflow-hidden shadow-xs hover:shadow-md border border-slate-200/80 flex flex-col transition">
@@ -1594,14 +1366,8 @@
               </h2>
 
               <div class="space-y-1 text-[11px] text-slate-500 border-t border-slate-100 pt-2 mb-3 font-medium">
-                <p class="flex items-center gap-1.5 truncate">
-                  <i class="fa-solid fa-location-dot text-orange-500 w-3"></i>
-                  <span class="truncate">${item.address || dict.addressEmpty}</span>
-                </p>
-                <p class="flex items-center gap-1.5 font-mono">
-                  <i class="fa-solid fa-phone text-slate-400 w-3"></i>
-                  <span>${cleanPhone ? `<a href="tel:${cleanPhone}" class="hover:text-orange-600 underline font-bold">${item.phone}</a>` : dict.phoneEmpty}</span>
-                </p>
+                <p class="flex items-center gap-1.5 truncate"><i class="fa-solid fa-location-dot text-orange-500 w-3"></i><span class="truncate">${item.address || dict.addressEmpty}</span></p>
+                <p class="flex items-center gap-1.5 font-mono"><i class="fa-solid fa-phone text-slate-400 w-3"></i><span>${cleanPhone ? `<a href="tel:${cleanPhone}" class="hover:text-orange-600 underline font-bold">${rawPhone}</a>` : dict.phoneEmpty}</span></p>
               </div>
 
               <div class="mt-auto grid grid-cols-2 gap-2 pt-1 border-t border-slate-100">
@@ -1618,7 +1384,7 @@
       }).join('');
     }
 
-    // 4. 精選優惠卡片渲染 (標準黃金視覺動線升級版)
+    // 4. 特惠渲染
     function renderNews() {
       const listEl = document.getElementById('news-list');
       const dict = I18N_DICT[currentLang] || I18N_DICT['zh-TW'];
@@ -1630,27 +1396,11 @@
         return matchC && matchS;
       });
 
-      if (currentSearchQuery) {
-        const q = currentSearchQuery.toLowerCase();
-        filtered = filtered.filter(item => {
-          const t = getLocalizedText(item, 'title', currentShortLang);
-          const d = getLocalizedText(item, 'description', currentShortLang);
-          const s = safeStr(item.store_name);
-          return (safeStr(t) + ' ' + safeStr(d) + ' ' + s).includes(q);
-        });
-      }
-
-      filterSummaryText.textContent = `${isIslandMode(currentCity) ? dict.navNewsIsland : dict.navNews} · 即時優惠`;
+      filterSummaryText.textContent = `特約門市即時特惠`;
       itemCountBadge.textContent = `${filtered.length} ${dict.newsCountUnit}`;
 
       if (filtered.length === 0) {
-        listEl.innerHTML = `
-          <div class="bg-white rounded-2xl p-8 text-center border border-slate-200/80 shadow-xs mt-2">
-            <i class="fa-solid fa-tags text-3xl text-slate-300 mb-2"></i>
-            <h4 class="text-xs font-bold text-slate-700">${dict.noResult}</h4>
-            <p class="text-[11px] text-slate-400 mt-1">${dict.noResultSub}</p>
-          </div>
-        `;
+        listEl.innerHTML = `<div class="bg-white rounded-2xl p-8 text-center border border-slate-200/80 shadow-xs mt-2"><h4 class="text-xs font-bold text-slate-700">${dict.noResult}</h4></div>`;
         return;
       }
 
@@ -1658,97 +1408,29 @@
         const storeName = item.store_name || '精選特約門市';
         const title = getLocalizedText(item, 'title', currentShortLang) || '特惠活動';
         const description = getLocalizedText(item, 'description', currentShortLang) || '活動詳情請洽門市工作人員。';
-        const type = (item.type || 'ongoing').toLowerCase();
-
-        let badgeHtml = '';
-        if (type === 'exclusive') {
-          badgeHtml = `
-            <span class="bg-neutral-900/95 text-amber-300 border border-amber-400/70 text-[11px] font-extrabold px-2.5 py-1 rounded-full shadow-lg flex items-center gap-1.5 backdrop-blur-md">
-              <i class="fa-solid fa-crown text-amber-400"></i> ${dict.badgeExclusive}
-            </span>
-          `;
-        } else if (type === 'limited') {
-          badgeHtml = `
-            <span class="bg-rose-600/90 text-white text-[11px] font-bold px-2.5 py-1 rounded-full shadow-md flex items-center gap-1 backdrop-blur-md">
-              <i class="fa-solid fa-clock text-white"></i> ${dict.badgeLimited}
-            </span>
-          `;
-        } else {
-          badgeHtml = `
-            <span class="bg-emerald-600/90 text-white text-[11px] font-bold px-2.5 py-1 rounded-full shadow-md flex items-center gap-1 backdrop-blur-md">
-              <i class="fa-solid fa-gem text-white"></i> ${dict.badgeOngoing}
-            </span>
-          `;
-        }
-
-        const validUntil = item.valid_until ? `${dict.validUntilPrefix}${item.valid_until}` : '長期有效';
+        const smartLink = getSmartLink(storeName, item.city, item.website);
+        const cleanPhone = getCleanPhone(item.phone);
 
         return `
-          <article class="bg-white rounded-2xl overflow-hidden shadow-xs hover:shadow-md border ${
-            type === 'exclusive' ? 'border-amber-400 ring-2 ring-amber-400/20' : 'border-slate-200/80'
-          } flex flex-col transition">
-            
+          <article class="bg-white rounded-2xl overflow-hidden shadow-xs hover:shadow-md border border-slate-200/80 flex flex-col transition">
             <div class="relative w-full overflow-hidden">
               ${buildCarouselHtml(item.images, `promo-${idx}`, title)}
-              
-              <div class="absolute top-2.5 left-2.5 z-10 flex flex-col gap-1">
-                ${badgeHtml}
-              </div>
-
-              <div class="absolute top-2.5 right-2.5 z-10">
-                <span class="bg-neutral-900/80 text-white text-[10px] px-2 py-0.5 rounded-full backdrop-blur-xs font-mono">
-                  ${validUntil}
-                </span>
-              </div>
-
-              <div class="absolute bottom-2.5 left-2.5 z-10">
-                <span class="bg-slate-900/80 backdrop-blur-xs text-white text-[10px] px-2 py-0.5 rounded font-medium">
-                  ${dict['city_' + item.city] || item.city || '全菲'}
-                </span>
-              </div>
             </div>
-
             <div class="p-4 flex flex-col flex-1">
               <h2 class="font-extrabold text-base text-slate-900 leading-tight mb-1 flex items-center gap-1.5">
                 <i class="fa-solid fa-store text-orange-500 text-xs"></i>
-                <a href="${getSmartLink(storeName, item.city, item.website)}" target="_blank" rel="noopener noreferrer" class="hover:text-orange-600 transition inline-flex items-center gap-1 group">
+                <a href="${smartLink}" target="_blank" rel="noopener noreferrer" class="hover:text-orange-600 transition inline-flex items-center gap-1 group">
                   <span>${storeName}</span>
                   <i class="fa-solid fa-arrow-up-right-from-square text-[10px] text-slate-400 group-hover:text-orange-600 transition"></i>
                 </a>
               </h2>
-
-              <h3 class="font-bold text-xs text-orange-600 mb-2 leading-snug">
-                ${title}
-              </h3>
-
-              <div class="bg-slate-50 border-l-3 border-orange-400 p-2.5 rounded-r-lg text-xs text-slate-600 leading-relaxed mb-3">
-                ${description}
-              </div>
-
-              <div class="space-y-1 text-[11px] text-slate-500 border-t border-slate-100 pt-2 mb-3 font-medium">
-                ${item.address ? `
-                  <p class="flex items-center gap-1.5 truncate">
-                    <i class="fa-solid fa-location-dot text-orange-500 w-3"></i>
-                    <span class="truncate">${item.address}</span>
-                  </p>
-                ` : ''}
-                ${item.phone ? `
-                  <p class="flex items-center gap-1.5 font-mono">
-                    <i class="fa-solid fa-phone text-slate-400 w-3"></i>
-                    <a href="tel:${getCleanPhone(item.phone)}" class="hover:text-orange-600 underline">${item.phone}</a>
-                  </p>
-                ` : ''}
-              </div>
-
-              <div class="mt-auto grid ${item.phone ? 'grid-cols-2' : 'grid-cols-1'} gap-2 pt-1 border-t border-slate-100">
-                ${item.phone ? `
-                  <a href="tel:${getCleanPhone(item.phone)}" class="bg-slate-100 hover:bg-slate-200 active:scale-95 text-slate-700 text-xs font-bold py-2.5 rounded-xl text-center flex items-center justify-center gap-1.5 transition">
-                    <i class="fa-solid fa-phone text-xs"></i> ${dict.btnCall}
-                  </a>
-                ` : ''}
-                <a href="${item.nav_link || ('https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(storeName + ' ' + (item.address || '')))}" 
-                   target="_blank" rel="noopener noreferrer"
-                   class="bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 active:scale-95 text-white text-xs font-bold py-2.5 rounded-xl text-center flex items-center justify-center gap-1.5 shadow-sm transition">
+              <h3 class="font-bold text-xs text-orange-600 mb-2 leading-snug">${title}</h3>
+              <div class="bg-slate-50 border-l-3 border-orange-400 p-2.5 rounded-r-lg text-xs text-slate-600 leading-relaxed mb-3">${description}</div>
+              <div class="mt-auto grid grid-cols-2 gap-2 pt-1 border-t border-slate-100">
+                <a href="${cleanPhone ? `tel:${cleanPhone}` : '#'}" class="bg-slate-100 hover:bg-slate-200 active:scale-95 text-slate-700 text-xs font-bold py-2.5 rounded-xl text-center flex items-center justify-center gap-1.5 transition ${!cleanPhone ? 'opacity-50 pointer-events-none' : ''}">
+                  <i class="fa-solid fa-phone text-xs"></i> ${dict.btnCall}
+                </a>
+                <a href="${item.nav_link || ('https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(storeName + ' ' + (item.address || '')))}" target="_blank" rel="noopener noreferrer" class="bg-gradient-to-r from-orange-500 to-amber-500 text-white text-xs font-bold py-2.5 rounded-xl text-center flex items-center justify-center gap-1.5 shadow-sm transition">
                   <i class="fa-solid fa-location-arrow text-xs"></i> ${dict.btnNav}
                 </a>
               </div>
@@ -1758,7 +1440,7 @@
       }).join('');
     }
 
-    // ====== 即時留言板 (Firestore Realtime Integration) ======
+    // ====== 即時留言與評分系統 (Firestore Comments & Rating) ======
     let activeCommentTarget = null;
     let selectedRating = 5;
 
@@ -1774,7 +1456,7 @@
 
     async function openCommentModal(targetId, targetName) {
       activeCommentTarget = { id: targetId, name: targetName };
-      document.getElementById('comment-modal-title').innerText = `${targetName} · 討論留言`;
+      document.getElementById('comment-modal-title').innerText = `${targetName} · 討論與點評`;
       document.getElementById('comment-modal').classList.remove('hidden');
       loadComments(targetId);
     }
@@ -1813,7 +1495,7 @@
           `;
         }).join('');
       } catch (e) {
-        container.innerHTML = '<p class="text-center text-rose-500 py-6 text-xs">暫無法載入留言，請先登入帳號！</p>';
+        container.innerHTML = '<p class="text-center text-rose-500 py-6 text-xs">暫無法載入留言，請先確認登入狀態！</p>';
       }
     }
 
@@ -1821,7 +1503,6 @@
       document.getElementById('comment-modal').classList.add('hidden');
     });
 
-    // 星星打分選擇
     document.querySelectorAll('#star-rating-select i').forEach(star => {
       star.addEventListener('click', () => {
         selectedRating = parseInt(star.getAttribute('data-star'));
@@ -1831,7 +1512,6 @@
       });
     });
 
-    // 發表留言並累加 20 積分
     document.getElementById('btn-submit-comment').addEventListener('click', async () => {
       if (!currentUser) {
         document.getElementById('comment-modal').classList.add('hidden');
@@ -1872,7 +1552,7 @@
       }
     });
 
-    // ====== 會員彈窗互動 ======
+    // ====== 會員個人中心彈窗 ======
     const authModal = document.getElementById('auth-modal');
     document.getElementById('auth-state-btn').addEventListener('click', () => {
       if (currentUser) {
@@ -1907,200 +1587,7 @@
       });
     });
 
-    document.getElementById('btn-send-magic').addEventListener('click', () => {
-      const email = document.getElementById('magic-email-input').value.trim();
-      if (!email) {
-        alert('請輸入 Email 信箱');
-        return;
-      }
-      sendSignInLinkToEmail(auth, email, { url: window.location.href, handleCodeInApp: true }).then(() => {
-        alert('魔法登入信已發送至您的信箱，請點擊信中連結完成登入！');
-        authModal.classList.add('hidden');
-      });
-    });
-
-    document.getElementById('share-btn').addEventListener('click', () => {
-      if (navigator.share) {
-        navigator.share({
-          title: '大V的旅遊窩 - 菲律賓精緻生活 & 海島漫遊地圖',
-          url: window.location.href
-        }).catch(() => {});
-      } else {
-        navigator.clipboard.writeText(window.location.href).then(() => showToast('網站連結已複製！'));
-      }
-    });
-
-    const chatFab = document.getElementById('chat-fab');
-    const chatModal = document.getElementById('chat-modal');
-    const btnCloseChat = document.getElementById('btn-close-chat');
-    const chatInput = document.getElementById('chat-input');
-    const btnSendChat = document.getElementById('btn-send-chat');
-    const chatMessages = document.getElementById('chat-messages');
-
-    chatFab.addEventListener('click', () => {
-      chatModal.classList.toggle('hidden');
-      if (!chatModal.classList.contains('hidden')) {
-        chatInput.focus();
-      }
-    });
-
-    btnCloseChat.addEventListener('click', () => chatModal.classList.add('hidden'));
-    btnSendChat.addEventListener('click', handleChatSend);
-    chatInput.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') handleChatSend();
-    });
-
-    async function handleChatSend() {
-      const msg = chatInput.value.trim();
-      if (!msg) return;
-
-      const dict = I18N_DICT[currentLang] || I18N_DICT['zh-TW'];
-      const targetLang = currentLang === 'zh-TW' ? 'zh' : currentLang;
-
-      chatMessages.innerHTML += `
-        <div class="bg-orange-500 text-white p-2.5 rounded-xl rounded-tr-sm self-end max-w-[85%] ml-auto text-xs leading-relaxed shadow-xs">
-          ${msg}
-        </div>
-      `;
-      chatInput.value = '';
-      chatMessages.scrollTop = chatMessages.scrollHeight;
-
-      const loadId = 'load-' + Date.now();
-      const loadingText = dict.aiLoading || '管家正在為您查詢... ⚡';
-      chatMessages.innerHTML += `
-        <div id="${loadId}" class="bg-white p-2.5 rounded-xl rounded-tl-sm border border-slate-200/70 text-slate-500 text-xs self-start max-w-[85%] flex items-center gap-1.5 shadow-2xs">
-          <i class="fa-solid fa-spinner fa-spin text-orange-500"></i> ${loadingText}
-        </div>
-      `;
-      chatMessages.scrollTop = chatMessages.scrollHeight;
-
-      const resContext = (allRestaurants || [])
-        .filter(i => currentCity === 'all' || isCityMatch(i, currentCity))
-        .slice(0, 8)
-        .map(r => getLocalizedText(r, 'name', targetLang) || r.name)
-        .join(', ');
-
-      try {
-        const res = await fetch(AI_WORKER_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            message: msg,
-            lang: targetLang,
-            currentCity: currentCity,
-            restaurantsContext: `精選參考: ${resContext}`
-          })
-        });
-        const data = await res.json();
-        const loadEl = document.getElementById(loadId);
-        if (loadEl) {
-          loadEl.className = 'bg-white p-2.5 rounded-xl rounded-tl-sm border border-slate-200/70 text-slate-800 text-xs self-start max-w-[88%] leading-relaxed shadow-2xs';
-          loadEl.innerText = data.reply;
-        }
-      } catch (err) {
-        const loadEl = document.getElementById(loadId);
-        if (loadEl) {
-          loadEl.className = 'bg-white p-2.5 rounded-xl rounded-tl-sm border border-slate-200/70 text-slate-800 text-xs self-start max-w-[88%] leading-relaxed shadow-2xs';
-          loadEl.innerText = targetLang === 'en'
-            ? "Quick tip: Check out our top-rated local dining spots, medical facilities, and island beaches!"
-            : targetLang === 'tl'
-            ? "Mabilisang tip: Bisitahin ang mga tanyag na kainan, ospital, at mga isla sa Pilipinas!"
-            : "已為您快速查詢！推薦造訪在地人氣嚴選私房餐廳、醫療機構與精選海島景點。";
-        }
-      }
-      chatMessages.scrollTop = chatMessages.scrollHeight;
-    }
-
-    function renderUI() {
-      renderRegionPills();
-      renderSubFilterBar();
-      renderContent();
-    }
-
-    function updateUiLanguage() {
-      document.documentElement.lang = currentLang;
-      const dict = I18N_DICT[currentLang] || I18N_DICT['zh-TW'];
-      
-      const searchInput = document.getElementById('search-input');
-      if (searchInput) searchInput.placeholder = dict.searchPlaceholder;
-
-      const chatWelcome = document.getElementById('chat-welcome-bubble');
-      if (chatWelcome && dict.aiChatWelcome) chatWelcome.textContent = dict.aiChatWelcome;
-
-      const chatInputEl = document.getElementById('chat-input');
-      if (chatInputEl && dict.aiChatPlaceholder) chatInputEl.placeholder = dict.aiChatPlaceholder;
-
-      document.querySelectorAll('[data-i18n]').forEach(el => {
-        const key = el.getAttribute('data-i18n');
-        if (dict[key]) {
-          el.textContent = dict[key];
-        }
-      });
-
-      const authBtn = document.getElementById('auth-btn-text');
-      if (authBtn && !currentUser) {
-        authBtn.textContent = dict.btnLogin;
-      }
-
-      renderUI();
-    }
-
-    window.updateUiLanguage = updateUiLanguage;
-
-    function enableHorizontalScroll() {
-      const scrollContainers = [
-        document.getElementById('regionPillsNav'),
-        document.getElementById('subFilterContainer')
-      ];
-
-      scrollContainers.forEach(container => {
-        if (!container) return;
-
-        container.addEventListener('wheel', (e) => {
-          if (e.deltaY !== 0) {
-            e.preventDefault();
-            container.scrollLeft += e.deltaY;
-          }
-        }, { passive: false });
-
-        let isDown = false;
-        let startX, scrollLeft;
-
-        container.addEventListener('mousedown', (e) => {
-          isDown = true;
-          container.classList.add('drag-scroll-active');
-          startX = e.pageX - container.offsetLeft;
-          scrollLeft = container.scrollLeft;
-        });
-
-        window.addEventListener('mouseup', () => {
-          if (!isDown) return;
-          isDown = false;
-          container.classList.remove('drag-scroll-active');
-        });
-
-        container.addEventListener('mousemove', (e) => {
-          if (!isDown) return;
-          e.preventDefault();
-          const x = e.pageX - container.offsetLeft;
-          const walk = (x - startX) * 1.5;
-          container.scrollLeft = scrollLeft - walk;
-        });
-      });
-    }
-
-    const langSelect = document.getElementById('lang-select');
-    if (langSelect) {
-      langSelect.value = currentLang;
-      langSelect.addEventListener('change', (e) => {
-        currentLang = e.target.value;
-        localStorage.setItem('ph_app_lang', currentLang);
-        updateUiLanguage();
-        const dict = I18N_DICT[currentLang] || I18N_DICT['zh-TW'];
-        showToast(`${dict.toastSwitch}${e.target.options[e.target.selectedIndex].text}`);
-      });
-    }
-
+    // 切換都會生活圈 vs 渡假海島
     typeCityBtn.addEventListener('click', () => {
       currentDimension = 'cities';
       sessionStorage.setItem('ph_dim', 'cities');
@@ -2134,13 +1621,11 @@
 
     const searchInput = document.getElementById('search-input');
     const searchClearBtn = document.getElementById('search-clear-btn');
-
     searchInput.addEventListener('input', (e) => {
       currentSearchQuery = e.target.value.trim();
       searchClearBtn.classList.toggle('hidden', !currentSearchQuery);
       renderContent();
     });
-
     searchClearBtn.addEventListener('click', () => {
       searchInput.value = '';
       currentSearchQuery = '';
@@ -2148,27 +1633,108 @@
       renderContent();
     });
 
+    function enableHorizontalScroll() {
+      ['regionPillsNav', 'subFilterContainer'].forEach(id => {
+        const c = document.getElementById(id);
+        if (!c) return;
+        c.addEventListener('wheel', (e) => {
+          if (e.deltaY !== 0) { e.preventDefault(); c.scrollLeft += e.deltaY; }
+        }, { passive: false });
+      });
+    }
+
+    const langSelect = document.getElementById('lang-select');
+    if (langSelect) {
+      langSelect.value = currentLang;
+      langSelect.addEventListener('change', (e) => {
+        currentLang = e.target.value;
+        localStorage.setItem('ph_app_lang', currentLang);
+        updateUiLanguage();
+        showToast(`${I18N_DICT[currentLang].toastSwitch}${e.target.options[e.target.selectedIndex].text}`);
+      });
+    }
+
+    function renderUI() {
+      renderRegionPills();
+      renderSubFilterBar();
+      renderContent();
+    }
+
+    function updateUiLanguage() {
+      document.documentElement.lang = currentLang;
+      const dict = I18N_DICT[currentLang] || I18N_DICT['zh-TW'];
+      const searchInput = document.getElementById('search-input');
+      if (searchInput) searchInput.placeholder = dict.searchPlaceholder;
+
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (dict[key]) el.textContent = dict[key];
+      });
+
+      renderUI();
+    }
+
+    document.getElementById('share-btn').addEventListener('click', () => {
+      if (navigator.share) {
+        navigator.share({ title: '大V的旅遊窩', url: window.location.href }).catch(() => {});
+      } else {
+        navigator.clipboard.writeText(window.location.href).then(() => showToast('網站連結已複製！'));
+      }
+    });
+
+    const chatFab = document.getElementById('chat-fab');
+    const chatModal = document.getElementById('chat-modal');
+    const btnCloseChat = document.getElementById('btn-close-chat');
+    const chatInput = document.getElementById('chat-input');
+    const btnSendChat = document.getElementById('btn-send-chat');
+    const chatMessages = document.getElementById('chat-messages');
+
+    chatFab.addEventListener('click', () => {
+      chatModal.classList.toggle('hidden');
+      if (!chatModal.classList.contains('hidden')) chatInput.focus();
+    });
+    btnCloseChat.addEventListener('click', () => chatModal.classList.add('hidden'));
+    btnSendChat.addEventListener('click', handleChatSend);
+    chatInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') handleChatSend(); });
+
+    async function handleChatSend() {
+      const msg = chatInput.value.trim();
+      if (!msg) return;
+      const targetLang = currentLang === 'zh-TW' ? 'zh' : currentLang;
+
+      chatMessages.innerHTML += `<div class="bg-orange-500 text-white p-2.5 rounded-xl rounded-tr-sm self-end max-w-[85%] ml-auto text-xs leading-relaxed shadow-xs">${msg}</div>`;
+      chatInput.value = '';
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+
+      const loadId = 'load-' + Date.now();
+      chatMessages.innerHTML += `<div id="${loadId}" class="bg-white p-2.5 rounded-xl rounded-tl-sm border border-slate-200/70 text-slate-500 text-xs self-start max-w-[85%] flex items-center gap-1.5 shadow-2xs"><i class="fa-solid fa-spinner fa-spin text-orange-500"></i> 管家正在為您查詢... ⚡</div>`;
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+
+      try {
+        const res = await fetch(AI_WORKER_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message: msg, lang: targetLang, currentCity: currentCity })
+        });
+        const data = await res.json();
+        const loadEl = document.getElementById(loadId);
+        if (loadEl) loadEl.innerText = data.reply;
+      } catch (err) {
+        const loadEl = document.getElementById(loadId);
+        if (loadEl) loadEl.innerText = "已為您快速查詢！推薦造訪在地人氣嚴選私房餐廳、醫療機構與精選海島景點。";
+      }
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
     initVisitorCounter();
     enableHorizontalScroll();
     fetchData();
 
-    // 註冊 Service Worker 啟用 PWA 自動偵測更新
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js').then((reg) => {
+        navigator.serviceWorker.register('./sw.js').then(reg => {
           reg.update();
-          reg.addEventListener('updatefound', () => {
-            const newWorker = reg.installing;
-            newWorker.addEventListener('statechange', () => {
-              if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                showToast('已為您自動更新至最新版本！', 'fa-bolt');
-                setTimeout(() => location.reload(), 1200);
-              }
-            });
-          });
-        }).catch(err => {
-          console.warn('ServiceWorker 註冊失敗:', err);
-        });
+        }).catch(err => console.warn('SW 註冊異常:', err));
       });
     }
   </script>
