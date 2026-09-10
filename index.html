@@ -275,17 +275,7 @@
 
       <!-- 發表留言輸入區 -->
       <div class="border-t border-slate-800 pt-3 flex flex-col gap-2 bg-slate-950">
-        <div class="flex items-center gap-2">
-          <span class="text-xs text-slate-400 font-medium">打分：</span>
-          <div id="star-rating-select" class="flex items-center gap-1 text-amber-400 cursor-pointer text-sm">
-            <i class="fa-solid fa-star" data-star="1"></i>
-            <i class="fa-solid fa-star" data-star="2"></i>
-            <i class="fa-solid fa-star" data-star="3"></i>
-            <i class="fa-solid fa-star" data-star="4"></i>
-            <i class="fa-solid fa-star" data-star="5"></i>
-          </div>
-        </div>
-        <div class="flex items-center gap-1.5">
+          <div class="flex items-center gap-1.5">
           <input type="text" id="comment-input-text" placeholder="寫下您的真實體驗與點評..." class="flex-1 bg-slate-900 border border-slate-800 text-white rounded-xl px-3 py-2 text-xs focus:border-amber-400 outline-none placeholder-slate-500" />
           <button id="btn-submit-comment" type="button" class="relative z-30 bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 active:from-amber-500 active:to-amber-600 text-slate-950 font-black text-xs px-4 py-2.5 rounded-xl transition active:scale-95 shadow-md shadow-amber-500/20 whitespace-nowrap cursor-pointer touch-manipulation">
           發表 (+20分)
@@ -1813,21 +1803,19 @@
 
         container.innerHTML = matchedDocs.map(d => {
           const c = d.data();
-          const stars = '★'.repeat(c.rating || 5) + '☆'.repeat(5 - (c.rating || 5));
-          const timeStr = c.createdAt ? new Date(c.createdAt.seconds ? c.createdAt.seconds * 1000 : c.createdAt).toLocaleDateString() : '近期';
-          return `
-            <div class="bg-slate-900 border border-slate-800 rounded-xl p-3 flex flex-col gap-1.5 shadow-xs">
-              <div class="flex items-center justify-between">
-                <div class="flex items-center gap-2">
-                  <img src="${c.userPhoto || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=50'}" class="w-5 h-5 rounded-full object-cover ring-1 ring-amber-400/50" />
-                  <span class="font-bold text-slate-200 text-xs">${c.userName || '吃貨好友'}</span>
-                  <span class="text-[10px] text-slate-500">${timeStr}</span>
-                </div>
-                <span class="text-amber-400 text-xs font-mono tracking-tighter">${stars}</span>
-              </div>
-              <p class="text-slate-300 text-xs leading-relaxed pl-7">${c.comment || c.content || ''}</p>
-            </div>
-          `;
+       const timeStr = c.createdAt ? new Date(c.createdAt.seconds ? c.createdAt.seconds * 1000 : c.createdAt).toLocaleDateString() : '近期';
+       return `
+         <div class="bg-slate-900 border border-slate-800 rounded-xl p-3 flex flex-col gap-1.5 shadow-xs">
+           <div class="flex items-center justify-between">
+             <div class="flex items-center gap-2">
+               <img src="${c.userPhoto || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=50'}" class="w-5 h-5 rounded-full object-cover ring-1 ring-amber-400/50" />
+               <span class="font-bold text-slate-200 text-xs">${c.userName || '吃貨好友'}</span>
+             </div>
+             <span class="text-[10px] text-slate-500 font-medium">${timeStr}</span>
+           </div>
+           <p class="text-slate-300 text-xs leading-relaxed pl-7">${c.comment || c.content || ''}</p>
+         </div>
+       `;
         }).join('');
       } catch (e) {
         console.warn("載入留言異常:", e);
