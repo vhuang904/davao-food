@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>大V的旅遊窩 - UI 實驗室</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <style>
+    .carousel-track {
+      display: flex;
+      width: 100%;
+      height: 100%;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+    }
+    .carousel-slide {
+      flex: 0 0 100%;
+      width: 100%;
+      height: 100%;
+      scroll-snap-align: center;
+      position: relative;
+    }
+    .drag-scroll-active { cursor: grabbing !important; }
+    .hide-scrollbar::-webkit-scrollbar { display: none; }
+    .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+  </style>
+</head>
+<body class="bg-slate-100 text-slate-800 antialiased min-h-screen pb-24 select-none">
+
+  <!-- 頂部：三種版本切換控制器 -->
+  <div class="sticky top-0 z-50 bg-neutral-900/95 backdrop-blur-md text-white px-3 py-2 border-b border-neutral-700 shadow-md">
+    <div class="max-w-md mx-auto flex items-center justify-between gap-1">
+      <span class="text-[11px] font-bold text-amber-400 flex items-center gap-1">
+        <i class="fa-solid fa-flask"></i> UI實驗室
+      </span>
+      <div class="flex bg-neutral-800 p-0.5 rounded-lg text-xs font-semibold">
+        <button id="btn-mode-a" onclick="switchTheme('theme-a')" class="px-2.5 py-1 rounded-md transition text-slate-300">A.潮流社群</button>
+        <button id="btn-mode-b" onclick="switchTheme('theme-b')" class="px-2.5 py-1 rounded-md transition text-slate-300">B.輕奢雜誌</button>
+        <button id="btn-mode-c" onclick="switchTheme('theme-c')" class="px-2.5 py-1 rounded-md transition text-slate-300">C.單手工具</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 主內容容器 -->
+  <main class="max-w-md mx-auto px-3.5 pt-3" id="app-container">
+    <!-- 卡片內容將由 JavaScript 動態渲染 -->
+    <div id="cards-container" class="flex flex-col gap-4"></div>
+  </main>
+
+  <!-- 底部留言抽屜 (Bottom Sheet Review Drawer) -->
+  <div id="review-drawer" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs hidden flex flex-col justify-end transition-all">
+    <div class="bg-white rounded-t-3xl max-h-[85vh] flex flex-col w-full max-w-md mx-auto overflow-hidden shadow-2xl animate-in slide-in-from-bottom duration-300">
+      <div class="p-3.5 border-b border-slate-100 flex items-center justify-between">
+        <div>
+          <h3 id="drawer-title" class="font-bold text-sm text-slate-900">門市留言與評分</h3>
+          <p class="text-[10px] text-slate-400">大V讀者認證真實回饋</p>
+        </div>
+        <button onclick="closeReviewDrawer()" class="w-7 h-7 bg-slate-100 text-slate-500 rounded-full flex items-center justify-center text-xs">✕</button>
+      </div>
+      
+      <!-- 評分與撰寫留言區 -->
+      <div class="p-3.5 bg-orange-50/50 border-b border-orange-100/60">
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-xs font-bold text-slate-700">留下您的評分：</span>
+          <div id="star-picker" class="flex gap-1 text-base text-slate-300 cursor-pointer">
+            <i class="fa-solid fa-star text-amber-400" data-val="1"></i>
+            <i class="fa-solid fa-star text-amber-400" data-val="2"></i>
+            <i class="fa-solid fa-star text-amber-400" data-val="3"></i>
+            <i class="fa-solid fa-star text-amber-400" data-val="4"></i>
+            <i class="fa-solid fa-star text-amber-400" data-val="5"></i>
+          </div>
+        </div>
+        <div class="flex gap-1.5">
+          <input type="text" id="review-input" placeholder="寫下您的探店心得或推薦餐點..." class="flex-1 text-xs bg-white border border-slate-200 rounded-xl px-3 py-2 outline-none focus:ring-2 focus:ring-orange-500" />
+          <button onclick="submitReview()" class="bg-orange-500 text-white text-xs font-bold px-3 py-2 rounded-xl active:scale-95 transition shadow-xs">發布</button>
+        </div>
+      </div>
+
+      <!-- 留言清單列表 -->
+      <div id="review-list" class="flex-1 overflow-y-auto p-3.5 space-y-3 text-xs hide-scrollbar">
+        <!-- 動態注入留言 -->
+      </div>
+    </div>
+  </div>
+
+  <!-- 版本 C 專用：底部常駐單手導航列 (Bottom Nav Bar) -->
+  <nav id="bottom-nav-c" class="fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-slate-200/90 py-2 hidden shadow-lg">
+    <div class="max-w-md mx-auto grid grid-cols-4 text-center text-slate-500 text-[11px] font-bold">
+      <button class="flex flex-col items-center gap-1 text-orange-600">
+        <i class="fa-solid fa-utensils text-base"></i><span>美食饗宴</span>
+      </button>
+      <button class="flex flex-col items-center gap-1 hover:text-slate-800">
+        <i class="fa-solid fa-camera-retro text-base"></i><span>景點導覽</span>
+      </button>
+      <button class="flex flex-col items-center gap-1 hover:text-slate-800">
+        <i class="fa-solid fa-tags text-base"></i><span>精選優惠</span>
+      </button>
+      <button class="flex flex-col items-center gap-1 hover:text-slate-800">
+        <i class="fa-regular fa-bookmark text-base"></i><span>我的口袋</span>
+      </button>
+    </div>
+  </nav>
+
+  <script>
+    // 範例測試資料（結合美食、景點電話與評分）
+    const sampleItems = [
+      {
+        id: 'sample-1',
+        type: 'restaurant',
+        city: 'davao',
+        name_zh: 'Tsuru 鶴日式料理 (Pelayo 本店)',
+        category: '日料生魚片/炭烤',
+        address: 'Pelayo St, Poblacion District, Davao City',
+        phone: '+63 82 221 0901',
+        isCurated: true,
+        curatedNote: '達沃三十年老牌日料標竿！黑鮪魚大腹（Toro）油脂甜美，厚切生魚片必點！',
+        mustTry: '鮪魚刺身、炭烤牛舌、鐵板魷魚',
+        googleRating: 4.8,
+        googleReviewCount: 320,
+        userRating: 4.9,
+        reviewCount: 42,
+        images: [
+          'https://images.unsplash.com/photo-1579871494447-9811cf80d66c?w=800&auto=format&fit=crop',
+          'https://images.unsplash.com/photo-1611143669185-af224c5e3252?w=800&auto=format&fit=crop'
+        ],
+        reviews: [
+          { user: 'Kevin W.', stars: 5, date: '昨天', comment: '跟著大V推薦來的，鮪魚生魚片真的超級新鮮！' },
+          { user: 'Elena', stars: 5, date: '3天前', comment: '環境很舒適，炭烤牛舌很有水準。' }
+        ]
+      },
+      {
+        id: 'sample-2',
+        type: 'attraction',
+        city: 'manila',
+        name_zh: '聖地牙哥堡 (Fort Santiago)',
+        category: '歷史文化地標',
+        address: 'Intramuros, Manila, Metro Manila',
+        phone: '+63 2 8527 3155',
+        isCurated: false,
+        desc_zh: '座落於馬尼拉王城區西北端的傳奇石造防禦要塞，見證西班牙統治時期的深刻歷史印記。',
+        googleRating: 4.6,
+        googleReviewCount: 1540,
+        userRating: 4.7,
+        reviewCount: 18,
+        images: [
+          'https://images.unsplash.com/photo-1518509562904-e7ef99cdcc86?w=800&auto=format&fit=crop',
+          'https://images.unsplash.com/photo-1544644181-1484b3fdfc62?w=800&auto=format&fit=crop'
+        ],
+        reviews: [
+          { user: 'Mark C.', stars: 5, date: '1週前', comment: '王城區必去的歷史景點，石造拱門拍照很有氣氛。' }
+        ]
+      }
+    ];
+
+    let currentTheme = 'theme-a';
+    let activeItem = null;
+
+    function switchTheme(theme) {
+      currentTheme = theme;
+      ['btn-mode-a', 'btn-mode-b', 'btn-mode-c'].forEach(b => {
+        document.getElementById(b).className = 'px-2.5 py-1 rounded-md transition text-slate-300';
+      });
+
+      const activeBtnMap = { 'theme-a': 'btn-mode-a', 'theme-b': 'btn-mode-b', 'theme-c': 'btn-mode-c' };
+      document.getElementById(activeBtnMap[theme]).className = 'px-2.5 py-1 rounded-md transition bg-white text-orange-600 font-bold shadow-xs';
+
+      document.getElementById('bottom-nav-c').classList.toggle('hidden', theme !== 'theme-c');
+      document.body.classList.toggle('pb-24', theme === 'theme-c');
+      document.body.classList.toggle('pb-12', theme !== 'theme-c');
+
+      renderThemeCards();
+    }
+
+    function renderThemeCards() {
+      const container = document.getElementById('cards-container');
+      if (currentTheme === 'theme-a') {
+        renderThemeA(container);
+      } else if (currentTheme === 'theme-b') {
+        renderThemeB(container);
+      } else {
+        renderThemeC(container);
+      }
+      bindCarouselControls();
+    }
+
+    // ==========================================
+    // 版本 A：潮流社群 / 探索卡片流
+    // ==========================================
+    function renderThemeA(container) {
+      container.innerHTML = sampleItems.map((item, idx) => `
+        <article class="bg-white rounded-3xl overflow-hidden shadow-md border border-slate-200/60 flex flex-col">
+          <div class="relative h-56 w-full">
+            <div id="track-a-${idx}" class="carousel-track hide-scrollbar">
+              ${item.images.map(img => `
+                <div class="carousel-slide"><img src="${img}" class="w-full h-full object-cover" draggable="false" /></div>
+              `).join('')}
+            </div>
+            <!-- 沉浸式漸層陰影與大標 -->
+            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/20 pointer-events-none"></div>
+            
+            ${item.isCurated ? `
+              <div class="absolute top-3 left-3 bg-amber-400 text-neutral-900 text-[11px] font-extrabold px-2.5 py-1 rounded-full shadow-md flex items-center gap-1">
+                <i class="fa-solid fa-crown"></i> 站長私房
+              </div>
+            ` : ''}
+
+            <div class="absolute bottom-3 left-3 right-3 text-white">
+              <span class="bg-white/20 backdrop-blur-md text-amber-200 text-[10px] px-2 py-0.5 rounded-full font-bold uppercase">${item.category}</span>
+              <h2 class="text-base font-extrabold mt-1 truncate drop-shadow-sm">${item.name_zh}</h2>
+            </div>
+          </div>
+
+          <div class="p-3.5">
+            ${item.curatedNote ? `
+              <p class="text-xs text-slate-700 leading-relaxed mb-3 bg-amber-50/70 p-2 rounded-xl border border-amber-200/50">
+                💡 <b>大V點評：</b>${item.curatedNote}
+              </p>
+            ` : ''}
+
+            <div class="text-[11px] text-slate-500 space-y-1 mb-3">
+              <p class="truncate"><i class="fa-solid fa-location-dot text-orange-500 w-4"></i>${item.address}</p>
+              <p><i class="fa-solid fa-phone text-slate-400 w-4"></i><a href="tel:${item.phone}" class="text-orange-600 font-bold">${item.phone}</a></p>
+            </div>
+
+            <!-- 社群互動列 -->
+            <div class="flex items-center justify-between pt-2 border-t border-slate-100 text-xs">
+              <button class="flex items-center gap-1 text-slate-600 hover:text-rose-500 transition">
+                <i class="fa-regular fa-heart text-sm"></i> <span>收藏</span>
+              </button>
+              <button onclick="openReviewDrawer('${item.id}')" class="flex items-center gap-1.5 bg-orange-50 text-orange-600 px-3 py-1.5 rounded-full font-bold active:scale-95 transition">
+                <i class="fa-solid fa-star text-amber-400"></i> ${item.userRating}
+                <span class="text-[11px] font-normal text-slate-400">(${item.reviewCount} 則留言)</span>
+              </button>
+              <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(item.name_zh)}" target="_blank" class="bg-slate-900 text-white px-3 py-1.5 rounded-xl font-bold active:scale-95 transition">
+                導航
+              </a>
+            </div>
+          </div>
+        </article>
+      `).join('');
+    }
+
+    // ==========================================
+    // 版本 B：現代輕奢 / 雜誌編輯指南流
+    // ==========================================
+    function renderThemeB(container) {
+      container.innerHTML = sampleItems.map((item, idx) => `
+        <article class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200/80 flex flex-col">
+          <!-- 雜誌風格標題置頂 -->
+          <div class="flex items-start justify-between gap-2 mb-2">
+            <div>
+              <span class="text-[10px] font-bold text-orange-600 tracking-wider uppercase">${item.category} · ${item.city.toUpperCase()}</span>
+              <h2 class="text-base font-black text-slate-900 leading-snug">${item.name_zh}</h2>
+            </div>
+            <div class="text-right flex-shrink-0">
+              <span class="text-sm font-extrabold text-amber-500 font-mono">★ ${item.googleRating}</span>
+              <p class="text-[9px] text-slate-400 font-medium">Google 指標</p>
+            </div>
+          </div>
+
+          <!-- 16:9 相簿 -->
+          <div class="relative h-44 w-full rounded-xl overflow-hidden mb-3">
+            <div id="track-b-${idx}" class="carousel-track hide-scrollbar">
+              ${item.images.map(img => `
+                <div class="carousel-slide"><img src="${img}" class="w-full h-full object-cover" draggable="false" /></div>
+              `).join('')}
+            </div>
+          </div>
+
+          <!-- 站長專欄手札框 -->
+          ${item.curatedNote ? `
+            <blockquote class="border-l-2 border-orange-500 pl-3 my-2 text-xs text-slate-700 italic leading-relaxed">
+              "${item.curatedNote}"
+              <footer class="text-[10px] text-slate-400 not-italic mt-0.5 font-bold">— 站長私房手札</footer>
+            </blockquote>
+          ` : ''}
+
+          <!-- 地址與官方電話 -->
+          <div class="bg-slate-50 p-2.5 rounded-xl text-[11px] text-slate-600 space-y-1 mb-3">
+            <p class="truncate"><b>地址：</b>${item.address}</p>
+            <p><b>官方電話：</b><a href="tel:${item.phone}" class="text-slate-800 font-bold underline">${item.phone}</a></p>
+          </div>
+
+          <!-- 讀者反饋與操作 -->
+          <div class="flex items-center justify-between pt-1 text-xs">
+            <button onclick="openReviewDrawer('${item.id}')" class="text-slate-600 hover:text-slate-900 font-bold flex items-center gap-1">
+              <i class="fa-regular fa-comment-dots text-orange-500"></i> 讀者評分 (${item.reviewCount})
+            </button>
+            <div class="flex gap-2">
+              <a href="tel:${item.phone}" class="border border-slate-300 text-slate-700 px-3 py-1.5 rounded-lg font-bold">撥打</a>
+              <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(item.name_zh)}" target="_blank" class="bg-orange-500 text-white px-3 py-1.5 rounded-lg font-bold">開啟地圖</a>
+            </div>
+          </div>
+        </article>
+      `).join('');
+    }
+
+    // ==========================================
+    // 版本 C：單手旅行工具 / 效率地圖流
+    // ==========================================
+    function renderThemeC(container) {
+      container.innerHTML = sampleItems.map((item, idx) => `
+        <article class="bg-white rounded-2xl p-3 shadow-xs border border-slate-200/90 flex flex-col gap-2.5">
+          <!-- 橫向緊湊排列：左邊方塊輪播相簿，右邊重點資訊 -->
+          <div class="flex gap-3">
+            <div class="relative w-28 h-28 rounded-xl overflow-hidden flex-shrink-0 bg-slate-100">
+              <div id="track-c-${idx}" class="carousel-track hide-scrollbar">
+                ${item.images.map(img => `
+                  <div class="carousel-slide"><img src="${img}" class="w-full h-full object-cover" draggable="false" /></div>
+                `).join('')}
+              </div>
+            </div>
+
+            <div class="flex-1 min-w-0 flex flex-col justify-between py-0.5">
+              <div>
+                <div class="flex items-center justify-between gap-1">
+                  <span class="text-[9px] bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded font-bold">${item.category}</span>
+                  <span class="text-[10px] text-emerald-600 font-bold"><i class="fa-solid fa-location-arrow"></i> 距離 850m</span>
+                </div>
+                <h2 class="font-extrabold text-sm text-slate-900 truncate mt-1">${item.name_zh}</h2>
+                <p class="text-[11px] text-slate-500 truncate mt-0.5">${item.address}</p>
+              </div>
+
+              <div class="flex items-center justify-between text-[11px] pt-1">
+                <span class="font-mono text-slate-700 font-bold"><i class="fa-solid fa-phone text-slate-400"></i> ${item.phone}</span>
+                <button onclick="openReviewDrawer('${item.id}')" class="text-orange-600 font-bold flex items-center gap-0.5">
+                  <i class="fa-solid fa-star text-amber-400 text-[10px]"></i> ${item.userRating}
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 單手大按鈕列：好按、不誤觸 -->
+          <div class="grid grid-cols-3 gap-2 pt-2 border-t border-slate-100">
+            <a href="https://food.grab.com/ph/en/restaurants?search=${encodeURIComponent(item.name_zh)}" target="_blank" class="bg-emerald-600 text-white text-xs font-bold py-2 rounded-xl text-center flex items-center justify-center gap-1 active:scale-95 transition">
+              <i class="fa-solid fa-motorcycle"></i> Grab
+            </a>
+            <a href="tel:${item.phone}" class="bg-slate-100 text-slate-800 text-xs font-bold py-2 rounded-xl text-center flex items-center justify-center gap-1 active:scale-95 transition">
+              <i class="fa-solid fa-phone"></i> 撥號
+            </a>
+            <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(item.name_zh)}" target="_blank" class="bg-orange-500 text-white text-xs font-bold py-2 rounded-xl text-center flex items-center justify-center gap-1 active:scale-95 transition">
+              <i class="fa-solid fa-location-arrow"></i> 導航
+            </a>
+          </div>
+        </article>
+      `).join('');
+    }
+
+    // 輪播滑鼠拖曳與手勢控制器
+    function bindCarouselControls() {
+      document.querySelectorAll('.carousel-track').forEach(track => {
+        let isDown = false, startX, scrollLeft;
+        track.addEventListener('mousedown', (e) => {
+          isDown = true;
+          track.classList.add('drag-scroll-active');
+          startX = e.pageX - track.offsetLeft;
+          scrollLeft = track.scrollLeft;
+        });
+        window.addEventListener('mouseup', () => { isDown = false; track.classList.remove('drag-scroll-active'); });
+        track.addEventListener('mousemove', (e) => {
+          if (!isDown) return;
+          e.preventDefault();
+          const x = e.pageX - track.offsetLeft;
+          track.scrollLeft = scrollLeft - (x - startX) * 1.5;
+        });
+      });
+    }
+
+    // 留言板抽屜控制邏輯
+    function openReviewDrawer(itemId) {
+      activeItem = sampleItems.find(i => i.id === itemId);
+      if (!activeItem) return;
+      document.getElementById('drawer-title').innerText = `${activeItem.name_zh} - 讀者評論`;
+      
+      const listEl = document.getElementById('review-list');
+      listEl.innerHTML = activeItem.reviews.map(r => `
+        <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-100">
+          <div class="flex justify-between items-center mb-1">
+            <span class="font-bold text-slate-800">${r.user}</span>
+            <span class="text-amber-400 font-bold">${'★'.repeat(r.stars)}</span>
+          </div>
+          <p class="text-slate-600">${r.comment}</p>
+          <span class="text-[9px] text-slate-400 mt-1 block">${r.date}</span>
+        </div>
+      `).join('');
+
+      document.getElementById('review-drawer').classList.remove('hidden');
+    }
+
+    function closeReviewDrawer() {
+      document.getElementById('review-drawer').classList.add('hidden');
+    }
+
+    function submitReview() {
+      const input = document.getElementById('review-input');
+      const text = input.value.trim();
+      if (!text || !activeItem) return;
+      activeItem.reviews.unshift({ user: '我 (大V讀者)', stars: 5, date: '剛剛', comment: text });
+      activeItem.reviewCount += 1;
+      input.value = '';
+      openReviewDrawer(activeItem.id);
+      renderThemeCards();
+    }
+
+    // 預設載入版本 A
+    switchTheme('theme-a');
+  </script>
+</body>
+</html>
