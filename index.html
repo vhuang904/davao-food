@@ -7,7 +7,7 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
-  <meta name="app-version" content="20260910-v19.1-blackgold-master" />
+  <meta name="app-version" content="20260910-v19.2-scrollfix-master" />
   <meta name="theme-color" content="#020617" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -213,7 +213,6 @@
         <h3 class="text-base font-black text-white mb-0.5">加入大V會員</h3>
         <p class="text-xs text-slate-400 mb-4 leading-relaxed">解鎖私房探店評語、發表評論累積吃貨積分！</p>
         
-        <!-- 登入方式 1: Google 一鍵登入 -->
         <button id="btn-google-login" class="w-full bg-white hover:bg-slate-100 text-slate-900 py-2.5 px-3 rounded-xl font-bold text-xs flex items-center justify-center gap-2 shadow-sm transition mb-3">
           <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" class="w-4 h-4" alt="Google">
           使用 Google 帳號一鍵登入
@@ -225,7 +224,6 @@
           <div class="flex-grow border-t border-slate-800"></div>
         </div>
 
-        <!-- 登入方式 2: Email 魔法精靈 -->
         <div class="space-y-2">
           <input type="email" id="magic-email-input" placeholder="輸入電子信箱（免記密碼）" class="w-full bg-slate-900 border border-slate-800 text-white placeholder-slate-500 text-xs rounded-xl px-3 py-2.5 focus:outline-none focus:border-amber-400" />
           <button id="btn-magic-email" class="w-full bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-slate-950 font-black text-xs py-2.5 rounded-xl transition flex items-center justify-center gap-1.5 shadow-md">
@@ -1083,6 +1081,7 @@
           currentSubFilter = 'all';
           sessionStorage.setItem('ph_nav_sub', 'all');
           localStorage.setItem('ph_app_city', currentCity);
+          window.scrollTo({ top: 0, behavior: 'smooth' }); // 👉 切換城市地區時，自動回到頂端
           renderRegionPills();
           renderSubFilterBar();
           renderContent();
@@ -1121,10 +1120,12 @@
         `;
       }).join('');
 
+      // 👉 核心修復：點選子分類（菲餐、日式料理、精選中餐...）時，一律平滑捲動回頂端！
       document.querySelectorAll('.sub-pill').forEach(btn => {
         btn.addEventListener('click', () => {
           currentSubFilter = btn.getAttribute('data-subkey');
           sessionStorage.setItem('ph_nav_sub', currentSubFilter);
+          window.scrollTo({ top: 0, behavior: 'smooth' }); // 👉 點擊切換標籤自動回到最頂部
           renderSubFilterBar();
           renderContent();
         });
@@ -1332,7 +1333,7 @@
           `;
         }
 
-        // ================= LEVEL 2: Google 高分嚴選推薦 (門檻：4.8分且百則以上) =================
+        // ================= LEVEL 2: Google 高分嚴選推薦 =================
         if (isGoogleTop) {
           return `
             <article class="rounded-2xl overflow-hidden border border-sky-400/60 bg-slate-950 shadow-[0_0_15px_-3px_rgba(56,189,248,0.25)] flex flex-col transition-all">
@@ -1388,7 +1389,7 @@
           `;
         }
 
-        // ================= LEVEL 3: 社會大眾口碑店 (門檻：4.0分且25則以上) =================
+        // ================= LEVEL 3: 社會大眾口碑店 =================
         return `
           <article class="rounded-2xl overflow-hidden border border-slate-800 bg-slate-950 shadow-sm flex flex-col transition-all">
             <div class="relative w-full overflow-hidden">
@@ -1833,6 +1834,7 @@
       currentSubFilter = 'all';
       sessionStorage.setItem('ph_nav_sub', 'all');
       localStorage.setItem('ph_app_city', currentCity);
+      window.scrollTo({ top: 0, behavior: 'smooth' }); // 👉 切換維度置頂
       renderUI();
     });
 
@@ -1843,15 +1845,18 @@
       currentSubFilter = 'all';
       sessionStorage.setItem('ph_nav_sub', 'all');
       localStorage.setItem('ph_app_city', currentCity);
+      window.scrollTo({ top: 0, behavior: 'smooth' }); // 👉 切換維度置頂
       renderUI();
     });
 
+    // 👉 核心修復：四大主分頁切換時，自動平滑回到頂端！
     document.querySelectorAll('.main-tab-pill').forEach(btn => {
       btn.addEventListener('click', () => {
         currentMainTab = btn.getAttribute('data-maintab');
         sessionStorage.setItem('ph_nav_tab', currentMainTab);
         currentSubFilter = 'all';
         sessionStorage.setItem('ph_nav_sub', 'all');
+        window.scrollTo({ top: 0, behavior: 'smooth' }); // 👉 切換主分頁置頂
         renderSubFilterBar();
         renderContent();
       });
