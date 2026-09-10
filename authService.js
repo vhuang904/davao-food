@@ -151,24 +151,31 @@ export async function fetchOrCreateUserProfile(user) {
   }
 }
 
-// 1. Google 登入（手機端與 PWA 自動採用穩定轉址 Redirect）
+// 1. Google 登入（Popup 優先相容手機與桌面，遇彈窗阻擋自動退回 Redirect）
 export async function loginWithGoogle() {
-  const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-  const shouldUseRedirect = isPwaStandalone() || isMobile;
-
   try {
-    if (shouldUseRedirect) {
+    // 優先使用彈窗模式，避免 iOS/Android 跨網域 Cookie 被丟失
+    const result = await signInWithPopup(auth, googleProvider);
+    return await fetchOrCreateUserProfile(result.user);
+  } catch (error) {
+    console.warn("[AuthService] Popup 登入回傳或被攔截:", error.code, error.message);
+
+    // 只有在瀏覽器嚴格封鎖彈窗或獨立 PWA 模式時，才退回 Redirect
+    if (
+      error.code === 'auth/popup-blocked' || 
+      error.code === 'auth/cancelled-popup-request' ||
+      isPwaStandalone()
+    ) {
       await signInWithRedirect(auth, googleProvider);
       return null;
-    } else {
-      const result = await signInWithPopup(auth, googleProvider);
-      return await fetchOrCreateUserProfile(result.user);
     }
-  } catch (error) {
-    console.error("[AuthService] 登入異常:", error.code, error.message);
-    // 遇到任何彈窗阻擋或跨來源問題，全面降級為轉址登入
-    await signInWithRedirect(auth, googleProvider);
-    return null;
+    
+    // 若為使用者自行點 X 關閉視窗，拋出友善提示
+    if (error.code === 'auth/popup-closed-by-user') {
+      throw new Error("已取消 Google 登入。");
+    }
+
+    throw error;
   }
 }
 
