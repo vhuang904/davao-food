@@ -93,8 +93,10 @@
         </div>
 
         <div class="flex items-center gap-1.5 flex-shrink-0">
-          <button id="auth-state-btn" class="bg-white/20 hover:bg-white/30 border border-white/30 text-white rounded-lg px-2.5 py-1 text-[11px] font-bold flex items-center gap-1 transition active:scale-95 whitespace-nowrap">
-            <i id="user-avatar-icon" class="fa-regular fa-user text-[10px]"></i>
+          <button id="auth-state-btn" class="bg-white/20 hover:bg-white/30 border border-white/30 text-white rounded-lg px-2.5 py-1 text-[11px] font-bold flex items-center gap-1.5 transition active:scale-95 whitespace-nowrap">
+            <span id="user-avatar-container" class="inline-flex items-center justify-center">
+              <i id="user-avatar-icon" class="fa-regular fa-user text-[10px]"></i>
+            </span>
             <span id="auth-btn-text" data-i18n="btnLogin">登入</span>
           </button>
           <button id="share-btn" class="bg-white/20 hover:bg-white/30 border border-white/30 text-white rounded-lg px-2.5 py-1 text-[11px] font-bold flex items-center gap-1 transition active:scale-95 whitespace-nowrap">
@@ -313,25 +315,32 @@
 
   <!-- Firebase SDK 與核心邏輯模組 -->
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getFirestore, collection, getDocs, doc, getDoc, setDoc, updateDoc, increment, query, where, orderBy, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-    import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { initializeApp, getApps, getApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getFirestore, collection, getDocs, doc, getDoc, setDoc, updateDoc, increment, query, where, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
     import { loadMasterDatabase, getLocalizedText } from './googleSheetService.js';
+    import { 
+      initAuthService, 
+      loginWithGoogle, 
+      logoutUser, 
+      getCurrentProfile, 
+      addStoreComment 
+    } from './authService.js';
+
+    // 啟動 PWA / Web 雙軌認證服務模組
+    initAuthService();
 
     const firebaseConfig = {
-      apiKey: "AIzaSyCM2dCa2Y8d6Z-Dc_Uz9yvvgaifav-1Vg",
+      apiKey: "AIzaSyCm2dCa2Y8d6Z-Dc_Uz9yvvgai6fav-1Vg",
       authDomain: "bigv-foodmap.firebaseapp.com",
       projectId: "bigv-foodmap",
-      storageBucket: "bigv-foodmap.appspot.com",
+      storageBucket: "bigv-foodmap.firebasestorage.app",
       messagingSenderId: "701000455421",
       appId: "1:701000455421:web:ab02befef466e1f8989a94",
       measurementId: "G-9G6BR6ZGBP"
     };
 
-    const app = initializeApp(firebaseConfig);
+    const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
     const db = getFirestore(app);
-    const auth = getAuth(app);
-    const googleProvider = new GoogleAuthProvider();
 
     const AI_WORKER_URL = "https://food-ai-assistant.vhuang904.workers.dev";
     let currentUser = null;
@@ -476,43 +485,26 @@
       }
     }
 
-    // ====== 會員身分與 Firestore 積分同步 ======
-    onAuthStateChanged(auth, async (user) => {
+    // ====== 會員狀態全域廣播監聽（秒級響應） ======
+    window.addEventListener("auth-user-changed", (e) => {
+      const { user, profile, isLoggedIn } = e.detail;
       currentUser = user;
+      currentUserProfile = profile || { points: 50, level: 'LV.1 探店初心者' };
+
       const dict = I18N_DICT[currentLang] || I18N_DICT['zh-TW'];
       const authBtnText = document.getElementById('auth-btn-text');
-      const avatarIcon = document.getElementById('user-avatar-icon');
+      const avatarContainer = document.getElementById('user-avatar-container');
 
-      if (user) {
+      if (isLoggedIn && user) {
         authBtnText.innerText = user.displayName ? user.displayName.split(' ')[0] : dict.btnMember;
         if (user.photoURL) {
-          avatarIcon.outerHTML = `<img id="user-avatar-icon" src="${user.photoURL}" class="w-3.5 h-3.5 rounded-full object-cover inline-block" />`;
-        }
-        
-        try {
-          const userDocRef = doc(db, "users", user.uid);
-          const snap = await getDoc(userDocRef);
-          if (!snap.exists()) {
-            currentUserProfile = {
-              displayName: user.displayName || '吃貨好友',
-              photoURL: user.photoURL || '',
-              points: 50,
-              level: 'LV.1 探店初心者',
-              createdAt: serverTimestamp()
-            };
-            await setDoc(userDocRef, currentUserProfile);
-          } else {
-            currentUserProfile = snap.data();
-          }
-        } catch (e) {
-          console.warn("無法取得用戶積分:", e);
+          avatarContainer.innerHTML = `<img id="user-avatar-icon" src="${user.photoURL}" class="w-3.5 h-3.5 rounded-full object-cover inline-block" />`;
+        } else {
+          avatarContainer.innerHTML = `<i id="user-avatar-icon" class="fa-solid fa-circle-user text-[11px] text-amber-200"></i>`;
         }
       } else {
         authBtnText.innerText = dict.btnLogin;
-        const currentIcon = document.getElementById('user-avatar-icon');
-        if (currentIcon && currentIcon.tagName === 'IMG') {
-          currentIcon.outerHTML = `<i id="user-avatar-icon" class="fa-regular fa-user text-[10px]"></i>`;
-        }
+        avatarContainer.innerHTML = `<i id="user-avatar-icon" class="fa-regular fa-user text-[10px]"></i>`;
       }
     });
 
@@ -1465,7 +1457,7 @@
       }).join('');
     }
 
-    // ====== 即時留言與評分系統 (Firestore Comments & Rating) ======
+    // ====== 即時留言與評分系統 ======
     let activeCommentTarget = null;
     let selectedRating = 5;
 
@@ -1491,7 +1483,7 @@
       container.innerHTML = '<p class="text-center text-slate-400 py-6">載入留言中...</p>';
 
       try {
-        const q = query(collection(db, "comments"), where("targetId", "==", targetId), orderBy("createdAt", "desc"));
+        const q = query(collection(db, "comments"), where("targetId", "==", String(targetId)), orderBy("createdAt", "desc"));
         const snap = await getDocs(q);
         if (snap.empty) {
           container.innerHTML = `
@@ -1515,12 +1507,13 @@
                 </div>
                 <span class="text-amber-500 text-[10px] font-mono tracking-tighter">${stars}</span>
               </div>
-              <p class="text-slate-700 text-xs leading-relaxed pl-5">${c.content}</p>
+              <p class="text-slate-700 text-xs leading-relaxed pl-5">${c.comment || c.content || ''}</p>
             </div>
           `;
         }).join('');
       } catch (e) {
-        container.innerHTML = '<p class="text-center text-rose-500 py-6 text-xs">暫無法載入留言，請先確認登入狀態！</p>';
+        console.warn("載入留言異常:", e);
+        container.innerHTML = '<p class="text-center text-slate-400 py-6 text-xs">歡迎登入後發表第一則評語！</p>';
       }
     }
 
@@ -1553,27 +1546,17 @@
       }
 
       try {
-        await addDoc(collection(db, "comments"), {
-          targetId: activeCommentTarget.id,
-          targetName: activeCommentTarget.name,
-          userId: currentUser.uid,
-          userName: currentUser.displayName || '探店會員',
-          userPhoto: currentUser.photoURL || '',
+        await addStoreComment(activeCommentTarget.id, {
           rating: selectedRating,
-          content: text,
-          createdAt: serverTimestamp()
+          comment: text
         });
-
-        const userRef = doc(db, "users", currentUser.uid);
-        await updateDoc(userRef, { points: increment(20) });
-        currentUserProfile.points = (currentUserProfile.points || 50) + 20;
 
         input.value = '';
         showToast('留言發布成功！獲得 20 積分 🎁', 'fa-award');
         loadComments(activeCommentTarget.id);
       } catch (err) {
         console.error("發布留言失敗:", err);
-        showToast('留言發表失敗，請稍候再試');
+        showToast(err.message || '留言發表失敗，請稍候再試');
       }
     });
 
@@ -1583,9 +1566,10 @@
       if (currentUser) {
         document.getElementById('auth-modal-login-view').classList.add('hidden');
         document.getElementById('auth-modal-user-view').classList.remove('hidden');
-        document.getElementById('user-modal-name').innerText = currentUser.displayName || '吃貨好友';
-        document.getElementById('user-modal-avatar').src = currentUser.photoURL || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200';
+        document.getElementById('user-modal-name').innerText = currentUserProfile.displayName || currentUser.displayName || '吃貨好友';
+        document.getElementById('user-modal-avatar').src = currentUserProfile.photoURL || currentUser.photoURL || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200';
         document.getElementById('user-modal-points').innerHTML = `${currentUserProfile.points || 50} <span class="text-xs font-normal text-slate-500">PTS</span>`;
+        document.getElementById('user-modal-level').innerText = currentUserProfile.level || 'LV.1 探店初心者';
       } else {
         document.getElementById('auth-modal-login-view').classList.remove('hidden');
         document.getElementById('auth-modal-user-view').classList.add('hidden');
@@ -1595,21 +1579,25 @@
 
     document.getElementById('close-auth-btn').addEventListener('click', () => authModal.classList.add('hidden'));
 
-    document.getElementById('btn-google-login').addEventListener('click', () => {
-      signInWithPopup(auth, googleProvider).then(() => {
+    document.getElementById('btn-google-login').addEventListener('click', async () => {
+      try {
+        await loginWithGoogle();
         authModal.classList.add('hidden');
         showToast('Google 帳號登入成功！');
-      }).catch(err => {
+      } catch (err) {
         console.error("登入失敗:", err);
         showToast('登入取消或發生異常');
-      });
+      }
     });
 
-    document.getElementById('btn-logout').addEventListener('click', () => {
-      signOut(auth).then(() => {
+    document.getElementById('btn-logout').addEventListener('click', async () => {
+      try {
+        await logoutUser();
         authModal.classList.add('hidden');
         showToast('已成功登出');
-      });
+      } catch (err) {
+        showToast('登出失敗，請稍候再試');
+      }
     });
 
     // 切換都會生活圈 vs 渡假海島
