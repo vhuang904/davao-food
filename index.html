@@ -357,6 +357,10 @@
       }
 
       try {
+        // 記錄請求前的原始權限狀態 ('default', 'granted', 'denied')
+        const initialPermission = Notification.permission;
+
+        // 向瀏覽器請求權限（若過去已授權過，此行會瞬間通過，不會跳出彈窗）
         const permission = await Notification.requestPermission();
         if (permission !== 'granted') {
           console.log('[Push] 使用者未授權通知權限');
@@ -371,7 +375,7 @@
         });
 
         if (currentToken) {
-          console.log('[Push] 成功取得推播 Token:', currentToken);
+          console.log('[Push] 成功取得推播 Token');
           // 儲存至 Firestore 的 push_subscriptions 集合
           const subRef = doc(db, "push_subscriptions", user.uid);
           await setDoc(subRef, {
@@ -383,7 +387,11 @@
             updatedAt: new Date().toISOString()
           }, { merge: true });
 
-          showToast('已成功開啟最新優惠與探店推播！', 'fa-bell');
+          // 核心優化：只有從「未設定 (default)」剛點選「允許」的全新用戶，才彈出 Toast 提示
+          // 已經是允許狀態的老用戶在登入時會靜默更新 Token，絕不跳 Toast 打擾
+          if (initialPermission === 'default') {
+            showToast('🎉 已成功開啟最新優惠與探店推播！', 'fa-bell');
+          }
         }
       } catch (err) {
         console.warn('[Push] 取得推播 Token 失敗或使用者已忽略:', err);
