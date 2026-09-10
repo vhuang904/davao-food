@@ -1293,11 +1293,8 @@
         if (currentSubFilter === 'history') return cat.includes('history') || cat.includes('歷史') || cat.includes('教堂');
         if (currentSubFilter === 'nature') return cat.includes('nature') || cat.includes('自然') || cat.includes('公園') || cat.includes('park') || cat.includes('農莊') || cat.includes('園區') || cat.includes('eden');
         if (currentSubFilter === 'casino') {
-          // 1. 排除住宅建案與純公寓 (黑名單)
           const isResidential = cat.includes('residences') || cat.includes('condo') || cat.includes('apartment');
           if (isResidential) return false;
-
-          // 2. 必須精準符合合法賭場關鍵字 (白名單)
           const isRealCasino = cat.includes('casino') || cat.includes('賭場') || cat.includes('pagcor') || 
                                cat.includes('okada') || cat.includes('solaire') || cat.includes('dreams') || cat.includes('newport');
           return isRealCasino;
