@@ -992,8 +992,9 @@
             website: bigVItem.website || "",
             nav_link: bigVItem.nav_link || "",
             grab_url: bigVItem.grab_url || "",
-            googleRating: Number(bigVItem.googleRating || bigVItem.google_rating || bigVItem.rating || 4.7),
-            googleReviewCount: Number(bigVItem.googleReviewCount || bigVItem.reviews_count || bigVItem.reviews || 120),
+            vScore: bigVItem.v_score || bigVItem.vscore || bigVItem.bigv_score || '9.8',
+            googleRating: Number(bigVItem.google_rating || bigVItem.googlerating || bigVItem.rating || 4.8),
+            googleReviewCount: Number(bigVItem.google_reviews || bigVItem.googlereviews || bigVItem.reviews || 100),
             images: parseImages(bigVItem, 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=800&auto=format&fit=crop')
           });
         });
@@ -1354,7 +1355,7 @@
 
                   <div class="flex items-center gap-1 bg-amber-400 text-slate-950 font-black px-2.5 py-0.5 rounded-md shadow-sm">
                     <i class="fa-solid fa-star text-[10px]"></i>
-                    <span>私房評分 9.8</span>
+                    <span>私房評分 ${item.vScore || '9.8'}</span>
                   </div>
                 </div>
 
