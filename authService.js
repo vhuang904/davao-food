@@ -1,5 +1,4 @@
-// authService.js - 大V的旅遊窩 PWA 獨立認證與會員積分服務模組
-// 遵循 100% 全量無省略規範，支援 PWA Standalone 雙軌登入與 Firestore 積分原子回填
+// authService.js - 大V的旅遊窩 PWA 獨立認證模組（整合 Google 雙軌 + Email 魔法登入 + 狀態持久化）
 
 import { initializeApp, getApps, getApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
 import { 
@@ -9,7 +8,10 @@ import {
   signInWithRedirect, 
   getRedirectResult, 
   signOut, 
-  onAuthStateChanged 
+  onAuthStateChanged,
+  sendSignInLinkToEmail,
+  isSignInWithEmailLink,
+  signInWithEmailLink
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 import { 
   getFirestore, 
@@ -23,7 +25,6 @@ import {
   increment 
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-// 1. Firebase 初始化（填入真實 Key）
 const firebaseConfig = {
   apiKey: "AIzaSyCm2dCa2Y8d6Z-Dc_Uz9yvvgai6fav-1Vg",
   authDomain: "bigv-foodmap.firebaseapp.com",
@@ -39,10 +40,8 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 const googleProvider = new GoogleAuthProvider();
 
-// 2. 當前本地快取的用戶狀態
 let currentUserProfile = null;
 
-// 計算吃貨等級演算法
 export function calculateUserLevel(points = 0) {
   if (points >= 500) return "LV.5 終極米其林老饕";
   if (points >= 300) return "LV.4 尋味美食家";
@@ -51,14 +50,12 @@ export function calculateUserLevel(points = 0) {
   return "LV.1 探店初心者";
 }
 
-// 判斷是否為手機 PWA Standalone 獨立視窗環境
 export function isPwaStandalone() {
   const isStandaloneMatch = window.matchMedia("(display-mode: standalone)").matches;
   const isNavigatorStandalone = window.navigator.standalone === true;
   return isStandaloneMatch || isNavigatorStandalone;
 }
 
-// 廣播全域認證狀態變更事件
 function broadcastAuthChange(user, profile) {
   const event = new CustomEvent("auth-user-changed", {
     detail: {
@@ -70,8 +67,7 @@ function broadcastAuthChange(user, profile) {
   window.dispatchEvent(event);
 }
 
-// 取得或初始化 Firestore 使用者資料
-async function fetchOrCreateUserProfile(user) {
+export async function fetchOrCreateUserProfile(user) {
   if (!user) {
     currentUserProfile = null;
     broadcastAuthChange(null, null);
@@ -92,7 +88,6 @@ async function fetchOrCreateUserProfile(user) {
         level: data.level || calculateUserLevel(data.points || 50)
       };
     } else {
-      // 新會員註冊預設贈送 50 積分
       const initialPoints = 50;
       const initialLevel = calculateUserLevel(initialPoints);
       const newProfile = {
@@ -127,35 +122,46 @@ async function fetchOrCreateUserProfile(user) {
   }
 }
 
-// 3. 核心功能：登入（支援 PWA 雙軌機制）
+// 1. Google 一鍵登入
 export async function loginWithGoogle() {
   try {
     if (isPwaStandalone()) {
-      // 手機 PWA 獨立視窗模式：使用 Redirect 避免彈窗被系統阻擋
       await signInWithRedirect(auth, googleProvider);
       return null;
     } else {
-      // 一般瀏覽器模式：使用 Popup 彈窗提供流暢不跳頁體驗
       const result = await signInWithPopup(auth, googleProvider);
       return await fetchOrCreateUserProfile(result.user);
     }
   } catch (error) {
-    console.warn("[AuthService] 彈窗登入失敗，嘗試降級改為 Redirect 重定向登入:", error);
-    try {
-      await signInWithRedirect(auth, googleProvider);
-      return null;
-    } catch (redirectError) {
-      console.error("[AuthService] 重定向登入亦失敗:", redirectError);
-      throw redirectError;
-    }
+    console.warn("[AuthService] 彈窗登入失敗，降級為 Redirect:", error);
+    await signInWithRedirect(auth, googleProvider);
+    return null;
   }
 }
 
-// 4. 核心功能：登出
+// 2. Email 魔法精靈：寄送免密碼驗證信
+export async function sendMagicEmailLink(email) {
+  const cleanEmail = (email || "").trim();
+  if (!cleanEmail || !cleanEmail.includes("@")) {
+    throw new Error("請輸入正確的電子郵件信箱。");
+  }
+
+  const actionCodeSettings = {
+    url: window.location.origin + window.location.pathname,
+    handleCodeInApp: true
+  };
+
+  await sendSignInLinkToEmail(auth, cleanEmail, actionCodeSettings);
+  window.localStorage.setItem("emailForSignIn", cleanEmail);
+  return true;
+}
+
+// 3. 核心功能：登出
 export async function logoutUser() {
   try {
     await signOut(auth);
     currentUserProfile = null;
+    window.localStorage.removeItem("emailForSignIn");
     broadcastAuthChange(null, null);
   } catch (error) {
     console.error("[AuthService] 登出失敗:", error);
@@ -163,12 +169,10 @@ export async function logoutUser() {
   }
 }
 
-// 5. 核心功能：取得目前用戶設定檔
 export function getCurrentProfile() {
   return currentUserProfile;
 }
 
-// 6. 核心功能：發表店家評論並自動累加 20 積分
 export async function addStoreComment(storeId, commentPayload) {
   const currentUser = auth.currentUser;
   if (!currentUser) {
@@ -176,7 +180,7 @@ export async function addStoreComment(storeId, commentPayload) {
   }
 
   if (!storeId) {
-    throw new Error("店家代碼（storeId）無效。");
+    throw new Error("店家代碼無效。");
   }
 
   const cleanComment = (commentPayload.comment || "").trim();
@@ -186,27 +190,26 @@ export async function addStoreComment(storeId, commentPayload) {
 
   const rating = Number(commentPayload.rating) || 5;
 
-  // 寫入 comments 集合
   const commentDocData = {
     storeId: String(storeId),
+    targetId: String(storeId),
     userId: currentUser.uid,
     userName: currentUserProfile?.displayName || currentUser.displayName || "匿名老饕",
     userPhoto: currentUserProfile?.photoURL || currentUser.photoURL || "",
     rating: rating,
     comment: cleanComment,
+    content: cleanComment,
     createdAt: serverTimestamp()
   };
 
   await addDoc(collection(db, "comments"), commentDocData);
 
-  // 寫入 users 集合：積分原子化累加 +20
   const userRef = doc(db, "users", currentUser.uid);
   await updateDoc(userRef, {
     points: increment(20),
     lastCommentAt: serverTimestamp()
   });
 
-  // 本地快取立即同步更新（Optimistic UI）
   if (currentUserProfile) {
     currentUserProfile.points = (currentUserProfile.points || 0) + 20;
     currentUserProfile.level = calculateUserLevel(currentUserProfile.points);
@@ -222,9 +225,27 @@ export async function addStoreComment(storeId, commentPayload) {
   };
 }
 
-// 7. 初始化服務監聽器
+// 4. 初始化認證監聽器（處理跳轉回調與 Email 魔法登入驗證）
 export function initAuthService() {
-  // 檢查是否為 PWA 重定向登入後回調
+  // A. 處理 Email 魔法連結跳回
+  if (isSignInWithEmailLink(auth, window.location.href)) {
+    let email = window.localStorage.getItem("emailForSignIn");
+    if (!email) {
+      email = window.prompt("請再次確認您登入時使用的電子郵件信箱：");
+    }
+    if (email) {
+      signInWithEmailLink(auth, email, window.location.href)
+        .then(async (result) => {
+          window.localStorage.removeItem("emailForSignIn");
+          await fetchOrCreateUserProfile(result.user);
+          // 清理 URL 上的授權參數
+          window.history.replaceState({}, document.title, window.location.pathname);
+        })
+        .catch((err) => console.error("[AuthService] Email 魔法登入失敗:", err));
+    }
+  }
+
+  // B. 處理 Google Redirect 重定向跳回
   getRedirectResult(auth)
     .then(async (result) => {
       if (result && result.user) {
@@ -232,10 +253,10 @@ export function initAuthService() {
       }
     })
     .catch((error) => {
-      console.error("[AuthService] Redirect 回調錯誤:", error);
+      console.error("[AuthService] Google Redirect 回調錯誤:", error);
     });
 
-  // 全域監聽使用者登入/登出狀態
+  // C. 持續監聽狀態
   onAuthStateChanged(auth, async (user) => {
     if (user) {
       await fetchOrCreateUserProfile(user);
