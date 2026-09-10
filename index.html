@@ -1641,7 +1641,7 @@
           emailInput.value = '';
         } catch (err) {
           console.error("發送魔法信失敗:", err);
-          showToast(err.message || '寄送失敗，請確認信箱格式', 'fa-circle-exclamation');
+          alert(err.message || '寄送失敗，請確認信箱格式');
         } finally {
           magicEmailBtn.disabled = false;
           magicEmailBtn.innerHTML = '<i class="fa-solid fa-wand-magic-sparkles text-amber-300"></i> 發送魔法登入連結';
