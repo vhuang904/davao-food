@@ -1309,15 +1309,29 @@
       }
 
       // 👉 核心排序：依 Google 評分由高至低排序 (分數相同時，則依評論數由多到少)
+      // 👉 核心信賴門檻排序：評論數少於 10 則者視為樣本不足排至後方；達標者依評分由高到低排序
+      const MIN_REVIEWS_THRESHOLD = 10;
+
       filtered.sort((a, b) => {
         const ratingA = Number(a.google_rating || a.googlerating || a.rating || 0);
         const ratingB = Number(b.google_rating || b.googlerating || b.rating || 0);
-        if (ratingB !== ratingA) {
-          return ratingB - ratingA; // 評分高者排前面
-        }
         const reviewsA = Number(a.review_count || a.reviewcount || 0);
         const reviewsB = Number(b.review_count || b.reviewcount || 0);
-        return reviewsB - reviewsA; // 評論數多者排前面
+
+        const aQualified = reviewsA >= MIN_REVIEWS_THRESHOLD;
+        const bQualified = reviewsB >= MIN_REVIEWS_THRESHOLD;
+
+        // 1. 達標者（>=10則）優先排在前面，未達標者沉底
+        if (aQualified && !bQualified) return -1;
+        if (!aQualified && bQualified) return 1;
+
+        // 2. 雙方都達標（或都未達標）：先比評分高低
+        if (ratingB !== ratingA) {
+          return ratingB - ratingA;
+        }
+
+        // 3. 評分相同時，比評論數多寡
+        return reviewsB - reviewsA;
       });
       
       const curReg = [...REGION_CONFIG.cities, ...REGION_CONFIG.islands].find(r => r.id === currentCity);
@@ -1681,15 +1695,29 @@
       }
 
       // 👉 請確保這段排序有放在 renderMedical 裡面！
+      // 👉 核心信賴門檻排序：評論數少於 10 則者視為樣本不足排至後方；達標者依評分由高到低排序
+      const MIN_REVIEWS_THRESHOLD = 10;
+
       filtered.sort((a, b) => {
         const ratingA = Number(a.google_rating || a.googlerating || a.rating || 0);
         const ratingB = Number(b.google_rating || b.googlerating || b.rating || 0);
-        if (ratingB !== ratingA) {
-          return ratingB - ratingA; // 評分高者排前面
-        }
         const reviewsA = Number(a.review_count || a.reviewcount || 0);
         const reviewsB = Number(b.review_count || b.reviewcount || 0);
-        return reviewsB - reviewsA; // 評論數多者排前面
+
+        const aQualified = reviewsA >= MIN_REVIEWS_THRESHOLD;
+        const bQualified = reviewsB >= MIN_REVIEWS_THRESHOLD;
+
+        // 1. 達標者（>=10則）優先排在前面，未達標者沉底
+        if (aQualified && !bQualified) return -1;
+        if (!aQualified && bQualified) return 1;
+
+        // 2. 雙方都達標（或都未達標）：先比評分高低
+        if (ratingB !== ratingA) {
+          return ratingB - ratingA;
+        }
+
+        // 3. 評分相同時，比評論數多寡
+        return reviewsB - reviewsA;
       });
       
       filterSummaryText.textContent = `${dict['city_' + currentCity] || ''} · ${dict.navMedical}`;
@@ -2142,9 +2170,39 @@
     fetchData();
 
     if ('serviceWorker' in navigator) {
+      // 避免重複連續刷新標記
+      let isRefreshing = false;
+      navigator.serviceWorker.addEventListener('controllerchange', () => {
+        if (!isRefreshing) {
+          isRefreshing = true;
+          window.location.reload();
+        }
+      });
+
       window.addEventListener('load', () => {
         navigator.serviceWorker.register('./sw.js').then(reg => {
-          reg.update();
+          reg.update(); // 每次開啟皆檢查 GitHub 有無最新部署
+
+          reg.onupdatefound = () => {
+            const installingWorker = reg.installing;
+            if (!installingWorker) return;
+
+            installingWorker.onstatechange = () => {
+              if (installingWorker.state === 'installed') {
+                if (navigator.serviceWorker.controller) {
+                  // 已有舊版存在，通知新版啟用並自動刷新
+                  console.log('偵測到新版本部署，自動更新畫面中...');
+                  if (installingWorker.waiting) {
+                    installingWorker.waiting.postMessage({ type: 'SKIP_WAITING' });
+                  }
+                  if (!isRefreshing) {
+                    isRefreshing = true;
+                    window.location.reload();
+                  }
+                }
+              }
+            };
+          };
         }).catch(err => console.warn('SW 註冊異常:', err));
       });
     }
