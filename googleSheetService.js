@@ -238,12 +238,15 @@ function normalizeMedical(rows) {
       return {
         id: row.id || `med_${Math.random()}`,
         city: (row.city || '').toLowerCase().trim(),
-        type: 'medical',
+        type: (row.type || 'medical').toLowerCase().trim(),
         name: row.namezh || row.nameen || row.name || row.id,
         name_zh: row.namezh || '',
         name_en: row.nameen || '',
         name_tl: row.nametl || '',
-        category: (row.category || 'clinic').toLowerCase().trim(), // hospital | clinic | pharmacy
+        category: row.category || '',
+        categoryKey: (row.category || '').toLowerCase().trim(),
+        google_rating: parseFloat(row.googlerating || row.rating) || 4.5,
+        review_count: parseInt(row.reviewcount || row.googlereviewcount || row.reviews, 10) || 50,
         address: row.address || '',
         phone: cleanPhoneNumber(p),
         website: row.website || '',
