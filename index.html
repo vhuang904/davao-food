@@ -940,6 +940,10 @@
             if (matchedBigV.website) item.website = matchedBigV.website;
             if (matchedBigV.nav_link) item.nav_link = matchedBigV.nav_link;
             if (matchedBigV.grab_url) item.grab_url = matchedBigV.grab_url;
+            // 👉 補上這 3 行讀取試算表的新欄位：
+            item.vScore = matchedBigV.v_score || matchedBigV.vscore || matchedBigV.bigv_score || '9.8';
+            item.googleRating = Number(matchedBigV.google_rating || matchedBigV.googlerating || matchedBigV.rating || 4.8);
+            item.googleReviewCount = Number(matchedBigV.google_reviews || matchedBigV.googlereviews || matchedBigV.reviews || 100);
             item.images = parseImages(matchedBigV, 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=800&auto=format&fit=crop');
             bigVLookup.delete(matchedBigV.id.toLowerCase().trim());
           } else {
