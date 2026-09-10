@@ -1752,42 +1752,53 @@
     }
 
     async function openCommentModal(targetId, targetName) {
-      activeCommentTarget = { id: targetId, name: targetName };
-      document.getElementById('comment-modal-title').innerText = `${targetName} · 討論與點評`;
+      if (!targetId) return;
+      activeCommentTarget = { id: String(targetId).trim(), name: targetName || '店家' };
+      document.getElementById('comment-modal-title').innerText = `${activeCommentTarget.name} · 訪客點評`;
       document.getElementById('comment-modal').classList.remove('hidden');
-      loadComments(targetId);
+      loadComments(activeCommentTarget.id);
     }
 
     async function loadComments(targetId) {
       const container = document.getElementById('comment-list-container');
-      container.innerHTML = '<p class="text-center text-slate-500 py-6">載入留言中...</p>';
+      container.innerHTML = '<p class="text-center text-slate-500 py-6 text-xs"><i class="fa-solid fa-spinner fa-spin text-amber-400 mr-1.5"></i>載入最新訪客評論中...</p>';
 
       try {
-        const q = query(collection(db, "comments"), where("targetId", "==", String(targetId)), orderBy("createdAt", "desc"));
+        const cleanId = String(targetId).trim().toLowerCase();
+        const q = query(collection(db, "comments"), orderBy("createdAt", "desc"));
         const snap = await getDocs(q);
-        if (snap.empty) {
+
+        const matchedDocs = snap.docs.filter(d => {
+          const c = d.data();
+          return String(c.targetId || '').trim().toLowerCase() === cleanId || 
+                 String(c.storeId || '').trim().toLowerCase() === cleanId;
+        });
+
+        if (matchedDocs.length === 0) {
           container.innerHTML = `
             <div class="text-center py-8 text-slate-500">
-              <i class="fa-regular fa-comment-dots text-2xl mb-1 block text-slate-600"></i>
-              還沒有人留下評價，快來搶頭香發表心得！
+              <i class="fa-regular fa-comment-dots text-2xl mb-1.5 block text-slate-600"></i>
+              目前尚無探店評語，快來搶頭香發表第一則心得！
             </div>
           `;
           return;
         }
 
-        container.innerHTML = snap.docs.map(d => {
+        container.innerHTML = matchedDocs.map(d => {
           const c = d.data();
           const stars = '★'.repeat(c.rating || 5) + '☆'.repeat(5 - (c.rating || 5));
+          const timeStr = c.createdAt ? new Date(c.createdAt.seconds ? c.createdAt.seconds * 1000 : c.createdAt).toLocaleDateString() : '近期';
           return `
-            <div class="bg-slate-900 border border-slate-800 rounded-xl p-2.5 flex flex-col gap-1">
+            <div class="bg-slate-900 border border-slate-800 rounded-xl p-3 flex flex-col gap-1.5 shadow-xs">
               <div class="flex items-center justify-between">
-                <div class="flex items-center gap-1.5">
-                  <img src="${c.userPhoto || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=50'}" class="w-4 h-4 rounded-full object-cover" />
-                  <span class="font-bold text-slate-200 text-[11px]">${c.userName || '探店好友'}</span>
+                <div class="flex items-center gap-2">
+                  <img src="${c.userPhoto || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=50'}" class="w-5 h-5 rounded-full object-cover ring-1 ring-amber-400/50" />
+                  <span class="font-bold text-slate-200 text-xs">${c.userName || '吃貨好友'}</span>
+                  <span class="text-[10px] text-slate-500">${timeStr}</span>
                 </div>
-                <span class="text-amber-400 text-[10px] font-mono tracking-tighter">${stars}</span>
+                <span class="text-amber-400 text-xs font-mono tracking-tighter">${stars}</span>
               </div>
-              <p class="text-slate-300 text-xs leading-relaxed pl-5">${c.comment || c.content || ''}</p>
+              <p class="text-slate-300 text-xs leading-relaxed pl-7">${c.comment || c.content || ''}</p>
             </div>
           `;
         }).join('');
@@ -1796,49 +1807,6 @@
         container.innerHTML = '<p class="text-center text-slate-500 py-6 text-xs">歡迎登入後發表第一則評語！</p>';
       }
     }
-
-    document.getElementById('close-comment-btn').addEventListener('click', () => {
-      document.getElementById('comment-modal').classList.add('hidden');
-    });
-
-    document.querySelectorAll('#star-rating-select i').forEach(star => {
-      star.addEventListener('click', () => {
-        selectedRating = parseInt(star.getAttribute('data-star'));
-        document.querySelectorAll('#star-rating-select i').forEach((s, idx) => {
-          s.className = idx < selectedRating ? 'fa-solid fa-star' : 'fa-regular fa-star';
-        });
-      });
-    });
-
-    document.getElementById('btn-submit-comment').addEventListener('click', async () => {
-      if (!currentUser) {
-        document.getElementById('comment-modal').classList.add('hidden');
-        document.getElementById('auth-modal').classList.remove('hidden');
-        showToast('請先登入 Google 帳號再發表留言！', 'fa-user-lock');
-        return;
-      }
-
-      const input = document.getElementById('comment-input-text');
-      const text = input.value.trim();
-      if (!text) {
-        showToast('請輸入留言內容');
-        return;
-      }
-
-      try {
-        await addStoreComment(activeCommentTarget.id, {
-          rating: selectedRating,
-          comment: text
-        });
-
-        input.value = '';
-        showToast('留言發布成功！獲得 20 積分 🎁', 'fa-award');
-        loadComments(activeCommentTarget.id);
-      } catch (err) {
-        console.error("發布留言失敗:", err);
-        showToast(err.message || '留言發表失敗，請稍候再試');
-      }
-    });
 
     // ====== 會員個人中心彈窗 ======
     const authModal = document.getElementById('auth-modal');
