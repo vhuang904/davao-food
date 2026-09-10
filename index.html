@@ -806,14 +806,25 @@
       });
     }
 
-    // 核心資料聚合整合
+    // 核心資料聚合整合（加入 6 秒逾時保護與防呆渲染）
     async function fetchData() {
+      const loadingEl = document.getElementById('loading');
+      console.log("[App] 開始取得資料庫內容...");
+
+      // 建立 6 秒逾時機制，避免 Google Sheet 網路卡死導致無限轉圈
+      const timeoutPromise = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error("Google Sheets 連線逾時")), 6000)
+      );
+
       try {
         let sheetMaster = { bigVPicks: [], attractions: [], promotions: [], autoDiscovered: [], medical: [] };
+        
         try {
-          sheetMaster = await loadMasterDatabase();
+          // 競速機制：6 秒內取得資料即正常解析，超時則進入備援容錯
+          sheetMaster = await Promise.race([loadMasterDatabase(), timeoutPromise]);
+          console.log("[App] Google Sheets 資料讀取成功！", sheetMaster);
         } catch (e) {
-          console.warn("讀取 Google Sheet 失敗:", e);
+          console.warn("[App] Google Sheets 讀取異常或逾時，啟動備援模式:", e);
         }
 
         const rawList = [];
@@ -1010,10 +1021,13 @@
         }));
 
       } catch (err) {
-        console.error("載入失敗:", err);
+        console.error("[App] 載入資料遭遇非預期錯誤:", err);
+      } finally {
+        // 核心防呆：無論成功或逾時，必定關閉轉圈，並保證執行介面渲染
+        if (loadingEl) loadingEl.style.display = 'none';
+        updateUiLanguage();
+        console.log("[App] 介面初始化渲染完畢！");
       }
-
-      updateUiLanguage();
     }
 
     function isCityMatch(item, targetCity) {
