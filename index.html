@@ -58,128 +58,319 @@
     .carousel-slide img { pointer-events: none; -webkit-user-drag: none; user-select: none; }
     .drag-scroll-active { cursor: grabbing !important; cursor: -webkit-grabbing !important; }
     .dot-indicator.active { width: 14px; border-radius: 4px; background: #fbbf24; }
-   
-  /* ==========================================
-   * 大V的旅遊窩 - 暖陽蜜柑橘頂級淺色系統 (Warm Orange Light Theme)
-   * ========================================== */
 
-  /* 1. 全站大畫布：溫潤象牙米白 */
-  html.light body {
-    background-color: #FBF8F2 !important;
-    color: #292524 !important;
-  }
+    /* ==========================================
+     * 大V的旅遊窩 - 全站 100% 淺色系統 (含全部 Pop-up / AI管家 / 置中通知)
+     * ========================================== */
 
-  /* 2. 頂部核心控制底盤（大V標題到所有按鈕區塊）：注入溫暖蜜柑橘微透光底 */
-  html.light header,
-  html.light nav,
-  html.light .header-container,
-  html.light #sticky-header,
-  html.light .top-control-panel {
-    background: linear-gradient(180deg, #FFF7ED 0%, #FFEDD5 100%) !important;
-    border-color: rgba(249, 115, 22, 0.25) !important;
-    box-shadow: 0 4px 20px -2px rgba(234, 88, 12, 0.08) !important;
-  }
+    /* 1. 全站大畫布：象牙暖米白底 */
+    html.light body {
+      background-color: #F8F5F0 !important;
+      color: #1F2937 !important;
+    }
 
-  /* 3. 搜尋欄位與語系切換按鈕：轉為乾淨暖白底 */
-  html.light input[type="text"],
-  html.light .search-bar,
-  html.light select,
-  html.light .lang-select {
-    background-color: #FFFFFF !important;
-    color: #1C1917 !important;
-    border: 1px solid rgba(249, 115, 22, 0.3) !important;
-    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.03) !important;
-  }
-  html.light input::placeholder {
-    color: #A8A29E !important;
-  }
+    /* 2. 頂部大底盤：招牌活力暖橘色漸層 */
+    html.light header.glass-header {
+      background: linear-gradient(180deg, #F97316 0%, #EA580C 100%) !important;
+      border-bottom: 2px solid #C2410C !important;
+      box-shadow: 0 4px 20px -2px rgba(234, 88, 12, 0.3) !important;
+    }
+    html.light header * {
+      color: #FFFFFF;
+    }
 
-  /* 4. 都會生活圈 / 渡假海島切換大按鈕 */
-  html.light .mode-switch-btn,
-  html.light [data-mode="city"],
-  html.light [data-mode="island"] {
-    background-color: #FFFFFF !important;
-    color: #78350F !important;
-    border: 1px solid rgba(249, 115, 22, 0.2) !important;
-  }
-  html.light .mode-switch-btn.active,
-  html.light [data-mode].active {
-    background: linear-gradient(135deg, #EA580C 0%, #F97316 100%) !important;
-    color: #FFFFFF !important;
-    border-color: #EA580C !important;
-    box-shadow: 0 3px 12px rgba(234, 88, 12, 0.3) !important;
-  }
+    /* 3. 搜尋列與語言選單：純白底 + 暖灰字 */
+    html.light #search-input,
+    html.light #lang-select {
+      background-color: #FFFFFF !important;
+      color: #1F2937 !important;
+      border: 1px solid rgba(255, 255, 255, 0.5) !important;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06) !important;
+    }
+    html.light #search-input::placeholder {
+      color: #9CA3AF !important;
+    }
+    html.light #search-input + button i,
+    html.light .fa-magnifying-glass {
+      color: #9CA3AF !important;
+    }
 
-  /* 5. 城市標籤與主類別膠囊（馬尼拉、宿霧、達沃 / 美食、景點、醫療） */
-  html.light .city-pill,
-  html.light .main-tab-btn,
-  html.light .sub-filter-pill {
-    background-color: #FFFFFF !important;
-    color: #44403C !important;
-    border: 1px solid rgba(249, 115, 22, 0.2) !important;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04) !important;
-  }
+    /* 4. 都會/海島切換槽 & 主分頁外框槽 */
+    html.light header .bg-slate-950,
+    html.light header .bg-slate-900 {
+      background-color: rgba(255, 255, 255, 0.22) !important;
+      border-color: rgba(255, 255, 255, 0.3) !important;
+    }
+    html.light #typeCityBtn:not(.bg-gradient-to-r),
+    html.light #typeIslandBtn:not(.bg-gradient-to-r),
+    html.light .main-tab-pill:not(.bg-gradient-to-r) {
+      color: #FFF7ED !important;
+    }
 
-  /* 6. 選中啟動態：亮眼暖橘漸層 + 白字 + 微光（如宿霧被選中） */
-  html.light .city-pill.active,
-  html.light .main-tab-btn.active,
-  html.light .sub-filter-pill.active,
-  html.light .active-pill {
-    background: linear-gradient(135deg, #EA580C 0%, #F97316 100%) !important;
-    color: #FFFFFF !important;
-    border-color: #EA580C !important;
-    font-weight: 600 !important;
-    box-shadow: 0 4px 14px rgba(234, 88, 12, 0.35) !important;
-  }
+    /* 5. 子分類標籤容器（第六列）：乾淨暖米底 */
+    html.light header > div.bg-slate-950\/90 {
+      background-color: #F3ECE2 !important;
+      border-top: 1px solid rgba(234, 88, 12, 0.15) !important;
+    }
 
-  /* 7. 地點數量徽章（如 124 個地點） */
-  html.light .count-badge {
-    background-color: #FFEDD5 !important;
-    color: #C2410C !important;
-    border: 1px solid rgba(249, 115, 22, 0.3) !important;
-  }
+    /* 6. 地區膠囊與子分類膠囊 */
+    html.light .region-pill,
+    html.light .sub-pill {
+      background-color: #FFFFFF !important;
+      border: 1px solid #E5E7EB !important;
+      color: #4B5563 !important;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+    }
+    html.light .region-pill.bg-amber-400,
+    html.light .sub-pill.bg-amber-400\/20 {
+      background: linear-gradient(135deg, #F97316, #EA580C) !important;
+      border: 1px solid #EA580C !important;
+      color: #FFFFFF !important;
+      font-weight: 700 !important;
+      box-shadow: 0 3px 10px rgba(234, 88, 12, 0.35) !important;
+    }
 
-  /* 8. 消除所有預設黑底容器（強制洗掉 bg-slate-900 / bg-slate-800） */
-  html.light .bg-slate-900,
-  html.light .bg-slate-900\/80,
-  html.light .bg-slate-900\/90,
-  html.light .bg-slate-800,
-  html.light .bg-slate-800\/60,
-  html.light .bg-slate-800\/80,
-  html.light .bg-black {
-    background-color: #FFFFFF !important;
-    border-color: #E7E5E4 !important;
-  }
+    /* 7. 地點數量徽章 */
+    html.light #itemCountBadge {
+      background-color: #FFEDD5 !important;
+      color: #C2410C !important;
+      border: 1px solid #FDBA74 !important;
+    }
+    html.light #currentFilterSummary {
+      color: #4B5563 !important;
+    }
 
-  /* 9. 文字色彩校正：標題深暖炭灰，副標石灰 */
-  html.light .text-white {
-    color: #1C1917 !important;
-  }
-  html.light .text-slate-300,
-  html.light .text-slate-400 {
-    color: #57534E !important;
-  }
+    /* ==========================================
+     * ⭐ 三級卡片外框、純白底盤與黑字反轉
+     * ========================================== */
+    html.light article {
+      background-color: #FFFFFF !important;
+      border-radius: 1rem !important;
+      overflow: hidden !important;
+    }
+    html.light article.border-2.border-amber-400 {
+      border: 2px solid #D97706 !important;
+      box-shadow: 0 0 20px rgba(217, 119, 6, 0.22) !important;
+    }
+    html.light article.border-2.border-amber-400 .border-l-2.border-amber-400 {
+      border-left-color: #D97706 !important;
+    }
+    html.light article.border-sky-400\/60,
+    html.light article.border-sky-400 {
+      border: 1.5px solid #0284C7 !important;
+      box-shadow: 0 0 16px rgba(2, 132, 199, 0.18) !important;
+    }
+    html.light article.border-slate-800 {
+      border: 1px solid #E5E7EB !important;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04) !important;
+    }
+    html.light article div.bg-slate-950,
+    html.light article div.bg-slate-900,
+    html.light article div.bg-slate-900\/90,
+    html.light article div.bg-slate-800 {
+      background-color: #FFFFFF !important;
+    }
+    html.light article .h-\[1px\],
+    html.light article .h-\[1\.5px\],
+    html.light article .h-\[2px\] {
+      background-color: #F3F4F6 !important;
+    }
+    html.light article h2,
+    html.light article h3,
+    html.light article a span.truncate {
+      color: #111827 !important;
+      font-weight: 700 !important;
+    }
+    html.light article p,
+    html.light article .text-slate-200,
+    html.light article .text-slate-300,
+    html.light article .text-slate-400 {
+      color: #374151 !important;
+    }
 
-  /* 10. 卡片主體純白微光，保留天藍與黑金卡神聖光暈 */
-  html.light .store-card {
-    background-color: #FFFFFF !important;
-    border: 1px solid #E7E5E4 !important;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05) !important;
-  }
-  html.light .card-high-score {
-    border: 1.5px solid #0284C7 !important;
-    box-shadow: 0 0 16px rgba(2, 132, 199, 0.18) !important;
-  }
-  html.light .card-curated {
-    border: 2px solid #D97706 !important;
-    box-shadow: 0 0 22px rgba(217, 119, 6, 0.22) !important;
-  }
+    /* Google 大眾評分列 */
+    html.light article .border-t.border-slate-800\/80 {
+      background-color: #F9FAFB !important;
+      border-top: 1px solid #F3F4F6 !important;
+    }
+    html.light article .border-t.border-slate-800\/80 span.text-slate-400 {
+      color: #4B5563 !important;
+      font-weight: 600 !important;
+    }
+    html.light article .border-t.border-slate-800\/80 div.text-slate-300 {
+      color: #111827 !important;
+      font-weight: 800 !important;
+    }
+    html.light article .border-t.border-slate-800\/80 span.text-slate-500 {
+      color: #6B7280 !important;
+    }
+
+    /* ⭐ 寫評論專屬高光按鈕：招牌暖橘底 + 純白立體粗體字 */
+    html.light article .btn-open-comment {
+      background: linear-gradient(135deg, #F97316 0%, #EA580C 100%) !important;
+      border: 1px solid #EA580C !important;
+      box-shadow: 0 3px 12px rgba(234, 88, 12, 0.35) !important;
+    }
+    html.light article .btn-open-comment i,
+    html.light article .btn-open-comment span {
+      color: #FFFFFF !important;
+      font-weight: 800 !important;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.15) !important;
+    }
+
+    /* 撥打電話、路線導航按鈕 */
+    html.light article a.bg-slate-800,
+    html.light article a.bg-slate-800\/80,
+    html.light article button.bg-slate-800:not(.btn-open-comment),
+    html.light article button.bg-slate-800\/80:not(.btn-open-comment) {
+      background-color: #F3F4F6 !important;
+      border: 1px solid #E5E7EB !important;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04) !important;
+    }
+    html.light article a.bg-slate-800 span,
+    html.light article a.bg-slate-800\/80 span,
+    html.light article button.bg-slate-800:not(.btn-open-comment) span,
+    html.light article button.bg-slate-800\/80:not(.btn-open-comment) span {
+      color: #1F2937 !important;
+      font-weight: 700 !important;
+    }
+    html.light article a.text-amber-300 span { color: #1F2937 !important; }
+    html.light article a.text-amber-300 i { color: #EA580C !important; }
+    html.light article i.text-emerald-400 { color: #059669 !important; }
+    html.light article i.text-sky-400 { color: #0284C7 !important; }
+    html.light article a.bg-\[\#00B14F\]\/15 {
+      background-color: #ECFDF5 !important;
+      border: 1px solid #A7F3D0 !important;
+      color: #047857 !important;
+    }
+    html.light article a.bg-\[\#00B14F\]\/15 span {
+      color: #047857 !important;
+      font-weight: 700 !important;
+    }
+
+    /* ==========================================
+     * ⭐ 8. 畫面正中央通知提示（Toast）淺色優化
+     * ========================================== */
+    html.light #toastInnerBox {
+      background: rgba(255, 255, 255, 0.98) !important;
+      border: 1.5px solid #F97316 !important;
+      box-shadow: 0 10px 30px -5px rgba(234, 88, 12, 0.25) !important;
+      color: #1F2937 !important;
+    }
+    html.light #toastMessage {
+      color: #1F2937 !important;
+      font-weight: 800 !important;
+    }
+    html.light #toastIcon {
+      color: #EA580C !important;
+    }
+
+    /* ==========================================
+     * ⭐ 9. 會員彈窗 (Auth Modal) 淺色全面換裝
+     * ========================================== */
+    html.light #auth-modal .bg-slate-950 {
+      background-color: #FFFFFF !important;
+      border-color: rgba(234, 88, 12, 0.3) !important;
+      box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.15) !important;
+    }
+    html.light #auth-modal h3,
+    html.light #auth-modal h4 {
+      color: #111827 !important;
+    }
+    html.light #auth-modal p,
+    html.light #auth-modal span.text-slate-400 {
+      color: #4B5563 !important;
+    }
+    html.light #auth-modal #close-auth-btn {
+      background-color: #F3F4F6 !important;
+      color: #4B5563 !important;
+    }
+    html.light #auth-modal input {
+      background-color: #F9FAFB !important;
+      border-color: #E5E7EB !important;
+      color: #111827 !important;
+    }
+    html.light #auth-modal .bg-gradient-to-br,
+    html.light #auth-modal .bg-slate-900\/90 {
+      background: #FFF7ED !important;
+      border: 1px solid #FFEDD5 !important;
+    }
+    html.light #auth-modal #user-modal-points {
+      color: #EA580C !important;
+    }
+    html.light #auth-modal .text-slate-200 {
+      color: #1F2937 !important;
+    }
+
+    /* ==========================================
+     * ⭐ 10. 訪客留言彈窗 (Comment Modal) 淺色優化
+     * ========================================== */
+    html.light #comment-modal .bg-slate-950 {
+      background-color: #FFFFFF !important;
+      border-color: rgba(234, 88, 12, 0.3) !important;
+    }
+    html.light #comment-modal #comment-modal-title {
+      color: #111827 !important;
+    }
+    html.light #comment-modal #close-comment-btn {
+      background-color: #F3F4F6 !important;
+      color: #4B5563 !important;
+    }
+    html.light #comment-modal .bg-slate-900 {
+      background-color: #F9FAFB !important;
+      border-color: #E5E7EB !important;
+    }
+    html.light #comment-modal .text-slate-200,
+    html.light #comment-modal .text-slate-300 {
+      color: #1F2937 !important;
+    }
+    html.light #comment-input-text {
+      background-color: #F9FAFB !important;
+      border-color: #E5E7EB !important;
+      color: #111827 !important;
+    }
+
+    /* ==========================================
+     * ⭐ 11. AI 旅遊管家對話面板 (AI Chat Modal) 淺色優化
+     * ========================================== */
+    html.light #chat-modal {
+      background-color: #FFFFFF !important;
+      border: 1.5px solid #EA580C !important;
+      box-shadow: 0 15px 35px -5px rgba(234, 88, 12, 0.2) !important;
+    }
+    html.light #chat-modal > div.bg-slate-900 {
+      background: linear-gradient(135deg, #F97316, #EA580C) !important;
+      border-bottom: 1px solid #C2410C !important;
+    }
+    html.light #chat-modal > div.bg-slate-900 h3,
+    html.light #chat-modal > div.bg-slate-900 span {
+      color: #FFFFFF !important;
+    }
+    html.light #chat-messages {
+      background-color: #FBF8F2 !important;
+    }
+    html.light #chat-messages .bg-slate-900,
+    html.light #chat-messages .chat-ready-bubble {
+      background-color: #FFFFFF !important;
+      border: 1px solid #E5E7EB !important;
+      color: #1F2937 !important;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04) !important;
+    }
+    html.light #chat-modal > div.p-2.bg-slate-900 {
+      background-color: #FFFFFF !important;
+      border-top: 1px solid #E5E7EB !important;
+    }
+    html.light #chat-input {
+      background-color: #F3F4F6 !important;
+      border: 1px solid #E5E7EB !important;
+      color: #111827 !important;
+    }
   </style>
 
-  <!-- 全域 Toast 提示 -->
-  <div id="toastNotification" class="fixed top-5 left-1/2 -translate-x-1/2 z-[99999] transition-all duration-300 pointer-events-none opacity-0 translate-y-[-10px] w-full max-w-sm px-4">
-    <div class="bg-slate-950/95 text-white text-xs font-bold px-4 py-2.5 rounded-2xl shadow-2xl flex items-center justify-center gap-2 border border-amber-400/50 backdrop-blur-md">
-      <i id="toastIcon" class="fa-solid fa-check text-amber-400"></i>
+  <!-- 全域 Toast 提示（置中顯示） -->
+  <div id="toastNotification" class="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[99999] transition-all duration-300 pointer-events-none opacity-0 scale-95 w-auto min-w-[240px] max-w-xs px-4">
+    <div id="toastInnerBox" class="bg-slate-950/95 text-white text-xs font-bold px-5 py-3.5 rounded-2xl shadow-2xl flex items-center justify-center gap-2.5 border border-amber-400/50 backdrop-blur-md text-center">
+      <i id="toastIcon" class="fa-solid fa-check text-amber-400 text-sm"></i>
       <span id="toastMessage">已完成操作</span>
     </div>
   </div>
@@ -683,16 +874,21 @@
       return String(val);
     }
 
+    // ⭐ 置中顯示 Toast 通知
     function showToast(msg, icon = 'fa-check') {
       const toast = document.getElementById('toastNotification');
       const toastIcon = document.getElementById('toastIcon');
       const toastMessage = document.getElementById('toastMessage');
-      toastIcon.className = `fa-solid ${icon} text-amber-400`;
-      toastMessage.textContent = msg;
-      toast.classList.remove('opacity-0', 'translate-y-[-10px]', 'pointer-events-none');
-      setTimeout(() => {
-        toast.classList.add('opacity-0', 'translate-y-[-10px]', 'pointer-events-none');
-      }, 2000);
+      if (toastIcon) toastIcon.className = `fa-solid ${icon} text-amber-400 text-sm`;
+      if (toastMessage) toastMessage.textContent = msg;
+      if (toast) {
+        toast.classList.remove('opacity-0', 'scale-95', 'pointer-events-none');
+        toast.classList.add('opacity-100', 'scale-100');
+        setTimeout(() => {
+          toast.classList.remove('opacity-100', 'scale-100');
+          toast.classList.add('opacity-0', 'scale-95', 'pointer-events-none');
+        }, 2200);
+      }
     }
 
     const commentModalEl = document.getElementById('comment-modal');
@@ -2547,7 +2743,6 @@
     document.getElementById('btn-google-login').addEventListener('click', async () => {
       try {
         const userProfile = await loginWithGoogle();
-        // 電腦版彈窗回傳資料時才關閉彈窗；手機版走轉址跳轉不手動關閉
         if (userProfile) {
           authModal.classList.add('hidden');
           showToast('Google 帳號登入成功！');
@@ -2560,7 +2755,7 @@
       }
     });
 
-    const magicEmailBtn = document.getElementById('btn-magic-email');
+    const magicEmailBtn = document.getElementById('magic-email-input') ? document.getElementById('btn-magic-email') : null;
     if (magicEmailBtn) {
       magicEmailBtn.addEventListener('click', async () => {
         const emailInput = document.getElementById('magic-email-input');
@@ -2693,7 +2888,6 @@
 
     function renderChatUI() {
       if (!currentUser) {
-        // 未登入狀態：顯示登入解鎖引導提示，禁用打字框
         chatMessages.innerHTML = `
           <div class="bg-gradient-to-br from-slate-900 to-slate-950 p-3.5 rounded-xl border border-amber-400/40 text-slate-200 leading-relaxed shadow-lg text-center flex flex-col items-center gap-2">
             <div class="w-10 h-10 rounded-full bg-amber-400/10 border border-amber-400/40 flex items-center justify-center text-amber-400 text-base">
@@ -2721,7 +2915,6 @@
         chatInput.placeholder = "🔒 請先登入會員解鎖 AI 諮詢...";
         btnSendChat.disabled = true;
       } else {
-        // 已登入狀態：顯示歡迎訊息，解鎖打字框
         chatInput.disabled = false;
         chatInput.placeholder = "問點什麼吧（例：馬尼拉海鮮酒家、頂級和牛...）";
         btnSendChat.disabled = false;
