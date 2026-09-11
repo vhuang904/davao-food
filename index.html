@@ -1912,9 +1912,16 @@
         if (noiseWords.some(w => allText.includes(w))) return false;
 
         // 2. 嚴格醫療主體判定
-        const isHospital = allText.includes('hospital') || allText.includes('綜合醫院') || allText.includes('醫院') || allText.includes('medical center') || allText.includes('infirmary');
-        const isClinic = allText.includes('clinic') || allText.includes('專科診所') || allText.includes('診所') || allText.includes('doctor') || allText.includes('health center');
+        // 1. 綜合醫院優先判定
+        const isHospital = allText.includes('hospital') || allText.includes('綜合醫院') || allText.includes('醫院') || allText.includes('infirmary') || allText.includes('medical center');
+
+        // 2. 藥局判定
         const isPharmacy = allText.includes('pharmacy') || allText.includes('連鎖藥局') || allText.includes('藥局') || allText.includes('mercury') || allText.includes('watsons') || allText.includes('drug');
+
+        // 3. 專科診所判定：必須「非醫院」且「非藥局」，才允許用 clinic/doctor 判定為診所
+        const isClinic = !isHospital && !isPharmacy && (
+          allText.includes('clinic') || allText.includes('專科診所') || allText.includes('診所') || allText.includes('doctor') || allText.includes('health center')
+        );
 
         // 非屬上述三者則排除
         if (!isHospital && !isClinic && !isPharmacy) return false;
