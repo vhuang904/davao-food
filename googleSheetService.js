@@ -1,6 +1,8 @@
 /**
- * 大V的旅遊窩 PWA - Google Sheets CMS 資料串接服務 (v24.2 Ultra Robust Link & Photos)
- * 100% 解決 website 遺失與 Google 相片未能正常解析問題
+ * 大V的旅遊窩 PWA - Google Sheets CMS 資料串接服務 (v26.2 Active & Seed Synchronized)
+ * 1. 100% 完整支援 6 大工作表的 is_active 上下架開關（布林值、大小寫 FALSE、0 全面攔截）
+ * 2. 徹底修復 Auto_Discovered 與 Island_Discovered 漏過濾的問題
+ * 3. 完美相容 15 欄位結構，絕不強制覆蓋 is_active
  */
 
 export const SHEET_CONFIG = {
@@ -91,7 +93,7 @@ export async function fetchSheetCsv(sheetName) {
     return [];
   }
 
-  // 將表頭轉為標準乾淨的小寫 key，同時保留原始 key 以防萬一
+  // 將表頭轉為標準乾淨的小寫 key（移除底線與空格，如 is_active -> isactive）
   const headers = rawRows[0].map(h => h.toLowerCase().trim().replace(/^['"]|['"]$/g, '').replace(/[\s_-]/g, ''));
   const records = [];
 
@@ -124,7 +126,7 @@ function cleanPhoneNumber(phone) {
   return str;
 }
 
-// 輔助工具：安全解析照片清單 (防止空值或誤殺 Google API 照片)
+// 輔助工具：安全解析照片清單
 function extractImages(row) {
   const raw = row.imageurl || row.image_url || row.image || row.photos || row.photo || '';
   if (!raw || typeof raw !== 'string') return [];
@@ -142,9 +144,20 @@ function extractWebsite(row) {
   return '';
 }
 
+// ⭐ 核心安全過濾器：判斷是否為有效上架項目
+function checkIsActive(row) {
+  if (!row) return false;
+  const val = row.isactive !== undefined ? row.isactive : row.is_active;
+  if (val === undefined || val === null || val === '') return true; // 空白預設上架
+  if (val === false) return false;
+  if (val === true) return true;
+  const str = String(val).trim().toUpperCase();
+  return str !== 'FALSE' && str !== '0' && str !== 'NO' && str !== 'OFF';
+}
+
 function normalizeBigVPicks(rows) {
   return rows
-    .filter(row => !row.isactive || String(row.isactive).trim().toUpperCase() !== 'FALSE')
+    .filter(checkIsActive)
     .map(row => ({
       id: row.id,
       city: (row.city || '').toLowerCase().trim(),
@@ -177,11 +190,11 @@ function normalizeBigVPicks(rows) {
 
 function normalizeAttractions(rows) {
   return rows
-    .filter(row => !row.isactive || String(row.isactive).trim().toUpperCase() !== 'FALSE')
+    .filter(checkIsActive)
     .map(row => ({
       id: row.id,
       city: (row.city || '').toLowerCase().trim(),
-      type: 'attraction',
+      type: (row.type || 'attraction').toLowerCase().trim(),
       name: row.namezh || row.name || row.id,
       name_zh: row.namezh || row.name || '',
       name_en: row.nameen || '',
@@ -192,8 +205,8 @@ function normalizeAttractions(rows) {
       desc_zh: row.desczh || row.description || row.desc || '',
       desc_en: row.descen || '',
       desc_tl: row.desctl || '',
-      googleRating: parseFloat(row.googlerating) || 4.5,
-      googleReviewCount: parseInt(row.googlereviewcount || row.reviewcount, 10) || 100,
+      googleRating: parseFloat(row.googlerating || row.rating) || 4.5,
+      googleReviewCount: parseInt(row.googlereviewcount || row.reviewcount || row.reviews, 10) || 100,
       address: row.address || '',
       phone: cleanPhoneNumber(row.phone),
       website: extractWebsite(row),
@@ -206,7 +219,7 @@ function normalizeAttractions(rows) {
 
 function normalizePromotions(rows) {
   return rows
-    .filter(row => !row.isactive || String(row.isactive).trim().toUpperCase() !== 'FALSE')
+    .filter(checkIsActive)
     .map(row => ({
       id: row.id,
       city: (row.city || 'all').toLowerCase().trim(),
@@ -231,51 +244,59 @@ function normalizePromotions(rows) {
     }));
 }
 
+// ⭐ 修復：加入 checkIsActive 過濾
 function normalizeAutoDiscovered(rows) {
-  return rows.map(row => ({
-    id: row.id,
-    city: (row.city || '').toLowerCase().trim(),
-    type: (row.type || 'restaurant').toLowerCase().trim(),
-    name_zh: row.namezh || '',
-    name_en: row.nameen || '',
-    name_tl: row.nametl || '',
-    category: row.category || '',
-    categoryKey: (row.category || '').toLowerCase().trim(),
-    googleRating: parseFloat(row.googlerating || row.rating) || 4.5,
-    googleReviewCount: parseInt(row.googlereviewcount || row.reviewcount || row.reviews, 10) || 50,
-    address: row.address || '',
-    phone: cleanPhoneNumber(row.phone),
-    website: extractWebsite(row), // ⭐ 精準提取官網
-    image_url: row.imageurl || row.image || '',
-    images: extractImages(row),   // ⭐ 直接轉化為圖片陣列，不丟失 Google 照片
-    nav_link: row.navlink || row.nav_link || ''
-  }));
+  return rows
+    .filter(checkIsActive)
+    .map(row => ({
+      id: row.id,
+      city: (row.city || '').toLowerCase().trim(),
+      type: (row.type || 'restaurant').toLowerCase().trim(),
+      name_zh: row.namezh || '',
+      name_en: row.nameen || '',
+      name_tl: row.nametl || '',
+      category: row.category || '',
+      categoryKey: (row.category || '').toLowerCase().trim(),
+      googleRating: parseFloat(row.googlerating || row.rating) || 4.5,
+      googleReviewCount: parseInt(row.reviewcount || row.googlereviewcount || row.reviews, 10) || 50,
+      address: row.address || '',
+      phone: cleanPhoneNumber(row.phone),
+      website: extractWebsite(row),
+      image_url: row.imageurl || row.image || '',
+      images: extractImages(row),
+      nav_link: row.navlink || row.nav_link || '',
+      is_active: true
+    }));
 }
 
+// ⭐ 修復：加入 checkIsActive 過濾
 function normalizeIslandDiscovered(rows) {
-  return rows.map(row => ({
-    id: row.id,
-    city: (row.city || '').toLowerCase().trim(),
-    type: (row.type || 'attraction').toLowerCase().trim(),
-    name_zh: row.namezh || '',
-    name_en: row.nameen || '',
-    name_tl: row.nametl || '',
-    category: row.category || '',
-    categoryKey: (row.category || '').toLowerCase().trim(),
-    googleRating: parseFloat(row.googlerating || row.rating) || 4.5,
-    googleReviewCount: parseInt(row.googlereviewcount || row.reviewcount || row.reviews, 10) || 50,
-    address: row.address || '',
-    phone: cleanPhoneNumber(row.phone),
-    website: extractWebsite(row), // ⭐ 精準提取官網
-    image_url: row.imageurl || row.image || '',
-    images: extractImages(row),   // ⭐ 直接轉化為圖片陣列
-    nav_link: row.navlink || row.nav_link || ''
-  }));
+  return rows
+    .filter(checkIsActive)
+    .map(row => ({
+      id: row.id,
+      city: (row.city || '').toLowerCase().trim(),
+      type: (row.type || 'attraction').toLowerCase().trim(),
+      name_zh: row.namezh || '',
+      name_en: row.nameen || '',
+      name_tl: row.nametl || '',
+      category: row.category || '',
+      categoryKey: (row.category || '').toLowerCase().trim(),
+      googleRating: parseFloat(row.googlerating || row.rating) || 4.5,
+      googleReviewCount: parseInt(row.reviewcount || row.googlereviewcount || row.reviews, 10) || 50,
+      address: row.address || '',
+      phone: cleanPhoneNumber(row.phone),
+      website: extractWebsite(row),
+      image_url: row.imageurl || row.image || '',
+      images: extractImages(row),
+      nav_link: row.navlink || row.nav_link || '',
+      is_active: true
+    }));
 }
 
 function normalizeMedical(rows) {
   return rows
-    .filter(row => !row.isactive || String(row.isactive).trim().toUpperCase() !== 'FALSE')
+    .filter(checkIsActive)
     .map(row => {
       const p = row.phone || row.telephone || row.contact || row.col_8 || row.col_9 || '';
       return {
