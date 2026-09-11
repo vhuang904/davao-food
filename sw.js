@@ -1,13 +1,13 @@
 /**
- * 大V的旅遊窩 PWA - Service Worker (版本自適應 & 自動舊快取清理版)
- * 1. 帶動態版本戳記，發布時自動清空舊版死鎖快取
- * 2. 徹底放行 Google Sheets API、Firebase、Google 授權與 Cloudflare Workers 原生連線
- * 3. 核心頁面與腳本採用 Network First 網路優先策略
- * 4. 完整保留 Web Push 背景推播與點擊跳轉機制
+ * 大V的旅遊窩 PWA - Service Worker (版本自適應 & App Badging 紅點推播強化版)
+ * 1. 帶動態版本戳記，發布時自動清空舊版快取
+ * 2. 核心頁面與腳本採用 Network First 網路優先策略
+ * 3. 整合 App Badging API：背景推播送達亮紅點，點擊通知自動清除
+ * 4. 強化通知震動反饋與提示聲呼叫
  */
 
-// 👉 每次專案有重大改版發布時，修改此版本號即可強制全體手機客戶端自動更新
-const CACHE_VERSION = 'v20260911-v32.0';
+// 👉 每次重大發布修改此版本號，強制手機客戶端熱更新
+const CACHE_VERSION = 'v20260912-v36.0-badge';
 const STATIC_CACHE_NAME = `bigv-static-${CACHE_VERSION}`;
 const IMAGE_CACHE_NAME = `bigv-images-${CACHE_VERSION}`;
 
@@ -75,7 +75,7 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // 策略 B：Firebase Storage 圖片與 Unsplash 圖庫 -> Stale-While-Revalidate（優先讀快取，背景靜默更新）
+  // 策略 B：Firebase Storage 圖片與 Unsplash 圖庫 -> Stale-While-Revalidate
   if (
     url.hostname.includes('firebasestorage.googleapis.com') ||
     url.hostname.includes('images.unsplash.com')
@@ -140,15 +140,20 @@ self.addEventListener('fetch', (event) => {
   );
 });
 
-// 4. 監聽前端發來的指令（支援熱更新 skipWaiting）
+// 4. 監聽前端發來的指令（支援熱更新與主動清除紅點）
 self.addEventListener('message', (event) => {
   if (event.data && event.data.type === 'SKIP_WAITING') {
     self.skipWaiting();
   }
+  if (event.data && event.data.type === 'CLEAR_BADGE') {
+    if ('clearAppBadge' in navigator) {
+      navigator.clearAppBadge().catch(() => {});
+    }
+  }
 });
 
 // ==========================================
-// Web Push 推播通知與點擊處理邏輯（完整保留）
+// Web Push 推播通知與點擊處理邏輯（整合 App Badging）
 // ==========================================
 
 // 1. 監聽推播訊息 (背景接收)
@@ -175,19 +180,29 @@ self.addEventListener('push', (event) => {
     data: {
       url: (data.data && data.data.url) || data.url || '/'
     },
-    vibrate: [100, 50, 100],
+    vibrate: [200, 100, 200], // 強化雙震動節奏
     tag: 'bigv-push-notification',
     renotify: true
   };
 
-  event.waitUntil(
-    self.registration.showNotification(notificationTitle, notificationOptions)
-  );
+  // ⭐ 背景亮起桌面 App Icon 紅點徽章
+  const badgePromise = ('setAppBadge' in navigator)
+    ? navigator.setAppBadge(data.badgeCount || 1).catch(() => {})
+    : Promise.resolve();
+
+  const showNotificationPromise = self.registration.showNotification(notificationTitle, notificationOptions);
+
+  event.waitUntil(Promise.all([showNotificationPromise, badgePromise]));
 });
 
 // 2. 監聽使用者點擊通知卡片
 self.addEventListener('notificationclick', (event) => {
   event.notification.close();
+
+  // ⭐ 使用者點了通知，立刻清除桌面紅點徽章
+  if ('clearAppBadge' in navigator) {
+    navigator.clearAppBadge().catch(() => {});
+  }
 
   const targetUrl = (event.notification.data && event.notification.data.url) || '/';
 
