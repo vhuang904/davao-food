@@ -1911,11 +1911,23 @@
         const type = (item.type || '').toLowerCase();
         const allText = `${cat} ${type}`;
 
-        if (sub === 'hospital') return allText.includes('hospital') || allText.includes('綜合醫院') || allText.includes('醫院');
-        if (sub === 'clinic') return allText.includes('clinic') || allText.includes('專科診所') || allText.includes('診所');
-        if (sub === 'pharmacy') return allText.includes('pharmacy') || allText.includes('連鎖藥局') || allText.includes('藥局') || allText.includes('mercury');
+        // ⭐ 排除潛水、跳島、旅行社等非醫療雜訊
+        const noiseWords = ['divers', 'diving', 'dive', 'tour', 'paradise', 'travel', 'resort', 'expedition', 'adventure'];
+        const nameLower = (safeStr(item.name_zh) + ' ' + safeStr(item.name_en)).toLowerCase();
+        if (noiseWords.some(w => nameLower.includes(w))) return false;
 
-        return allText.includes(sub);
+        const isHospital = allText.includes('hospital') || allText.includes('綜合醫院') || allText.includes('醫院') || allText.includes('infirmary') || allText.includes('medical center');
+        const isClinic = allText.includes('clinic') || allText.includes('專科診所') || allText.includes('診所') || allText.includes('doctor') || allText.includes('health center');
+        const isPharmacy = allText.includes('pharmacy') || allText.includes('連鎖藥局') || allText.includes('藥局') || allText.includes('mercury') || allText.includes('watsons') || allText.includes('drug');
+
+        // 如果選全部，但本身根本不屬於醫院、診所或藥局，剔除掉
+        if (!isHospital && !isClinic && !isPharmacy) return false;
+
+        if (sub === 'hospital') return isHospital;
+        if (sub === 'clinic') return isClinic;
+        if (sub === 'pharmacy') return isPharmacy;
+
+        return true;
       });
 
       if (currentSearchQuery) {
@@ -1992,10 +2004,15 @@
         const rawReviews = item.review_count ?? item.reviewcount ?? item.google_reviews ?? item.reviews ?? 50;
         const reviewCount = parseInt(String(rawReviews).replace(/[^\d]/g, ''), 10) || 0;
         
-        let catBadge = '🏥 綜合醫院';
-        const catLower = (item.category || '').toLowerCase();
-        if (catLower.includes('clinic')) catBadge = '🩺 專科診所';
-        if (catLower.includes('pharmacy')) catBadge = '💊 連鎖藥局';
+        let catBadge = '🏥 醫療機構';
+        const catAll = `${(item.category || '')} ${(item.type || '')} ${(item.name_en || '')}`.toLowerCase();
+        if (catAll.includes('hospital') || catAll.includes('medical center') || catAll.includes('infirmary')) {
+          catBadge = '🏥 綜合醫院';
+        } else if (catAll.includes('clinic') || catAll.includes('doctor') || catAll.includes('health')) {
+          catBadge = '🩺 專科診所';
+        } else if (catAll.includes('pharmacy') || catAll.includes('drug') || catAll.includes('mercury') || catAll.includes('watsons')) {
+          catBadge = '💊 連鎖藥局';
+        }
 
         // ⭐ 醫療專屬雙軌制藍色 Google 嚴選光環判定：
         // 海島區：4.6 星 + 50 評論以上
