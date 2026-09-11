@@ -7,7 +7,7 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
-  <meta name="app-version" content="20260911-v26.1-rock-solid" />
+  <meta name="app-version" content="20260911-v30.0-medical-sorted" />
   <meta name="theme-color" content="#020617" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -1912,14 +1912,29 @@
         filtered = filtered.filter(item => (safeStr(item.name_zh) + ' ' + safeStr(item.name_en) + ' ' + safeStr(item.address)).includes(q));
       }
 
-      // ⭐ 醫療權威排序：評分最高優先 -> 同分者評論數最多優先 (絕不再亂掉)
+      // ⭐ 醫療權威強固排序：絕對防呆過濾 NaN，高分優先 -> 評論數最多優先
       filtered.sort((a, b) => {
-        const ratingA = Number(a.google_rating || a.googlerating || a.googleRating || a.rating || 0);
-        const ratingB = Number(b.google_rating || b.googlerating || b.googleRating || b.rating || 0);
-        if (ratingB !== ratingA) return ratingB - ratingA;
+        const getRating = (item) => {
+          const val = item.google_rating ?? item.googleRating ?? item.googlerating ?? item.rating;
+          const num = parseFloat(String(val).replace(/[^\d.]/g, ''));
+          return isNaN(num) ? 0 : num;
+        };
 
-        const reviewsA = Number(a.google_reviews || a.googlereviews || a.googleReviewCount || a.review_count || a.reviewcount || a.reviews || 0);
-        const reviewsB = Number(b.google_reviews || b.googlereviews || b.googleReviewCount || b.review_count || b.reviewcount || b.reviews || 0);
+        const getReviews = (item) => {
+          const val = item.review_count ?? item.reviewcount ?? item.google_reviews ?? item.googlereviews ?? item.googleReviewCount ?? item.reviews;
+          const num = parseInt(String(val).replace(/[^\d]/g, ''), 10);
+          return isNaN(num) ? 0 : num;
+        };
+
+        const ratingA = getRating(a);
+        const ratingB = getRating(b);
+
+        if (ratingB !== ratingA) {
+          return ratingB - ratingA;
+        }
+
+        const reviewsA = getReviews(a);
+        const reviewsB = getReviews(b);
         return reviewsB - reviewsA;
       });
       
@@ -1934,15 +1949,21 @@
       listEl.innerHTML = filtered.map((item, idx) => {
         const name = getLocalizedText(item, 'name', currentShortLang) || item.name_en || item.name_zh || '醫療急救機構';
         const smartLink = getSmartLink(item.name_en || name, item.city, item.website);
-        const rawPhone = item.phone || item.telephone || item.contact || item.col_8 || item.col_9 || '';
+        const rawPhone = item.phone || item.telephone || item.contact || '';
         const cleanPhone = getCleanPhone(rawPhone);
 
-        const rating = item.google_rating || item.googlerating || item.rating || 4.5;
-        const reviewCount = item.review_count || item.reviewcount || item.reviews || 50;
+        // 統一評分與評論數顯示格式
+        const rawRating = item.google_rating ?? item.googleRating ?? item.googlerating ?? item.rating ?? 4.5;
+        const numRating = parseFloat(String(rawRating).replace(/[^\d.]/g, ''));
+        const rating = isNaN(numRating) ? '4.5' : numRating.toFixed(1);
+
+        const rawReviews = item.review_count ?? item.reviewcount ?? item.google_reviews ?? item.reviews ?? 50;
+        const reviewCount = parseInt(String(rawReviews).replace(/[^\d]/g, ''), 10) || 0;
         
         let catBadge = '🏥 綜合醫院';
-        if (item.category === 'clinic') catBadge = '🩺 專科診所';
-        if (item.category === 'pharmacy') catBadge = '💊 連鎖藥局';
+        const catLower = (item.category || '').toLowerCase();
+        if (catLower.includes('clinic')) catBadge = '🩺 專科診所';
+        if (catLower.includes('pharmacy')) catBadge = '💊 連鎖藥局';
 
         return `
           <article class="bg-slate-950 rounded-2xl overflow-hidden shadow-xs border border-slate-800 flex flex-col transition">
