@@ -60,16 +60,23 @@
     .dot-indicator.active { width: 14px; border-radius: 4px; background: #fbbf24; }
 
     /* ==========================================
-     * 大V的旅遊窩 - 暖陽淺色主題 (徹底告別金色反白與黑塊)
+     * 大V的旅遊窩 - 雙模態純淨隔離主題系統
      * ========================================== */
 
-    /* 1. 全站大畫布：象牙乳白色 */
+    /* ---------- 1. 暗黑模式 (Dark Mode) 保險還原 ---------- */
+    html.dark body,
+    html:not(.light) body {
+      background-color: #020617 !important;
+      color: #F8FAFC !important;
+    }
+
+    /* ---------- 2. 暖陽淺色模式 (Light Mode) 專屬樣式 ---------- */
     html.light body {
       background-color: #F7F3EB !important;
       color: #1F2937 !important;
     }
 
-    /* 2. 頂部大底盤：招牌活力暖橘漸層 */
+    /* 頂部 Header 暖橘漸層 */
     html.light header.glass-header {
       background: linear-gradient(180deg, #F97316 0%, #EA580C 100%) !important;
       border-bottom: 2px solid #C2410C !important;
@@ -79,7 +86,7 @@
       color: #FFFFFF;
     }
 
-    /* 3. 搜尋列與語言選單 */
+    /* 搜尋列與語言選單 */
     html.light #search-input,
     html.light #lang-select {
       background-color: #FFFFFF !important;
@@ -95,7 +102,7 @@
       color: #9CA3AF !important;
     }
 
-    /* 4. 都會/海島切換槽 & 主分頁外框槽 */
+    /* 都會/海島切換槽 & 主分頁外框槽 */
     html.light header .bg-slate-950,
     html.light header .bg-slate-900 {
       background-color: rgba(255, 255, 255, 0.22) !important;
@@ -107,14 +114,14 @@
       color: #FFF7ED !important;
     }
 
-    /* 5. 子分類標籤容器托盤底色 */
+    /* 子分類標籤容器托盤底色 */
     html.light header > div.bg-slate-950\/90 {
       background: linear-gradient(180deg, #EFE2D3 0%, #E8D7C3 100%) !important;
       border-top: 1px solid rgba(194, 65, 12, 0.2) !important;
       box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.03) !important;
     }
 
-    /* 6. 膠囊按鈕 */
+    /* 膠囊按鈕 */
     html.light .region-pill,
     html.light .sub-pill {
       background-color: #FFFFFF !important;
@@ -132,7 +139,7 @@
       box-shadow: 0 3px 10px rgba(234, 88, 12, 0.4) !important;
     }
 
-    /* 7. 地點數量徽章 */
+    /* 地點數量統計徽章 */
     html.light #itemCountBadge {
       background-color: #FFEDD5 !important;
       color: #C2410C !important;
@@ -142,9 +149,7 @@
       color: #4B5563 !important;
     }
 
-    /* ==========================================
-     * ⭐ 卡片底盤：舒適乳白 (Creamy Ivory)
-     * ========================================== */
+    /* 卡片底盤：僅在 light 模式轉為舒適乳白 */
     html.light article {
       background-color: #FCF9F2 !important;
       border-radius: 1rem !important;
@@ -177,28 +182,29 @@
     html.light article .h-\[2px\] {
       background-color: #EFE8DC !important;
     }
-    /* ⭐ 輪播照片上的店名與外連圖示：強制純白 + 文字陰影（絕不反黑隱形） */
-  html.light article .absolute.bottom-2\.5 a,
-  html.light article .absolute.bottom-2\.5 a span,
-  html.light article .carousel-track + div + div a span,
-  html.light article .carousel-track + div + div a {
-    color: #FFFFFF !important;
-    font-weight: 800 !important;
-    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8), 0 2px 8px rgba(0, 0, 0, 0.9) !important;
-  }
-  html.light article .absolute.bottom-2\.5 a i {
-    color: #FBBF24 !important; /* 亮黃金外連小箭頭 */
-    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8) !important;
-  }
 
-  /* 僅卡片下方內容區標題維持清晰黑字 */
-  html.light article div.p-4 h2,
-  html.light article div.p-4 h3,
-  html.light article div.p-3\.5 h2,
-  html.light article div.p-3\.5 h3 {
-    color: #111827 !important;
-    font-weight: 700 !important;
-  }
+    /* 輪播照片上的店名：強制純白高亮 + 雙層陰影 */
+    html.light article .absolute.bottom-2\.5 a,
+    html.light article .absolute.bottom-2\.5 a span,
+    html.light article .carousel-track + div + div a span,
+    html.light article .carousel-track + div + div a {
+      color: #FFFFFF !important;
+      font-weight: 800 !important;
+      text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8), 0 2px 8px rgba(0, 0, 0, 0.9) !important;
+    }
+    html.light article .absolute.bottom-2\.5 a i {
+      color: #FBBF24 !important;
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8) !important;
+    }
+
+    /* 淺色卡片內文字色：清晰深黑字 */
+    html.light article div.p-4 h2,
+    html.light article div.p-4 h3,
+    html.light article div.p-3\.5 h2,
+    html.light article div.p-3\.5 h3 {
+      color: #111827 !important;
+      font-weight: 700 !important;
+    }
     html.light article p,
     html.light article .text-slate-200,
     html.light article .text-slate-300,
@@ -206,11 +212,7 @@
       color: #374151 !important;
     }
 
-    /* ==========================================
-     * ⭐ 核心破局：徹底換掉看不清的金色字與黑色塊！
-     * ========================================== */
-
-    /* 1. 站長私房嚴選卡：地點標籤改為「深邃曜石墨黑底盤 + 亮白粗體字」，極度清晰霸氣！ */
+    /* 標籤反差設定 */
     html.light article span.bg-amber-400\/10 {
       background: #1E293B !important;
       border: 1px solid #0F172A !important;
@@ -222,8 +224,6 @@
     html.light article span.bg-amber-400\/10 span {
       color: #FFFFFF !important;
     }
-
-    /* 2. 必點招牌：改為「深焦糖橘紅標籤 + 亮白字」，後方菜名為「高對比黑體字」 */
     html.light article span.bg-amber-400\/20 {
       background: #C2410C !important;
       border: 1px solid #9A3412 !important;
@@ -231,28 +231,24 @@
       font-weight: 900 !important;
     }
     html.light article .text-amber-300\/90 {
-      color: #111827 !important; /* 必點菜名直接改清楚黑字 */
+      color: #111827 !important;
       font-weight: 700 !important;
     }
-
-    /* 3. 私房評分按鈕：招牌暖金漸層底 + 純白粗體字 */
     html.light article .bg-amber-400.text-slate-950 {
       background: linear-gradient(135deg, #F59E0B, #D97706) !important;
       color: #FFFFFF !important;
       font-weight: 900 !important;
       box-shadow: 0 2px 6px rgba(217, 119, 6, 0.3) !important;
     }
-
-    /* 4. ⭐ 解決第二張圖那個黑媽媽的色塊（口卑指標標籤）！改為天藍高光底盤＋白字！ */
     html.light article span.bg-slate-800.text-slate-300,
     html.light article span.bg-slate-900.text-slate-400 {
-      background: #0284C7 !important; /* 湛藍底 */
+      background: #0284C7 !important;
       border: 1px solid #0369A1 !important;
-      color: #FFFFFF !important;      /* 純白字 */
+      color: #FFFFFF !important;
       font-weight: 800 !important;
     }
 
-    /* Google 大眾評分列 */
+    /* Google 評分列 */
     html.light article .border-t.border-slate-800\/80 {
       background-color: #F5EFE6 !important;
       border-top: 1px solid #EAE1D5 !important;
@@ -272,7 +268,7 @@
       color: #EA580C !important;
     }
 
-    /* 寫評論專屬高光按鈕：招牌暖橘底 + 純白立體粗體字 */
+    /* 按鈕樣式 */
     html.light article .btn-open-comment {
       background: linear-gradient(135deg, #F97316 0%, #EA580C 100%) !important;
       border: 1px solid #EA580C !important;
@@ -284,8 +280,6 @@
       font-weight: 800 !important;
       text-shadow: 0 1px 2px rgba(0, 0, 0, 0.15) !important;
     }
-
-    /* 撥打電話、路線導航按鈕 */
     html.light article a.bg-slate-800,
     html.light article a.bg-slate-800\/80,
     html.light article button.bg-slate-800:not(.btn-open-comment),
@@ -315,31 +309,24 @@
       font-weight: 700 !important;
     }
 
-    /* 8. 畫面正中央通知提示（Toast） */
+    /* 居中 Toast 提示 */
     html.light #toastInnerBox {
       background: rgba(255, 255, 255, 0.98) !important;
       border: 1.5px solid #F97316 !important;
       box-shadow: 0 10px 30px -5px rgba(234, 88, 12, 0.25) !important;
       color: #1F2937 !important;
     }
-    html.light #toastMessage {
-      color: #1F2937 !important;
-      font-weight: 800 !important;
-    }
-    html.light #toastIcon {
-      color: #EA580C !important;
-    }
+    html.light #toastMessage { color: #1F2937 !important; font-weight: 800 !important; }
+    html.light #toastIcon { color: #EA580C !important; }
 
-    /* 9. 會員彈窗 (Auth Modal) */
+    /* 彈窗與 AI 面板 */
     html.light #auth-modal .bg-slate-950 {
       background-color: #FCF9F2 !important;
       border-color: rgba(234, 88, 12, 0.3) !important;
       box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.15) !important;
     }
-    html.light #auth-modal h3,
-    html.light #auth-modal h4 { color: #111827 !important; }
-    html.light #auth-modal p,
-    html.light #auth-modal span.text-slate-400 { color: #4B5563 !important; }
+    html.light #auth-modal h3, html.light #auth-modal h4 { color: #111827 !important; }
+    html.light #auth-modal p, html.light #auth-modal span.text-slate-400 { color: #4B5563 !important; }
     html.light #auth-modal #close-auth-btn { background-color: #EFE8DC !important; color: #4B5563 !important; }
     html.light #auth-modal input { background-color: #FFFFFF !important; border-color: #D8CFC4 !important; color: #111827 !important; }
     html.light #auth-modal .bg-gradient-to-br,
@@ -347,26 +334,24 @@
     html.light #auth-modal #user-modal-points { color: #EA580C !important; }
     html.light #auth-modal .text-slate-200 { color: #1F2937 !important; }
 
-    /* 10. 訪客留言彈窗 (Comment Modal) */
     html.light #comment-modal .bg-slate-950 { background-color: #FCF9F2 !important; border-color: rgba(234, 88, 12, 0.3) !important; }
     html.light #comment-modal #comment-modal-title { color: #111827 !important; }
     html.light #comment-modal #close-comment-btn { background-color: #EFE8DC !important; color: #4B5563 !important; }
     html.light #comment-modal .bg-slate-900 { background-color: #FFFFFF !important; border-color: #E2DACF !important; }
-    html.light #comment-modal .text-slate-200,
-    html.light #comment-modal .text-slate-300 { color: #1F2937 !important; }
+    html.light #comment-modal .text-slate-200, html.light #comment-modal .text-slate-300 { color: #1F2937 !important; }
     html.light #comment-input-text { background-color: #FFFFFF !important; border-color: #D8CFC4 !important; color: #111827 !important; }
 
-    /* 11. AI 旅遊管家對話面板 (AI Chat Modal) */
     html.light #chat-modal { background-color: #FCF9F2 !important; border: 1.5px solid #EA580C !important; box-shadow: 0 15px 35px -5px rgba(234, 88, 12, 0.2) !important; }
     html.light #chat-modal > div.bg-slate-900 { background: linear-gradient(135deg, #F97316, #EA580C) !important; border-bottom: 1px solid #C2410C !important; }
-    html.light #chat-modal > div.bg-slate-900 h3,
-    html.light #chat-modal > div.bg-slate-900 span { color: #FFFFFF !important; }
+    html.light #chat-modal > div.bg-slate-900 h3, html.light #chat-modal > div.bg-slate-900 span { color: #FFFFFF !important; }
     html.light #chat-messages { background-color: #F7F3EB !important; }
     html.light #chat-messages .bg-slate-900,
     html.light #chat-messages .chat-ready-bubble { background-color: #FFFFFF !important; border: 1px solid #E2DACF !important; color: #1F2937 !important; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04) !important; }
     html.light #chat-modal > div.p-2.bg-slate-900 { background-color: #FCF9F2 !important; border-top: 1px solid #E2DACF !important; }
     html.light #chat-input { background-color: #FFFFFF !important; border: 1px solid #D8CFC4 !important; color: #111827 !important; }
   </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col font-sans">
 
   <!-- 全域 Toast 提示（置中顯示） -->
   <div id="toastNotification" class="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[99999] transition-all duration-300 pointer-events-none opacity-0 scale-95 w-auto min-w-[240px] max-w-xs px-4">
@@ -801,6 +786,7 @@
     let currentMainTab = sessionStorage.getItem('ph_nav_tab') || 'map';
     let currentSubFilter = sessionStorage.getItem('ph_nav_sub') || 'all';
     let currentSearchQuery = '';
+
     // 智慧寬鬆搜尋同義詞字典
     const SEARCH_SYNONYMS = {
       '牛排': ['steak', 'beef', 'wagyu', '和牛', '肋眼', 'ribeye', 'western', '排餐', '牛'],
@@ -827,6 +813,7 @@
       }
       return Array.from(new Set(terms));
     }
+
     let currentLang = localStorage.getItem('ph_app_lang') || 'zh-TW';
 
     if (deepCity) {
@@ -988,7 +975,6 @@
         avatarContainer.innerHTML = `<i id="user-avatar-icon" class="fa-regular fa-user text-[10px]"></i>`;
       }
 
-      // ⭐ 登入狀態改變時，立即同步刷新 AI 管家介面
       renderChatUI();
     });
 
@@ -1345,10 +1331,8 @@
       });
     }
 
-    // ⭐ 防重複連線鎖定旗標
     let isFetchingData = false;
 
-    // 核心資料聚合整合
     async function fetchData() {
       if (isFetchingData) return;
       isFetchingData = true;
@@ -1396,7 +1380,6 @@
           return true;
         }
 
-        // 1. 優先載入 BigV 站長嚴選
         (sheetMaster.bigVPicks || []).forEach(bigVItem => {
           if (!bigVItem.id || !isItemActive(bigVItem)) return;
           const bId = String(bigVItem.id).toLowerCase().trim();
@@ -1455,7 +1438,6 @@
           return null;
         }
 
-        // 2. 處理 Auto_Discovered
         const autoAttractions = [];
         (sheetMaster.autoDiscovered || []).forEach(autoItem => {
           if (!autoItem.id || !isItemActive(autoItem)) return;
@@ -1521,7 +1503,6 @@
           }
         });
 
-        // 3. 處理 Island_Discovered
         const islandAttractions = [];
         (sheetMaster.islandDiscovered || []).forEach(islandItem => {
           if (!islandItem.id || !isItemActive(islandItem)) return;
@@ -1586,7 +1567,6 @@
           }
         });
 
-        // 4. 寫入全域變數 (掛載評分與評論數)
         allRestaurants = Array.from(mergedMap.values());
         
         allAttractions = [
@@ -1625,7 +1605,6 @@
       }
     }
 
-    // 核心升級：精準信任城市標籤
     function isCityMatch(item, targetCity) {
       if (!item) return false;
       const c = safeStr(item.city);
@@ -1801,14 +1780,12 @@
 
         const cat = (safeStr(item.categoryKey) + ' ' + safeStr(item.category) + ' ' + safeStr(item.name) + ' ' + safeStr(item.name_zh) + ' ' + safeStr(item.name_en)).toLowerCase();
 
-        // 🦀 海鮮盛宴（都會生活圈獨立篩選）
         if (currentSubFilter === 'seafood') {
           return cat.includes('海鮮') || cat.includes('seafood') || cat.includes('crab') || cat.includes('lobster') || 
                  cat.includes('fish') || cat.includes('shrimp') || cat.includes('prawn') || cat.includes('dampa') || 
                  cat.includes('fishermans') || cat.includes('huashan') || cat.includes('west empire') || cat.includes('pagkaing-dagat');
         }
 
-        // 🏝️ 海島生活圈（海鮮餐廳在點選「food」必吃美食時自動列出）
         if (isIslandMode(currentCity)) {
           if (currentSubFilter === 'food') return item.islandType === 'food' || cat.includes('food') || cat.includes('seafood') || cat.includes('海鮮');
           if (currentSubFilter === 'nightlife') return item.islandType === 'nightlife' || item.categoryKey === 'nightlife';
@@ -1851,7 +1828,6 @@
       if (currentSearchQuery) {
         const expandedTerms = expandSearchKeywords(currentSearchQuery);
         filtered = filtered.filter(item => {
-          // 聚合：店名、英文名、地址、分類、必點招牌、站長評語與介紹
           const corpus = (
             safeStr(item.name) + ' ' +
             safeStr(item.name_zh) + ' ' +
@@ -1867,12 +1843,10 @@
             safeStr(item.description)
           ).toLowerCase();
 
-          // 只要命中擴展詞庫中的任一特徵即算匹配成功
           return expandedTerms.some(term => corpus.includes(term));
         });
       }
 
-      // ⭐ 美食自然排序：大V私房最優先 -> 純依 Google 評分由高到低 -> 同分比評論數
       filtered.sort((a, b) => {
         const aIsCurated = !!a.isCurated;
         const bIsCurated = !!b.isCurated;
@@ -1908,7 +1882,6 @@
         const rawReviews = item.googleReviewCount ?? item.google_reviews ?? item.review_count ?? item.reviews ?? 50;
         const reviewCount = parseInt(String(rawReviews).replace(/[^\d]/g, ''), 10) || 0;
 
-        // ⭐ 雙軌制等級判定：海島 4.6星+50評論 / 都會 4.8星+100評論 亮藍光
         const isIslandArea = isIslandMode(item.city || currentCity);
         const isGoogleTop = !isCurated && (
           isIslandArea 
@@ -1958,7 +1931,6 @@
           </a>
         `;
 
-        // LEVEL 1: 大V站長私房嚴選黑金卡
         if (isCurated) {
           return `
             <article class="rounded-2xl overflow-hidden border-2 border-amber-400 bg-slate-950 shadow-[0_0_25px_-3px_rgba(245,158,11,0.5)] flex flex-col transition-all duration-300">
@@ -2004,7 +1976,6 @@
                 </div>
               </div>
 
-              <!-- 統一風格 Google 評分列 -->
               <div class="px-3.5 py-2 bg-slate-900/90 border-t border-slate-800/80 flex items-center justify-between text-xs">
                 <div class="flex items-center gap-2">
                   <span class="w-4 h-4 rounded bg-white text-slate-900 font-bold flex items-center justify-center text-[9px]">G</span>
@@ -2041,7 +2012,6 @@
           `;
         }
 
-        // LEVEL 2: Google 高分嚴選推薦 (藍框光暈)
         if (isGoogleTop) {
           return `
             <article class="rounded-2xl overflow-hidden border border-sky-400/60 bg-slate-950 shadow-[0_0_15px_-3px_rgba(56,189,248,0.25)] flex flex-col transition-all">
@@ -2072,7 +2042,6 @@
                 </p>
               </div>
 
-              <!-- 統一風格 Google 評分列 -->
               <div class="px-3.5 py-2 bg-slate-900/90 border-t border-slate-800/80 flex items-center justify-between text-xs">
                 <div class="flex items-center gap-2">
                   <span class="w-4 h-4 rounded bg-white text-slate-900 font-bold flex items-center justify-center text-[9px]">G</span>
@@ -2108,7 +2077,6 @@
           `;
         }
 
-        // LEVEL 3: 社會大眾口碑店
         return `
           <article class="rounded-2xl overflow-hidden border border-slate-800 bg-slate-950 shadow-sm flex flex-col transition-all">
             <div class="relative w-full overflow-hidden">
@@ -2137,7 +2105,6 @@
               </p>
             </div>
 
-            <!-- 統一風格 Google 評分列 -->
             <div class="px-3.5 py-2 bg-slate-900/90 border-t border-slate-800/80 flex items-center justify-between text-xs">
               <div class="flex items-center gap-2">
                 <span class="w-4 h-4 rounded bg-white text-slate-900 font-bold flex items-center justify-center text-[9px]">G</span>
@@ -2311,7 +2278,6 @@
               </p>
             </div>
 
-            <!-- 統一風格 Google 評分列 -->
             <div class="px-3.5 py-2 bg-slate-900/90 border-t border-slate-800/80 flex items-center justify-between text-xs">
               <div class="flex items-center gap-2">
                 <span class="w-4 h-4 rounded bg-white text-slate-900 font-bold flex items-center justify-center text-[9px]">G</span>
@@ -2364,11 +2330,9 @@
 
         const allText = `${safeStr(item.category)} ${safeStr(item.type)} ${safeStr(item.name_zh)} ${safeStr(item.name_en)}`.toLowerCase();
 
-        // 1. 嚴格過濾潛水、跳島、旅行社等旅遊雜訊
         const noiseWords = ['divers', 'diving', 'dive', 'tour', 'paradise', 'travel', 'resort', 'expedition', 'adventure', 'island hopping'];
         if (noiseWords.some(w => allText.includes(w))) return false;
 
-        // 2. 嚴格醫療主體判定 (排他邏輯)
         const isHospital = allText.includes('hospital') || allText.includes('綜合醫院') || allText.includes('醫院') || allText.includes('infirmary') || allText.includes('medical center');
         const isPharmacy = allText.includes('pharmacy') || allText.includes('連鎖藥局') || allText.includes('藥局') || allText.includes('mercury') || allText.includes('watsons') || allText.includes('drug');
         const isClinic = !isHospital && !isPharmacy && (
@@ -2377,7 +2341,6 @@
 
         if (!isHospital && !isClinic && !isPharmacy) return false;
 
-        // 3. 子分類篩選
         if (!currentSubFilter || currentSubFilter === 'all') return true;
         if (currentSubFilter === 'hospital') return isHospital;
         if (currentSubFilter === 'clinic') return isClinic;
@@ -2404,7 +2367,6 @@
         });
       }
 
-      // 醫療權威排序：藍框嚴選優先置頂 -> 同級內再比評分與評論數
       filtered.sort((a, b) => {
         const checkIsTopMedical = (item) => {
           const isIsland = isIslandMode(item.city || currentCity);
@@ -2510,7 +2472,6 @@
               </p>
             </div>
 
-            <!-- 統一風格 Google 評分列 -->
             <div class="px-3.5 py-2 bg-slate-900/90 border-t border-slate-800/80 flex items-center justify-between text-xs">
               <div class="flex items-center gap-2">
                 <span class="w-4 h-4 rounded bg-white text-slate-900 font-bold flex items-center justify-center text-[9px]">G</span>
@@ -2822,14 +2783,12 @@
 
         const userProfile = await loginWithGoogle();
 
-        // 登入成功：切換視角並關閉彈窗
         if (userProfile) {
           document.getElementById('auth-modal-login-view').classList.add('hidden');
           document.getElementById('auth-modal-user-view').classList.remove('hidden');
           document.getElementById('auth-modal').classList.add('hidden');
           showToast('🎉 Google 帳號登入成功！');
         } else {
-          // 若為轉址模式或彈窗被關閉
           document.getElementById('auth-modal').classList.add('hidden');
         }
       } catch (err) {
@@ -3117,10 +3076,8 @@
     enableHorizontalScroll();
     fetchData();
 
-    // ⭐ 確保所有事件與監聽器就緒後再啟動認證
     initAuthService();
 
-    // ====== 頂級 PWA 熱更新與快取破除機制 ======
     if ('serviceWorker' in navigator) {
       let isRefreshing = false;
 
