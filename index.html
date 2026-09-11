@@ -7,7 +7,7 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
-  <meta name="app-version" content="20260911-v24.2-perfect-sync" />
+  <meta name="app-version" content="20260911-v25.0-grand-luxury" />
   <meta name="theme-color" content="#020617" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -434,9 +434,11 @@
         { key: 'nightlife', label: { 'zh-TW': '🍸 夜生活', 'en': '🍸 Nightlife', 'tl': '🍸 Buhay Gabi' } },
         { key: 'brunch', label: { 'zh-TW': '☕ 奢華早午餐', 'en': '☕ Luxury Brunch', 'tl': '☕ Marangyang Brunch' } }
       ],
+      // ⭐ 海島專區全面擴充「夜生活」維度
       food_island: [
         { key: 'all', label: { 'zh-TW': '🏝️ 全部推薦', 'en': '🏝️ All Spots', 'tl': '🏝️ Lahat' } },
         { key: 'food', label: { 'zh-TW': '🍽️ Top 必吃美食', 'en': '🍽️ Top Eats', 'tl': '🍽️ Pagkain' } },
+        { key: 'nightlife', label: { 'zh-TW': '🍸 夜生活', 'en': '🍸 Nightlife', 'tl': '🍸 Buhay Gabi' } },
         { key: 'hotel_villa', label: { 'zh-TW': '🏨 星級飯店 / 海景 Villa', 'en': '🏨 Star Hotels & Villas', 'tl': '🏨 Mga Hotel at Villa' } }
       ],
       attraction_urban: [
@@ -836,7 +838,7 @@
       ]
     };
 
-    // ⭐ 關鍵修復 1：放行 Google 官方相片 API 網址 (maps.googleapis.com)，不再誤殺！
+    // 核心修正：放行 Google 官方相片 API 網址 (maps.googleapis.com)
     function parseImages(item, fallback) {
       if (!item) return [fallback || CATEGORY_FALLBACK_IMAGES.default[0]];
 
@@ -983,7 +985,7 @@
       });
     }
 
-    // ⭐ 關鍵修復 2：精準去重聚合引擎（徹底消除 Yaki together 撞車雙胞胎）
+    // 核心資料聚合整合 (保證 BigV 與 Auto/Island 100% 精準去重)
     async function fetchData() {
       const loadingEl = document.getElementById('loading');
       const timeoutPromise = new Promise((_, reject) => 
@@ -1000,7 +1002,7 @@
 
         const mergedMap = new Map();
 
-        // 1. 優先載入 BigV 站長嚴選 (奠定尊榮 Level 1 基石)
+        // 1. 第一步：優先將 BigV 站長私房嚴選完整載入 (奠定最高等級基石)
         (sheetMaster.bigVPicks || []).forEach(bigVItem => {
           if (!bigVItem.id) return;
           const bId = String(bigVItem.id).toLowerCase().trim();
@@ -1036,7 +1038,7 @@
           });
         });
 
-        // 智慧比對輔助函式：比對 ID、同城英文店名（完全相同或包含）
+        // 輔助函式：檢查 Auto 或 Island 的店家是否已存在於 BigV 中
         function findMatchedBigV(candidateItem) {
           const cId = String(candidateItem.id || '').toLowerCase().trim();
           const cCity = String(candidateItem.city || '').toLowerCase().trim();
@@ -1051,10 +1053,7 @@
               const bEn = String(existing.name_en || '').toLowerCase().trim();
               const bName = String(existing.name || existing.name_zh || '').toLowerCase().trim();
 
-              // 英文名字完全相同 (例如 yaki together by kyoto)
               if (cEn && bEn && cEn === bEn) return existing;
-
-              // 英文名字互相包含
               if (cEn && bEn && (cEn.includes(bEn) || bEn.includes(cEn))) return existing;
               if (cName && bName && (cName.includes(bName) || bName.includes(cName))) return existing;
             }
@@ -1062,7 +1061,7 @@
           return null;
         }
 
-        // 2. 處理 Auto_Discovered，自動融合撞車店家，不重複長出卡片
+        // 2. 第二步：處理 Auto_Discovered，遇重複則自動融合進 BigV，不另立卡片
         const autoAttractions = [];
         (sheetMaster.autoDiscovered || []).forEach(autoItem => {
           if (!autoItem.id) return;
@@ -1089,7 +1088,6 @@
           } else {
             const matched = findMatchedBigV(autoItem);
             if (matched) {
-              // 撞車融合：補齊最新 Google 評分與照片，絕對不另外新增卡片！
               if (autoItem.googleRating) matched.googleRating = Number(autoItem.googleRating);
               if (autoItem.googleReviewCount) matched.googleReviewCount = Number(autoItem.googleReviewCount);
               if (autoItem.website && !matched.website) matched.website = autoItem.website;
@@ -1129,16 +1127,17 @@
           }
         });
 
-        // 3. 處理 Island_Discovered，同樣嚴格防重複
+        // 3. 第三步：處理 Island_Discovered (海島夜生活專屬分流)
         const islandAttractions = [];
         (sheetMaster.islandDiscovered || []).forEach(islandItem => {
           if (!islandItem.id) return;
           const itemType = (islandItem.type || 'attraction').toLowerCase().trim();
           const categoryStr = (islandItem.category || '').toLowerCase();
           const isHotel = itemType === 'hotel' || categoryStr.includes('villa') || categoryStr.includes('hotel') || categoryStr.includes('resort');
-          const isFood = itemType === 'restaurant' || categoryStr.includes('food') || categoryStr.includes('美食') || categoryStr.includes('bar');
+          const isNightlife = categoryStr.includes('夜生活') || categoryStr.includes('bar') || categoryStr.includes('club') || categoryStr.includes('lounge');
+          const isFood = itemType === 'restaurant' || categoryStr.includes('food') || categoryStr.includes('美食');
 
-          if (isFood || isHotel) {
+          if (isFood || isHotel || isNightlife) {
             const matched = findMatchedBigV(islandItem);
             if (matched) {
               if (islandItem.googleRating) matched.googleRating = Number(islandItem.googleRating);
@@ -1146,16 +1145,20 @@
               if (islandItem.website && !matched.website) matched.website = islandItem.website;
             } else {
               const iKey = String(islandItem.id).toLowerCase().trim();
+              let assignedIslandType = 'food';
+              if (isHotel) assignedIslandType = 'hotel_villa';
+              if (isNightlife) assignedIslandType = 'nightlife';
+
               mergedMap.set(iKey, {
                 id: islandItem.id,
                 name: islandItem.name_zh || islandItem.name_en || islandItem.id,
                 name_zh: islandItem.name_zh || '',
                 name_en: islandItem.name_en || '',
                 name_tl: islandItem.name_tl || '',
-                category: islandItem.category || (isHotel ? '星級飯店 / 海景 Villa' : 'Top 必吃美食'),
-                categoryKey: isHotel ? 'hotel_villa' : 'food',
+                category: islandItem.category || (isHotel ? '星級飯店 / 海景 Villa' : (isNightlife ? '夜生活' : 'Top 必吃美食')),
+                categoryKey: assignedIslandType,
                 city: (islandItem.city || '').toLowerCase().trim(),
-                islandType: isHotel ? 'hotel_villa' : 'food',
+                islandType: assignedIslandType,
                 isCurated: false,
                 address: islandItem.address || '',
                 phone: String(islandItem.phone || "").replace(/^['"]/, '').trim(),
@@ -1187,7 +1190,7 @@
           }
         });
 
-        // 4. 排序 (Level 1 大V站長最優先 -> Level 2 評分排序)
+        // 4. 第四步：排序
         allRestaurants = Array.from(mergedMap.values())
           .sort((a, b) => {
             const aIsCurated = !!a.isCurated;
@@ -1227,35 +1230,64 @@
       }
     }
 
+    // ⭐ 嚴格行政區與國境防火牆 (阻斷海外、隔離達沃與愛妮島)
     function isCityMatch(item, targetCity) {
       if (!item) return false;
       const a = safeStr(item.address);
-      if (a.includes('usa') || a.includes('ny ') || a.includes('10550') || a.includes('united states')) return false;
-
-      if (!targetCity || targetCity === 'all') return true;
       const c = safeStr(item.city);
 
-      if (c && c !== targetCity) {
-        if (['cebu', 'davao', 'boracay', 'palawan', 'bohol', 'siargao', 'samal'].includes(c)) return false;
+      // 1. 全球國外地址一票否決
+      const foreignBlacklist = [
+        'japan', 'tokyo', 'osaka', 'kyoto,', 'hokkaido', '日本',
+        'usa', 'united states', 'california', 'new york', 'ny ', '10550',
+        'singapore', 'australia', 'france', 'italy', 'spain', 'london', 'uk'
+      ];
+      if (foreignBlacklist.some(fk => a.includes(fk))) return false;
+
+      // 2. 嚴格限定必須帶有菲律賓特徵
+      if (a.length > 15 && !a.includes('philippines') && !a.includes('ph') && !a.includes('city') && !a.includes('davao') && !a.includes('manila') && !a.includes('cebu') && !a.includes('boracay') && !a.includes('palawan')) {
+        return false;
       }
 
-      if (targetCity === 'samal') return c === 'samal' || a.includes('samal');
-      if (targetCity === 'davao') return (c === 'davao' || a.includes('davao')) && !c.includes('samal') && !a.includes('samal');
+      if (!targetCity || targetCity === 'all') return true;
 
+      // 3. 達沃市 (Davao) 專項防禦：堅決阻斷愛妮島 (El Nido) 與巴拉望
+      if (targetCity === 'davao') {
+        if (a.includes('el nido') || a.includes('palawan') || a.includes('coron') || a.includes('puerto princesa')) {
+          return false;
+        }
+        if (c.includes('samal') || a.includes('samal') || a.includes('cebu') || a.includes('makati')) {
+          return false;
+        }
+        return c === 'davao' || a.includes('davao');
+      }
+
+      // 4. 巴拉望/愛妮島 (Palawan / El Nido) 專項比對
+      if (targetCity === 'palawan') {
+        return c === 'palawan' || a.includes('palawan') || a.includes('el nido') || a.includes('coron');
+      }
+
+      // 5. 薩馬爾島 (Samal)
+      if (targetCity === 'samal') {
+        return c === 'samal' || a.includes('samal');
+      }
+
+      // 6. 大馬尼拉生活圈
       if (targetCity === 'manila') {
+        if (a.includes('cebu') || a.includes('davao') || a.includes('palawan')) return false;
         return c === 'manila' || c === 'metro manila' || c === 'ncr' ||
                a.includes('metro manila') || a.includes('makati') || a.includes('taguig') || 
                a.includes('pasay') || a.includes('bgc') || a.includes('bonifacio') ||
                a.includes('quezon city') || a.includes('mandaluyong') || a.includes('alabang') || 
-               a.includes('ortigas') || a.includes('pasig') || a.includes('paranaque') ||
-               (a.includes('manila') && !a.includes('cebu') && !a.includes('davao'));
+               a.includes('ortigas') || a.includes('pasig') || a.includes('paranaque');
       }
 
+      // 7. 大宿霧生活圈
       if (targetCity === 'cebu') {
+        if (a.includes('davao') || a.includes('manila') || a.includes('palawan')) return false;
         return c === 'cebu' || 
                a.includes('cebu') || a.includes('mactan') || a.includes('lapu-lapu') || 
-               a.includes('mandaue') || a.includes('moalboal') || a.includes('oslob') || 
-               a.includes('kawasan') || a.includes('bantayan');
+               a.includes('mandaue') || a.includes('moalboal') || a.includes('oslob');
       }
 
       return c === targetCity || a.includes(targetCity);
@@ -1398,7 +1430,8 @@
         if (currentSubFilter === 'all') return true;
 
         if (isIslandMode(currentCity)) {
-          if (currentSubFilter === 'food') return item.islandType === 'food' || item.categoryKey !== 'hotel_villa';
+          if (currentSubFilter === 'food') return item.islandType === 'food';
+          if (currentSubFilter === 'nightlife') return item.islandType === 'nightlife' || item.categoryKey === 'nightlife';
           if (currentSubFilter === 'hotel_villa') return item.islandType === 'hotel_villa' || item.categoryKey === 'hotel_villa' || item.categoryKey === 'hotel' || item.categoryKey === 'villa';
           return true;
         } else {
@@ -1461,7 +1494,7 @@
       
       const curReg = [...REGION_CONFIG.cities, ...REGION_CONFIG.islands].find(r => r.id === currentCity);
       const cityName = dict['city_' + currentCity] || curReg?.name || '';
-      filterSummaryText.textContent = `${cityName} · 頂級美食推薦`;
+      filterSummaryText.textContent = `${cityName} · 頂級推薦`;
       itemCountBadge.textContent = `${filtered.length} ${dict.placesCountUnit}`;
 
       if (filtered.length === 0) {
