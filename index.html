@@ -1223,7 +1223,7 @@
           }
         });
 
-        // 4. 寫入全域變數 (⭐ 確保醫療與景點完整掛載評分與評論數)
+        // 4. 寫入全域變數 (掛載評分與評論數)
         allRestaurants = Array.from(mergedMap.values());
         
         allAttractions = [
@@ -1422,7 +1422,7 @@
     }
 
     // ==========================================================
-    // 1. 美食卡片渲染 (大V優先 -> 純依評分由高到低自然排序 -> 評論數多到少)
+    // 1. 美食卡片渲染 (大V優先 -> 純依評分自然排序 -> 評論數多到少)
     // ==========================================================
     function renderRestaurants() {
       const listEl = document.getElementById('restaurant-list');
@@ -1482,7 +1482,7 @@
         filtered = filtered.filter(item => (safeStr(item.name) + ' ' + safeStr(item.name_en) + ' ' + safeStr(item.address)).includes(q));
       }
 
-      // ⭐ 美食專屬自然排序：大V私房最優先 -> 純依 Google 評分由高到低 -> 同分比評論數
+      // ⭐ 美食自然排序：大V私房最優先 -> 純依 Google 評分由高到低 -> 同分比評論數
       filtered.sort((a, b) => {
         const aIsCurated = !!a.isCurated;
         const bIsCurated = !!b.isCurated;
@@ -1524,12 +1524,6 @@
           isIslandArea 
             ? (rating >= 4.6 && reviewCount >= 50)
             : (rating >= 4.8 && reviewCount >= 100)
-        );
-
-        const isCommunity = !isCurated && !isGoogleTop && (
-          isIslandArea
-            ? (rating >= 4.0 && reviewCount >= 10)
-            : (rating >= 4.0 && reviewCount >= 25)
         );
 
         const curatedNote = getLocalizedText(item, 'bigv_comment', currentShortLang) || item.curatedNote || '';
@@ -1620,6 +1614,7 @@
                 </div>
               </div>
 
+              <!-- 統一風格 Google 評分列 -->
               <div class="px-3.5 py-2 bg-slate-900/90 border-t border-slate-800/80 flex items-center justify-between text-xs">
                 <div class="flex items-center gap-2">
                   <span class="w-4 h-4 rounded bg-white text-slate-900 font-bold flex items-center justify-center text-[9px]">G</span>
@@ -1680,15 +1675,24 @@
                   <span class="px-2.5 py-0.5 rounded-md bg-slate-800 text-slate-300 font-medium text-[11px] border border-slate-700">
                     ${dict['city_' + item.city] || item.city} · 口碑指標
                   </span>
-                  <div class="flex items-center gap-1 bg-sky-950/80 border border-sky-400/40 text-sky-300 px-2 py-0.5 rounded-md text-[11px] font-bold">
-                    <i class="fa-solid fa-star text-amber-400 text-[10px]"></i>
-                    <span>${rating.toFixed(1)} (${reviewCount}則好評)</span>
-                  </div>
                 </div>
 
                 <p class="text-xs text-slate-400 line-clamp-2 leading-relaxed">
                   ${desc}
                 </p>
+              </div>
+
+              <!-- 統一風格 Google 評分列 -->
+              <div class="px-3.5 py-2 bg-slate-900/90 border-t border-slate-800/80 flex items-center justify-between text-xs">
+                <div class="flex items-center gap-2">
+                  <span class="w-4 h-4 rounded bg-white text-slate-900 font-bold flex items-center justify-center text-[9px]">G</span>
+                  <span class="text-slate-400 text-[11px]">Google 大眾評分</span>
+                </div>
+                <div class="flex items-center gap-1 text-slate-300 font-bold">
+                  <i class="fa-solid fa-star text-amber-400 text-[11px]"></i>
+                  <span>${rating.toFixed(1)}</span>
+                  <span class="text-slate-500 text-[10px] font-normal">(${reviewCount}則評價)</span>
+                </div>
               </div>
 
               <div class="p-2.5 bg-slate-900 border-t border-slate-800 space-y-2 text-xs">
@@ -1736,16 +1740,24 @@
                 <span class="px-2.5 py-1 rounded-md bg-slate-900 text-slate-400 font-medium text-[11px] border border-slate-800">
                   ${dict['city_' + item.city] || item.city}
                 </span>
-                <div class="flex items-center gap-1 text-slate-300 text-[11px]">
-                  <i class="fa-solid fa-star text-amber-400 text-[10px]"></i>
-                  <span class="font-bold">${rating.toFixed(1)}</span>
-                  <span class="text-slate-500 text-[10px]">(${reviewCount}則評價)</span>
-                </div>
               </div>
 
               <p class="text-xs text-slate-400 line-clamp-2 leading-relaxed">
                 ${desc}
               </p>
+            </div>
+
+            <!-- 統一風格 Google 評分列 -->
+            <div class="px-3.5 py-2 bg-slate-900/90 border-t border-slate-800/80 flex items-center justify-between text-xs">
+              <div class="flex items-center gap-2">
+                <span class="w-4 h-4 rounded bg-white text-slate-900 font-bold flex items-center justify-center text-[9px]">G</span>
+                <span class="text-slate-400 text-[11px]">Google 大眾評分</span>
+              </div>
+              <div class="flex items-center gap-1 text-slate-300 font-bold">
+                <i class="fa-solid fa-star text-amber-400 text-[11px]"></i>
+                <span>${rating.toFixed(1)}</span>
+                <span class="text-slate-500 text-[10px] font-normal">(${reviewCount}則評價)</span>
+              </div>
             </div>
 
             <div class="p-2.5 bg-slate-900 border-t border-slate-800 space-y-2 text-xs">
@@ -1773,7 +1785,7 @@
     }
 
     // ==========================================================
-    // 2. 景點導覽渲染
+    // 2. 景點導覽渲染 (統一卡片樣式與 Google 評分欄)
     // ==========================================================
     function renderAttractions() {
       const listEl = document.getElementById('attraction-list');
@@ -1842,50 +1854,94 @@
         const cleanPhone = getCleanPhone(item.phone);
 
         const rawRating = item.google_rating || item.googlerating || item.googleRating || item.rating || 4.5;
-        const rating = Number(rawRating).toFixed(1);
+        const rating = Number(rawRating);
         const reviewCount = item.review_count || item.reviewcount || item.googleReviewCount || item.reviews || 50;
 
+        const isIslandArea = isIslandMode(item.city || currentCity);
+        const isGoogleTop = isIslandArea ? (rating >= 4.6 && reviewCount >= 50) : (rating >= 4.8 && reviewCount >= 100);
+
+        const targetWebUrl = (item.website && typeof item.website === 'string' && item.website.trim().startsWith('http')) ? item.website.trim() : smartLink;
+
+        const titleHtml = `
+          <a href="${targetWebUrl}" target="_blank" rel="noopener noreferrer" class="hover:text-amber-400 transition inline-flex items-center gap-1.5 group cursor-pointer max-w-full">
+            <span class="truncate leading-tight">${name}</span>
+            <i class="fa-solid fa-arrow-up-right-from-square text-[11px] text-amber-400/80 group-hover:text-amber-300 transition flex-shrink-0"></i>
+          </a>
+        `;
+
         return `
-          <article class="bg-slate-950 rounded-2xl overflow-hidden shadow-xs border border-slate-800 flex flex-col transition">
+          <article class="rounded-2xl overflow-hidden ${
+            isGoogleTop 
+              ? 'border border-sky-400/60 shadow-[0_0_15px_-3px_rgba(56,189,248,0.25)]' 
+              : 'border border-slate-800 shadow-sm'
+          } bg-slate-950 flex flex-col transition-all">
             <div class="relative w-full overflow-hidden">
               ${buildCarouselHtml(item.images, `attr-${idx}`, name)}
               
-              <div class="absolute bottom-2.5 left-2.5 flex items-center gap-1.5 z-10">
-                <span class="bg-slate-900/80 backdrop-blur-xs text-white text-[10px] px-2 py-0.5 rounded font-medium">${dict['city_' + item.city] || item.city}</span>
-                ${item.category ? `<span class="bg-amber-500/90 text-slate-950 text-[10px] font-bold px-2 py-0.5 rounded">${item.category}</span>` : ''}
+              <div class="absolute top-3 left-3 z-20 flex items-center gap-1.5 flex-wrap">
+                ${isGoogleTop ? `
+                  <div class="bg-white text-slate-900 text-[11px] font-bold px-2.5 py-1 rounded-lg shadow-md flex items-center gap-1.5 border border-slate-200">
+                    <i class="fa-brands fa-google text-blue-600 text-xs"></i>
+                    <span>${dict.badgeGoogleTop}</span>
+                  </div>
+                ` : `
+                  <div class="bg-slate-900/80 backdrop-blur-md text-slate-300 text-[10px] font-bold px-2 py-0.5 rounded-md border border-slate-700">
+                    ${dict.badgeCommunity}
+                  </div>
+                `}
               </div>
 
-              <div class="absolute top-2.5 right-2.5 z-10">
-                <span class="bg-slate-950/85 backdrop-blur-xs text-amber-300 border border-slate-700/80 text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1 shadow-sm">
-                  <i class="fa-solid fa-star text-[9px] text-amber-400"></i> ${rating} <span class="text-slate-400 font-normal">(${reviewCount}則評價)</span>
-                </span>
+              <div class="absolute bottom-2.5 left-3.5 right-3.5 pr-8 text-white text-sm sm:text-base font-bold tracking-wide drop-shadow-md z-20">
+                ${titleHtml}
               </div>
             </div>
 
-            <div class="p-3.5 flex flex-col flex-1">
-              <h2 class="font-bold text-sm text-white mb-1 leading-snug">
-                <a href="${smartLink}" target="_blank" rel="noopener noreferrer" class="hover:text-amber-400 transition inline-flex items-center gap-1.5 group">
-                  <span>${name}</span>
-                  <i class="fa-solid fa-arrow-up-right-from-square text-[10px] text-slate-500 group-hover:text-amber-400 transition"></i>
-                </a>
-              </h2>
+            <div class="h-[1.5px] w-full ${isGoogleTop ? 'bg-sky-500/40' : 'bg-slate-800'}"></div>
 
-              <p class="text-xs text-slate-400 line-clamp-2 leading-relaxed mb-3">${desc}</p>
-              
-              <div class="space-y-1 text-[11px] text-slate-500 border-t border-slate-800/80 pt-2 mb-3 font-medium">
-                <p class="flex items-center gap-1.5 truncate"><i class="fa-solid fa-location-dot text-amber-400 w-3"></i><span class="truncate">${item.address || dict.addressEmpty}</span></p>
-                <p class="flex items-center gap-1.5 font-mono"><i class="fa-solid fa-phone text-slate-500 w-3"></i><span>${cleanPhone ? `<a href="tel:${cleanPhone}" class="hover:text-amber-400 underline">${item.phone}</a>` : dict.phoneEmpty}</span></p>
+            <div class="p-3.5 space-y-2.5 bg-slate-950">
+              <div class="flex items-center justify-between text-xs">
+                <span class="px-2.5 py-1 rounded-md bg-slate-900 text-slate-300 font-medium text-[11px] border border-slate-800">
+                  <i class="fa-solid fa-location-dot text-amber-400 text-[10px] mr-1"></i>${dict['city_' + item.city] || item.city} · ${item.category || '景點'}
+                </span>
               </div>
 
-              <div class="mt-auto grid grid-cols-3 gap-1.5 pt-1 border-t border-slate-800">
-                <button data-comment-id="${item.id}" data-comment-name="${name}" class="btn-open-comment bg-slate-900 hover:bg-slate-800 active:scale-95 text-slate-300 text-[11px] font-bold py-2 rounded-xl text-center flex items-center justify-center gap-1 transition border border-slate-800">
-                  <i class="fa-regular fa-comment-dots text-amber-400"></i> ${dict.btnComment}
+              <p class="text-xs text-slate-400 line-clamp-2 leading-relaxed font-normal">
+                ${desc}
+              </p>
+            </div>
+
+            <!-- 統一風格 Google 評分列 -->
+            <div class="px-3.5 py-2 bg-slate-900/90 border-t border-slate-800/80 flex items-center justify-between text-xs">
+              <div class="flex items-center gap-2">
+                <span class="w-4 h-4 rounded bg-white text-slate-900 font-bold flex items-center justify-center text-[9px]">G</span>
+                <span class="text-slate-400 text-[11px]">Google 大眾評分</span>
+              </div>
+              <div class="flex items-center gap-1 text-slate-300 font-bold">
+                <i class="fa-solid fa-star text-amber-400 text-[11px]"></i>
+                <span>${rating.toFixed(1)}</span>
+                <span class="text-slate-500 text-[10px] font-normal">(${reviewCount}則評價)</span>
+              </div>
+            </div>
+
+            <div class="p-2.5 bg-slate-900 border-t border-slate-800 space-y-2 text-xs">
+              <div class="grid grid-cols-2 gap-2">
+                <button data-comment-id="${item.id}" data-comment-name="${name}" class="btn-open-comment flex items-center justify-center gap-1.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 font-bold transition active:scale-95">
+                  <i class="fa-solid fa-pen text-amber-400 text-xs"></i>
+                  <span class="text-[11px]">${dict.btnComment}</span>
                 </button>
-                <a href="${cleanPhone ? `tel:${cleanPhone}` : '#'}" class="bg-slate-900 hover:bg-slate-800 text-emerald-400 active:scale-95 text-[11px] font-bold py-2 rounded-xl text-center flex items-center justify-center gap-1 transition border border-slate-800 ${!cleanPhone ? 'opacity-40 pointer-events-none' : ''}">
-                  <i class="fa-solid fa-phone"></i> ${dict.btnCall}
+                <a href="${targetWebUrl}" target="_blank" rel="noopener noreferrer" class="flex items-center justify-center gap-1.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-amber-300 border border-slate-700 font-bold transition active:scale-95 shadow-sm">
+                  <i class="fa-solid fa-globe text-xs"></i>
+                  <span class="text-[11px]">${dict.btnWebsite}</span>
                 </a>
-                <a href="${item.nav_link || ('https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(name + ' ' + (item.address || '')))}" target="_blank" rel="noopener noreferrer" class="bg-gradient-to-r from-amber-400 to-amber-500 text-slate-950 font-bold active:scale-95 text-[11px] py-2 rounded-xl text-center flex items-center justify-center gap-1 shadow-xs transition">
-                  <i class="fa-solid fa-location-arrow"></i> ${dict.btnNav}
+              </div>
+              <div class="grid grid-cols-2 gap-2">
+                <a href="${cleanPhone ? `tel:${cleanPhone}` : '#'}" class="flex items-center justify-center gap-1.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700/60 transition active:scale-95 ${!cleanPhone ? 'opacity-40 pointer-events-none' : ''}">
+                  <i class="fa-solid fa-phone text-emerald-400 text-xs"></i>
+                  <span class="font-medium text-[11px]">${cleanPhone ? dict.btnCall : dict.phoneEmpty}</span>
+                </a>
+                <a href="${item.nav_link || ('https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(name + ' ' + (item.address || '')))}" target="_blank" rel="noopener noreferrer" class="flex items-center justify-center gap-1.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700/60 transition active:scale-95">
+                  <i class="fa-solid fa-diamond-turn-right text-sky-400 text-xs"></i>
+                  <span class="font-bold text-[11px]">${dict.btnNav}</span>
                 </a>
               </div>
             </div>
@@ -1895,7 +1951,7 @@
     }
 
     // ==========================================================
-    // 3. 醫療藥局渲染 (⭐ 支援雙軌制藍色 Google 嚴選光環 + 權威高分自然排序)
+    // 3. 醫療藥局渲染 (統一卡片樣式與 Google 評分欄)
     // ==========================================================
     function renderMedical() {
       const listEl = document.getElementById('medical-list');
@@ -1911,19 +1967,13 @@
         const noiseWords = ['divers', 'diving', 'dive', 'tour', 'paradise', 'travel', 'resort', 'expedition', 'adventure', 'island hopping'];
         if (noiseWords.some(w => allText.includes(w))) return false;
 
-        // 2. 嚴格醫療主體判定
-        // 1. 綜合醫院優先判定
+        // 2. 嚴格醫療主體判定 (排他邏輯)
         const isHospital = allText.includes('hospital') || allText.includes('綜合醫院') || allText.includes('醫院') || allText.includes('infirmary') || allText.includes('medical center');
-
-        // 2. 藥局判定
         const isPharmacy = allText.includes('pharmacy') || allText.includes('連鎖藥局') || allText.includes('藥局') || allText.includes('mercury') || allText.includes('watsons') || allText.includes('drug');
-
-        // 3. 專科診所判定：必須「非醫院」且「非藥局」，才允許用 clinic/doctor 判定為診所
         const isClinic = !isHospital && !isPharmacy && (
           allText.includes('clinic') || allText.includes('專科診所') || allText.includes('診所') || allText.includes('doctor') || allText.includes('health center')
         );
 
-        // 非屬上述三者則排除
         if (!isHospital && !isClinic && !isPharmacy) return false;
 
         // 3. 子分類篩選
@@ -1940,51 +1990,30 @@
         filtered = filtered.filter(item => (safeStr(item.name_zh) + ' ' + safeStr(item.name_en) + ' ' + safeStr(item.address)).includes(q));
       }
 
-      // ⭐ 醫療權威排序：藍框嚴選優先置頂 -> 排除親友刷分灌水 -> 同級內再比評分與評論數
+      // 醫療權威排序：藍框嚴選優先置頂 -> 同級內再比評分與評論數
       filtered.sort((a, b) => {
-        // 判斷是否為「Google 高分嚴選 (藍框)」
         const checkIsTopMedical = (item) => {
           const isIsland = isIslandMode(item.city || currentCity);
           const rawR = item.google_rating ?? item.googleRating ?? item.googlerating ?? item.rating ?? 0;
           const r = parseFloat(String(rawR).replace(/[^\d.]/g, '')) || 0;
-          
           const rawC = item.review_count ?? item.reviewcount ?? item.google_reviews ?? item.reviews ?? 0;
           const c = parseInt(String(rawC).replace(/[^\d]/g, ''), 10) || 0;
-
-          // 海島 4.6星+50則 / 都會 4.8星+100則
           return isIsland ? (r >= 4.6 && c >= 50) : (r >= 4.8 && c >= 100);
         };
 
         const aIsTop = checkIsTopMedical(a);
         const bIsTop = checkIsTopMedical(b);
 
-        // 1. 第一順位：有藍框嚴選的醫院，強制排在沒藍框的前面！(解決 3 則評論 5 星灌水問題)
         if (aIsTop && !bIsTop) return -1;
         if (!aIsTop && bIsTop) return 1;
 
-        // 2. 同梯隊內：比評分高低
-        const getRating = (item) => {
-          const val = item.google_rating ?? item.googleRating ?? item.googlerating ?? item.rating;
-          const num = parseFloat(String(val).replace(/[^\d.]/g, ''));
-          return isNaN(num) ? 0 : num;
-        };
+        const ratingA = parseFloat(String(a.google_rating ?? a.googleRating ?? a.googlerating ?? a.rating ?? 0).replace(/[^\d.]/g, '')) || 0;
+        const ratingB = parseFloat(String(b.google_rating ?? b.googleRating ?? b.googlerating ?? b.rating ?? 0).replace(/[^\d.]/g, '')) || 0;
+        if (ratingB !== ratingA) return ratingB - ratingA;
 
-        const ratingA = getRating(a);
-        const ratingB = getRating(b);
-        if (ratingB !== ratingA) {
-          return ratingB - ratingA;
-        }
-
-        // 3. 同梯隊且同評分：比評論數多寡
-        const getReviews = (item) => {
-          const val = item.review_count ?? item.reviewcount ?? item.google_reviews ?? item.reviews;
-          const num = parseInt(String(val).replace(/[^\d]/g, ''), 10);
-          return isNaN(num) ? 0 : num;
-        };
-
-        const reviewsA = getReviews(a);
-        const reviewsB = getReviews(b);
-        return reviewsB - reviewsA;
+        const revA = parseInt(String(a.review_count ?? a.reviewcount ?? a.google_reviews ?? a.reviews ?? 0).replace(/[^\d]/g, ''), 10) || 0;
+        const revB = parseInt(String(b.review_count ?? b.reviewcount ?? b.google_reviews ?? b.reviews ?? 0).replace(/[^\d]/g, ''), 10) || 0;
+        return revB - revA;
       });
       
       filterSummaryText.textContent = `${dict['city_' + currentCity] || ''} · ${dict.navMedical}`;
@@ -2001,7 +2030,6 @@
         const rawPhone = item.phone || item.telephone || item.contact || '';
         const cleanPhone = getCleanPhone(rawPhone);
 
-        // 統一評分與評論數
         const rawRating = item.google_rating ?? item.googleRating ?? item.googlerating ?? item.rating ?? 4.5;
         const numRating = parseFloat(String(rawRating).replace(/[^\d.]/g, ''));
         const rating = isNaN(numRating) ? 4.5 : numRating;
@@ -2012,62 +2040,90 @@
         let catBadge = '🏥 醫療機構';
         const catAll = `${(item.category || '')} ${(item.type || '')} ${(item.name_en || '')}`.toLowerCase();
         if (catAll.includes('hospital') || catAll.includes('medical center') || catAll.includes('infirmary')) {
-          catBadge = '🏥 綜合醫院';
+          catBadge = '🏥 綜合醫院 (24H)';
         } else if (catAll.includes('clinic') || catAll.includes('doctor') || catAll.includes('health')) {
           catBadge = '🩺 專科診所';
         } else if (catAll.includes('pharmacy') || catAll.includes('drug') || catAll.includes('mercury') || catAll.includes('watsons')) {
           catBadge = '💊 連鎖藥局';
         }
 
-        // ⭐ 醫療專屬雙軌制藍色 Google 嚴選光環判定：
-        // 海島區：4.6 星 + 50 評論以上
-        // 都會區：4.8 星 + 100 評論以上
         const isIslandArea = isIslandMode(item.city || currentCity);
-        const isGoogleTopMedical = isIslandArea 
-          ? (rating >= 4.6 && reviewCount >= 50)
-          : (rating >= 4.8 && reviewCount >= 100);
+        const isGoogleTopMedical = isIslandArea ? (rating >= 4.6 && reviewCount >= 50) : (rating >= 4.8 && reviewCount >= 100);
+
+        const targetWebUrl = (item.website && typeof item.website === 'string' && item.website.trim().startsWith('http')) ? item.website.trim() : smartLink;
+
+        const titleHtml = `
+          <a href="${targetWebUrl}" target="_blank" rel="noopener noreferrer" class="hover:text-amber-400 transition inline-flex items-center gap-1.5 group cursor-pointer max-w-full">
+            <span class="truncate leading-tight">${name}</span>
+            <i class="fa-solid fa-arrow-up-right-from-square text-[11px] text-amber-400/80 group-hover:text-amber-300 transition flex-shrink-0"></i>
+          </a>
+        `;
 
         return `
-          <article class="bg-slate-950 rounded-2xl overflow-hidden ${
+          <article class="rounded-2xl overflow-hidden ${
             isGoogleTopMedical 
               ? 'border border-sky-400/60 shadow-[0_0_15px_-3px_rgba(56,189,248,0.25)]' 
-              : 'border border-slate-800 shadow-xs'
-          } flex flex-col transition">
+              : 'border border-slate-800 shadow-sm'
+          } bg-slate-950 flex flex-col transition-all">
             <div class="relative w-full overflow-hidden">
               ${buildCarouselHtml(item.images, `med-${idx}`, name)}
               
-              <div class="absolute top-2.5 left-2.5 z-10 flex items-center gap-1.5 flex-wrap">
-                <span class="bg-emerald-600 text-white text-[11px] font-bold px-2.5 py-1 rounded-full shadow-md">${catBadge}</span>
+              <div class="absolute top-3 left-3 z-20 flex items-center gap-1.5 flex-wrap">
+                <span class="bg-emerald-600 text-white text-[11px] font-bold px-2.5 py-1 rounded-lg shadow-md">${catBadge}</span>
                 ${isGoogleTopMedical ? `
-                  <span class="bg-white text-slate-900 text-[10px] font-bold px-2 py-0.5 rounded-full shadow-md flex items-center gap-1 border border-slate-200">
-                    <i class="fa-brands fa-google text-blue-600 text-[10px]"></i> 高分嚴選
-                  </span>
+                  <div class="bg-white text-slate-900 text-[11px] font-bold px-2.5 py-1 rounded-lg shadow-md flex items-center gap-1.5 border border-slate-200">
+                    <i class="fa-brands fa-google text-blue-600 text-xs"></i>
+                    <span>${dict.badgeGoogleTop}</span>
+                  </div>
                 ` : ''}
-                <span class="bg-slate-950/85 backdrop-blur-xs text-amber-300 border border-slate-700/80 text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1 shadow-sm">
-                  <i class="fa-solid fa-star text-[9px] text-amber-400"></i> ${rating.toFixed(1)} <span class="text-slate-400 font-normal">(${reviewCount})</span>
-                </span>
+              </div>
+
+              <div class="absolute bottom-2.5 left-3.5 right-3.5 pr-8 text-white text-sm sm:text-base font-bold tracking-wide drop-shadow-md z-20">
+                ${titleHtml}
               </div>
             </div>
 
-            <div class="p-3.5 flex flex-col flex-1">
-              <h2 class="font-bold text-sm text-white mb-1 leading-snug">
-                <a href="${smartLink}" target="_blank" rel="noopener noreferrer" class="hover:text-amber-400 transition inline-flex items-center gap-1.5 group">
-                  <span>${name}</span>
-                  <i class="fa-solid fa-arrow-up-right-from-square text-[10px] text-slate-500 group-hover:text-amber-400 transition"></i>
-                </a>
-              </h2>
+            <div class="h-[1.5px] w-full ${isGoogleTopMedical ? 'bg-sky-500/40' : 'bg-slate-800'}"></div>
 
-              <div class="space-y-1 text-[11px] text-slate-500 border-t border-slate-800/80 pt-2 mb-3 font-medium">
-                <p class="flex items-center gap-1.5 truncate"><i class="fa-solid fa-location-dot text-amber-400 w-3"></i><span class="truncate">${item.address || dict.addressEmpty}</span></p>
-                <p class="flex items-center gap-1.5 font-mono"><i class="fa-solid fa-phone text-slate-500 w-3"></i><span>${cleanPhone ? `<a href="tel:${cleanPhone}" class="hover:text-emerald-400 underline font-bold">${rawPhone}</a>` : dict.phoneEmpty}</span></p>
+            <div class="p-3.5 space-y-2 bg-slate-950">
+              <div class="flex items-center justify-between text-xs">
+                <span class="px-2.5 py-1 rounded-md bg-slate-900 text-slate-300 font-medium text-[11px] border border-slate-800">
+                  <i class="fa-solid fa-location-dot text-amber-400 text-[10px] mr-1"></i>${dict['city_' + item.city] || item.city} · 應急醫療
+                </span>
               </div>
+              <p class="text-xs text-slate-400 line-clamp-2 leading-relaxed truncate font-normal">
+                <i class="fa-solid fa-map-pin text-slate-500 mr-1"></i>${item.address || dict.addressEmpty}
+              </p>
+            </div>
 
-              <div class="mt-auto grid grid-cols-2 gap-2 pt-1 border-t border-slate-800">
-                <a href="${cleanPhone ? `tel:${cleanPhone}` : '#'}" class="bg-emerald-600 hover:bg-emerald-500 text-white active:scale-95 text-xs font-bold py-2 rounded-xl text-center flex items-center justify-center gap-1.5 transition ${!cleanPhone ? 'opacity-40 pointer-events-none' : ''}">
-                  <i class="fa-solid fa-phone"></i> ${cleanPhone ? dict.btnCall : dict.phoneEmpty}
+            <!-- 統一風格 Google 評分列 -->
+            <div class="px-3.5 py-2 bg-slate-900/90 border-t border-slate-800/80 flex items-center justify-between text-xs">
+              <div class="flex items-center gap-2">
+                <span class="w-4 h-4 rounded bg-white text-slate-900 font-bold flex items-center justify-center text-[9px]">G</span>
+                <span class="text-slate-400 text-[11px]">Google 大眾評分</span>
+              </div>
+              <div class="flex items-center gap-1 text-slate-300 font-bold">
+                <i class="fa-solid fa-star text-amber-400 text-[11px]"></i>
+                <span>${rating.toFixed(1)}</span>
+                <span class="text-slate-500 text-[10px] font-normal">(${reviewCount}則評價)</span>
+              </div>
+            </div>
+
+            <div class="p-2.5 bg-slate-900 border-t border-slate-800 space-y-2 text-xs">
+              <div class="grid grid-cols-2 gap-2">
+                <a href="${cleanPhone ? `tel:${cleanPhone}` : '#'}" class="flex items-center justify-center gap-1.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold transition active:scale-95 ${!cleanPhone ? 'opacity-40 pointer-events-none' : ''}">
+                  <i class="fa-solid fa-phone text-xs"></i>
+                  <span class="text-[11px]">${cleanPhone ? dict.btnCall : dict.phoneEmpty}</span>
                 </a>
-                <a href="${item.nav_link || ('https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(name + ' ' + (item.address || '')))}" target="_blank" rel="noopener noreferrer" class="bg-slate-900 hover:bg-slate-800 active:scale-95 text-slate-200 border border-slate-700 text-xs font-bold py-2 rounded-xl text-center flex items-center justify-center gap-1.5 shadow-xs transition">
-                  <i class="fa-solid fa-location-arrow text-amber-400"></i> ${dict.btnNav}
+                <a href="${targetWebUrl}" target="_blank" rel="noopener noreferrer" class="flex items-center justify-center gap-1.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-amber-300 border border-slate-700 font-bold transition active:scale-95 shadow-sm">
+                  <i class="fa-solid fa-globe text-xs"></i>
+                  <span class="text-[11px]">${dict.btnWebsite}</span>
+                </a>
+              </div>
+              <div class="grid grid-cols-1">
+                <a href="${item.nav_link || ('https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(name + ' ' + (item.address || '')))}" target="_blank" rel="noopener noreferrer" class="flex items-center justify-center gap-1.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700/60 transition active:scale-95">
+                  <i class="fa-solid fa-diamond-turn-right text-sky-400 text-xs"></i>
+                  <span class="font-bold text-[11px]">${dict.btnNav}</span>
                 </a>
               </div>
             </div>
