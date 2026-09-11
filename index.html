@@ -58,6 +58,47 @@
     .carousel-slide img { pointer-events: none; -webkit-user-drag: none; user-select: none; }
     .drag-scroll-active { cursor: grabbing !important; cursor: -webkit-grabbing !important; }
     .dot-indicator.active { width: 14px; border-radius: 4px; background: #fbbf24; }
+    /* ==========================================
+   * 大V的旅遊窩 - 暖陽淺色模式 (Warm Light Theme)
+   * ========================================== */
+  html.light body {
+    background-color: #FDFBF7 !important;
+    color: #1C1917 !important;
+  }
+  html.light nav,
+  html.light header,
+  html.light footer {
+    background-color: rgba(253, 251, 247, 0.94) !important;
+    border-color: rgba(234, 88, 12, 0.15) !important;
+    box-shadow: 0 4px 20px -2px rgba(234, 88, 12, 0.06);
+  }
+  html.light .store-card,
+  html.light .card-base {
+    background-color: #FFFFFF !important;
+    border-color: #E7E5E4 !important;
+    box-shadow: 0 4px 15px rgba(28, 25, 23, 0.04);
+  }
+  html.light .card-curated {
+    background: linear-gradient(145deg, #FFFFFF, #FFFDF8) !important;
+    border: 2px solid #D97706 !important;
+    box-shadow: 0 0 20px rgba(217, 119, 6, 0.2) !important;
+  }
+  html.light .card-high-score {
+    background-color: #FFFFFF !important;
+    border: 1.5px solid #0284C7 !important;
+    box-shadow: 0 0 15px rgba(2, 132, 199, 0.15) !important;
+  }
+  html.light .text-white {
+    color: #1C1917 !important;
+  }
+  html.light .text-slate-300,
+  html.light .text-slate-400 {
+    color: #57534E !important;
+  }
+  html.light .bg-slate-900,
+  html.light .bg-slate-800 {
+    background-color: #FFFFFF !important;
+  }
   </style>
 </head>
 <body class="bg-slate-900 text-slate-100 font-sans min-h-screen flex flex-col antialiased pb-20 selection:bg-amber-400 selection:text-black">
@@ -269,6 +310,22 @@
           </button>
         </div>
 
+        <!-- 主題外觀切換開關 (暗夜黑金 / 暖陽金橘) -->
+        <div class="flex items-center justify-between p-3 rounded-2xl border transition-all duration-300 bg-slate-900/90 border-slate-800">
+          <div class="flex items-center gap-2.5">
+            <div id="theme-icon-container" class="w-7 h-7 rounded-xl flex items-center justify-center bg-amber-400/10 border border-amber-400/30 text-amber-400 text-xs">
+              <i class="fa-solid fa-moon text-xs" id="theme-icon"></i>
+            </div>
+            <div>
+              <p class="text-xs font-bold text-slate-200 leading-tight">介面視覺風格</p>
+              <p class="text-[10px] text-slate-400" id="theme-status-desc">當前：暗夜尊爵</p>
+            </div>
+          </div>
+          <button id="btn-toggle-theme" type="button" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-800 hover:bg-slate-700 text-amber-300 border border-amber-400/30 transition active:scale-95 flex items-center gap-1.5 shadow-sm">
+            <span id="theme-btn-text">切換暖陽</span>
+            <i class="fa-solid fa-arrows-rotate text-[10px]"></i>
+          </button>
+        </div>
         <button id="btn-logout" class="w-full bg-rose-950/40 border border-rose-800/40 hover:bg-rose-900/40 text-rose-300 font-bold text-xs py-2.5 rounded-xl transition">
           登出帳號
         </button>
@@ -2655,6 +2712,51 @@
       chatMessages.scrollTop = chatMessages.scrollHeight;
     }
 
+    // ====== 主題外觀切換管理器 (暗夜黑金 / 暖陽金橘) ======
+    const ThemeManager = {
+      THEME_KEY: 'bigv_app_theme',
+      init() {
+        const savedTheme = localStorage.getItem(this.THEME_KEY) || 'dark';
+        this.apply(savedTheme, false);
+
+        const btn = document.getElementById('btn-toggle-theme');
+        if (btn) {
+          btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            const isDark = document.documentElement.classList.contains('dark') || !document.documentElement.classList.contains('light');
+            const nextTheme = isDark ? 'light' : 'dark';
+            this.apply(nextTheme, true);
+          });
+        }
+      },
+      apply(theme, save = true) {
+        const root = document.documentElement;
+        const icon = document.getElementById('theme-icon');
+        const iconContainer = document.getElementById('theme-icon-container');
+        const desc = document.getElementById('theme-status-desc');
+        const btnText = document.getElementById('theme-btn-text');
+
+        if (theme === 'light') {
+          root.classList.remove('dark');
+          root.classList.add('light');
+          if (icon) icon.className = 'fa-solid fa-sun text-xs text-orange-500';
+          if (iconContainer) iconContainer.className = 'w-7 h-7 rounded-xl flex items-center justify-center bg-orange-100 border border-orange-300 text-orange-500 text-xs';
+          if (desc) desc.textContent = '當前：暖陽金橘';
+          if (btnText) btnText.textContent = '切換暗夜';
+          if (save) localStorage.setItem(this.THEME_KEY, 'light');
+        } else {
+          root.classList.remove('light');
+          root.classList.add('dark');
+          if (icon) icon.className = 'fa-solid fa-moon text-xs text-amber-400';
+          if (iconContainer) iconContainer.className = 'w-7 h-7 rounded-xl flex items-center justify-center bg-amber-400/10 border border-amber-400/30 text-amber-400 text-xs';
+          if (desc) desc.textContent = '當前：暗夜尊爵';
+          if (btnText) btnText.textContent = '切換暖陽';
+          if (save) localStorage.setItem(this.THEME_KEY, 'dark');
+        }
+      }
+    };
+    ThemeManager.init();
     initVisitorCounter();
     enableHorizontalScroll();
     fetchData();
