@@ -58,36 +58,100 @@
     .carousel-slide img { pointer-events: none; -webkit-user-drag: none; user-select: none; }
     .drag-scroll-active { cursor: grabbing !important; cursor: -webkit-grabbing !important; }
     .dot-indicator.active { width: 14px; border-radius: 4px; background: #fbbf24; }
-    /* ==========================================
-   * 大V的旅遊窩 - 暖陽淺色模式 (Warm Light Theme)
+   
+  /* ==========================================
+   * 大V的旅遊窩 - 暖陽蜜柑橘頂級淺色系統 (Warm Orange Light Theme)
    * ========================================== */
+
+  /* 1. 全站大畫布：溫潤象牙米白 */
   html.light body {
-    background-color: #FDFBF7 !important;
-    color: #1C1917 !important;
+    background-color: #FBF8F2 !important;
+    color: #292524 !important;
   }
-  html.light nav,
+
+  /* 2. 頂部核心控制底盤（大V標題到所有按鈕區塊）：注入溫暖蜜柑橘微透光底 */
   html.light header,
-  html.light footer {
-    background-color: rgba(253, 251, 247, 0.94) !important;
-    border-color: rgba(234, 88, 12, 0.15) !important;
-    box-shadow: 0 4px 20px -2px rgba(234, 88, 12, 0.06);
+  html.light nav,
+  html.light .header-container,
+  html.light #sticky-header,
+  html.light .top-control-panel {
+    background: linear-gradient(180deg, #FFF7ED 0%, #FFEDD5 100%) !important;
+    border-color: rgba(249, 115, 22, 0.25) !important;
+    box-shadow: 0 4px 20px -2px rgba(234, 88, 12, 0.08) !important;
   }
-  html.light .store-card,
-  html.light .card-base {
+
+  /* 3. 搜尋欄位與語系切換按鈕：轉為乾淨暖白底 */
+  html.light input[type="text"],
+  html.light .search-bar,
+  html.light select,
+  html.light .lang-select {
+    background-color: #FFFFFF !important;
+    color: #1C1917 !important;
+    border: 1px solid rgba(249, 115, 22, 0.3) !important;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.03) !important;
+  }
+  html.light input::placeholder {
+    color: #A8A29E !important;
+  }
+
+  /* 4. 都會生活圈 / 渡假海島切換大按鈕 */
+  html.light .mode-switch-btn,
+  html.light [data-mode="city"],
+  html.light [data-mode="island"] {
+    background-color: #FFFFFF !important;
+    color: #78350F !important;
+    border: 1px solid rgba(249, 115, 22, 0.2) !important;
+  }
+  html.light .mode-switch-btn.active,
+  html.light [data-mode].active {
+    background: linear-gradient(135deg, #EA580C 0%, #F97316 100%) !important;
+    color: #FFFFFF !important;
+    border-color: #EA580C !important;
+    box-shadow: 0 3px 12px rgba(234, 88, 12, 0.3) !important;
+  }
+
+  /* 5. 城市標籤與主類別膠囊（馬尼拉、宿霧、達沃 / 美食、景點、醫療） */
+  html.light .city-pill,
+  html.light .main-tab-btn,
+  html.light .sub-filter-pill {
+    background-color: #FFFFFF !important;
+    color: #44403C !important;
+    border: 1px solid rgba(249, 115, 22, 0.2) !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04) !important;
+  }
+
+  /* 6. 選中啟動態：亮眼暖橘漸層 + 白字 + 微光（如宿霧被選中） */
+  html.light .city-pill.active,
+  html.light .main-tab-btn.active,
+  html.light .sub-filter-pill.active,
+  html.light .active-pill {
+    background: linear-gradient(135deg, #EA580C 0%, #F97316 100%) !important;
+    color: #FFFFFF !important;
+    border-color: #EA580C !important;
+    font-weight: 600 !important;
+    box-shadow: 0 4px 14px rgba(234, 88, 12, 0.35) !important;
+  }
+
+  /* 7. 地點數量徽章（如 124 個地點） */
+  html.light .count-badge {
+    background-color: #FFEDD5 !important;
+    color: #C2410C !important;
+    border: 1px solid rgba(249, 115, 22, 0.3) !important;
+  }
+
+  /* 8. 消除所有預設黑底容器（強制洗掉 bg-slate-900 / bg-slate-800） */
+  html.light .bg-slate-900,
+  html.light .bg-slate-900\/80,
+  html.light .bg-slate-900\/90,
+  html.light .bg-slate-800,
+  html.light .bg-slate-800\/60,
+  html.light .bg-slate-800\/80,
+  html.light .bg-black {
     background-color: #FFFFFF !important;
     border-color: #E7E5E4 !important;
-    box-shadow: 0 4px 15px rgba(28, 25, 23, 0.04);
   }
-  html.light .card-curated {
-    background: linear-gradient(145deg, #FFFFFF, #FFFDF8) !important;
-    border: 2px solid #D97706 !important;
-    box-shadow: 0 0 20px rgba(217, 119, 6, 0.2) !important;
-  }
-  html.light .card-high-score {
-    background-color: #FFFFFF !important;
-    border: 1.5px solid #0284C7 !important;
-    box-shadow: 0 0 15px rgba(2, 132, 199, 0.15) !important;
-  }
+
+  /* 9. 文字色彩校正：標題深暖炭灰，副標石灰 */
   html.light .text-white {
     color: #1C1917 !important;
   }
@@ -95,13 +159,22 @@
   html.light .text-slate-400 {
     color: #57534E !important;
   }
-  html.light .bg-slate-900,
-  html.light .bg-slate-800 {
+
+  /* 10. 卡片主體純白微光，保留天藍與黑金卡神聖光暈 */
+  html.light .store-card {
     background-color: #FFFFFF !important;
+    border: 1px solid #E7E5E4 !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05) !important;
+  }
+  html.light .card-high-score {
+    border: 1.5px solid #0284C7 !important;
+    box-shadow: 0 0 16px rgba(2, 132, 199, 0.18) !important;
+  }
+  html.light .card-curated {
+    border: 2px solid #D97706 !important;
+    box-shadow: 0 0 22px rgba(217, 119, 6, 0.22) !important;
   }
   </style>
-</head>
-<body class="bg-slate-900 text-slate-100 font-sans min-h-screen flex flex-col antialiased pb-20 selection:bg-amber-400 selection:text-black">
 
   <!-- 全域 Toast 提示 -->
   <div id="toastNotification" class="fixed top-5 left-1/2 -translate-x-1/2 z-[99999] transition-all duration-300 pointer-events-none opacity-0 translate-y-[-10px] w-full max-w-sm px-4">
