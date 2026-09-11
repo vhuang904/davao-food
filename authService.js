@@ -1,4 +1,4 @@
-// authService.js - 大V的旅遊窩 PWA 認證模組（手機全相容防死鎖版）
+// authService.js - 大V的旅遊窩 PWA 認證模組（全平台跨網域防阻擋高相容版）
 
 import { initializeApp, getApps, getApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
 import { 
@@ -11,7 +11,9 @@ import {
   onAuthStateChanged,
   sendSignInLinkToEmail,
   isSignInWithEmailLink,
-  signInWithEmailLink
+  signInWithEmailLink,
+  setPersistence,
+  browserLocalPersistence
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 import { 
   getFirestore, 
@@ -21,7 +23,7 @@ import {
   updateDoc, 
   collection, 
   getDocs,
-  query,
+  query, 
   where,
   addDoc, 
   serverTimestamp, 
@@ -42,6 +44,11 @@ const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
 const auth = getAuth(app);
 const db = getFirestore(app);
 
+// 設定登入狀態本機持久化
+setPersistence(auth, browserLocalPersistence).catch(err => {
+  console.warn("[AuthService] 設定持久化略過:", err);
+});
+
 const googleProvider = new GoogleAuthProvider();
 googleProvider.setCustomParameters({ prompt: 'select_account' });
 
@@ -53,14 +60,6 @@ export function calculateUserLevel(points = 0) {
   if (points >= 150) return "LV.3 街巷老吃貨";
   if (points >= 50) return "LV.2 認證探店客";
   return "LV.1 探店初心者";
-}
-
-// 判定是否為行動裝置或獨立 PWA 視窗
-export function isMobileOrStandalone() {
-  const isStandaloneMatch = window.matchMedia("(display-mode: standalone)").matches;
-  const isNavigatorStandalone = window.navigator.standalone === true;
-  const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-  return isStandaloneMatch || isNavigatorStandalone || isMobile;
 }
 
 function broadcastAuthChange(user, profile) {
@@ -150,28 +149,27 @@ export async function fetchOrCreateUserProfile(user) {
   }
 }
 
-// 1. Google 登入（手機端強制全頁轉址 Redirect，避免 Popup 白畫面死鎖）
+// 1. Google 登入（⭐ 全平台一律彈窗優先，徹底避開 iOS Safari / Chrome 跨網域跳轉丟失 Token 死鎖）
 export async function loginWithGoogle() {
   try {
-    if (isMobileOrStandalone()) {
-      // 手機端或 PWA 模式：直接走轉址登入，絕不開彈窗
-      await signInWithRedirect(auth, googleProvider);
-      return null;
-    } else {
-      // 電腦桌面瀏覽器：走彈窗登入
-      const result = await signInWithPopup(auth, googleProvider);
-      return await fetchOrCreateUserProfile(result.user);
+    const result = await signInWithPopup(auth, googleProvider);
+    if (result && result.user) {
+      const profile = await fetchOrCreateUserProfile(result.user);
+      return profile;
     }
+    return null;
   } catch (error) {
-    console.warn("[AuthService] Google 登入例外:", error.code, error.message);
+    console.warn("[AuthService] Google Popup 登入異常:", error.code, error.message);
 
+    // 若瀏覽器彈窗被硬性攔截，才進行轉址降級
     if (error.code === 'auth/popup-blocked' || error.code === 'auth/cancelled-popup-request') {
+      console.log("[AuthService] 彈窗受阻，切換至轉址模式備援...");
       await signInWithRedirect(auth, googleProvider);
       return null;
     }
 
     if (error.code === 'auth/popup-closed-by-user') {
-      throw new Error("已取消 Google 登入。");
+      throw new Error("您已關閉登入視窗。");
     }
 
     throw error;
@@ -265,7 +263,7 @@ export async function addStoreComment(storeId, commentPayload) {
   };
 }
 
-// 5. 初始化認證監聽（支援重定向跳回與魔法連結自動驗證）
+// 5. 初始化認證監聽（支援魔法連結驗證、轉址回傳相容與全域狀態）
 export function initAuthService() {
   // A. 檢查 Email 魔法連結跳回
   if (isSignInWithEmailLink(auth, window.location.href)) {
@@ -284,7 +282,7 @@ export function initAuthService() {
     }
   }
 
-  // B. 檢查 Google Redirect 跳回（手機登入成功後在此接收憑證）
+  // B. 檢查 Google Redirect 跳回（若有先前殘留的跳轉仍可被解析）
   getRedirectResult(auth)
     .then(async (result) => {
       if (result && result.user) {
@@ -293,10 +291,10 @@ export function initAuthService() {
       }
     })
     .catch((error) => {
-      console.error("[AuthService] Redirect 解析失敗:", error.code, error.message);
+      console.warn("[AuthService] Redirect 狀態略過:", error.code);
     });
 
-  // C. 全域監聽狀態
+  // C. 全域監聽狀態（持久化登入保持）
   onAuthStateChanged(auth, async (user) => {
     if (user) {
       await fetchOrCreateUserProfile(user);
