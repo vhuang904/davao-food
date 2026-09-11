@@ -349,8 +349,6 @@
       addStoreComment 
     } from './authService.js';
 
-    initAuthService();
-
     const firebaseConfig = {
       apiKey: "AIzaSyCm2dCa2Y8d6Z-Dc_Uz9yvvgai6fav-1Vg",
       authDomain: "bigv-foodmap.firebaseapp.com",
@@ -2398,11 +2396,17 @@
 
     document.getElementById('btn-google-login').addEventListener('click', async () => {
       try {
-        await loginWithGoogle();
-        authModal.classList.add('hidden');
-        showToast('Google 帳號登入成功！');
+        const userProfile = await loginWithGoogle();
+        // 電腦版彈窗回傳資料時才關閉彈窗；手機版走轉址跳轉不手動關閉
+        if (userProfile) {
+          authModal.classList.add('hidden');
+          showToast('Google 帳號登入成功！');
+        }
       } catch (err) {
-        showToast('登入取消或發生異常');
+        console.warn('登入處理:', err);
+        if (err.message && !err.message.includes('取消')) {
+          showToast(err.message || '登入發生異常');
+        }
       }
     });
 
@@ -2576,6 +2580,9 @@
     initVisitorCounter();
     enableHorizontalScroll();
     fetchData();
+
+    // ⭐ 確保所有事件與監聽器就緒後再啟動認證
+    initAuthService();
 
     // ====== 頂級 PWA 熱更新與快取破除機制 ======
     if ('serviceWorker' in navigator) {
