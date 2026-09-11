@@ -1,7 +1,7 @@
 /**
- * 大V的旅遊窩 PWA - Google Sheets CMS 資料串接服務 (v17.5 Multi-Tab Medical & Smart Links)
- * 移除有害死鎖快取，保證使用者每次開啟皆抓取 Google 試算表真值
- * 支援分頁：BigV_Picks, Attractions, Promotions, Auto_Discovered, Medical
+ * 大V的旅遊窩 PWA - Google Sheets CMS 資料串接服務 (v24.0 Grand Luxury & Full Island Support)
+ * 100% 保留 RFC 4180 狀態機與反快取機制，保證每次開啟皆抓取 Google 試算表真值
+ * 支援 6 大核心分頁：BigV_Picks, Attractions, Promotions, Auto_Discovered, Medical, Island_Discovered
  */
 
 export const SHEET_CONFIG = {
@@ -11,12 +11,13 @@ export const SHEET_CONFIG = {
     attractions: "Attractions",
     promotions: "Promotions",
     autoDiscovered: "Auto_Discovered",
-    medical: "Medical"
+    medical: "Medical",
+    islandDiscovered: "Island_Discovered" // ⭐ 正式加入海島旗艦專表
   }
 };
 
 /**
- * RFC 4180 強固型 CSV 狀態機解析器
+ * RFC 4180 強固型 CSV 狀態機解析器 (100% 原版保留)
  */
 export function parseCSV(text) {
   const rows = [];
@@ -71,7 +72,7 @@ export function parseCSV(text) {
 }
 
 /**
- * 抓取試算表 CSV（完全禁用快取，保證資料即時性）
+ * 抓取試算表 CSV（完全禁用快取，保證資料即時性）(100% 原版保留)
  */
 export async function fetchSheetCsv(sheetName) {
   const timestamp = Date.now();
@@ -230,6 +231,27 @@ function normalizeAutoDiscovered(rows) {
   }));
 }
 
+// ⭐ 全新加入：五大海島專區正規化器 (支援 Villa、美食與跳島)
+function normalizeIslandDiscovered(rows) {
+  return rows.map(row => ({
+    id: row.id,
+    city: (row.city || '').toLowerCase().trim(),
+    type: (row.type || 'attraction').toLowerCase().trim(),
+    name_zh: row.namezh || '',
+    name_en: row.nameen || '',
+    name_tl: row.nametl || '',
+    category: row.category || '',
+    categoryKey: (row.category || '').toLowerCase().trim(),
+    googleRating: parseFloat(row.googlerating) || 4.5,
+    googleReviewCount: parseInt(row.googlereviewcount || row.reviewcount, 10) || 50,
+    address: row.address || '',
+    phone: cleanPhoneNumber(row.phone),
+    website: row.website || '',
+    image_url: row.imageurl || row.image || '',
+    nav_link: row.navlink || ''
+  }));
+}
+
 function normalizeMedical(rows) {
   return rows
     .filter(row => !row.isactive || String(row.isactive).trim().toUpperCase() !== 'FALSE')
@@ -258,15 +280,16 @@ function normalizeMedical(rows) {
 }
 
 /**
- * 載入 Master 資料庫核心（徹底移除快取，並將 Medical 分頁納入同步）
+ * 載入 Master 資料庫核心（徹底移除快取，6 大工作表全部並行讀取）
  */
 export async function loadMasterDatabase() {
-  const [rawBigV, rawAttr, rawPromo, rawAuto, rawMed] = await Promise.allSettled([
+  const [rawBigV, rawAttr, rawPromo, rawAuto, rawMed, rawIsland] = await Promise.allSettled([
     fetchSheetCsv(SHEET_CONFIG.sheets.bigVPicks),
     fetchSheetCsv(SHEET_CONFIG.sheets.attractions),
     fetchSheetCsv(SHEET_CONFIG.sheets.promotions),
     fetchSheetCsv(SHEET_CONFIG.sheets.autoDiscovered),
-    fetchSheetCsv(SHEET_CONFIG.sheets.medical)
+    fetchSheetCsv(SHEET_CONFIG.sheets.medical),
+    fetchSheetCsv(SHEET_CONFIG.sheets.islandDiscovered) // ⭐ 正式發起抓取
   ]);
 
   return {
@@ -274,7 +297,8 @@ export async function loadMasterDatabase() {
     attractions: rawAttr.status === 'fulfilled' ? normalizeAttractions(rawAttr.value) : [],
     promotions: rawPromo.status === 'fulfilled' ? normalizePromotions(rawPromo.value) : [],
     autoDiscovered: rawAuto.status === 'fulfilled' ? normalizeAutoDiscovered(rawAuto.value) : [],
-    medical: rawMed.status === 'fulfilled' ? normalizeMedical(rawMed.value) : []
+    medical: rawMed.status === 'fulfilled' ? normalizeMedical(rawMed.value) : [],
+    islandDiscovered: rawIsland.status === 'fulfilled' ? normalizeIslandDiscovered(rawIsland.value) : [] // ⭐ 輸出給前端
   };
 }
 
