@@ -1743,7 +1743,11 @@
         const cat = (safeStr(item.category) + ' ' + safeStr(item.id) + ' ' + safeStr(item.name_zh) + ' ' + safeStr(item.name_en)).toLowerCase();
         if (currentSubFilter === 'shopping') return cat.includes('mall') || cat.includes('商場') || cat.includes('shop');
         if (currentSubFilter === 'history') return cat.includes('history') || cat.includes('歷史') || cat.includes('教堂');
-        if (currentSubFilter === 'nature') return cat.includes('nature') || cat.includes('自然') || cat.includes('公園') || cat.includes('park') || cat.includes('農莊') || cat.includes('園區') || cat.includes('eden') || cat.includes('瀑布') || cat.includes('falls');
+        if (currentSubFilter === 'nature') {
+  // 排除帶有 mall / 商場 的購物中心 (例如 Parkmall)
+  if (cat.includes('mall') || cat.includes('商場') || cat.includes('shopping')) return false;
+  return cat.includes('nature') || cat.includes('自然') || cat.includes('公園') || cat.includes('park') || cat.includes('農莊') || cat.includes('園區') || cat.includes('eden') || cat.includes('瀑布') || cat.includes('falls');
+}
         if (currentSubFilter === 'beach') return cat.includes('beach') || cat.includes('沙灘') || cat.includes('cove');
         if (currentSubFilter === 'island_hopping') return cat.includes('island') || cat.includes('hop') || cat.includes('浮潛') || cat.includes('snorkeling') || cat.includes('tour') || cat.includes('dock');
         if (currentSubFilter === 'casino') {
