@@ -1755,7 +1755,7 @@
     }
 
     // ==========================================================
-    // 2. 景點導覽渲染 (含 NUSTAR 賭場、各大旗艦商場，嚴格分流)
+    // 2. 景點導覽渲染 (含評分徽章、權威排序與嚴格分流)
     // ==========================================================
     function renderAttractions() {
       const listEl = document.getElementById('attraction-list');
@@ -1803,6 +1803,17 @@
         filtered = filtered.filter(item => (safeStr(item.name_zh) + ' ' + safeStr(item.name_en) + ' ' + safeStr(item.address)).includes(q));
       }
 
+      // ⭐ 景點與海島排序：評分由高到低 -> 評論數由多到少
+      filtered.sort((a, b) => {
+        const ratingA = Number(a.google_rating || a.googlerating || a.googleRating || a.rating || 0);
+        const ratingB = Number(b.google_rating || b.googlerating || b.googleRating || b.rating || 0);
+        if (ratingB !== ratingA) return ratingB - ratingA;
+
+        const revA = Number(a.review_count || a.reviewcount || a.googleReviewCount || a.reviews || 0);
+        const revB = Number(b.review_count || b.reviewcount || b.googleReviewCount || b.reviews || 0);
+        return revB - revA;
+      });
+
       filterSummaryText.textContent = `${dict['city_' + currentCity] || ''} · ${dict.navSpot}`;
       itemCountBadge.textContent = `${filtered.length} ${dict.spotsCountUnit}`;
 
@@ -1817,13 +1828,27 @@
         const smartLink = getSmartLink(item.name_en || name, item.city, item.website);
         const cleanPhone = getCleanPhone(item.phone);
 
+        // ⭐ 取得評分與評論數（雙向相容）
+        const rawRating = item.google_rating || item.googlerating || item.googleRating || item.rating || 4.5;
+        const rating = Number(rawRating).toFixed(1);
+        const reviewCount = item.review_count || item.reviewcount || item.googleReviewCount || item.reviews || 50;
+
         return `
           <article class="bg-slate-950 rounded-2xl overflow-hidden shadow-xs border border-slate-800 flex flex-col transition">
             <div class="relative w-full overflow-hidden">
               ${buildCarouselHtml(item.images, `attr-${idx}`, name)}
+              
+              <!-- 左下：城市與分類標籤 -->
               <div class="absolute bottom-2.5 left-2.5 flex items-center gap-1.5 z-10">
                 <span class="bg-slate-900/80 backdrop-blur-xs text-white text-[10px] px-2 py-0.5 rounded font-medium">${dict['city_' + item.city] || item.city}</span>
                 ${item.category ? `<span class="bg-amber-500/90 text-slate-950 text-[10px] font-bold px-2 py-0.5 rounded">${item.category}</span>` : ''}
+              </div>
+
+              <!-- ⭐ 右上角：Google 評分與評論數徽章 -->
+              <div class="absolute top-2.5 right-2.5 z-10">
+                <span class="bg-slate-950/85 backdrop-blur-xs text-amber-300 border border-slate-700/80 text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1 shadow-sm">
+                  <i class="fa-solid fa-star text-[9px] text-amber-400"></i> ${rating} <span class="text-slate-400 font-normal">(${reviewCount}則評價)</span>
+                </span>
               </div>
             </div>
 
