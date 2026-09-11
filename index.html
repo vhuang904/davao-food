@@ -7,7 +7,7 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
-  <meta name="app-version" content="20260911-v31.0-perfect-sync" />
+  <meta name="app-version" content="20260911-v34.0-ai-auth-guard" />
   <meta name="theme-color" content="#020617" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -109,7 +109,7 @@
       <div class="flex items-center gap-1.5">
         <div class="relative flex-1 flex items-center">
           <i class="fa-solid fa-magnifying-glass absolute left-3 text-slate-500 text-xs pointer-events-none"></i>
-          <input id="search-input" type="text" placeholder="搜尋和牛、燒肉、夜生活、Villa、海鮮、急診..." class="w-full bg-slate-950 border border-slate-800 text-slate-100 placeholder-slate-500 text-xs rounded-xl pl-8 pr-7 py-2 focus:outline-none focus:border-amber-400/70 shadow-inner transition" />
+          <input id="search-input" type="text" placeholder="搜尋和牛、海鮮、夜生活、Villa、急診..." class="w-full bg-slate-950 border border-slate-800 text-slate-100 placeholder-slate-500 text-xs rounded-xl pl-8 pr-7 py-2 focus:outline-none focus:border-amber-400/70 shadow-inner transition" />
           <button id="search-clear-btn" class="absolute right-2 text-slate-500 hover:text-slate-300 hidden text-xs p-1">
             <i class="fa-solid fa-circle-xmark"></i>
           </button>
@@ -210,7 +210,7 @@
           <i class="fa-solid fa-crown"></i>
         </div>
         <h3 class="text-base font-black text-white mb-0.5">加入大V會員</h3>
-        <p class="text-xs text-slate-400 mb-4 leading-relaxed">解鎖私房探店評語、發表評論累積吃貨積分！</p>
+        <p class="text-xs text-slate-400 mb-4 leading-relaxed">解鎖私房探店評語、發表評論與 AI 管家諮詢服務！</p>
         
         <button id="btn-google-login" class="w-full bg-white hover:bg-slate-100 text-slate-900 py-2.5 px-3 rounded-xl font-bold text-xs flex items-center justify-center gap-2 shadow-sm transition mb-3">
           <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" class="w-4 h-4" alt="Google">
@@ -307,7 +307,7 @@
     <img src="ai-avatar.jpg" alt="AI 管家" class="w-full h-full object-cover" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop';" />
   </button>
 
-  <!-- AI 管家面板 -->
+  <!-- AI 管家面板 (具備會員登入驗證保護) -->
   <div id="chat-modal" class="fixed bottom-56 right-4 w-80 max-w-[calc(100vw-32px)] h-112 max-h-[calc(100vh-160px)] bg-slate-950 rounded-2xl shadow-2xl border border-amber-400/40 flex flex-col z-50 overflow-hidden hidden">
     <div class="bg-slate-900 border-b border-amber-500/20 text-white p-3 flex justify-between items-center">
       <div class="flex items-center gap-2">
@@ -321,14 +321,16 @@
       </div>
       <button id="btn-close-chat" class="text-slate-400 hover:text-white text-base p-1">✕</button>
     </div>
+
+    <!-- 訊息對話區 -->
     <div id="chat-messages" class="flex-1 p-3 overflow-y-auto space-y-2.5 text-xs bg-slate-950 hide-scrollbar">
-      <div id="chat-welcome-bubble" class="bg-slate-900 p-2.5 rounded-xl rounded-tl-sm border border-slate-800 text-slate-200 leading-relaxed shadow-xs self-start max-w-[88%]">
-        嗨！我是大V旅遊窩管家 👋 歡迎來到菲律賓！想尋找在地特色私房美食、海島渡假村、急救醫療藥局或行程安排，隨時問我喔！
-      </div>
+      <!-- 依登入狀態動態注入歡迎詞或引導登入訊息 -->
     </div>
+
+    <!-- 輸入操作區 -->
     <div class="p-2 bg-slate-900 border-t border-slate-800 flex gap-1.5 items-center">
-      <input type="text" id="chat-input" placeholder="問點什麼吧（例：馬尼拉頂級和牛燒肉...）" class="flex-1 bg-slate-950 border border-slate-700 text-white rounded-xl px-3 py-2 text-xs focus:border-amber-400 outline-none placeholder-slate-500" />
-      <button id="btn-send-chat" class="w-8 h-8 rounded-full bg-amber-400 hover:bg-amber-300 text-slate-950 flex items-center justify-center text-xs font-black transition active:scale-95 shadow-sm">
+      <input type="text" id="chat-input" placeholder="問點什麼吧（例：馬尼拉海鮮酒家、頂級和牛...）" class="flex-1 bg-slate-950 border border-slate-700 text-white rounded-xl px-3 py-2 text-xs focus:border-amber-400 outline-none placeholder-slate-500 disabled:opacity-50 disabled:cursor-not-allowed" />
+      <button id="btn-send-chat" class="w-8 h-8 rounded-full bg-amber-400 hover:bg-amber-300 text-slate-950 flex items-center justify-center text-xs font-black transition active:scale-95 shadow-sm disabled:opacity-50 disabled:cursor-not-allowed">
         <i class="fa-solid fa-paper-plane"></i>
       </button>
     </div>
@@ -423,9 +425,11 @@
       return ISLAND_KEYS.includes(cityKey);
     }
 
+    // ⭐ 子分類設定：都會生活圈具備「🦀 海鮮盛宴」，海島生活圈海鮮直接整合於「🍽️ Top 必吃美食」
     const SUB_FILTERS = {
       food_urban: [
         { key: 'all', label: { 'zh-TW': '全部', 'en': 'All', 'tl': 'Lahat' } },
+        { key: 'seafood', label: { 'zh-TW': '🦀 海鮮盛宴', 'en': '🦀 Seafood Feast', 'tl': '🦀 Pagkaing-dagat' } },
         { key: 'chinese', label: { 'zh-TW': '🥢 精緻中餐', 'en': '🥢 Chinese Gourmet', 'tl': '🥢 Pagkaing Tsino' } },
         { key: 'japanese', label: { 'zh-TW': '🇯🇵 頂級日料', 'en': '🇯🇵 Japanese Cuisine', 'tl': '🇯🇵 Pagkaing Hapones' } },
         { key: 'western', label: { 'zh-TW': '🍷 西洋美饌', 'en': '🍷 Western Fine Dining', 'tl': '🍷 Pagkaing Kanluranin' } },
@@ -630,6 +634,9 @@
         authBtnText.innerText = dict.btnLogin;
         avatarContainer.innerHTML = `<i id="user-avatar-icon" class="fa-regular fa-user text-[10px]"></i>`;
       }
+
+      // ⭐ 登入狀態改變時，立即同步刷新 AI 管家介面
+      renderChatUI();
     });
 
     const I18N_DICT = {
@@ -638,7 +645,7 @@
         appSubtitle: '菲律賓精緻生活 & 海島漫遊地圖',
         btnLogin: '登入',
         btnMember: '會員',
-        searchPlaceholder: '搜尋和牛、燒肉、夜生活、Villa、海鮮、急診...',
+        searchPlaceholder: '搜尋和牛、海鮮、夜生活、Villa、急診...',
         shareBtn: '分享',
         tabMetro: '都會生活圈',
         tabIsland: '渡假海島專區',
@@ -682,7 +689,7 @@
         city_siargao: '錫亞高島',
         city_samal: '薩馬爾島',
         aiChatWelcome: '嗨！我是大V旅遊窩管家 👋 歡迎來到菲律賓！想尋找在地特色私房美食、海島渡假村或行程安排，隨時問我喔！',
-        aiChatPlaceholder: '問點什麼吧（例：馬尼拉頂級和牛燒肉...）',
+        aiChatPlaceholder: '問點什麼吧（例：馬尼拉海鮮酒家、頂級和牛...）',
         aiLoading: '管家正在為您查詢... ⚡',
         badgeExclusive: '🔥 大V特約',
         badgeLimited: '⏰ 限時快閃',
@@ -694,7 +701,7 @@
         appSubtitle: 'Philippine Living & Island Travel Guide',
         btnLogin: 'Login',
         btnMember: 'Member',
-        searchPlaceholder: 'Search Wagyu, BBQ, Nightlife, Villa, Medical...',
+        searchPlaceholder: 'Search Wagyu, Seafood, Nightlife, Villa, Medical...',
         shareBtn: 'Share',
         tabMetro: 'Metro Area',
         tabIsland: 'Islands',
@@ -738,7 +745,7 @@
         city_siargao: 'Siargao',
         city_samal: 'Samal',
         aiChatWelcome: 'Hello! I am your Big V Concierge 👋 Welcome to the Philippines! Ask me anything about local food, island resorts, or trip tips!',
-        aiChatPlaceholder: 'Ask something (e.g., Best Wagyu in Manila...)',
+        aiChatPlaceholder: 'Ask something (e.g., Best Seafood in Manila...)',
         aiLoading: 'Concierge is checking for you... ⚡',
         badgeExclusive: '🔥 BigV Exclusive',
         badgeLimited: '⏰ Limited Deal',
@@ -804,6 +811,10 @@
     };
 
     const CATEGORY_FALLBACK_IMAGES = {
+      seafood: [
+        'https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?w=800&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1559742811-822873691df8?w=800&auto=format&fit=crop'
+      ],
       chinese: [
         'https://images.unsplash.com/photo-1541696432-82c6da8ce7bf?w=800&auto=format&fit=crop',
         'https://images.unsplash.com/photo-1563245372-f21724e3856d?w=800&auto=format&fit=crop'
@@ -830,8 +841,7 @@
       ],
       default: [
         'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1552611052-33e04de081de?w=800&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=800&auto=format&fit=crop'
+        'https://images.unsplash.com/photo-1552611052-33e04de081de?w=800&auto=format&fit=crop'
       ]
     };
 
@@ -865,7 +875,8 @@
 
       const cat = (safeStr(item.categoryKey) + ' ' + safeStr(item.category) + ' ' + safeStr(item.name)).toLowerCase();
       let pool = CATEGORY_FALLBACK_IMAGES.default;
-      if (cat.includes('中餐') || cat.includes('chinese') || cat.includes('hotpot') || cat.includes('dim sum') || cat.includes('火鍋')) pool = CATEGORY_FALLBACK_IMAGES.chinese;
+      if (cat.includes('海鮮') || cat.includes('seafood') || cat.includes('crab') || cat.includes('lobster') || cat.includes('fish')) pool = CATEGORY_FALLBACK_IMAGES.seafood;
+      else if (cat.includes('中餐') || cat.includes('chinese') || cat.includes('hotpot') || cat.includes('dim sum') || cat.includes('火鍋')) pool = CATEGORY_FALLBACK_IMAGES.chinese;
       else if (cat.includes('日料') || cat.includes('日式') || cat.includes('japan') || cat.includes('yaki') || cat.includes('sushi') || cat.includes('teppan') || cat.includes('tsumura')) pool = CATEGORY_FALLBACK_IMAGES.japanese;
       else if (cat.includes('西洋') || cat.includes('western') || cat.includes('steak') || cat.includes('排餐') || cat.includes('bistro')) pool = CATEGORY_FALLBACK_IMAGES.western;
       else if (cat.includes('菲') || cat.includes('filipino') || cat.includes('lechon')) pool = CATEGORY_FALLBACK_IMAGES.filipino;
@@ -1046,6 +1057,7 @@
             category: bigVItem.category || '',
             categoryKey: (bigVItem.category || '').toLowerCase().trim(),
             city: (bigVItem.city || '').toLowerCase().trim(),
+            islandType: 'food',
             isCurated: true,
             curatedBadge: "👑 站長私房嚴選",
             curatedNote: bigVItem.big_v_comment || bigVItem.bigv_comment_zh || '',
@@ -1164,7 +1176,7 @@
           const categoryStr = (islandItem.category || '').toLowerCase();
           const isHotel = itemType === 'hotel' || categoryStr.includes('villa') || categoryStr.includes('hotel') || categoryStr.includes('resort');
           const isNightlife = categoryStr.includes('夜生活') || categoryStr.includes('bar') || categoryStr.includes('club') || categoryStr.includes('lounge');
-          const isFood = itemType === 'restaurant' || categoryStr.includes('food') || categoryStr.includes('美食');
+          const isFood = itemType === 'restaurant' || categoryStr.includes('food') || categoryStr.includes('美食') || categoryStr.includes('seafood') || categoryStr.includes('海鮮');
 
           if (isFood || isHotel || isNightlife) {
             const matched = findMatchedBigV(islandItem);
@@ -1434,14 +1446,22 @@
 
         if (currentSubFilter === 'all') return true;
 
+        const cat = (safeStr(item.categoryKey) + ' ' + safeStr(item.category) + ' ' + safeStr(item.name) + ' ' + safeStr(item.name_zh) + ' ' + safeStr(item.name_en)).toLowerCase();
+
+        // 🦀 海鮮盛宴（都會生活圈獨立篩選）
+        if (currentSubFilter === 'seafood') {
+          return cat.includes('海鮮') || cat.includes('seafood') || cat.includes('crab') || cat.includes('lobster') || 
+                 cat.includes('fish') || cat.includes('shrimp') || cat.includes('prawn') || cat.includes('dampa') || 
+                 cat.includes('fishermans') || cat.includes('huashan') || cat.includes('west empire') || cat.includes('pagkaing-dagat');
+        }
+
+        // 🏝️ 海島生活圈（海鮮餐廳在點選「food」必吃美食時自動列出）
         if (isIslandMode(currentCity)) {
-          if (currentSubFilter === 'food') return item.islandType === 'food';
+          if (currentSubFilter === 'food') return item.islandType === 'food' || cat.includes('food') || cat.includes('seafood') || cat.includes('海鮮');
           if (currentSubFilter === 'nightlife') return item.islandType === 'nightlife' || item.categoryKey === 'nightlife';
           if (currentSubFilter === 'hotel_villa') return item.islandType === 'hotel_villa' || item.categoryKey === 'hotel_villa' || item.categoryKey === 'hotel' || item.categoryKey === 'villa';
           return true;
         } else {
-          const cat = (safeStr(item.categoryKey) + ' ' + safeStr(item.category)).toLowerCase();
-          
           if (currentSubFilter === 'chinese') {
             return cat.includes('精緻中餐') || cat.includes('中餐') || cat.includes('chinese') || 
                    cat.includes('hotpot') || cat.includes('shabu') || cat.includes('dim sum') || 
@@ -2533,6 +2553,7 @@
       }
     });
 
+    // ====== ⭐ AI 管家模組（會員登入狀態動態控管） ======
     const chatFab = document.getElementById('chat-fab');
     const chatModal = document.getElementById('chat-modal');
     const btnCloseChat = document.getElementById('btn-close-chat');
@@ -2540,15 +2561,72 @@
     const btnSendChat = document.getElementById('btn-send-chat');
     const chatMessages = document.getElementById('chat-messages');
 
+    function renderChatUI() {
+      if (!currentUser) {
+        // 未登入狀態：顯示登入解鎖引導提示，禁用打字框
+        chatMessages.innerHTML = `
+          <div class="bg-gradient-to-br from-slate-900 to-slate-950 p-3.5 rounded-xl border border-amber-400/40 text-slate-200 leading-relaxed shadow-lg text-center flex flex-col items-center gap-2">
+            <div class="w-10 h-10 rounded-full bg-amber-400/10 border border-amber-400/40 flex items-center justify-center text-amber-400 text-base">
+              <i class="fa-solid fa-lock"></i>
+            </div>
+            <div>
+              <h4 class="font-black text-amber-300 text-xs mb-1">大V旅遊窩管家 · 會員專屬服務</h4>
+              <p class="text-[11px] text-slate-300">請先登入會員，我就可以馬上為您服務！隨時查詢在地私房探店、急診藥局與海島行程。</p>
+            </div>
+            <button id="btn-chat-modal-login" class="w-full py-2 px-3 rounded-xl bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-slate-950 font-black text-xs shadow-md transition active:scale-95 flex items-center justify-center gap-1.5 mt-1">
+              <i class="fa-solid fa-crown text-slate-950 text-xs"></i> 立即登入 / 註冊解鎖
+            </button>
+          </div>
+        `;
+
+        const chatLoginBtn = document.getElementById('btn-chat-modal-login');
+        if (chatLoginBtn) {
+          chatLoginBtn.addEventListener('click', () => {
+            chatModal.classList.add('hidden');
+            authModal.classList.remove('hidden');
+          });
+        }
+
+        chatInput.disabled = true;
+        chatInput.placeholder = "🔒 請先登入會員解鎖 AI 諮詢...";
+        btnSendChat.disabled = true;
+      } else {
+        // 已登入狀態：顯示歡迎訊息，解鎖打字框
+        chatInput.disabled = false;
+        chatInput.placeholder = "問點什麼吧（例：馬尼拉海鮮酒家、頂級和牛...）";
+        btnSendChat.disabled = false;
+
+        if (!chatMessages.querySelector('.chat-ready-bubble')) {
+          const userName = currentUser.displayName ? currentUser.displayName.split(' ')[0] : '吃貨好友';
+          chatMessages.innerHTML = `
+            <div class="chat-ready-bubble bg-slate-900 p-2.5 rounded-xl rounded-tl-sm border border-slate-800 text-slate-200 leading-relaxed shadow-xs self-start max-w-[88%]">
+              嗨，${userName}！我是大V旅遊窩管家 👋 很高興為您服務！想尋找在地特色私房海鮮、海島渡假村、急救醫療或行程規劃，隨時問我喔！
+            </div>
+          `;
+        }
+      }
+    }
+
     chatFab.addEventListener('click', () => {
       chatModal.classList.toggle('hidden');
-      if (!chatModal.classList.contains('hidden')) chatInput.focus();
+      if (!chatModal.classList.contains('hidden')) {
+        renderChatUI();
+        if (currentUser) chatInput.focus();
+      }
     });
+
     btnCloseChat.addEventListener('click', () => chatModal.classList.add('hidden'));
     btnSendChat.addEventListener('click', handleChatSend);
     chatInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') handleChatSend(); });
 
     async function handleChatSend() {
+      if (!currentUser) {
+        showToast('請先登入會員再使用 AI 管家！', 'fa-lock');
+        chatModal.classList.add('hidden');
+        authModal.classList.remove('hidden');
+        return;
+      }
+
       const msg = chatInput.value.trim();
       if (!msg) return;
       const targetLang = currentLang === 'zh-TW' ? 'zh' : currentLang;
@@ -2588,7 +2666,6 @@
     if ('serviceWorker' in navigator) {
       let isRefreshing = false;
 
-      // 只有在新版 SW 真正接管且尚未重載過時才觸發一次
       navigator.serviceWorker.addEventListener('controllerchange', () => {
         if (!isRefreshing) {
           isRefreshing = true;
@@ -2600,9 +2677,7 @@
       });
 
       window.addEventListener('load', () => {
-        // 移除 Date.now()，改為標準註冊，避免瀏覽器誤判為每次都是不同 Worker
         navigator.serviceWorker.register('./sw.js').then((reg) => {
-          // 每次開啟頁面時，由瀏覽器原生比對 sw.js 內容是否有更動
           reg.update();
 
           reg.onupdatefound = () => {
@@ -2610,7 +2685,6 @@
             if (!installingWorker) return;
 
             installingWorker.onstatechange = () => {
-              // 必須是原本就有舊 controller（代表是舊用戶更新），才通知新版跳過等待
               if (installingWorker.state === 'installed' && navigator.serviceWorker.controller) {
                 if (installingWorker.waiting) {
                   installingWorker.waiting.postMessage({ type: 'SKIP_WAITING' });
