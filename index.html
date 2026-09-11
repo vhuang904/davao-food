@@ -3076,6 +3076,26 @@
     enableHorizontalScroll();
     fetchData();
 
+    // ⭐ PWA App Badging：只要使用者開啟或回到 App 畫面，即刻自動清除桌面未讀紅點
+function clearAppBadgeOnOpen() {
+  if ('clearAppBadge' in navigator) {
+    navigator.clearAppBadge().catch(() => {});
+  }
+  if (navigator.serviceWorker && navigator.serviceWorker.controller) {
+    navigator.serviceWorker.controller.postMessage({ type: 'CLEAR_BADGE' });
+  }
+}
+
+// 1. 網頁載入時清除
+clearAppBadgeOnOpen();
+
+// 2. 當使用者從背景切回前台時清除
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible') {
+    clearAppBadgeOnOpen();
+  }
+});
+
     initAuthService();
 
     if ('serviceWorker' in navigator) {
