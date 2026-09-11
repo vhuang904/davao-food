@@ -60,16 +60,16 @@
     .dot-indicator.active { width: 14px; border-radius: 4px; background: #fbbf24; }
 
     /* ==========================================
-     * 大V的旅遊窩 - 全站 100% 淺色系統 (含全部 Pop-up / AI管家 / 置中通知)
+     * 大V的旅遊窩 - 暖陽淺色主題 (徹底告別金色反白與黑塊)
      * ========================================== */
 
-    /* 1. 全站大畫布：象牙暖米白底 */
+    /* 1. 全站大畫布：象牙乳白色 */
     html.light body {
-      background-color: #F8F5F0 !important;
+      background-color: #F7F3EB !important;
       color: #1F2937 !important;
     }
 
-    /* 2. 頂部大底盤：招牌活力暖橘色漸層 */
+    /* 2. 頂部大底盤：招牌活力暖橘漸層 */
     html.light header.glass-header {
       background: linear-gradient(180deg, #F97316 0%, #EA580C 100%) !important;
       border-bottom: 2px solid #C2410C !important;
@@ -79,7 +79,7 @@
       color: #FFFFFF;
     }
 
-    /* 3. 搜尋列與語言選單：純白底 + 暖灰字 */
+    /* 3. 搜尋列與語言選單 */
     html.light #search-input,
     html.light #lang-select {
       background-color: #FFFFFF !important;
@@ -107,27 +107,29 @@
       color: #FFF7ED !important;
     }
 
-    /* 5. 子分類標籤容器（第六列）：乾淨暖米底 */
+    /* 5. 子分類標籤容器托盤底色 */
     html.light header > div.bg-slate-950\/90 {
-      background-color: #F3ECE2 !important;
-      border-top: 1px solid rgba(234, 88, 12, 0.15) !important;
+      background: linear-gradient(180deg, #EFE2D3 0%, #E8D7C3 100%) !important;
+      border-top: 1px solid rgba(194, 65, 12, 0.2) !important;
+      box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.03) !important;
     }
 
-    /* 6. 地區膠囊與子分類膠囊 */
+    /* 6. 膠囊按鈕 */
     html.light .region-pill,
     html.light .sub-pill {
       background-color: #FFFFFF !important;
-      border: 1px solid #E5E7EB !important;
-      color: #4B5563 !important;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+      border: 1px solid #D8CFC4 !important;
+      color: #374151 !important;
+      font-weight: 600 !important;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05) !important;
     }
     html.light .region-pill.bg-amber-400,
     html.light .sub-pill.bg-amber-400\/20 {
       background: linear-gradient(135deg, #F97316, #EA580C) !important;
-      border: 1px solid #EA580C !important;
+      border: 1px solid #C2410C !important;
       color: #FFFFFF !important;
-      font-weight: 700 !important;
-      box-shadow: 0 3px 10px rgba(234, 88, 12, 0.35) !important;
+      font-weight: 800 !important;
+      box-shadow: 0 3px 10px rgba(234, 88, 12, 0.4) !important;
     }
 
     /* 7. 地點數量徽章 */
@@ -141,39 +143,39 @@
     }
 
     /* ==========================================
-     * ⭐ 三級卡片外框、純白底盤與黑字反轉
+     * ⭐ 卡片底盤：舒適乳白 (Creamy Ivory)
      * ========================================== */
     html.light article {
-      background-color: #FFFFFF !important;
+      background-color: #FCF9F2 !important;
       border-radius: 1rem !important;
       overflow: hidden !important;
     }
     html.light article.border-2.border-amber-400 {
       border: 2px solid #D97706 !important;
-      box-shadow: 0 0 20px rgba(217, 119, 6, 0.22) !important;
+      box-shadow: 0 4px 20px rgba(217, 119, 6, 0.16) !important;
     }
     html.light article.border-2.border-amber-400 .border-l-2.border-amber-400 {
-      border-left-color: #D97706 !important;
+      border-left-color: #EA580C !important;
     }
     html.light article.border-sky-400\/60,
     html.light article.border-sky-400 {
       border: 1.5px solid #0284C7 !important;
-      box-shadow: 0 0 16px rgba(2, 132, 199, 0.18) !important;
+      box-shadow: 0 4px 16px rgba(2, 132, 199, 0.14) !important;
     }
     html.light article.border-slate-800 {
-      border: 1px solid #E5E7EB !important;
+      border: 1px solid #E2DACF !important;
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04) !important;
     }
     html.light article div.bg-slate-950,
     html.light article div.bg-slate-900,
     html.light article div.bg-slate-900\/90,
     html.light article div.bg-slate-800 {
-      background-color: #FFFFFF !important;
+      background-color: #FCF9F2 !important;
     }
     html.light article .h-\[1px\],
     html.light article .h-\[1\.5px\],
     html.light article .h-\[2px\] {
-      background-color: #F3F4F6 !important;
+      background-color: #EFE8DC !important;
     }
     html.light article h2,
     html.light article h3,
@@ -188,10 +190,56 @@
       color: #374151 !important;
     }
 
+    /* ==========================================
+     * ⭐ 核心破局：徹底換掉看不清的金色字與黑色塊！
+     * ========================================== */
+
+    /* 1. 站長私房嚴選卡：地點標籤改為「深邃曜石墨黑底盤 + 亮白粗體字」，極度清晰霸氣！ */
+    html.light article span.bg-amber-400\/10 {
+      background: #1E293B !important;
+      border: 1px solid #0F172A !important;
+      color: #FFFFFF !important;
+      font-weight: 800 !important;
+      padding: 3px 8px !important;
+    }
+    html.light article span.bg-amber-400\/10 i,
+    html.light article span.bg-amber-400\/10 span {
+      color: #FFFFFF !important;
+    }
+
+    /* 2. 必點招牌：改為「深焦糖橘紅標籤 + 亮白字」，後方菜名為「高對比黑體字」 */
+    html.light article span.bg-amber-400\/20 {
+      background: #C2410C !important;
+      border: 1px solid #9A3412 !important;
+      color: #FFFFFF !important;
+      font-weight: 900 !important;
+    }
+    html.light article .text-amber-300\/90 {
+      color: #111827 !important; /* 必點菜名直接改清楚黑字 */
+      font-weight: 700 !important;
+    }
+
+    /* 3. 私房評分按鈕：招牌暖金漸層底 + 純白粗體字 */
+    html.light article .bg-amber-400.text-slate-950 {
+      background: linear-gradient(135deg, #F59E0B, #D97706) !important;
+      color: #FFFFFF !important;
+      font-weight: 900 !important;
+      box-shadow: 0 2px 6px rgba(217, 119, 6, 0.3) !important;
+    }
+
+    /* 4. ⭐ 解決第二張圖那個黑媽媽的色塊（口卑指標標籤）！改為天藍高光底盤＋白字！ */
+    html.light article span.bg-slate-800.text-slate-300,
+    html.light article span.bg-slate-900.text-slate-400 {
+      background: #0284C7 !important; /* 湛藍底 */
+      border: 1px solid #0369A1 !important;
+      color: #FFFFFF !important;      /* 純白字 */
+      font-weight: 800 !important;
+    }
+
     /* Google 大眾評分列 */
     html.light article .border-t.border-slate-800\/80 {
-      background-color: #F9FAFB !important;
-      border-top: 1px solid #F3F4F6 !important;
+      background-color: #F5EFE6 !important;
+      border-top: 1px solid #EAE1D5 !important;
     }
     html.light article .border-t.border-slate-800\/80 span.text-slate-400 {
       color: #4B5563 !important;
@@ -204,8 +252,11 @@
     html.light article .border-t.border-slate-800\/80 span.text-slate-500 {
       color: #6B7280 !important;
     }
+    html.light article .border-t.border-slate-800\/80 i.fa-star {
+      color: #EA580C !important;
+    }
 
-    /* ⭐ 寫評論專屬高光按鈕：招牌暖橘底 + 純白立體粗體字 */
+    /* 寫評論專屬高光按鈕：招牌暖橘底 + 純白立體粗體字 */
     html.light article .btn-open-comment {
       background: linear-gradient(135deg, #F97316 0%, #EA580C 100%) !important;
       border: 1px solid #EA580C !important;
@@ -223,8 +274,8 @@
     html.light article a.bg-slate-800\/80,
     html.light article button.bg-slate-800:not(.btn-open-comment),
     html.light article button.bg-slate-800\/80:not(.btn-open-comment) {
-      background-color: #F3F4F6 !important;
-      border: 1px solid #E5E7EB !important;
+      background-color: #EFE8DC !important;
+      border: 1px solid #D8CFC4 !important;
       box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04) !important;
     }
     html.light article a.bg-slate-800 span,
@@ -248,9 +299,7 @@
       font-weight: 700 !important;
     }
 
-    /* ==========================================
-     * ⭐ 8. 畫面正中央通知提示（Toast）淺色優化
-     * ========================================== */
+    /* 8. 畫面正中央通知提示（Toast） */
     html.light #toastInnerBox {
       background: rgba(255, 255, 255, 0.98) !important;
       border: 1.5px solid #F97316 !important;
@@ -265,106 +314,42 @@
       color: #EA580C !important;
     }
 
-    /* ==========================================
-     * ⭐ 9. 會員彈窗 (Auth Modal) 淺色全面換裝
-     * ========================================== */
+    /* 9. 會員彈窗 (Auth Modal) */
     html.light #auth-modal .bg-slate-950 {
-      background-color: #FFFFFF !important;
+      background-color: #FCF9F2 !important;
       border-color: rgba(234, 88, 12, 0.3) !important;
       box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.15) !important;
     }
     html.light #auth-modal h3,
-    html.light #auth-modal h4 {
-      color: #111827 !important;
-    }
+    html.light #auth-modal h4 { color: #111827 !important; }
     html.light #auth-modal p,
-    html.light #auth-modal span.text-slate-400 {
-      color: #4B5563 !important;
-    }
-    html.light #auth-modal #close-auth-btn {
-      background-color: #F3F4F6 !important;
-      color: #4B5563 !important;
-    }
-    html.light #auth-modal input {
-      background-color: #F9FAFB !important;
-      border-color: #E5E7EB !important;
-      color: #111827 !important;
-    }
+    html.light #auth-modal span.text-slate-400 { color: #4B5563 !important; }
+    html.light #auth-modal #close-auth-btn { background-color: #EFE8DC !important; color: #4B5563 !important; }
+    html.light #auth-modal input { background-color: #FFFFFF !important; border-color: #D8CFC4 !important; color: #111827 !important; }
     html.light #auth-modal .bg-gradient-to-br,
-    html.light #auth-modal .bg-slate-900\/90 {
-      background: #FFF7ED !important;
-      border: 1px solid #FFEDD5 !important;
-    }
-    html.light #auth-modal #user-modal-points {
-      color: #EA580C !important;
-    }
-    html.light #auth-modal .text-slate-200 {
-      color: #1F2937 !important;
-    }
+    html.light #auth-modal .bg-slate-900\/90 { background: #FFF7ED !important; border: 1px solid #FFEDD5 !important; }
+    html.light #auth-modal #user-modal-points { color: #EA580C !important; }
+    html.light #auth-modal .text-slate-200 { color: #1F2937 !important; }
 
-    /* ==========================================
-     * ⭐ 10. 訪客留言彈窗 (Comment Modal) 淺色優化
-     * ========================================== */
-    html.light #comment-modal .bg-slate-950 {
-      background-color: #FFFFFF !important;
-      border-color: rgba(234, 88, 12, 0.3) !important;
-    }
-    html.light #comment-modal #comment-modal-title {
-      color: #111827 !important;
-    }
-    html.light #comment-modal #close-comment-btn {
-      background-color: #F3F4F6 !important;
-      color: #4B5563 !important;
-    }
-    html.light #comment-modal .bg-slate-900 {
-      background-color: #F9FAFB !important;
-      border-color: #E5E7EB !important;
-    }
+    /* 10. 訪客留言彈窗 (Comment Modal) */
+    html.light #comment-modal .bg-slate-950 { background-color: #FCF9F2 !important; border-color: rgba(234, 88, 12, 0.3) !important; }
+    html.light #comment-modal #comment-modal-title { color: #111827 !important; }
+    html.light #comment-modal #close-comment-btn { background-color: #EFE8DC !important; color: #4B5563 !important; }
+    html.light #comment-modal .bg-slate-900 { background-color: #FFFFFF !important; border-color: #E2DACF !important; }
     html.light #comment-modal .text-slate-200,
-    html.light #comment-modal .text-slate-300 {
-      color: #1F2937 !important;
-    }
-    html.light #comment-input-text {
-      background-color: #F9FAFB !important;
-      border-color: #E5E7EB !important;
-      color: #111827 !important;
-    }
+    html.light #comment-modal .text-slate-300 { color: #1F2937 !important; }
+    html.light #comment-input-text { background-color: #FFFFFF !important; border-color: #D8CFC4 !important; color: #111827 !important; }
 
-    /* ==========================================
-     * ⭐ 11. AI 旅遊管家對話面板 (AI Chat Modal) 淺色優化
-     * ========================================== */
-    html.light #chat-modal {
-      background-color: #FFFFFF !important;
-      border: 1.5px solid #EA580C !important;
-      box-shadow: 0 15px 35px -5px rgba(234, 88, 12, 0.2) !important;
-    }
-    html.light #chat-modal > div.bg-slate-900 {
-      background: linear-gradient(135deg, #F97316, #EA580C) !important;
-      border-bottom: 1px solid #C2410C !important;
-    }
+    /* 11. AI 旅遊管家對話面板 (AI Chat Modal) */
+    html.light #chat-modal { background-color: #FCF9F2 !important; border: 1.5px solid #EA580C !important; box-shadow: 0 15px 35px -5px rgba(234, 88, 12, 0.2) !important; }
+    html.light #chat-modal > div.bg-slate-900 { background: linear-gradient(135deg, #F97316, #EA580C) !important; border-bottom: 1px solid #C2410C !important; }
     html.light #chat-modal > div.bg-slate-900 h3,
-    html.light #chat-modal > div.bg-slate-900 span {
-      color: #FFFFFF !important;
-    }
-    html.light #chat-messages {
-      background-color: #FBF8F2 !important;
-    }
+    html.light #chat-modal > div.bg-slate-900 span { color: #FFFFFF !important; }
+    html.light #chat-messages { background-color: #F7F3EB !important; }
     html.light #chat-messages .bg-slate-900,
-    html.light #chat-messages .chat-ready-bubble {
-      background-color: #FFFFFF !important;
-      border: 1px solid #E5E7EB !important;
-      color: #1F2937 !important;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04) !important;
-    }
-    html.light #chat-modal > div.p-2.bg-slate-900 {
-      background-color: #FFFFFF !important;
-      border-top: 1px solid #E5E7EB !important;
-    }
-    html.light #chat-input {
-      background-color: #F3F4F6 !important;
-      border: 1px solid #E5E7EB !important;
-      color: #111827 !important;
-    }
+    html.light #chat-messages .chat-ready-bubble { background-color: #FFFFFF !important; border: 1px solid #E2DACF !important; color: #1F2937 !important; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04) !important; }
+    html.light #chat-modal > div.p-2.bg-slate-900 { background-color: #FCF9F2 !important; border-top: 1px solid #E2DACF !important; }
+    html.light #chat-input { background-color: #FFFFFF !important; border: 1px solid #D8CFC4 !important; color: #111827 !important; }
   </style>
 
   <!-- 全域 Toast 提示（置中顯示） -->
