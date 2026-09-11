@@ -2581,23 +2581,21 @@
     if ('serviceWorker' in navigator) {
       let isRefreshing = false;
 
-      // 當發現新版 SW 已接管，顯示提示並自動平滑重載
+      // 只有在新版 SW 真正接管且尚未重載過時才觸發一次
       navigator.serviceWorker.addEventListener('controllerchange', () => {
         if (!isRefreshing) {
           isRefreshing = true;
           showToast('✨ 已同步至最新版本！', 'fa-rotate');
           setTimeout(() => {
             window.location.reload();
-          }, 600);
+          }, 800);
         }
       });
 
       window.addEventListener('load', () => {
-        // 在 sw.js 後方附帶時間戳記，杜絕 sw.js 本身被瀏覽器鎖死快取
-        const swUrlWithHash = `./sw.js?t=${Date.now()}`;
-
-        navigator.serviceWorker.register(swUrlWithHash).then((reg) => {
-          // 每次開啟頁面，主動向伺服器檢查 sw.js 是否有新改動
+        // 移除 Date.now()，改為標準註冊，避免瀏覽器誤判為每次都是不同 Worker
+        navigator.serviceWorker.register('./sw.js').then((reg) => {
+          // 每次開啟頁面時，由瀏覽器原生比對 sw.js 內容是否有更動
           reg.update();
 
           reg.onupdatefound = () => {
@@ -2605,12 +2603,10 @@
             if (!installingWorker) return;
 
             installingWorker.onstatechange = () => {
-              if (installingWorker.state === 'installed') {
-                if (navigator.serviceWorker.controller) {
-                  // 發現伺服器有新版本，立刻通知新 Worker 跳過等待並啟用
-                  if (installingWorker.waiting) {
-                    installingWorker.waiting.postMessage({ type: 'SKIP_WAITING' });
-                  }
+              // 必須是原本就有舊 controller（代表是舊用戶更新），才通知新版跳過等待
+              if (installingWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                if (installingWorker.waiting) {
+                  installingWorker.waiting.postMessage({ type: 'SKIP_WAITING' });
                 }
               }
             };
