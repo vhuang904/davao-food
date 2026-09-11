@@ -1,8 +1,8 @@
 /**
- * 大V的旅遊窩 PWA - Google Sheets CMS 資料串接服務 (v26.2 Active & Seed Synchronized)
- * 1. 100% 完整支援 6 大工作表的 is_active 上下架開關（布林值、大小寫 FALSE、0 全面攔截）
- * 2. 徹底修復 Auto_Discovered 與 Island_Discovered 漏過濾的問題
- * 3. 完美相容 15 欄位結構，絕不強制覆蓋 is_active
+ * 大V的旅遊窩 PWA - Google Sheets CMS 資料串接服務 (v26.3 Rock-Solid Active Filter)
+ * 1. 徹底解決 is_active 判定被誤判放行的問題
+ * 2. 支援 Google Sheets 核取方塊、原生布林值、引號字串 ("FALSE", 'false')
+ * 3. 六大工作表全面嚴格過濾
  */
 
 export const SHEET_CONFIG = {
@@ -93,7 +93,7 @@ export async function fetchSheetCsv(sheetName) {
     return [];
   }
 
-  // 將表頭轉為標準乾淨的小寫 key（移除底線與空格，如 is_active -> isactive）
+  // 將表頭轉為乾淨的小寫 key
   const headers = rawRows[0].map(h => h.toLowerCase().trim().replace(/^['"]|['"]$/g, '').replace(/[\s_-]/g, ''));
   const records = [];
 
@@ -126,7 +126,6 @@ function cleanPhoneNumber(phone) {
   return str;
 }
 
-// 輔助工具：安全解析照片清單
 function extractImages(row) {
   const raw = row.imageurl || row.image_url || row.image || row.photos || row.photo || '';
   if (!raw || typeof raw !== 'string') return [];
@@ -135,7 +134,6 @@ function extractImages(row) {
     .filter(s => s.startsWith('http') && !s.includes('goo.gl/maps') && !s.includes('maps.app.goo.gl'));
 }
 
-// 輔助工具：安全提取官網連結
 function extractWebsite(row) {
   const web = row.website || row.web || row.official_website || row.url || '';
   if (typeof web === 'string' && web.trim().startsWith('http')) {
@@ -144,15 +142,48 @@ function extractWebsite(row) {
   return '';
 }
 
-// ⭐ 核心安全過濾器：判斷是否為有效上架項目
-function checkIsActive(row) {
+// ⭐ 終極強固過濾器：絕不漏殺任何形態的 FALSE
+export function checkIsActive(row) {
   if (!row) return false;
-  const val = row.isactive !== undefined ? row.isactive : row.is_active;
-  if (val === undefined || val === null || val === '') return true; // 空白預設上架
-  if (val === false) return false;
-  if (val === true) return true;
-  const str = String(val).trim().toUpperCase();
-  return str !== 'FALSE' && str !== '0' && str !== 'NO' && str !== 'OFF';
+
+  let rawVal = undefined;
+
+  // 1. 直接比對常見屬性名
+  const candidateKeys = ['isactive', 'is_active', 'active', 'is_enabled', 'enabled'];
+  for (let k of candidateKeys) {
+    if (row[k] !== undefined && row[k] !== null && row[k] !== '') {
+      rawVal = row[k];
+      break;
+    }
+  }
+
+  // 2. 若沒找到，遍歷物件尋找相符鍵值
+  if (rawVal === undefined) {
+    for (let k in row) {
+      const cleanKey = k.toLowerCase().replace(/[\s_-]/g, '');
+      if (cleanKey === 'isactive' || cleanKey === 'active') {
+        rawVal = row[k];
+        break;
+      }
+    }
+  }
+
+  // 3. 若欄位完全空白或未提供，預設正常上架 (true)
+  if (rawVal === undefined || rawVal === null || String(rawVal).trim() === '') {
+    return true;
+  }
+
+  // 4. 布林值直接判斷
+  if (rawVal === false || rawVal === 'false') return false;
+  if (rawVal === true || rawVal === 'true') return true;
+
+  // 5. 字串清理引號後比對
+  const s = String(rawVal).replace(/['"]/g, '').trim().toUpperCase();
+  if (s === 'FALSE' || s === '0' || s === 'OFF' || s === 'NO' || s === 'F') {
+    return false;
+  }
+
+  return true;
 }
 
 function normalizeBigVPicks(rows) {
@@ -184,7 +215,7 @@ function normalizeBigVPicks(rows) {
       image_url: row.imageurl || row.image || '',
       images: extractImages(row),
       nav_link: row.navlink || row.nav_link || '',
-      is_active: true
+      is_active: checkIsActive(row)
     }));
 }
 
@@ -213,7 +244,7 @@ function normalizeAttractions(rows) {
       image_url: row.imageurl || row.image || '',
       images: extractImages(row),
       nav_link: row.navlink || row.nav_link || '',
-      is_active: true
+      is_active: checkIsActive(row)
     }));
 }
 
@@ -240,11 +271,10 @@ function normalizePromotions(rows) {
       image_url: row.imageurl || row.image || '',
       images: extractImages(row),
       nav_link: row.navlink || row.nav_link || '',
-      is_active: true
+      is_active: checkIsActive(row)
     }));
 }
 
-// ⭐ 修復：加入 checkIsActive 過濾
 function normalizeAutoDiscovered(rows) {
   return rows
     .filter(checkIsActive)
@@ -265,11 +295,10 @@ function normalizeAutoDiscovered(rows) {
       image_url: row.imageurl || row.image || '',
       images: extractImages(row),
       nav_link: row.navlink || row.nav_link || '',
-      is_active: true
+      is_active: checkIsActive(row)
     }));
 }
 
-// ⭐ 修復：加入 checkIsActive 過濾
 function normalizeIslandDiscovered(rows) {
   return rows
     .filter(checkIsActive)
@@ -290,7 +319,7 @@ function normalizeIslandDiscovered(rows) {
       image_url: row.imageurl || row.image || '',
       images: extractImages(row),
       nav_link: row.navlink || row.nav_link || '',
-      is_active: true
+      is_active: checkIsActive(row)
     }));
 }
 
@@ -317,7 +346,7 @@ function normalizeMedical(rows) {
         image_url: row.imageurl || row.image || '',
         images: extractImages(row),
         nav_link: row.navlink || row.nav_link || '',
-        is_active: true
+        is_active: checkIsActive(row)
       };
     });
 }
