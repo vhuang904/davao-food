@@ -1,8 +1,9 @@
 /**
- * 大V的旅遊窩 PWA - Google Sheets CMS 資料串接服務 (v26.3 Rock-Solid Active Filter)
+ * 大V的旅遊窩 PWA - Google Sheets CMS 資料串接服務 (v26.4 Ultimate No-Cache & Active Filter)
  * 1. 徹底解決 is_active 判定被誤判放行的問題
  * 2. 支援 Google Sheets 核取方塊、原生布林值、引號字串 ("FALSE", 'false')
  * 3. 六大工作表全面嚴格過濾
+ * 4. 具備多層級 HTTP 防快取標頭，確保即時反映雲端異動
  */
 
 export const SHEET_CONFIG = {
@@ -73,13 +74,20 @@ export function parseCSV(text) {
 }
 
 /**
- * 抓取試算表 CSV（完全禁用快取，保證資料即時性）
+ * 抓取試算表 CSV（極致無快取模式，保證每一次都是雲端最新資料）
  */
 export async function fetchSheetCsv(sheetName) {
   const timestamp = Date.now();
   const url = `https://docs.google.com/spreadsheets/d/${SHEET_CONFIG.spreadsheetId}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(sheetName)}&_t=${timestamp}`;
   
-  const response = await fetch(url, { cache: 'no-store' });
+  const response = await fetch(url, {
+    method: 'GET',
+    cache: 'no-store', // 強制瀏覽器與 Service Worker 絕不讀取硬碟或記憶體暫存
+    headers: {
+      'Pragma': 'no-cache',
+      'Cache-Control': 'no-cache, no-store, max-age=0, must-revalidate'
+    }
+  });
   
   if (!response.ok) {
     console.error(`[Sheet 抓取失敗] 分頁: ${sheetName}, HTTP 狀態: ${response.status}`);
