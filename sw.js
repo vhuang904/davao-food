@@ -1,26 +1,45 @@
 /**
  * 大V的旅遊窩 PWA - Service Worker (版本自適應 & 自動舊快取清理版)
  * 1. 帶動態版本戳記，發布時自動清空舊版死鎖快取
- * 2. 徹底放行 Google Sheets、Firebase、Google 授權與 Cloudflare Workers 原生連線
+ * 2. 徹底放行 Google Sheets API、Firebase、Google 授權與 Cloudflare Workers 原生連線
  * 3. 核心頁面與腳本採用 Network First 網路優先策略
+ * 4. 完整保留 Web Push 背景推播與點擊跳轉機制
  */
 
-// 👉 每次專案有重大改版發布時，只需修改此版本號即可強制全體手機客戶端自動更新
-const CACHE_VERSION = 'v20260910-release';
-const CACHE_NAME = `bigv-app-${CACHE_VERSION}`;
+// 👉 每次專案有重大改版發布時，修改此版本號即可強制全體手機客戶端自動更新
+const CACHE_VERSION = 'v20260911-v32.0';
+const STATIC_CACHE_NAME = `bigv-static-${CACHE_VERSION}`;
+const IMAGE_CACHE_NAME = `bigv-images-${CACHE_VERSION}`;
 
-// 安裝階段：立即跳過等待，加速新版啟用
+// 核心離線必備靜態外殼
+const PRECACHE_ASSETS = [
+  './',
+  './index.html',
+  './manifest.json',
+  './ai-avatar.jpg',
+  './googleSheetService.js',
+  './authService.js'
+];
+
+// 1. 安裝階段：立即跳過等待，預載核心外殼
 self.addEventListener('install', (event) => {
   self.skipWaiting();
+  event.waitUntil(
+    caches.open(STATIC_CACHE_NAME).then((cache) => {
+      return cache.addAll(PRECACHE_ASSETS).catch((err) => {
+        console.warn('[PWA SW] 預快取部分檔案失敗 (不影響運行):', err);
+      });
+    })
+  );
 });
 
-// 啟用階段：主動刪除所有舊版本的快取空間，杜絕死鎖
+// 2. 啟用階段：主動刪除舊版本的程式碼快取，杜絕死鎖
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((cacheNames) => {
       return Promise.all(
         cacheNames.map((cacheName) => {
-          if (cacheName !== CACHE_NAME) {
+          if (cacheName !== STATIC_CACHE_NAME && cacheName !== IMAGE_CACHE_NAME) {
             console.log(`[PWA SW] 清除過期快取: ${cacheName}`);
             return caches.delete(cacheName);
           }
@@ -30,18 +49,19 @@ self.addEventListener('activate', (event) => {
   );
 });
 
+// 3. 請求攔截與分流策略
 self.addEventListener('fetch', (event) => {
-  // 1. 嚴格排除非 HTTP/HTTPS 協議（避免 Chrome 擴充功能或內部協議干擾）
   if (!event.request.url.startsWith('http://') && !event.request.url.startsWith('https://')) {
     return;
   }
 
   const url = new URL(event.request.url);
 
-  // 2. 關鍵放行名單：直接交給瀏覽器原生連線，絕不經由 Service Worker 攔截
+  // 策略 A：關鍵放行名單（Google Sheet Apps Script、Firebase、認證、AI Worker）-> 永遠連網，絕不快取！
   if (
+    url.hostname.includes('script.google.com') ||
+    url.hostname.includes('script.googleusercontent.com') ||
     url.hostname.includes('docs.google.com') ||
-    url.hostname.includes('googleusercontent.com') ||
     url.hostname.includes('spreadsheets.google.com') ||
     url.hostname.includes('firebase') ||
     url.hostname.includes('firestore') ||
@@ -55,7 +75,29 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // 3. 核心 HTML 與 JS 檔案採用【網路優先 (Network First)】
+  // 策略 B：Firebase Storage 圖片與 Unsplash 圖庫 -> Stale-While-Revalidate（優先讀快取，背景靜默更新）
+  if (
+    url.hostname.includes('firebasestorage.googleapis.com') ||
+    url.hostname.includes('images.unsplash.com')
+  ) {
+    event.respondWith(
+      caches.open(IMAGE_CACHE_NAME).then((cache) => {
+        return cache.match(event.request).then((cachedResponse) => {
+          const fetchPromise = fetch(event.request).then((networkResponse) => {
+            if (networkResponse && networkResponse.status === 200) {
+              cache.put(event.request, networkResponse.clone());
+            }
+            return networkResponse;
+          }).catch(() => cachedResponse);
+
+          return cachedResponse || fetchPromise;
+        });
+      })
+    );
+    return;
+  }
+
+  // 策略 C：核心 HTML 與 JS 檔案 ->【網路優先 (Network First)】隨時獲取最新代碼
   if (
     event.request.mode === 'navigate' ||
     url.pathname.endsWith('.html') ||
@@ -67,10 +109,8 @@ self.addEventListener('fetch', (event) => {
         .then((response) => {
           if (response && response.status === 200) {
             const copy = response.clone();
-            caches.open(CACHE_NAME).then((cache) => {
-              if (event.request.url.startsWith('http')) {
-                cache.put(event.request, copy);
-              }
+            caches.open(STATIC_CACHE_NAME).then((cache) => {
+              cache.put(event.request, copy);
             });
           }
           return response;
@@ -80,17 +120,15 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // 4. 圖標、樣式與其他靜態資源採用 Stale-While-Revalidate（優先快取，背景更新）
+  // 策略 D：其餘靜態資源（CSS、字型、圖標）
   event.respondWith(
     caches.match(event.request).then((cached) => {
       const networked = fetch(event.request)
         .then((resp) => {
           if (resp && resp.status === 200) {
             const respClone = resp.clone();
-            caches.open(CACHE_NAME).then((cache) => {
-              if (event.request.url.startsWith('http')) {
-                cache.put(event.request, respClone);
-              }
+            caches.open(STATIC_CACHE_NAME).then((cache) => {
+              cache.put(event.request, respClone);
             });
           }
           return resp;
@@ -102,8 +140,15 @@ self.addEventListener('fetch', (event) => {
   );
 });
 
+// 4. 監聽前端發來的指令（支援熱更新 skipWaiting）
+self.addEventListener('message', (event) => {
+  if (event.data && event.data.type === 'SKIP_WAITING') {
+    self.skipWaiting();
+  }
+});
+
 // ==========================================
-// Web Push 推播通知與點擊處理邏輯
+// Web Push 推播通知與點擊處理邏輯（完整保留）
 // ==========================================
 
 // 1. 監聽推播訊息 (背景接收)
@@ -148,7 +193,6 @@ self.addEventListener('notificationclick', (event) => {
 
   event.waitUntil(
     clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
-      // 若已有開啟的 PWA 視窗，直接切換過去並聚焦
       for (const client of clientList) {
         if ('focus' in client) {
           if (client.url.includes(self.location.origin)) {
@@ -157,7 +201,6 @@ self.addEventListener('notificationclick', (event) => {
           }
         }
       }
-      // 若尚未開啟，則新開視窗載入
       if (clients.openWindow) {
         return clients.openWindow(targetUrl);
       }
