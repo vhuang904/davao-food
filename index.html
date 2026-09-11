@@ -785,6 +785,32 @@
     let currentMainTab = sessionStorage.getItem('ph_nav_tab') || 'map';
     let currentSubFilter = sessionStorage.getItem('ph_nav_sub') || 'all';
     let currentSearchQuery = '';
+    // 智慧寬鬆搜尋同義詞字典
+    const SEARCH_SYNONYMS = {
+      '牛排': ['steak', 'beef', 'wagyu', '和牛', '肋眼', 'ribeye', 'western', '排餐', '牛'],
+      'steak': ['牛排', 'beef', 'wagyu', '和牛', 'ribeye'],
+      '和牛': ['wagyu', 'beef', 'steak', '牛排'],
+      '火鍋': ['hotpot', 'hot pot', 'shabu', '麻辣', '火锅', '鍋'],
+      'hotpot': ['火鍋', 'shabu', '麻辣'],
+      '海鮮': ['seafood', 'crab', 'lobster', 'shrimp', 'prawn', 'fish', '螃蟹', '龍蝦', '蝦', '魚', 'dampa'],
+      'seafood': ['海鮮', 'crab', 'lobster', 'shrimp', 'fish'],
+      '日料': ['japanese', 'sushi', 'sashimi', 'yaki', 'teppan', '壽司', '生魚片', '日式'],
+      '中餐': ['chinese', 'dim sum', '粵菜', '川菜', '中式', '點心'],
+      '早午餐': ['brunch', 'breakfast', 'cafe', '咖啡', '甜點', '鬆餅'],
+      '酒吧': ['bar', 'nightlife', 'club', 'lounge', '夜生活', '調酒'],
+      '燒肉': ['yakiniku', 'bbq', 'barbecue', '烤肉', '韓式烤肉', 'korean bbq']
+    };
+
+    function expandSearchKeywords(query) {
+      const q = query.toLowerCase().trim();
+      const terms = [q];
+      for (const [key, synonyms] of Object.entries(SEARCH_SYNONYMS)) {
+        if (q.includes(key.toLowerCase()) || synonyms.some(s => s.toLowerCase() === q)) {
+          terms.push(key.toLowerCase(), ...synonyms.map(s => s.toLowerCase()));
+        }
+      }
+      return Array.from(new Set(terms));
+    }
     let currentLang = localStorage.getItem('ph_app_lang') || 'zh-TW';
 
     if (deepCity) {
@@ -1807,8 +1833,27 @@
       });
 
       if (currentSearchQuery) {
-        const q = currentSearchQuery.toLowerCase();
-        filtered = filtered.filter(item => (safeStr(item.name) + ' ' + safeStr(item.name_en) + ' ' + safeStr(item.address)).includes(q));
+        const expandedTerms = expandSearchKeywords(currentSearchQuery);
+        filtered = filtered.filter(item => {
+          // 聚合：店名、英文名、地址、分類、必點招牌、站長評語與介紹
+          const corpus = (
+            safeStr(item.name) + ' ' +
+            safeStr(item.name_zh) + ' ' +
+            safeStr(item.name_en) + ' ' +
+            safeStr(item.address) + ' ' +
+            safeStr(item.category) + ' ' +
+            safeStr(item.categoryKey) + ' ' +
+            safeStr(item.mustTry) + ' ' +
+            safeStr(item.must_try) + ' ' +
+            safeStr(item.curatedNote) + ' ' +
+            safeStr(item.bigv_comment_zh) + ' ' +
+            safeStr(item.desc) + ' ' +
+            safeStr(item.description)
+          ).toLowerCase();
+
+          // 只要命中擴展詞庫中的任一特徵即算匹配成功
+          return expandedTerms.some(term => corpus.includes(term));
+        });
       }
 
       // ⭐ 美食自然排序：大V私房最優先 -> 純依 Google 評分由高到低 -> 同分比評論數
@@ -2154,8 +2199,19 @@
       });
 
       if (currentSearchQuery) {
-        const q = currentSearchQuery.toLowerCase();
-        filtered = filtered.filter(item => (safeStr(item.name_zh) + ' ' + safeStr(item.name_en) + ' ' + safeStr(item.address)).includes(q));
+        const expandedTerms = expandSearchKeywords(currentSearchQuery);
+        filtered = filtered.filter(item => {
+          const corpus = (
+            safeStr(item.name_zh) + ' ' +
+            safeStr(item.name_en) + ' ' +
+            safeStr(item.address) + ' ' +
+            safeStr(item.category) + ' ' +
+            safeStr(item.desc_zh) + ' ' +
+            safeStr(item.description)
+          ).toLowerCase();
+
+          return expandedTerms.some(term => corpus.includes(term));
+        });
       }
 
       filtered.sort((a, b) => {
@@ -2315,8 +2371,21 @@
       });
 
       if (currentSearchQuery) {
-        const q = currentSearchQuery.toLowerCase();
-        filtered = filtered.filter(item => (safeStr(item.name_zh) + ' ' + safeStr(item.name_en) + ' ' + safeStr(item.address)).includes(q));
+        const expandedTerms = expandSearchKeywords(currentSearchQuery);
+        filtered = filtered.filter(item => {
+          const corpus = (
+            safeStr(item.name) + ' ' +
+            safeStr(item.name_zh) + ' ' +
+            safeStr(item.name_en) + ' ' +
+            safeStr(item.address) + ' ' +
+            safeStr(item.category) + ' ' +
+            safeStr(item.type) + ' ' +
+            safeStr(item.desc_zh) + ' ' +
+            safeStr(item.description)
+          ).toLowerCase();
+
+          return expandedTerms.some(term => corpus.includes(term));
+        });
       }
 
       // 醫療權威排序：藍框嚴選優先置頂 -> 同級內再比評分與評論數
