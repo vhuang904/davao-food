@@ -7,7 +7,7 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
-  <meta name="app-version" content="20260911-v24.1-clean-ui" />
+  <meta name="app-version" content="20260911-v24.2-perfect-sync" />
   <meta name="theme-color" content="#020617" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -302,7 +302,7 @@
     </div>
   </div>
 
-  <!-- 專屬大V圓形懸浮 AI 頭像球 (全面往上浮動，定位於 bottom-40 約評語旁) -->
+  <!-- 專屬大V圓形懸浮 AI 頭像球 (垂直上浮至 bottom-40 約評語旁) -->
   <button id="chat-fab" class="fixed bottom-40 right-4 rounded-full bg-slate-950 border-2 border-amber-400 shadow-[0_0_20px_-3px_rgba(245,158,11,0.6)] overflow-hidden flex items-center justify-center cursor-pointer z-40 active:scale-95 transition" style="width:50px; height:50px;" title="大V旅遊管家">
     <img src="ai-avatar.jpg" alt="AI 管家" class="w-full h-full object-cover" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop';" />
   </button>
@@ -836,7 +836,7 @@
       ]
     };
 
-    // 核心修正：放行 Google 官方相片 API 網址 (maps.googleapis.com)
+    // ⭐ 關鍵修復 1：放行 Google 官方相片 API 網址 (maps.googleapis.com)，不再誤殺！
     function parseImages(item, fallback) {
       if (!item) return [fallback || CATEGORY_FALLBACK_IMAGES.default[0]];
 
@@ -983,7 +983,7 @@
       });
     }
 
-    // ====== 核心資料整合 ======
+    // ⭐ 關鍵修復 2：精準去重聚合引擎（徹底消除 Yaki together 撞車雙胞胎）
     async function fetchData() {
       const loadingEl = document.getElementById('loading');
       const timeoutPromise = new Promise((_, reject) => 
@@ -998,100 +998,32 @@
           console.warn("[App] Google Sheets 讀取異常或逾時，啟動備援模式:", e);
         }
 
-        const rawList = [];
         const mergedMap = new Map();
-        const bigVLookup = new Map();
 
-        (sheetMaster.bigVPicks || []).forEach(v => {
-          if (v.id) bigVLookup.set(v.id.toLowerCase().trim(), v);
-        });
-
-        rawList.forEach(item => {
-          const nameAll = (safeStr(item.name) + ' ' + safeStr(item.name_en) + ' ' + safeStr(item.id)).toLowerCase();
-          let key = item.id;
-
-          let matchedBigV = null;
-          for (let [bId, bItem] of bigVLookup.entries()) {
-            const cityMatch = !bItem.city || (item.city && item.city.toLowerCase().trim() === bItem.city.toLowerCase().trim());
-            if (key.toLowerCase().trim() === bId || (cityMatch && bItem.name && nameAll.includes(bItem.name.toLowerCase().trim()))) {
-              matchedBigV = bItem;
-              break;
-            }
-          }
-
-          if (matchedBigV) {
-            key = matchedBigV.id;
-            item.id = matchedBigV.id;
-            item.name = matchedBigV.name;
-            item.name_zh = matchedBigV.name_zh || matchedBigV.name;
-            item.name_en = matchedBigV.name_en || item.name_en;
-            item.name_tl = matchedBigV.name_tl;
-            item.isCurated = true;
-            item.curatedBadge = "👑 站長私房嚴選";
-            item.curatedNote = matchedBigV.big_v_comment || matchedBigV.bigv_comment_zh || "站長每週必訪私房推薦！";
-            item.bigv_comment_zh = matchedBigV.bigv_comment_zh || matchedBigV.big_v_comment;
-            item.bigv_comment_en = matchedBigV.bigv_comment_en;
-            item.bigv_comment_tl = matchedBigV.bigv_comment_tl;
-            item.mustTry = matchedBigV.must_try || matchedBigV.must_try_zh || "";
-            item.must_try_zh = matchedBigV.must_try_zh || matchedBigV.must_try;
-            item.must_try_en = matchedBigV.must_try_en;
-            item.must_try_tl = matchedBigV.must_try_tl;
-            item.city = matchedBigV.city;
-            if (matchedBigV.address) item.address = matchedBigV.address;
-            if (matchedBigV.phone) item.phone = String(matchedBigV.phone).replace(/^['"]/, '').trim();
-            if (matchedBigV.website) item.website = matchedBigV.website;
-            if (matchedBigV.nav_link) item.nav_link = matchedBigV.nav_link;
-            if (matchedBigV.grab_url) item.grab_url = matchedBigV.grab_url;
-            item.vScore = matchedBigV.v_score || matchedBigV.vscore || matchedBigV.bigv_score || '9.8';
-            item.googleRating = Number(matchedBigV.google_rating || matchedBigV.googlerating || matchedBigV.rating || 4.8);
-            item.googleReviewCount = Number(matchedBigV.google_reviews || matchedBigV.googlereviews || matchedBigV.reviews || 100);
-            item.images = parseImages(matchedBigV, 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=800&auto=format&fit=crop');
-            bigVLookup.delete(matchedBigV.id.toLowerCase().trim());
-          } else {
-            item.isCurated = false;
-            delete item.curatedBadge;
-            delete item.curatedNote;
-            delete item.mustTry;
-          }
-
-          if (nameAll.includes('pearl farm') || nameAll.includes('chema')) {
-            item.city = 'samal';
-            item.islandType = 'hotel_villa';
-          }
-
-          if (!item.images || item.images.length === 0) {
-            item.images = ["https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=800&auto=format&fit=crop"];
-          }
-
-          if (mergedMap.has(key)) {
-            const existing = mergedMap.get(key);
-            if ((!existing.images || existing.images.length === 0) && (item.images && item.images.length > 0)) {
-              mergedMap.set(key, { ...existing, images: item.images });
-            }
-          } else {
-            mergedMap.set(key, item);
-          }
-        });
-
-        bigVLookup.forEach(bigVItem => {
-          mergedMap.set(bigVItem.id.toLowerCase().trim(), {
+        // 1. 優先載入 BigV 站長嚴選 (奠定尊榮 Level 1 基石)
+        (sheetMaster.bigVPicks || []).forEach(bigVItem => {
+          if (!bigVItem.id) return;
+          const bId = String(bigVItem.id).toLowerCase().trim();
+          
+          mergedMap.set(bId, {
             id: bigVItem.id,
-            name: bigVItem.name_zh || bigVItem.name,
-            name_zh: bigVItem.name_zh || bigVItem.name,
+            name: bigVItem.name_zh || bigVItem.name || bigVItem.id,
+            name_zh: bigVItem.name_zh || bigVItem.name || '',
             name_en: bigVItem.name_en || '',
             name_tl: bigVItem.name_tl || '',
             category: bigVItem.category || '',
-            city: bigVItem.city,
+            categoryKey: (bigVItem.category || '').toLowerCase().trim(),
+            city: (bigVItem.city || '').toLowerCase().trim(),
             isCurated: true,
             curatedBadge: "👑 站長私房嚴選",
             curatedNote: bigVItem.big_v_comment || bigVItem.bigv_comment_zh || '',
-            bigv_comment_zh: bigVItem.bigv_comment_zh || bigVItem.big_v_comment,
-            bigv_comment_en: bigVItem.bigv_comment_en,
-            bigv_comment_tl: bigVItem.bigv_comment_tl,
+            bigv_comment_zh: bigVItem.bigv_comment_zh || bigVItem.big_v_comment || '',
+            bigv_comment_en: bigVItem.bigv_comment_en || '',
+            bigv_comment_tl: bigVItem.bigv_comment_tl || '',
             mustTry: bigVItem.must_try || bigVItem.must_try_zh || '',
-            must_try_zh: bigVItem.must_try_zh || bigVItem.must_try,
-            must_try_en: bigVItem.must_try_en,
-            must_try_tl: bigVItem.must_try_tl,
+            must_try_zh: bigVItem.must_try_zh || bigVItem.must_try || '',
+            must_try_en: bigVItem.must_try_en || '',
+            must_try_tl: bigVItem.must_try_tl || '',
             address: bigVItem.address || "",
             phone: String(bigVItem.phone || "").replace(/^['"]/, '').trim(),
             website: bigVItem.website || "",
@@ -1104,17 +1036,43 @@
           });
         });
 
+        // 智慧比對輔助函式：比對 ID、同城英文店名（完全相同或包含）
+        function findMatchedBigV(candidateItem) {
+          const cId = String(candidateItem.id || '').toLowerCase().trim();
+          const cCity = String(candidateItem.city || '').toLowerCase().trim();
+          const cEn = String(candidateItem.name_en || '').toLowerCase().trim();
+          const cName = String(candidateItem.name || candidateItem.name_zh || '').toLowerCase().trim();
+
+          for (let [bId, existing] of mergedMap.entries()) {
+            if (bId === cId) return existing;
+
+            const isSameCity = !existing.city || !cCity || (existing.city === cCity);
+            if (isSameCity) {
+              const bEn = String(existing.name_en || '').toLowerCase().trim();
+              const bName = String(existing.name || existing.name_zh || '').toLowerCase().trim();
+
+              // 英文名字完全相同 (例如 yaki together by kyoto)
+              if (cEn && bEn && cEn === bEn) return existing;
+
+              // 英文名字互相包含
+              if (cEn && bEn && (cEn.includes(bEn) || bEn.includes(cEn))) return existing;
+              if (cName && bName && (cName.includes(bName) || bName.includes(cName))) return existing;
+            }
+          }
+          return null;
+        }
+
+        // 2. 處理 Auto_Discovered，自動融合撞車店家，不重複長出卡片
         const autoAttractions = [];
         (sheetMaster.autoDiscovered || []).forEach(autoItem => {
           if (!autoItem.id) return;
-          const autoKey = autoItem.id.toLowerCase().trim();
           const itemType = (autoItem.type || 'restaurant').toLowerCase().trim();
           const categoryStr = (autoItem.category || '').toLowerCase();
 
           if (itemType === 'attraction' || itemType === 'spot') {
             autoAttractions.push({
               id: autoItem.id,
-              city: autoItem.city,
+              city: (autoItem.city || '').toLowerCase().trim(),
               category: autoItem.category || '',
               name_zh: autoItem.name_zh || autoItem.name_en || autoItem.id,
               name_en: autoItem.name_en || '',
@@ -1129,14 +1087,23 @@
               images: parseImages(autoItem, 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&auto=format&fit=crop')
             });
           } else {
-            if (mergedMap.has(autoKey)) {
-              const existingItem = mergedMap.get(autoKey);
-              if (autoItem.googleRating) existingItem.googleRating = Number(autoItem.googleRating);
-              if (autoItem.googleReviewCount) existingItem.googleReviewCount = Number(autoItem.googleReviewCount);
+            const matched = findMatchedBigV(autoItem);
+            if (matched) {
+              // 撞車融合：補齊最新 Google 評分與照片，絕對不另外新增卡片！
+              if (autoItem.googleRating) matched.googleRating = Number(autoItem.googleRating);
+              if (autoItem.googleReviewCount) matched.googleReviewCount = Number(autoItem.googleReviewCount);
+              if (autoItem.website && !matched.website) matched.website = autoItem.website;
+              if (autoItem.nav_link && !matched.nav_link) matched.nav_link = autoItem.nav_link;
+              
+              const autoImages = parseImages(autoItem, null);
+              if (autoImages && autoImages.length > 0 && (!matched.images || matched.images[0].includes('unsplash.com'))) {
+                matched.images = autoImages;
+              }
             } else {
               const r = autoItem.googleRating || 4.5;
               const c = autoItem.googleReviewCount || 50;
               const isResort = categoryStr.includes('hotel') || categoryStr.includes('resort') || categoryStr.includes('villa');
+              const autoKey = String(autoItem.id).toLowerCase().trim();
 
               mergedMap.set(autoKey, {
                 id: autoItem.id,
@@ -1146,7 +1113,7 @@
                 name_tl: autoItem.name_tl || '',
                 category: autoItem.category || '',
                 categoryKey: categoryStr,
-                city: autoItem.city,
+                city: (autoItem.city || '').toLowerCase().trim(),
                 islandType: isResort ? 'hotel_villa' : 'food',
                 isCurated: false,
                 address: autoItem.address || '',
@@ -1162,18 +1129,23 @@
           }
         });
 
-        // 核心整合：解析 Island_Discovered
+        // 3. 處理 Island_Discovered，同樣嚴格防重複
         const islandAttractions = [];
         (sheetMaster.islandDiscovered || []).forEach(islandItem => {
           if (!islandItem.id) return;
-          const iKey = islandItem.id.toLowerCase().trim();
           const itemType = (islandItem.type || 'attraction').toLowerCase().trim();
           const categoryStr = (islandItem.category || '').toLowerCase();
           const isHotel = itemType === 'hotel' || categoryStr.includes('villa') || categoryStr.includes('hotel') || categoryStr.includes('resort');
           const isFood = itemType === 'restaurant' || categoryStr.includes('food') || categoryStr.includes('美食') || categoryStr.includes('bar');
 
           if (isFood || isHotel) {
-            if (!mergedMap.has(iKey)) {
+            const matched = findMatchedBigV(islandItem);
+            if (matched) {
+              if (islandItem.googleRating) matched.googleRating = Number(islandItem.googleRating);
+              if (islandItem.googleReviewCount) matched.googleReviewCount = Number(islandItem.googleReviewCount);
+              if (islandItem.website && !matched.website) matched.website = islandItem.website;
+            } else {
+              const iKey = String(islandItem.id).toLowerCase().trim();
               mergedMap.set(iKey, {
                 id: islandItem.id,
                 name: islandItem.name_zh || islandItem.name_en || islandItem.id,
@@ -1182,7 +1154,7 @@
                 name_tl: islandItem.name_tl || '',
                 category: islandItem.category || (isHotel ? '星級飯店 / 海景 Villa' : 'Top 必吃美食'),
                 categoryKey: isHotel ? 'hotel_villa' : 'food',
-                city: islandItem.city,
+                city: (islandItem.city || '').toLowerCase().trim(),
                 islandType: isHotel ? 'hotel_villa' : 'food',
                 isCurated: false,
                 address: islandItem.address || '',
@@ -1198,7 +1170,7 @@
           } else {
             islandAttractions.push({
               id: islandItem.id,
-              city: islandItem.city,
+              city: (islandItem.city || '').toLowerCase().trim(),
               category: islandItem.category || '海島絕美景點',
               name_zh: islandItem.name_zh || islandItem.name_en || islandItem.id,
               name_en: islandItem.name_en || '',
@@ -1215,6 +1187,7 @@
           }
         });
 
+        // 4. 排序 (Level 1 大V站長最優先 -> Level 2 評分排序)
         allRestaurants = Array.from(mergedMap.values())
           .sort((a, b) => {
             const aIsCurated = !!a.isCurated;
@@ -1410,7 +1383,7 @@
     }
 
     // ==========================================================
-    // 核心渲染：美食卡片 (字體瘦身 + 箭頭留白 + 100% 官網超連結)
+    // 核心渲染：美食卡片 (字體耐看 + 箭頭留白 + 100% 官網超連結)
     // ==========================================================
     function renderRestaurants() {
       const listEl = document.getElementById('restaurant-list');
@@ -1523,12 +1496,10 @@
 
         const navUrl = item.nav_link || ('https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(name + ' ' + (item.address || '')));
         
-        // 核心超連結優化：有 official website 優先開官網，無官網開 Google 商家專頁
         const targetWebUrl = (item.website && typeof item.website === 'string' && item.website.trim().startsWith('http')) 
           ? item.website.trim() 
           : navUrl;
 
-        // 店名字體瘦身為精緻耐看版 (text-sm sm:text-base font-bold)，外開箭頭自然銜接且右邊預留安全留白
         const titleHtml = `
           <a href="${targetWebUrl}" target="_blank" rel="noopener noreferrer" class="hover:text-amber-400 transition inline-flex items-center gap-1.5 group cursor-pointer max-w-full">
             <span class="truncate leading-tight">${name}</span>
@@ -1565,7 +1536,6 @@
                   <span>${dict.badgeCurated}</span>
                 </div>
 
-                <!-- 標題容器加入 pr-8 安全邊距，字體調整為精緻中字級 -->
                 <div class="absolute bottom-2.5 left-3.5 right-3.5 pr-8 text-white text-sm sm:text-base font-bold tracking-wide drop-shadow-md z-20">
                   ${titleHtml}
                 </div>
