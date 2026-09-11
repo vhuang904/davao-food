@@ -1000,11 +1000,29 @@
 
         const mergedMap = new Map();
 
-        // 輔助函式：判斷是否被設定為下架 (is_active === 'FALSE')
+        // ⭐ 終極強固判定：防止 JS false || '' 陷阱，並支援大小寫與核取方塊
         function isItemActive(item) {
-          if (!item) return true;
-          const activeVal = String(item.is_active || item.isActive || item.active || '').trim().toUpperCase();
-          return activeVal !== 'FALSE';
+          if (!item) return false;
+          
+          // 抓取可能的所有欄位名稱 (包含大小寫與別名)
+          let val = item.is_active !== undefined ? item.is_active :
+                    item.isActive !== undefined ? item.isActive :
+                    item.active !== undefined ? item.active :
+                    item.IS_ACTIVE !== undefined ? item.IS_ACTIVE : undefined;
+
+          // 若完全未設定或為空，預設啟用
+          if (val === undefined || val === null || val === '') return true;
+
+          // 若為原生布林值 false
+          if (val === false) return false;
+          if (val === true) return true;
+
+          // 若為字串型態
+          const strVal = String(val).trim().toUpperCase();
+          if (strVal === 'FALSE' || strVal === '0' || strVal === 'NO' || strVal === 'OFF') {
+            return false;
+          }
+          return true;
         }
 
         // 1. 優先載入 BigV 站長嚴選
