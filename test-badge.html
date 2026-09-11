@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>大V的旅遊窩 - 站長推播與紅點除錯台</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+</head>
+<body class="bg-slate-950 text-white min-h-screen flex items-center justify-center p-4 font-sans">
+
+  <div class="max-w-sm w-full bg-slate-900 border border-amber-400/40 rounded-3xl p-6 shadow-2xl flex flex-col gap-4 text-center">
+    <div class="w-12 h-12 rounded-2xl bg-amber-400/10 border border-amber-400/40 flex items-center justify-center text-amber-400 mx-auto text-xl">
+      <i class="fa-solid fa-shield-halved"></i>
+    </div>
+    
+    <div>
+      <h2 class="text-base font-black text-white">站長紅點與推播除錯台</h2>
+      <p class="text-xs text-slate-400 mt-1">此工具獨立於主站，僅供站長功能驗證</p>
+    </div>
+
+    <div class="bg-slate-950 p-3.5 rounded-2xl border border-slate-800 text-left text-xs space-y-2 font-mono">
+      <div class="flex justify-between">
+        <span class="text-slate-400">PWA Badging API:</span>
+        <span id="status-support" class="font-bold text-amber-300">檢測中...</span>
+      </div>
+      <div class="flex justify-between">
+        <span class="text-slate-400">通知權限狀態:</span>
+        <span id="status-permission" class="font-bold text-slate-300">檢測中...</span>
+      </div>
+    </div>
+
+    <div class="space-y-2.5 pt-2">
+      <button id="btn-badge-countdown" class="w-full bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 text-slate-950 font-black text-xs py-3 rounded-xl transition active:scale-95 shadow-md flex items-center justify-center gap-2">
+        <i class="fa-solid fa-bell"></i> 3 秒後點亮紅點 (數值 3)
+      </button>
+
+      <button id="btn-badge-clear" class="w-full bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs py-2.5 rounded-xl border border-slate-700 transition active:scale-95 flex items-center justify-center gap-2">
+        <i class="fa-solid fa-trash-can"></i> 立即手動清除紅點
+      </button>
+    </div>
+
+    <div id="countdown-banner" class="hidden text-amber-400 font-black text-xs py-2 bg-amber-400/10 rounded-xl border border-amber-400/30 animate-pulse">
+      請立刻退回手機桌面觀看！
+    </div>
+
+    <a href="./" class="text-[11px] text-slate-500 hover:text-amber-400 transition mt-2 flex items-center justify-center gap-1">
+      <i class="fa-solid fa-arrow-left"></i> 返回大V的旅遊窩首頁
+    </a>
+  </div>
+
+  <script>
+    const isSupported = ('setAppBadge' in navigator);
+    document.getElementById('status-support').innerText = isSupported ? '✅ 支援' : '❌ 此環境未支援';
+    document.getElementById('status-support').className = isSupported ? 'font-bold text-emerald-400' : 'font-bold text-rose-400';
+
+    if ('Notification' in window) {
+      document.getElementById('status-permission').innerText = Notification.permission;
+    } else {
+      document.getElementById('status-permission').innerText = '不支援通知';
+    }
+
+    const btnCountdown = document.getElementById('btn-badge-countdown');
+    const btnClear = document.getElementById('btn-badge-clear');
+    const banner = document.getElementById('countdown-banner');
+
+    btnCountdown.addEventListener('click', async () => {
+      if (!isSupported) {
+        alert('您的瀏覽器環境目前不支援 App Badging API。請確保已將 PWA「加入主畫面」並從桌面開啟。');
+        return;
+      }
+
+      btnCountdown.disabled = true;
+      banner.classList.remove('hidden');
+      banner.innerText = '請在 3 秒內切回手機桌面！';
+
+      let count = 3;
+      const timer = setInterval(() => {
+        count--;
+        if (count > 0) {
+          banner.innerText = `請在 ${count} 秒內切回手機桌面！`;
+        } else {
+          clearInterval(timer);
+          navigator.setAppBadge(3).catch((e) => console.warn(e));
+          banner.innerText = '紅點 (3) 已送出！可回桌面確認。';
+          btnCountdown.disabled = false;
+        }
+      }, 1000);
+    });
+
+    btnClear.addEventListener('click', () => {
+      if (isSupported) {
+        navigator.clearAppBadge().then(() => {
+          alert('桌面紅點已清除！');
+        }).catch(() => {});
+      }
+    });
+  </script>
+</body>
+</html>
