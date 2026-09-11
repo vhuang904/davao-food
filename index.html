@@ -2577,17 +2577,27 @@
     enableHorizontalScroll();
     fetchData();
 
+    // ====== 頂級 PWA 熱更新與快取破除機制 ======
     if ('serviceWorker' in navigator) {
       let isRefreshing = false;
+
+      // 當發現新版 SW 已接管，顯示提示並自動平滑重載
       navigator.serviceWorker.addEventListener('controllerchange', () => {
         if (!isRefreshing) {
           isRefreshing = true;
-          window.location.reload();
+          showToast('✨ 已同步至最新版本！', 'fa-rotate');
+          setTimeout(() => {
+            window.location.reload();
+          }, 600);
         }
       });
 
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js').then(reg => {
+        // 在 sw.js 後方附帶時間戳記，杜絕 sw.js 本身被瀏覽器鎖死快取
+        const swUrlWithHash = `./sw.js?t=${Date.now()}`;
+
+        navigator.serviceWorker.register(swUrlWithHash).then((reg) => {
+          // 每次開啟頁面，主動向伺服器檢查 sw.js 是否有新改動
           reg.update();
 
           reg.onupdatefound = () => {
@@ -2597,18 +2607,15 @@
             installingWorker.onstatechange = () => {
               if (installingWorker.state === 'installed') {
                 if (navigator.serviceWorker.controller) {
+                  // 發現伺服器有新版本，立刻通知新 Worker 跳過等待並啟用
                   if (installingWorker.waiting) {
                     installingWorker.waiting.postMessage({ type: 'SKIP_WAITING' });
-                  }
-                  if (!isRefreshing) {
-                    isRefreshing = true;
-                    window.location.reload();
                   }
                 }
               }
             };
           };
-        }).catch(err => console.warn('SW 註冊異常:', err));
+        }).catch((err) => console.warn('[SW] 註冊異常:', err));
       });
     }
   </script>
