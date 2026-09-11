@@ -177,12 +177,28 @@
     html.light article .h-\[2px\] {
       background-color: #EFE8DC !important;
     }
-    html.light article h2,
-    html.light article h3,
-    html.light article a span.truncate {
-      color: #111827 !important;
-      font-weight: 700 !important;
-    }
+    /* ⭐ 輪播照片上的店名與外連圖示：強制純白 + 文字陰影（絕不反黑隱形） */
+  html.light article .absolute.bottom-2\.5 a,
+  html.light article .absolute.bottom-2\.5 a span,
+  html.light article .carousel-track + div + div a span,
+  html.light article .carousel-track + div + div a {
+    color: #FFFFFF !important;
+    font-weight: 800 !important;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8), 0 2px 8px rgba(0, 0, 0, 0.9) !important;
+  }
+  html.light article .absolute.bottom-2\.5 a i {
+    color: #FBBF24 !important; /* 亮黃金外連小箭頭 */
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8) !important;
+  }
+
+  /* 僅卡片下方內容區標題維持清晰黑字 */
+  html.light article div.p-4 h2,
+  html.light article div.p-4 h3,
+  html.light article div.p-3\.5 h2,
+  html.light article div.p-3\.5 h3 {
+    color: #111827 !important;
+    font-weight: 700 !important;
+  }
     html.light article p,
     html.light article .text-slate-200,
     html.light article .text-slate-300,
