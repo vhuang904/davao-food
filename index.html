@@ -7,7 +7,7 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
-  <meta name="app-version" content="20260911-v34.0-ai-auth-guard" />
+  <meta name="app-version" content="20260911-v35.0-popup-force" />
   <meta name="theme-color" content="#020617" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -2726,16 +2726,36 @@
     }
 
     document.getElementById('btn-google-login').addEventListener('click', async () => {
+      const loginBtn = document.getElementById('btn-google-login');
+      const originalBtnHtml = '<img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" class="w-4 h-4" alt="Google"> 使用 Google 帳號一鍵登入';
+      
       try {
+        if (loginBtn) {
+          loginBtn.disabled = true;
+          loginBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin text-amber-500 mr-2"></i> 驗證授權中...';
+        }
+
         const userProfile = await loginWithGoogle();
+
+        // 登入成功：切換視角並關閉彈窗
         if (userProfile) {
-          authModal.classList.add('hidden');
-          showToast('Google 帳號登入成功！');
+          document.getElementById('auth-modal-login-view').classList.add('hidden');
+          document.getElementById('auth-modal-user-view').classList.remove('hidden');
+          document.getElementById('auth-modal').classList.add('hidden');
+          showToast('🎉 Google 帳號登入成功！');
+        } else {
+          // 若為轉址模式或彈窗被關閉
+          document.getElementById('auth-modal').classList.add('hidden');
         }
       } catch (err) {
-        console.warn('登入處理:', err);
-        if (err.message && !err.message.includes('取消')) {
-          showToast(err.message || '登入發生異常');
+        console.warn('[Auth] 登入處理回報:', err);
+        if (err.message && !err.message.includes('取消') && !err.message.includes('closed') && !err.message.includes('popup-closed')) {
+          showToast(err.message || '登入發生異常，請稍後再試');
+        }
+      } finally {
+        if (loginBtn) {
+          loginBtn.disabled = false;
+          loginBtn.innerHTML = originalBtnHtml;
         }
       }
     });
