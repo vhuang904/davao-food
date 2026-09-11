@@ -1923,26 +1923,47 @@
         filtered = filtered.filter(item => (safeStr(item.name_zh) + ' ' + safeStr(item.name_en) + ' ' + safeStr(item.address)).includes(q));
       }
 
-      // ⭐ 醫療權威自然排序：高分優先 -> 評論數最多優先
+      // ⭐ 醫療權威排序：藍框嚴選優先置頂 -> 排除親友刷分灌水 -> 同級內再比評分與評論數
       filtered.sort((a, b) => {
+        // 判斷是否為「Google 高分嚴選 (藍框)」
+        const checkIsTopMedical = (item) => {
+          const isIsland = isIslandMode(item.city || currentCity);
+          const rawR = item.google_rating ?? item.googleRating ?? item.googlerating ?? item.rating ?? 0;
+          const r = parseFloat(String(rawR).replace(/[^\d.]/g, '')) || 0;
+          
+          const rawC = item.review_count ?? item.reviewcount ?? item.google_reviews ?? item.reviews ?? 0;
+          const c = parseInt(String(rawC).replace(/[^\d]/g, ''), 10) || 0;
+
+          // 海島 4.6星+50則 / 都會 4.8星+100則
+          return isIsland ? (r >= 4.6 && c >= 50) : (r >= 4.8 && c >= 100);
+        };
+
+        const aIsTop = checkIsTopMedical(a);
+        const bIsTop = checkIsTopMedical(b);
+
+        // 1. 第一順位：有藍框嚴選的醫院，強制排在沒藍框的前面！(解決 3 則評論 5 星灌水問題)
+        if (aIsTop && !bIsTop) return -1;
+        if (!aIsTop && bIsTop) return 1;
+
+        // 2. 同梯隊內：比評分高低
         const getRating = (item) => {
           const val = item.google_rating ?? item.googleRating ?? item.googlerating ?? item.rating;
           const num = parseFloat(String(val).replace(/[^\d.]/g, ''));
           return isNaN(num) ? 0 : num;
         };
 
-        const getReviews = (item) => {
-          const val = item.review_count ?? item.reviewcount ?? item.google_reviews ?? item.googlereviews ?? item.googleReviewCount ?? item.reviews;
-          const num = parseInt(String(val).replace(/[^\d]/g, ''), 10);
-          return isNaN(num) ? 0 : num;
-        };
-
         const ratingA = getRating(a);
         const ratingB = getRating(b);
-
         if (ratingB !== ratingA) {
           return ratingB - ratingA;
         }
+
+        // 3. 同梯隊且同評分：比評論數多寡
+        const getReviews = (item) => {
+          const val = item.review_count ?? item.reviewcount ?? item.google_reviews ?? item.reviews;
+          const num = parseInt(String(val).replace(/[^\d]/g, ''), 10);
+          return isNaN(num) ? 0 : num;
+        };
 
         const reviewsA = getReviews(a);
         const reviewsB = getReviews(b);
