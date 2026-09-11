@@ -1,7 +1,6 @@
 /**
- * 大V的旅遊窩 PWA - Google Sheets CMS 資料串接服務 (v24.0 Grand Luxury & Full Island Support)
- * 100% 保留 RFC 4180 狀態機與反快取機制，保證每次開啟皆抓取 Google 試算表真值
- * 支援 6 大核心分頁：BigV_Picks, Attractions, Promotions, Auto_Discovered, Medical, Island_Discovered
+ * 大V的旅遊窩 PWA - Google Sheets CMS 資料串接服務 (v24.2 Ultra Robust Link & Photos)
+ * 100% 解決 website 遺失與 Google 相片未能正常解析問題
  */
 
 export const SHEET_CONFIG = {
@@ -12,12 +11,12 @@ export const SHEET_CONFIG = {
     promotions: "Promotions",
     autoDiscovered: "Auto_Discovered",
     medical: "Medical",
-    islandDiscovered: "Island_Discovered" // ⭐ 正式加入海島旗艦專表
+    islandDiscovered: "Island_Discovered"
   }
 };
 
 /**
- * RFC 4180 強固型 CSV 狀態機解析器 (100% 原版保留)
+ * RFC 4180 強固型 CSV 狀態機解析器
  */
 export function parseCSV(text) {
   const rows = [];
@@ -72,7 +71,7 @@ export function parseCSV(text) {
 }
 
 /**
- * 抓取試算表 CSV（完全禁用快取，保證資料即時性）(100% 原版保留)
+ * 抓取試算表 CSV（完全禁用快取，保證資料即時性）
  */
 export async function fetchSheetCsv(sheetName) {
   const timestamp = Date.now();
@@ -92,7 +91,7 @@ export async function fetchSheetCsv(sheetName) {
     return [];
   }
 
-  // 將表頭轉為標準乾淨的小寫 key，並替換底線
+  // 將表頭轉為標準乾淨的小寫 key，同時保留原始 key 以防萬一
   const headers = rawRows[0].map(h => h.toLowerCase().trim().replace(/^['"]|['"]$/g, '').replace(/[\s_-]/g, ''));
   const records = [];
 
@@ -102,7 +101,7 @@ export async function fetchSheetCsv(sheetName) {
 
     const obj = {};
     headers.forEach((key, colIndex) => {
-      let val = row[colIndex] || '';
+      let val = row[colIndex] !== undefined ? row[colIndex] : '';
       if (typeof val === 'string') {
         val = val.trim();
         if (val.startsWith("'") || val.startsWith('"')) {
@@ -123,6 +122,24 @@ function cleanPhoneNumber(phone) {
   let str = String(phone).trim();
   str = str.replace(/^['"]+/, '').replace(/['"]+$/, '');
   return str;
+}
+
+// 輔助工具：安全解析照片清單 (防止空值或誤殺 Google API 照片)
+function extractImages(row) {
+  const raw = row.imageurl || row.image_url || row.image || row.photos || row.photo || '';
+  if (!raw || typeof raw !== 'string') return [];
+  return raw.split(',')
+    .map(s => s.trim())
+    .filter(s => s.startsWith('http') && !s.includes('goo.gl/maps') && !s.includes('maps.app.goo.gl'));
+}
+
+// 輔助工具：安全提取官網連結
+function extractWebsite(row) {
+  const web = row.website || row.web || row.official_website || row.url || '';
+  if (typeof web === 'string' && web.trim().startsWith('http')) {
+    return web.trim();
+  }
+  return '';
 }
 
 function normalizeBigVPicks(rows) {
@@ -150,9 +167,10 @@ function normalizeBigVPicks(rows) {
       google_reviews: row.googlereviews || row.reviewcount || row.reviews || '',
       address: row.address || '',
       phone: cleanPhoneNumber(row.phone),
-      website: row.website || '',
+      website: extractWebsite(row),
       image_url: row.imageurl || row.image || '',
-      nav_link: row.navlink || '',
+      images: extractImages(row),
+      nav_link: row.navlink || row.nav_link || '',
       is_active: true
     }));
 }
@@ -178,9 +196,10 @@ function normalizeAttractions(rows) {
       googleReviewCount: parseInt(row.googlereviewcount || row.reviewcount, 10) || 100,
       address: row.address || '',
       phone: cleanPhoneNumber(row.phone),
-      website: row.website || '',
+      website: extractWebsite(row),
       image_url: row.imageurl || row.image || '',
-      nav_link: row.navlink || '',
+      images: extractImages(row),
+      nav_link: row.navlink || row.nav_link || '',
       is_active: true
     }));
 }
@@ -204,9 +223,10 @@ function normalizePromotions(rows) {
       valid_until: row.validuntil || '長期有效',
       address: row.address || '',
       phone: cleanPhoneNumber(row.phone),
-      website: row.website || '',
+      website: extractWebsite(row),
       image_url: row.imageurl || row.image || '',
-      nav_link: row.navlink || '',
+      images: extractImages(row),
+      nav_link: row.navlink || row.nav_link || '',
       is_active: true
     }));
 }
@@ -221,17 +241,17 @@ function normalizeAutoDiscovered(rows) {
     name_tl: row.nametl || '',
     category: row.category || '',
     categoryKey: (row.category || '').toLowerCase().trim(),
-    googleRating: parseFloat(row.googlerating) || 4.5,
-    googleReviewCount: parseInt(row.googlereviewcount || row.reviewcount, 10) || 50,
+    googleRating: parseFloat(row.googlerating || row.rating) || 4.5,
+    googleReviewCount: parseInt(row.googlereviewcount || row.reviewcount || row.reviews, 10) || 50,
     address: row.address || '',
     phone: cleanPhoneNumber(row.phone),
-    website: row.website || '',
+    website: extractWebsite(row), // ⭐ 精準提取官網
     image_url: row.imageurl || row.image || '',
-    nav_link: row.navlink || ''
+    images: extractImages(row),   // ⭐ 直接轉化為圖片陣列，不丟失 Google 照片
+    nav_link: row.navlink || row.nav_link || ''
   }));
 }
 
-// ⭐ 全新加入：五大海島專區正規化器 (支援 Villa、美食與跳島)
 function normalizeIslandDiscovered(rows) {
   return rows.map(row => ({
     id: row.id,
@@ -242,13 +262,14 @@ function normalizeIslandDiscovered(rows) {
     name_tl: row.nametl || '',
     category: row.category || '',
     categoryKey: (row.category || '').toLowerCase().trim(),
-    googleRating: parseFloat(row.googlerating) || 4.5,
-    googleReviewCount: parseInt(row.googlereviewcount || row.reviewcount, 10) || 50,
+    googleRating: parseFloat(row.googlerating || row.rating) || 4.5,
+    googleReviewCount: parseInt(row.googlereviewcount || row.reviewcount || row.reviews, 10) || 50,
     address: row.address || '',
     phone: cleanPhoneNumber(row.phone),
-    website: row.website || '',
+    website: extractWebsite(row), // ⭐ 精準提取官網
     image_url: row.imageurl || row.image || '',
-    nav_link: row.navlink || ''
+    images: extractImages(row),   // ⭐ 直接轉化為圖片陣列
+    nav_link: row.navlink || row.nav_link || ''
   }));
 }
 
@@ -271,16 +292,17 @@ function normalizeMedical(rows) {
         review_count: parseInt(row.reviewcount || row.googlereviewcount || row.reviews, 10) || 50,
         address: row.address || '',
         phone: cleanPhoneNumber(p),
-        website: row.website || '',
+        website: extractWebsite(row),
         image_url: row.imageurl || row.image || '',
-        nav_link: row.navlink || '',
+        images: extractImages(row),
+        nav_link: row.navlink || row.nav_link || '',
         is_active: true
       };
     });
 }
 
 /**
- * 載入 Master 資料庫核心（徹底移除快取，6 大工作表全部並行讀取）
+ * 載入 Master 資料庫核心（6 大工作表全部並行讀取）
  */
 export async function loadMasterDatabase() {
   const [rawBigV, rawAttr, rawPromo, rawAuto, rawMed, rawIsland] = await Promise.allSettled([
@@ -289,7 +311,7 @@ export async function loadMasterDatabase() {
     fetchSheetCsv(SHEET_CONFIG.sheets.promotions),
     fetchSheetCsv(SHEET_CONFIG.sheets.autoDiscovered),
     fetchSheetCsv(SHEET_CONFIG.sheets.medical),
-    fetchSheetCsv(SHEET_CONFIG.sheets.islandDiscovered) // ⭐ 正式發起抓取
+    fetchSheetCsv(SHEET_CONFIG.sheets.islandDiscovered)
   ]);
 
   return {
@@ -298,7 +320,7 @@ export async function loadMasterDatabase() {
     promotions: rawPromo.status === 'fulfilled' ? normalizePromotions(rawPromo.value) : [],
     autoDiscovered: rawAuto.status === 'fulfilled' ? normalizeAutoDiscovered(rawAuto.value) : [],
     medical: rawMed.status === 'fulfilled' ? normalizeMedical(rawMed.value) : [],
-    islandDiscovered: rawIsland.status === 'fulfilled' ? normalizeIslandDiscovered(rawIsland.value) : [] // ⭐ 輸出給前端
+    islandDiscovered: rawIsland.status === 'fulfilled' ? normalizeIslandDiscovered(rawIsland.value) : []
   };
 }
 
