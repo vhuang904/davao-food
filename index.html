@@ -1904,28 +1904,26 @@
 
       let filtered = allMedical.filter(item => {
         if (!isCityMatch(item, currentCity)) return false;
-        if (!currentSubFilter || currentSubFilter === 'all') return true;
 
-        const sub = currentSubFilter.toLowerCase();
-        const cat = (item.category || '').toLowerCase();
-        const type = (item.type || '').toLowerCase();
-        const allText = `${cat} ${type}`;
+        const allText = `${safeStr(item.category)} ${safeStr(item.type)} ${safeStr(item.name_zh)} ${safeStr(item.name_en)}`.toLowerCase();
 
-        // ⭐ 排除潛水、跳島、旅行社等非醫療雜訊
-        const noiseWords = ['divers', 'diving', 'dive', 'tour', 'paradise', 'travel', 'resort', 'expedition', 'adventure'];
-        const nameLower = (safeStr(item.name_zh) + ' ' + safeStr(item.name_en)).toLowerCase();
-        if (noiseWords.some(w => nameLower.includes(w))) return false;
+        // 1. 嚴格過濾潛水、跳島、旅行社等旅遊雜訊
+        const noiseWords = ['divers', 'diving', 'dive', 'tour', 'paradise', 'travel', 'resort', 'expedition', 'adventure', 'island hopping'];
+        if (noiseWords.some(w => allText.includes(w))) return false;
 
-        const isHospital = allText.includes('hospital') || allText.includes('綜合醫院') || allText.includes('醫院') || allText.includes('infirmary') || allText.includes('medical center');
+        // 2. 嚴格醫療主體判定
+        const isHospital = allText.includes('hospital') || allText.includes('綜合醫院') || allText.includes('醫院') || allText.includes('medical center') || allText.includes('infirmary');
         const isClinic = allText.includes('clinic') || allText.includes('專科診所') || allText.includes('診所') || allText.includes('doctor') || allText.includes('health center');
         const isPharmacy = allText.includes('pharmacy') || allText.includes('連鎖藥局') || allText.includes('藥局') || allText.includes('mercury') || allText.includes('watsons') || allText.includes('drug');
 
-        // 如果選全部，但本身根本不屬於醫院、診所或藥局，剔除掉
+        // 非屬上述三者則排除
         if (!isHospital && !isClinic && !isPharmacy) return false;
 
-        if (sub === 'hospital') return isHospital;
-        if (sub === 'clinic') return isClinic;
-        if (sub === 'pharmacy') return isPharmacy;
+        // 3. 子分類篩選
+        if (!currentSubFilter || currentSubFilter === 'all') return true;
+        if (currentSubFilter === 'hospital') return isHospital;
+        if (currentSubFilter === 'clinic') return isClinic;
+        if (currentSubFilter === 'pharmacy') return isPharmacy;
 
         return true;
       });
