@@ -983,8 +983,15 @@
       });
     }
 
-    // 核心資料聚合整合
+    // ⭐ 防重複連線鎖定旗標 (務必放在 fetchData 外層)
+    let isFetchingData = false;
+
+    // 核心資料聚合整合 (含防併發與空資料保護)
     async function fetchData() {
+      // 1. 如果正在抓取中，直接阻擋，避免多次滑動連續發出請求造成資料打架
+      if (isFetchingData) return;
+      isFetchingData = true;
+
       const loadingEl = document.getElementById('loading');
       const timeoutPromise = new Promise((_, reject) => 
         setTimeout(() => reject(new Error("Google Sheets 連線逾時")), 6000)
@@ -998,26 +1005,31 @@
           console.warn("[App] Google Sheets 讀取異常或逾時，啟動備援模式:", e);
         }
 
+        // ⭐ 關鍵保險：如果網路逾時或抓回來的是空的，但記憶體裡已有資料，絕對不清空！
+        const hasNewData = (sheetMaster.autoDiscovered?.length > 0) || 
+                           (sheetMaster.attractions?.length > 0) || 
+                           (sheetMaster.islandDiscovered?.length > 0) || 
+                           (sheetMaster.bigVPicks?.length > 0);
+
+        if (!hasNewData && allRestaurants.length > 0) {
+          console.warn("[App] 本次請求回傳為空或逾時，保留現有已載入之資料，不覆蓋畫面。");
+          return;
+        }
+
         const mergedMap = new Map();
 
-        // ⭐ 終極強固判定：防止 JS false || '' 陷阱，並支援大小寫與核取方塊
+        // 終極強固判定
         function isItemActive(item) {
           if (!item) return false;
-          
-          // 抓取可能的所有欄位名稱 (包含大小寫與別名)
           let val = item.is_active !== undefined ? item.is_active :
                     item.isActive !== undefined ? item.isActive :
                     item.active !== undefined ? item.active :
                     item.IS_ACTIVE !== undefined ? item.IS_ACTIVE : undefined;
 
-          // 若完全未設定或為空，預設啟用
           if (val === undefined || val === null || val === '') return true;
-
-          // 若為原生布林值 false
           if (val === false) return false;
           if (val === true) return true;
 
-          // 若為字串型態
           const strVal = String(val).trim().toUpperCase();
           if (strVal === 'FALSE' || strVal === '0' || strVal === 'NO' || strVal === 'OFF') {
             return false;
@@ -1212,23 +1224,9 @@
           }
         });
 
-        // 4. 排序 (大V站長優先 -> 評分高到低 -> 評論數多到少)
-        allRestaurants = Array.from(mergedMap.values())
-          .sort((a, b) => {
-            const aIsCurated = !!a.isCurated;
-            const bIsCurated = !!b.isCurated;
-            if (aIsCurated && !bIsCurated) return -1;
-            if (!aIsCurated && bIsCurated) return 1;
-
-            const ratingA = Number(a.googleRating || 0);
-            const ratingB = Number(b.googleRating || 0);
-            if (ratingB !== ratingA) return ratingB - ratingA;
-
-            const reviewsA = Number(a.googleReviewCount || 0);
-            const reviewsB = Number(b.googleReviewCount || 0);
-            return reviewsB - reviewsA;
-          });
-
+        // 4. 寫入全域變數
+        allRestaurants = Array.from(mergedMap.values());
+        
         const sheetAttractions = (sheetMaster.attractions || [])
           .filter(isItemActive)
           .map(att => ({
@@ -1254,6 +1252,7 @@
       } catch (err) {
         console.error("[App] 載入資料遭遇非預期錯誤:", err);
       } finally {
+        isFetchingData = false; // 解除連線鎖定
         if (loadingEl) loadingEl.style.display = 'none';
         updateUiLanguage();
       }
