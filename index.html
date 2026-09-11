@@ -7,7 +7,7 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
-  <meta name="app-version" content="20260911-v30.0-medical-sorted" />
+  <meta name="app-version" content="20260911-v31.0-perfect-sync" />
   <meta name="theme-color" content="#020617" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -302,7 +302,7 @@
     </div>
   </div>
 
-  <!-- 專屬大V圓形懸浮 AI 頭像球 (垂直上浮至 bottom-40 約評語旁) -->
+  <!-- 專屬大V圓形懸浮 AI 頭像球 -->
   <button id="chat-fab" class="fixed bottom-40 right-4 rounded-full bg-slate-950 border-2 border-amber-400 shadow-[0_0_20px_-3px_rgba(245,158,11,0.6)] overflow-hidden flex items-center justify-center cursor-pointer z-40 active:scale-95 transition" style="width:50px; height:50px;" title="大V旅遊管家">
     <img src="ai-avatar.jpg" alt="AI 管家" class="w-full h-full object-cover" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop';" />
   </button>
@@ -983,12 +983,11 @@
       });
     }
 
-    // ⭐ 防重複連線鎖定旗標 (務必放在 fetchData 外層)
+    // ⭐ 防重複連線鎖定旗標
     let isFetchingData = false;
 
-    // 核心資料聚合整合 (含防併發與空資料保護)
+    // 核心資料聚合整合
     async function fetchData() {
-      // 1. 如果正在抓取中，直接阻擋，避免多次滑動連續發出請求造成資料打架
       if (isFetchingData) return;
       isFetchingData = true;
 
@@ -1005,7 +1004,6 @@
           console.warn("[App] Google Sheets 讀取異常或逾時，啟動備援模式:", e);
         }
 
-        // ⭐ 關鍵保險：如果網路逾時或抓回來的是空的，但記憶體裡已有資料，絕對不清空！
         const hasNewData = (sheetMaster.autoDiscovered?.length > 0) || 
                            (sheetMaster.attractions?.length > 0) || 
                            (sheetMaster.islandDiscovered?.length > 0) || 
@@ -1018,7 +1016,6 @@
 
         const mergedMap = new Map();
 
-        // 終極強固判定
         function isItemActive(item) {
           if (!item) return false;
           let val = item.is_active !== undefined ? item.is_active :
@@ -1199,8 +1196,8 @@
                 website: islandItem.website || '',
                 nav_link: islandItem.nav_link || '',
                 grab_url: islandItem.grab_url || '',
-                googleRating: islandItem.googleRating || 4.5,
-                googleReviewCount: islandItem.googleReviewCount || 50,
+                googleRating: islandItem.googleRating || islandItem.google_rating || 4.5,
+                googleReviewCount: islandItem.googleReviewCount || islandItem.review_count || 50,
                 images: parseImages(islandItem, 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&auto=format&fit=crop')
               });
             }
@@ -1212,33 +1209,40 @@
               name_zh: islandItem.name_zh || islandItem.name_en || islandItem.id,
               name_en: islandItem.name_en || '',
               name_tl: islandItem.name_tl || '',
-              desc_zh: `【海島熱門推薦】Google 評分 ${islandItem.googleRating || 4.5} 星 (累積 ${islandItem.googleReviewCount || 50}+ 則好評)`,
-              desc_en: `Island Top Pick: Rated ${islandItem.googleRating || 4.5} stars (${islandItem.googleReviewCount || 50}+ reviews)`,
-              desc_tl: `Paborito sa Isla: May markang ${islandItem.googleRating || 4.5} bituin`,
+              desc_zh: `【海島熱門推薦】Google 評分 ${islandItem.googleRating || islandItem.google_rating || 4.5} 星 (累積 ${islandItem.googleReviewCount || islandItem.review_count || 50}+ 則好評)`,
+              desc_en: `Island Top Pick: Rated ${islandItem.googleRating || islandItem.google_rating || 4.5} stars`,
+              desc_tl: `Paborito sa Isla: May markang ${islandItem.googleRating || islandItem.google_rating || 4.5} bituin`,
               address: islandItem.address || '',
               phone: String(islandItem.phone || "").replace(/^['"]/, '').trim(),
               website: islandItem.website || '',
               nav_link: islandItem.nav_link || '',
+              google_rating: islandItem.googleRating || islandItem.google_rating || 4.5,
+              review_count: islandItem.googleReviewCount || islandItem.review_count || 50,
               images: parseImages(islandItem, 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&auto=format&fit=crop')
             });
           }
         });
 
-        // 4. 寫入全域變數
+        // 4. 寫入全域變數 (⭐ 確保醫療與景點完整掛載評分與評論數)
         allRestaurants = Array.from(mergedMap.values());
         
-        const sheetAttractions = (sheetMaster.attractions || [])
-          .filter(isItemActive)
-          .map(att => ({
-            ...att,
-            images: parseImages(att, 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&auto=format&fit=crop')
-          }));
-        allAttractions = [...sheetAttractions, ...autoAttractions, ...islandAttractions];
+        allAttractions = [
+          ...(sheetMaster.attractions || []).filter(isItemActive),
+          ...autoAttractions,
+          ...islandAttractions
+        ].map(att => ({
+          ...att,
+          google_rating: att.google_rating ?? att.googleRating ?? att.googlerating ?? att.rating ?? 4.5,
+          review_count: att.review_count ?? att.reviewcount ?? att.googleReviewCount ?? att.reviews ?? 50,
+          images: parseImages(att, 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&auto=format&fit=crop')
+        }));
 
         allMedical = (sheetMaster.medical || [])
           .filter(isItemActive)
           .map(med => ({
             ...med,
+            google_rating: med.google_rating ?? med.googleRating ?? med.googlerating ?? med.rating ?? 4.5,
+            review_count: med.review_count ?? med.reviewcount ?? med.googleReviewCount ?? med.reviews ?? 50,
             images: parseImages(med, 'https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=800&auto=format&fit=crop')
           }));
 
@@ -1252,7 +1256,7 @@
       } catch (err) {
         console.error("[App] 載入資料遭遇非預期錯誤:", err);
       } finally {
-        isFetchingData = false; // 解除連線鎖定
+        isFetchingData = false;
         if (loadingEl) loadingEl.style.display = 'none';
         updateUiLanguage();
       }
@@ -1418,7 +1422,7 @@
     }
 
     // ==========================================================
-    // 1. 美食卡片渲染 (大V優先 -> 評分由高到低 -> 評論數多到少)
+    // 1. 美食卡片渲染 (大V優先 -> 純依評分由高到低自然排序 -> 評論數多到少)
     // ==========================================================
     function renderRestaurants() {
       const listEl = document.getElementById('restaurant-list');
@@ -1478,36 +1482,19 @@
         filtered = filtered.filter(item => (safeStr(item.name) + ' ' + safeStr(item.name_en) + ' ' + safeStr(item.address)).includes(q));
       }
 
-      // ⭐ 美食專屬強固排序：大V私房最優先 -> 評分由高到低 -> 評論數多到少
-      // ⭐ 美食專屬強固排序：大V私房最優先 -> 藍色Google嚴選第二 -> 普通口碑店第三 (同級內比評分與評論)
+      // ⭐ 美食專屬自然排序：大V私房最優先 -> 純依 Google 評分由高到低 -> 同分比評論數
       filtered.sort((a, b) => {
-        // 1. 大V私房嚴選永遠第一
         const aIsCurated = !!a.isCurated;
         const bIsCurated = !!b.isCurated;
         if (aIsCurated && !bIsCurated) return -1;
         if (!aIsCurated && bIsCurated) return 1;
 
-        // 2. 第二級藍光判定 (海島 4.6星+50則 / 都會 4.8星+100則)
-        const checkIsTop = (item) => {
-          const isIsland = isIslandMode(item.city || currentCity);
-          const r = Number(item.googleRating || item.google_rating || item.rating || 0);
-          const c = Number(item.googleReviewCount || item.google_reviews || item.reviews || 0);
-          return isIsland ? (r >= 4.6 && c >= 50) : (r >= 4.8 && c >= 100);
-        };
-
-        const aIsTop = checkIsTop(a);
-        const bIsTop = checkIsTop(b);
-        if (aIsTop && !bIsTop) return -1; // 藍框強制排在灰框上方
-        if (!aIsTop && bIsTop) return 1;
-
-        // 3. 同等級內：評分高到低
-        const ratingA = Number(a.googleRating || a.google_rating || a.rating || 0);
-        const ratingB = Number(b.googleRating || b.google_rating || b.rating || 0);
+        const ratingA = parseFloat(String(a.googleRating ?? a.google_rating ?? a.rating ?? 0).replace(/[^\d.]/g, '')) || 0;
+        const ratingB = parseFloat(String(b.googleRating ?? b.google_rating ?? b.rating ?? 0).replace(/[^\d.]/g, '')) || 0;
         if (ratingB !== ratingA) return ratingB - ratingA;
 
-        // 4. 同等級且同分：評論數多到少
-        const reviewsA = Number(a.googleReviewCount || a.google_reviews || a.reviews || 0);
-        const reviewsB = Number(b.googleReviewCount || b.google_reviews || b.reviews || 0);
+        const reviewsA = parseInt(String(a.googleReviewCount ?? a.google_reviews ?? a.review_count ?? a.reviews ?? 0).replace(/[^\d]/g, ''), 10) || 0;
+        const reviewsB = parseInt(String(b.googleReviewCount ?? b.google_reviews ?? b.review_count ?? b.reviews ?? 0).replace(/[^\d]/g, ''), 10) || 0;
         return reviewsB - reviewsA;
       });
       
@@ -1524,24 +1511,21 @@
       listEl.innerHTML = filtered.map((item, idx) => {
         const name = getLocalizedText(item, 'name', currentShortLang) || item.name || item.name_en || '頂級名店';
         const isCurated = !!item.isCurated;
-        const rating = item.googleRating || 4.5;
-        const reviewCount = item.googleReviewCount || 50;
 
-        // ⭐ 雙軌制等級判定：海島區適度放寬標準，讓優質秘境也能獲得藍色光環
+        const rawRating = item.googleRating ?? item.google_rating ?? item.rating ?? 4.5;
+        const rating = parseFloat(String(rawRating).replace(/[^\d.]/g, '')) || 4.5;
+
+        const rawReviews = item.googleReviewCount ?? item.google_reviews ?? item.review_count ?? item.reviews ?? 50;
+        const reviewCount = parseInt(String(rawReviews).replace(/[^\d]/g, ''), 10) || 0;
+
+        // ⭐ 雙軌制等級判定：海島 4.6星+50評論 / 都會 4.8星+100評論 亮藍光
         const isIslandArea = isIslandMode(item.city || currentCity);
-
-        // 藍色 Google 高分嚴選 (Level 2)：
-        // 海島區：4.6 星 + 50 則評價以上
-        // 都會區：4.8 星 + 100 則評價以上
         const isGoogleTop = !isCurated && (
           isIslandArea 
             ? (rating >= 4.6 && reviewCount >= 50)
             : (rating >= 4.8 && reviewCount >= 100)
         );
 
-        // 綠色/灰色社群口碑 (Level 3)：
-        // 海島區：4.0 星 + 10 則評價以上
-        // 都會區：4.0 星 + 25 則評價以上
         const isCommunity = !isCurated && !isGoogleTop && (
           isIslandArea
             ? (rating >= 4.0 && reviewCount >= 10)
@@ -1556,11 +1540,11 @@
           if (isCurated && curatedNote) {
             desc = curatedNote;
           } else if (currentShortLang === 'en') {
-            desc = `Top-rated hotspot in ${item.city || 'the Philippines'}! Rated ${rating} stars with over ${reviewCount}+ authentic diner reviews.`;
+            desc = `Top-rated hotspot in ${item.city || 'the Philippines'}! Rated ${rating.toFixed(1)} stars with over ${reviewCount}+ authentic diner reviews.`;
           } else if (currentShortLang === 'tl') {
-            desc = `Tanyag na kainan sa ${item.city || 'Pilipinas'}! May markang ${rating} bituin mula sa higit ${reviewCount}+ na kumento.`;
+            desc = `Tanyag na kainan sa ${item.city || 'Pilipinas'}! May markang ${rating.toFixed(1)} bituin mula sa higit ${reviewCount}+ na kumento.`;
           } else {
-            desc = `在地超人氣推薦名店！Google 評分高達 ${rating} 星，累積逾 ${reviewCount}+ 則真實饕客好評推薦。`;
+            desc = `在地超人氣推薦名店！Google 評分高達 ${rating.toFixed(1)} 星，累積逾 ${reviewCount}+ 則真實饕客好評推薦。`;
           }
         }
 
@@ -1643,7 +1627,7 @@
                 </div>
                 <div class="flex items-center gap-1 text-slate-300 font-bold">
                   <i class="fa-solid fa-star text-amber-400 text-[11px]"></i>
-                  <span>${rating}</span>
+                  <span>${rating.toFixed(1)}</span>
                   <span class="text-slate-500 text-[10px] font-normal">(${reviewCount}則評價)</span>
                 </div>
               </div>
@@ -1672,7 +1656,7 @@
           `;
         }
 
-        // LEVEL 2: Google 高分嚴選推薦
+        // LEVEL 2: Google 高分嚴選推薦 (藍框光暈)
         if (isGoogleTop) {
           return `
             <article class="rounded-2xl overflow-hidden border border-sky-400/60 bg-slate-950 shadow-[0_0_15px_-3px_rgba(56,189,248,0.25)] flex flex-col transition-all">
@@ -1698,7 +1682,7 @@
                   </span>
                   <div class="flex items-center gap-1 bg-sky-950/80 border border-sky-400/40 text-sky-300 px-2 py-0.5 rounded-md text-[11px] font-bold">
                     <i class="fa-solid fa-star text-amber-400 text-[10px]"></i>
-                    <span>${rating} (${reviewCount}則好評)</span>
+                    <span>${rating.toFixed(1)} (${reviewCount}則好評)</span>
                   </div>
                 </div>
 
@@ -1754,7 +1738,7 @@
                 </span>
                 <div class="flex items-center gap-1 text-slate-300 text-[11px]">
                   <i class="fa-solid fa-star text-amber-400 text-[10px]"></i>
-                  <span class="font-bold">${rating}</span>
+                  <span class="font-bold">${rating.toFixed(1)}</span>
                   <span class="text-slate-500 text-[10px]">(${reviewCount}則評價)</span>
                 </div>
               </div>
@@ -1789,7 +1773,7 @@
     }
 
     // ==========================================================
-    // 2. 景點導覽渲染 (含評分徽章、權威排序與嚴格分流)
+    // 2. 景點導覽渲染
     // ==========================================================
     function renderAttractions() {
       const listEl = document.getElementById('attraction-list');
@@ -1804,13 +1788,11 @@
         const itemCat = safeStr(item.category);
         const nameAll = (safeStr(item.name_zh) + ' ' + safeStr(item.name_en) + ' ' + safeStr(item.id)).toLowerCase();
 
-        // 🎰 賭場娛樂城：嚴格限制只有 type 為 casino，或明確為賭場本體
         if (currentSubFilter === 'casino') {
           if (itemType === 'casino') return true;
           return itemCat.includes('賭場') || itemCat.includes('casino');
         }
 
-        // 🛒 精品商場：嚴格排除賭場本體，只收純商場與購物中心
         if (currentSubFilter === 'shopping') {
           if (itemType === 'casino' && !nameAll.includes('the mall') && !nameAll.includes('mall at')) {
             return false;
@@ -1819,12 +1801,10 @@
                  nameAll.includes('mall') || nameAll.includes('ayala') || nameAll.includes('sm ') || nameAll.includes('robinsons');
         }
 
-        // 🏛️ 歷史地標
         if (currentSubFilter === 'history') {
           return itemCat.includes('歷史') || itemCat.includes('history') || itemCat.includes('教堂') || itemCat.includes('museum') || nameAll.includes('cathedral') || nameAll.includes('church');
         }
 
-        // 海島專屬子分類 (沙灘 / 跳島 / 生態秘境)
         if (currentSubFilter === 'beach') return itemCat.includes('沙灘') || itemCat.includes('beach');
         if (currentSubFilter === 'island_hopping') return itemCat.includes('跳島') || itemCat.includes('island') || itemCat.includes('hopping');
         if (currentSubFilter === 'nature') return itemCat.includes('生態') || itemCat.includes('自然') || itemCat.includes('nature') || itemCat.includes('falls') || itemCat.includes('sanctuary');
@@ -1837,7 +1817,6 @@
         filtered = filtered.filter(item => (safeStr(item.name_zh) + ' ' + safeStr(item.name_en) + ' ' + safeStr(item.address)).includes(q));
       }
 
-      // ⭐ 景點與海島排序：評分由高到低 -> 評論數由多到少
       filtered.sort((a, b) => {
         const ratingA = Number(a.google_rating || a.googlerating || a.googleRating || a.rating || 0);
         const ratingB = Number(b.google_rating || b.googlerating || b.googleRating || b.rating || 0);
@@ -1862,7 +1841,6 @@
         const smartLink = getSmartLink(item.name_en || name, item.city, item.website);
         const cleanPhone = getCleanPhone(item.phone);
 
-        // ⭐ 取得評分與評論數（雙向相容）
         const rawRating = item.google_rating || item.googlerating || item.googleRating || item.rating || 4.5;
         const rating = Number(rawRating).toFixed(1);
         const reviewCount = item.review_count || item.reviewcount || item.googleReviewCount || item.reviews || 50;
@@ -1872,13 +1850,11 @@
             <div class="relative w-full overflow-hidden">
               ${buildCarouselHtml(item.images, `attr-${idx}`, name)}
               
-              <!-- 左下：城市與分類標籤 -->
               <div class="absolute bottom-2.5 left-2.5 flex items-center gap-1.5 z-10">
                 <span class="bg-slate-900/80 backdrop-blur-xs text-white text-[10px] px-2 py-0.5 rounded font-medium">${dict['city_' + item.city] || item.city}</span>
                 ${item.category ? `<span class="bg-amber-500/90 text-slate-950 text-[10px] font-bold px-2 py-0.5 rounded">${item.category}</span>` : ''}
               </div>
 
-              <!-- ⭐ 右上角：Google 評分與評論數徽章 -->
               <div class="absolute top-2.5 right-2.5 z-10">
                 <span class="bg-slate-950/85 backdrop-blur-xs text-amber-300 border border-slate-700/80 text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1 shadow-sm">
                   <i class="fa-solid fa-star text-[9px] text-amber-400"></i> ${rating} <span class="text-slate-400 font-normal">(${reviewCount}則評價)</span>
@@ -1919,7 +1895,7 @@
     }
 
     // ==========================================================
-    // 3. 醫療藥局渲染 (⭐ 醫療專屬強固排序：高評分優先 -> 評論數多者優先)
+    // 3. 醫療藥局渲染 (⭐ 支援雙軌制藍色 Google 嚴選光環 + 權威高分自然排序)
     // ==========================================================
     function renderMedical() {
       const listEl = document.getElementById('medical-list');
@@ -1947,7 +1923,7 @@
         filtered = filtered.filter(item => (safeStr(item.name_zh) + ' ' + safeStr(item.name_en) + ' ' + safeStr(item.address)).includes(q));
       }
 
-      // ⭐ 醫療權威強固排序：絕對防呆過濾 NaN，高分優先 -> 評論數最多優先
+      // ⭐ 醫療權威自然排序：高分優先 -> 評論數最多優先
       filtered.sort((a, b) => {
         const getRating = (item) => {
           const val = item.google_rating ?? item.googleRating ?? item.googlerating ?? item.rating;
@@ -1987,10 +1963,10 @@
         const rawPhone = item.phone || item.telephone || item.contact || '';
         const cleanPhone = getCleanPhone(rawPhone);
 
-        // 統一評分與評論數顯示格式
+        // 統一評分與評論數
         const rawRating = item.google_rating ?? item.googleRating ?? item.googlerating ?? item.rating ?? 4.5;
         const numRating = parseFloat(String(rawRating).replace(/[^\d.]/g, ''));
-        const rating = isNaN(numRating) ? '4.5' : numRating.toFixed(1);
+        const rating = isNaN(numRating) ? 4.5 : numRating;
 
         const rawReviews = item.review_count ?? item.reviewcount ?? item.google_reviews ?? item.reviews ?? 50;
         const reviewCount = parseInt(String(rawReviews).replace(/[^\d]/g, ''), 10) || 0;
@@ -2000,15 +1976,32 @@
         if (catLower.includes('clinic')) catBadge = '🩺 專科診所';
         if (catLower.includes('pharmacy')) catBadge = '💊 連鎖藥局';
 
+        // ⭐ 醫療專屬雙軌制藍色 Google 嚴選光環判定：
+        // 海島區：4.6 星 + 50 評論以上
+        // 都會區：4.8 星 + 100 評論以上
+        const isIslandArea = isIslandMode(item.city || currentCity);
+        const isGoogleTopMedical = isIslandArea 
+          ? (rating >= 4.6 && reviewCount >= 50)
+          : (rating >= 4.8 && reviewCount >= 100);
+
         return `
-          <article class="bg-slate-950 rounded-2xl overflow-hidden shadow-xs border border-slate-800 flex flex-col transition">
+          <article class="bg-slate-950 rounded-2xl overflow-hidden ${
+            isGoogleTopMedical 
+              ? 'border border-sky-400/60 shadow-[0_0_15px_-3px_rgba(56,189,248,0.25)]' 
+              : 'border border-slate-800 shadow-xs'
+          } flex flex-col transition">
             <div class="relative w-full overflow-hidden">
               ${buildCarouselHtml(item.images, `med-${idx}`, name)}
               
-              <div class="absolute top-2.5 left-2.5 z-10 flex items-center gap-1.5">
+              <div class="absolute top-2.5 left-2.5 z-10 flex items-center gap-1.5 flex-wrap">
                 <span class="bg-emerald-600 text-white text-[11px] font-bold px-2.5 py-1 rounded-full shadow-md">${catBadge}</span>
+                ${isGoogleTopMedical ? `
+                  <span class="bg-white text-slate-900 text-[10px] font-bold px-2 py-0.5 rounded-full shadow-md flex items-center gap-1 border border-slate-200">
+                    <i class="fa-brands fa-google text-blue-600 text-[10px]"></i> 高分嚴選
+                  </span>
+                ` : ''}
                 <span class="bg-slate-950/85 backdrop-blur-xs text-amber-300 border border-slate-700/80 text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1 shadow-sm">
-                  <i class="fa-solid fa-star text-[9px] text-amber-400"></i> ${rating} <span class="text-slate-400 font-normal">(${reviewCount})</span>
+                  <i class="fa-solid fa-star text-[9px] text-amber-400"></i> ${rating.toFixed(1)} <span class="text-slate-400 font-normal">(${reviewCount})</span>
                 </span>
               </div>
             </div>
