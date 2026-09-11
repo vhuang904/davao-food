@@ -1,4 +1,4 @@
-// authService.js - 大V的旅遊窩 PWA 認證模組（Google + Email 魔法精靈雙軌互通版）
+// authService.js - 大V的旅遊窩 PWA 認證模組（手機全相容防死鎖版）
 
 import { initializeApp, getApps, getApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
 import { 
@@ -11,8 +11,7 @@ import {
   onAuthStateChanged,
   sendSignInLinkToEmail,
   isSignInWithEmailLink,
-  signInWithEmailLink,
-  fetchSignInMethodsForEmail
+  signInWithEmailLink
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 import { 
   getFirestore, 
@@ -42,6 +41,7 @@ const firebaseConfig = {
 const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
 const auth = getAuth(app);
 const db = getFirestore(app);
+
 const googleProvider = new GoogleAuthProvider();
 googleProvider.setCustomParameters({ prompt: 'select_account' });
 
@@ -55,6 +55,7 @@ export function calculateUserLevel(points = 0) {
   return "LV.1 探店初心者";
 }
 
+// 判定是否為行動裝置或獨立 PWA 視窗
 export function isMobileOrStandalone() {
   const isStandaloneMatch = window.matchMedia("(display-mode: standalone)").matches;
   const isNavigatorStandalone = window.navigator.standalone === true;
@@ -73,7 +74,7 @@ function broadcastAuthChange(user, profile) {
   window.dispatchEvent(event);
 }
 
-// 核心：雙軌互通會員資料庫讀取（以 Email 跨 UID 繼承積分）
+// 核心：雙軌互通會員資料庫讀取與同步
 export async function fetchOrCreateUserProfile(user) {
   if (!user) {
     currentUserProfile = null;
@@ -98,7 +99,6 @@ export async function fetchOrCreateUserProfile(user) {
         level: data.level || calculateUserLevel(data.points || 50)
       };
     } else {
-      // 雙軌繼承機制：檢查此 Email 是否之前用另一種方式登入並已有積分
       let inheritedPoints = 50;
       let inheritedLevel = "LV.1 探店初心者";
 
@@ -107,11 +107,9 @@ export async function fetchOrCreateUserProfile(user) {
           const emailQuery = query(collection(db, "users"), where("email", "==", userEmail));
           const querySnap = await getDocs(emailQuery);
           if (!querySnap.empty) {
-            // 找到舊紀錄，無縫繼承既有積分
             const oldData = querySnap.docs[0].data();
             inheritedPoints = oldData.points || 50;
             inheritedLevel = oldData.level || calculateUserLevel(inheritedPoints);
-            console.log(`[AuthService] 雙軌資料自動合併：已從歷史帳號繼承 ${inheritedPoints} 積分！`);
           }
         } catch (queryErr) {
           console.warn("[AuthService] 檢查歷史帳號略過:", queryErr);
@@ -152,26 +150,26 @@ export async function fetchOrCreateUserProfile(user) {
   }
 }
 
-// 1. Google 登入（Popup 優先相容手機與桌面，遇彈窗阻擋自動退回 Redirect）
+// 1. Google 登入（手機端強制全頁轉址 Redirect，避免 Popup 白畫面死鎖）
 export async function loginWithGoogle() {
   try {
-    // 優先使用彈窗模式，避免 iOS/Android 跨網域 Cookie 被丟失
-    const result = await signInWithPopup(auth, googleProvider);
-    return await fetchOrCreateUserProfile(result.user);
+    if (isMobileOrStandalone()) {
+      // 手機端或 PWA 模式：直接走轉址登入，絕不開彈窗
+      await signInWithRedirect(auth, googleProvider);
+      return null;
+    } else {
+      // 電腦桌面瀏覽器：走彈窗登入
+      const result = await signInWithPopup(auth, googleProvider);
+      return await fetchOrCreateUserProfile(result.user);
+    }
   } catch (error) {
-    console.warn("[AuthService] Popup 登入回傳或被攔截:", error.code, error.message);
+    console.warn("[AuthService] Google 登入例外:", error.code, error.message);
 
-    // 只有在瀏覽器嚴格封鎖彈窗或獨立 PWA 模式時，才退回 Redirect
-    if (
-      error.code === 'auth/popup-blocked' || 
-      error.code === 'auth/cancelled-popup-request' ||
-      isPwaStandalone()
-    ) {
+    if (error.code === 'auth/popup-blocked' || error.code === 'auth/cancelled-popup-request') {
       await signInWithRedirect(auth, googleProvider);
       return null;
     }
-    
-    // 若為使用者自行點 X 關閉視窗，拋出友善提示
+
     if (error.code === 'auth/popup-closed-by-user') {
       throw new Error("已取消 Google 登入。");
     }
@@ -180,27 +178,11 @@ export async function loginWithGoogle() {
   }
 }
 
-// 2. Email 魔法精靈登入（直接向 Firestore 驗證是否已是 Google 用戶）
+// 2. Email 魔法精靈登入
 export async function sendMagicEmailLink(email) {
   const cleanEmail = (email || "").trim().toLowerCase();
   if (!cleanEmail || !cleanEmail.includes("@")) {
     throw new Error("請輸入正確的電子郵件信箱。");
-  }
-
-  // 直接向 Firestore users 集合查詢該信箱是否已註冊過
-  try {
-    const emailQuery = query(collection(db, "users"), where("email", "==", cleanEmail));
-    const querySnap = await getDocs(emailQuery);
-
-    if (!querySnap.empty) {
-      // 只要先前已經用 Google 登入並建立了資料庫檔案，直接阻擋並引導！
-      throw new Error("此信箱已註冊過！請直接點擊上方「使用 Google 帳號一鍵登入」。");
-    }
-  } catch (err) {
-    if (err.message && err.message.includes("Google")) {
-      throw err;
-    }
-    console.warn("[AuthService] 檢查歷史用戶略過:", err);
   }
 
   const actionCodeSettings = {
@@ -230,7 +212,7 @@ export function getCurrentProfile() {
   return currentUserProfile;
 }
 
-// 4. 發表評論累計積分
+// 4. 發表評論累計積分 (+20 PTS)
 export async function addStoreComment(storeId, commentPayload) {
   const currentUser = auth.currentUser;
   if (!currentUser) {
@@ -283,9 +265,9 @@ export async function addStoreComment(storeId, commentPayload) {
   };
 }
 
-// 5. 初始化認證監聽（支援重定向與魔法連結自動完成）
+// 5. 初始化認證監聽（支援重定向跳回與魔法連結自動驗證）
 export function initAuthService() {
-  // 檢查 Email 魔法連結跳回
+  // A. 檢查 Email 魔法連結跳回
   if (isSignInWithEmailLink(auth, window.location.href)) {
     let email = window.localStorage.getItem("emailForSignIn");
     if (!email) {
@@ -302,18 +284,19 @@ export function initAuthService() {
     }
   }
 
-  // 檢查 Google Redirect 跳回
+  // B. 檢查 Google Redirect 跳回（手機登入成功後在此接收憑證）
   getRedirectResult(auth)
     .then(async (result) => {
       if (result && result.user) {
         await fetchOrCreateUserProfile(result.user);
+        window.history.replaceState({}, document.title, window.location.pathname);
       }
     })
     .catch((error) => {
       console.error("[AuthService] Redirect 解析失敗:", error.code, error.message);
     });
 
-  // 全域監聽狀態
+  // C. 全域監聽狀態
   onAuthStateChanged(auth, async (user) => {
     if (user) {
       await fetchOrCreateUserProfile(user);
