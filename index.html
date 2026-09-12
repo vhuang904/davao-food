@@ -316,6 +316,15 @@
       background-color: #FFFFFF !important;
       border: 1px solid #EFE8DC !important;
     }
+
+    /* 暖陽模式：會員等級與積分文字連動 */
+    html.light #user-modal-level { color: #EA580C !important; }
+    html.light #user-modal-level i { color: #F97316 !important; }
+    html.light #user-modal-points-text { color: #1F2937 !important; }
+    html.light #level-diff-tip { color: #6B7280 !important; }
+    html.light #auth-modal .bg-slate-900\/90 { background-color: #FFFFFF !important; border-color: #FED7AA !important; }
+    html.light #auth-modal .bg-slate-950.h-2 { background-color: #F3F4F6 !important; border-color: #E5E7EB !important; }
+    html.light #level-progress-fill { background: linear-gradient(90deg, #F97316, #EA580C) !important; }
     html.light #btn-logout {
       background-color: #FFFFFF !important;
       border: 1px solid #FCA5A5 !important;
@@ -500,6 +509,14 @@
       background-color: #FFFFFF !important;
       border: 1px solid #EFE4F1 !important;
     }
+    /* 紫霞模式：會員等級與積分文字連動 */
+    html.amethyst #user-modal-level { color: #7B337F !important; }
+    html.amethyst #user-modal-level i { color: #8E4D88 !important; }
+    html.amethyst #user-modal-points-text { color: #2E1A33 !important; }
+    html.amethyst #level-diff-tip { color: #6B5B6E !important; }
+    html.amethyst #auth-modal .bg-slate-900\/90 { background-color: #FAF5FB !important; border-color: #E0BEE5 !important; }
+    html.amethyst #auth-modal .bg-slate-950.h-2 { background-color: #EFE6F0 !important; border-color: #D5C2D9 !important; }
+    html.amethyst #level-progress-fill { background: linear-gradient(90deg, #8E4D88, #6B3E75) !important; }
     html.amethyst #btn-logout {
       background-color: #FFFFFF !important;
       border: 1px solid #E8B4C0 !important;
@@ -564,17 +581,17 @@
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col font-sans">
 
-  <!-- 全域 Toast 提示（含右上角快速關閉叉叉） -->
-  <div id="toastNotification" class="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[99999] transition-all duration-300 pointer-events-none opacity-0 scale-95 w-auto min-w-[280px] max-w-sm px-4">
-    <div id="toastInnerBox" class="relative bg-slate-950/95 text-white text-xs font-bold p-4 rounded-2xl shadow-2xl flex flex-col items-center justify-center text-center gap-3 border border-amber-400/60 backdrop-blur-md pointer-events-auto">
-      <!-- 快速關閉叉叉 -->
-      <button id="toastCloseBtn" type="button" class="absolute top-2.5 right-2.5 w-6 h-6 rounded-full bg-slate-800 hover:bg-slate-700 active:bg-slate-600 text-slate-400 hover:text-white flex items-center justify-center text-[11px] cursor-pointer transition active:scale-90 select-none">✕</button>
+  <!-- 全域 Toast 提示（加寬拓展、呼吸感呼吸槽、獨立右上角關閉錨點） -->
+  <div id="toastNotification" class="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[99999] transition-all duration-300 pointer-events-none opacity-0 scale-95 w-[90vw] max-w-md px-2">
+    <div id="toastInnerBox" class="relative bg-slate-950/95 text-white text-xs font-bold p-5 rounded-2xl shadow-2xl flex flex-col items-center justify-center text-center gap-3.5 border border-amber-400/60 backdrop-blur-md pointer-events-auto">
+      <!-- 快速關閉叉叉（獨立右上角，不擠壓內文） -->
+      <button id="toastCloseBtn" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full bg-slate-800/90 hover:bg-slate-700 active:bg-slate-600 text-slate-300 hover:text-white flex items-center justify-center text-xs cursor-pointer transition active:scale-90 select-none z-10">✕</button>
       
-      <div class="flex items-center justify-center gap-2 pr-4 pl-1">
-        <i id="toastIcon" class="fa-solid fa-check text-amber-400 text-sm"></i>
-        <span id="toastMessage" class="leading-snug">已完成操作</span>
+      <div class="flex items-center justify-center gap-2 px-6">
+        <i id="toastIcon" class="fa-solid fa-check text-amber-400 text-base flex-shrink-0"></i>
+        <span id="toastMessage" class="leading-relaxed text-xs sm:text-sm font-bold">已完成操作</span>
       </div>
-      <div id="toastActionContainer" class="w-full flex justify-center"></div>
+      <div id="toastActionContainer" class="w-full flex justify-center px-2"></div>
     </div>
   </div>
 
