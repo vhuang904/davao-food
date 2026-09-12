@@ -1,8 +1,8 @@
 /**
- * 大V的旅遊窩 PWA - Google Sheets CMS 資料串接服務 (v26.4 Ultimate No-Cache & Active Filter)
- * 1. 徹底解決 is_active 判定被誤判放行的問題
- * 2. 支援 Google Sheets 核取方塊、原生布林值、引號字串 ("FALSE", 'false')
- * 3. 六大工作表全面嚴格過濾
+ * 大V的旅遊窩 PWA - Google Sheets CMS 資料串接服務 (v26.5 雙語摘要與 place_id 完整對齊版)
+ * 1. 支援 place_id 唯一識別，保障 BigV 特約與自然收錄無縫去重覆蓋
+ * 2. 完整映射 description (繁中) 與 description_en (原生英文)
+ * 3. 延續 RFC 4180 強固 CSV 解析與嚴密 is_active 過濾機制
  * 4. 具備多層級 HTTP 防快取標頭，確保即時反映雲端異動
  */
 
@@ -82,7 +82,7 @@ export async function fetchSheetCsv(sheetName) {
   
   const response = await fetch(url, {
     method: 'GET',
-    cache: 'no-store', // 強制瀏覽器與 Service Worker 絕不讀取硬碟或記憶體暫存
+    cache: 'no-store',
     headers: {
       'Pragma': 'no-cache',
       'Cache-Control': 'no-cache, no-store, max-age=0, must-revalidate'
@@ -156,7 +156,6 @@ export function checkIsActive(row) {
 
   let rawVal = undefined;
 
-  // 1. 直接比對常見屬性名
   const candidateKeys = ['isactive', 'is_active', 'active', 'is_enabled', 'enabled'];
   for (let k of candidateKeys) {
     if (row[k] !== undefined && row[k] !== null && row[k] !== '') {
@@ -165,7 +164,6 @@ export function checkIsActive(row) {
     }
   }
 
-  // 2. 若沒找到，遍歷物件尋找相符鍵值
   if (rawVal === undefined) {
     for (let k in row) {
       const cleanKey = k.toLowerCase().replace(/[\s_-]/g, '');
@@ -176,16 +174,13 @@ export function checkIsActive(row) {
     }
   }
 
-  // 3. 若欄位完全空白或未提供，預設正常上架 (true)
   if (rawVal === undefined || rawVal === null || String(rawVal).trim() === '') {
     return true;
   }
 
-  // 4. 布林值直接判斷
   if (rawVal === false || rawVal === 'false') return false;
   if (rawVal === true || rawVal === 'true') return true;
 
-  // 5. 字串清理引號後比對
   const s = String(rawVal).replace(/['"]/g, '').trim().toUpperCase();
   if (s === 'FALSE' || s === '0' || s === 'OFF' || s === 'NO' || s === 'F') {
     return false;
@@ -198,7 +193,8 @@ function normalizeBigVPicks(rows) {
   return rows
     .filter(checkIsActive)
     .map(row => ({
-      id: row.id,
+      id: row.placeid || row.id,
+      place_id: row.placeid || row.id || '',
       city: (row.city || '').toLowerCase().trim(),
       name: row.namezh || row.name || row.id,
       name_zh: row.namezh || row.name || '',
@@ -223,6 +219,8 @@ function normalizeBigVPicks(rows) {
       image_url: row.imageurl || row.image || '',
       images: extractImages(row),
       nav_link: row.navlink || row.nav_link || '',
+      description: row.description || row.desc || row.desczh || '',
+      description_en: row.descriptionen || row.descen || '',
       is_active: checkIsActive(row)
     }));
 }
@@ -231,7 +229,8 @@ function normalizeAttractions(rows) {
   return rows
     .filter(checkIsActive)
     .map(row => ({
-      id: row.id,
+      id: row.placeid || row.id,
+      place_id: row.placeid || row.id || '',
       city: (row.city || '').toLowerCase().trim(),
       type: (row.type || 'attraction').toLowerCase().trim(),
       name: row.namezh || row.name || row.id,
@@ -244,6 +243,8 @@ function normalizeAttractions(rows) {
       desc_zh: row.desczh || row.description || row.desc || '',
       desc_en: row.descen || '',
       desc_tl: row.desctl || '',
+      description: row.description || row.desc || row.desczh || '',
+      description_en: row.descriptionen || row.descen || '',
       googleRating: parseFloat(row.googlerating || row.rating) || 4.5,
       googleReviewCount: parseInt(row.googlereviewcount || row.reviewcount || row.reviews, 10) || 100,
       address: row.address || '',
@@ -287,7 +288,8 @@ function normalizeAutoDiscovered(rows) {
   return rows
     .filter(checkIsActive)
     .map(row => ({
-      id: row.id,
+      id: row.placeid || row.id,
+      place_id: row.placeid || row.id || '',
       city: (row.city || '').toLowerCase().trim(),
       type: (row.type || 'restaurant').toLowerCase().trim(),
       name_zh: row.namezh || '',
@@ -296,13 +298,17 @@ function normalizeAutoDiscovered(rows) {
       category: row.category || '',
       categoryKey: (row.category || '').toLowerCase().trim(),
       googleRating: parseFloat(row.googlerating || row.rating) || 4.5,
+      google_rating: parseFloat(row.googlerating || row.rating) || 4.5,
       googleReviewCount: parseInt(row.reviewcount || row.googlereviewcount || row.reviews, 10) || 50,
+      review_count: parseInt(row.reviewcount || row.googlereviewcount || row.reviews, 10) || 50,
       address: row.address || '',
       phone: cleanPhoneNumber(row.phone),
       website: extractWebsite(row),
       image_url: row.imageurl || row.image || '',
       images: extractImages(row),
       nav_link: row.navlink || row.nav_link || '',
+      description: row.description || row.desc || row.desczh || '',
+      description_en: row.descriptionen || row.descen || '',
       is_active: checkIsActive(row)
     }));
 }
@@ -311,7 +317,8 @@ function normalizeIslandDiscovered(rows) {
   return rows
     .filter(checkIsActive)
     .map(row => ({
-      id: row.id,
+      id: row.placeid || row.id,
+      place_id: row.placeid || row.id || '',
       city: (row.city || '').toLowerCase().trim(),
       type: (row.type || 'attraction').toLowerCase().trim(),
       name_zh: row.namezh || '',
@@ -320,13 +327,17 @@ function normalizeIslandDiscovered(rows) {
       category: row.category || '',
       categoryKey: (row.category || '').toLowerCase().trim(),
       googleRating: parseFloat(row.googlerating || row.rating) || 4.5,
+      google_rating: parseFloat(row.googlerating || row.rating) || 4.5,
       googleReviewCount: parseInt(row.reviewcount || row.googlereviewcount || row.reviews, 10) || 50,
+      review_count: parseInt(row.reviewcount || row.googlereviewcount || row.reviews, 10) || 50,
       address: row.address || '',
       phone: cleanPhoneNumber(row.phone),
       website: extractWebsite(row),
       image_url: row.imageurl || row.image || '',
       images: extractImages(row),
       nav_link: row.navlink || row.nav_link || '',
+      description: row.description || row.desc || row.desczh || '',
+      description_en: row.descriptionen || row.descen || '',
       is_active: checkIsActive(row)
     }));
 }
@@ -337,7 +348,8 @@ function normalizeMedical(rows) {
     .map(row => {
       const p = row.phone || row.telephone || row.contact || row.col_8 || row.col_9 || '';
       return {
-        id: row.id || `med_${Math.random()}`,
+        id: row.placeid || row.id || `med_${Math.random()}`,
+        place_id: row.placeid || row.id || '',
         city: (row.city || '').toLowerCase().trim(),
         type: (row.type || 'medical').toLowerCase().trim(),
         name: row.namezh || row.nameen || row.name || row.id,
@@ -354,6 +366,8 @@ function normalizeMedical(rows) {
         image_url: row.imageurl || row.image || '',
         images: extractImages(row),
         nav_link: row.navlink || row.nav_link || '',
+        description: row.description || row.desc || '',
+        description_en: row.descriptionen || row.descen || '',
         is_active: checkIsActive(row)
       };
     });
