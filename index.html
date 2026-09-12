@@ -2187,15 +2187,13 @@
         }
 
         if (currentSubFilter === 'history') {
-          return itemCat.includes('歷史') || itemCat.includes('history') || itemCat.includes('教堂') || itemCat.includes('museum') || nameAll.includes('cathedral') || nameAll.includes('church');
+          return itemCat.includes('歷史') || itemCat.includes('history') || itemCat.includes('教堂') || 
+                 itemCat.includes('museum') || itemCat.includes('景點') || itemCat.includes('觀光') || 
+                 itemCat.includes('park') || itemCat.includes('attraction') || itemCat.includes('ocean') || 
+                 itemCat.includes('eagle') || itemCat.includes('art') || 
+                 nameAll.includes('cathedral') || nameAll.includes('church') || nameAll.includes('museum') ||
+                 nameAll.includes('mind museum') || nameAll.includes('art in island') || nameAll.includes('ocean park');
         }
-
-        if (currentSubFilter === 'beach') return itemCat.includes('沙灘') || itemCat.includes('beach');
-        if (currentSubFilter === 'island_hopping') return itemCat.includes('跳島') || itemCat.includes('island') || itemCat.includes('hopping');
-        if (currentSubFilter === 'nature') return itemCat.includes('生態') || itemCat.includes('自然') || itemCat.includes('nature') || itemCat.includes('falls') || itemCat.includes('sanctuary');
-
-        return itemCat.includes(currentSubFilter.toLowerCase());
-      });
 
       if (currentSearchQuery) {
         const expandedTerms = expandSearchKeywords(currentSearchQuery);
