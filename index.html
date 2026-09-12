@@ -1455,7 +1455,7 @@
     function hideToastNow() {
       const toast = document.getElementById('toastNotification');
       if (toast) {
-        toast.classList.remove('opacity-100', 'scale-100');
+        toast.classList.remove('opacity-100', 'scale-100', 'pointer-events-auto');
         toast.classList.add('opacity-0', 'scale-95', 'pointer-events-none');
       }
       if (toastTimer) {
@@ -1504,7 +1504,7 @@
       }
 
       toast.classList.remove('opacity-0', 'scale-95', 'pointer-events-none');
-      toast.classList.add('opacity-100', 'scale-100');
+      toast.classList.add('opacity-100', 'scale-100', 'pointer-events-auto');
 
       toastTimer = setTimeout(() => {
         hideToastNow();
@@ -1952,7 +1952,7 @@
       if (currentSubFilter !== 'all') {
         filtered = filtered.filter(item => {
           // 100% 只認試算表 category 與 type 欄位，嚴格排除店名干擾
-          const cat = `${safeStr(item.category)} ${safeStr(item.type)}`.toLowerCase();
+          const cat = safeStr(item.category).toLowerCase();
 
           if (currentSubFilter === 'chinese') {
             return cat.includes('中餐') || cat.includes('中式') || cat.includes('粵菜') || cat.includes('川菜') || cat.includes('港式') || cat.includes('點心') || cat.includes('火鍋') || cat.includes('chinese');
@@ -2150,7 +2150,7 @@
       if (currentSubFilter !== 'all') {
         filtered = filtered.filter(item => {
           // 100% 只認試算表 category 與 type 欄位，嚴格排除店名干擾
-          const cat = `${safeStr(item.category)} ${safeStr(item.type)}`.toLowerCase();
+          const cat = safeStr(item.category).toLowerCase();
           
           if (currentSubFilter === 'casino') {
             return cat.includes('賭場') || cat.includes('casino') || cat.includes('飯店') || cat.includes('酒店') || cat.includes('住宿') || cat.includes('hotel') || cat.includes('resort');
