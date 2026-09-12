@@ -564,10 +564,13 @@
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col font-sans">
 
-  <!-- 全域 Toast 提示 -->
+  <!-- 全域 Toast 提示（含右上角快速關閉叉叉） -->
   <div id="toastNotification" class="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[99999] transition-all duration-300 pointer-events-none opacity-0 scale-95 w-auto min-w-[280px] max-w-sm px-4">
-    <div id="toastInnerBox" class="bg-slate-950/95 text-white text-xs font-bold p-4 rounded-2xl shadow-2xl flex flex-col items-center justify-center text-center gap-3 border border-amber-400/60 backdrop-blur-md">
-      <div class="flex items-center justify-center gap-2">
+    <div id="toastInnerBox" class="relative bg-slate-950/95 text-white text-xs font-bold p-4 rounded-2xl shadow-2xl flex flex-col items-center justify-center text-center gap-3 border border-amber-400/60 backdrop-blur-md pointer-events-auto">
+      <!-- 快速關閉叉叉 -->
+      <button id="toastCloseBtn" type="button" class="absolute top-2.5 right-2.5 w-6 h-6 rounded-full bg-slate-800 hover:bg-slate-700 active:bg-slate-600 text-slate-400 hover:text-white flex items-center justify-center text-[11px] cursor-pointer transition active:scale-90 select-none">✕</button>
+      
+      <div class="flex items-center justify-center gap-2 pr-4 pl-1">
         <i id="toastIcon" class="fa-solid fa-check text-amber-400 text-sm"></i>
         <span id="toastMessage" class="leading-snug">已完成操作</span>
       </div>
@@ -1448,12 +1451,36 @@
       return `https://food.grab.com/ph/en/restaurants?search=${encodeURIComponent(cleanQuery)}`;
     }
 
+    let toastTimer = null;
+    function hideToastNow() {
+      const toast = document.getElementById('toastNotification');
+      if (toast) {
+        toast.classList.remove('opacity-100', 'scale-100');
+        toast.classList.add('opacity-0', 'scale-95', 'pointer-events-none');
+      }
+      if (toastTimer) {
+        clearTimeout(toastTimer);
+        toastTimer = null;
+      }
+    }
+
+    // 綁定右上角叉叉按鈕
+    const toastCloseBtn = document.getElementById('toastCloseBtn');
+    if (toastCloseBtn) {
+      toastCloseBtn.onclick = (e) => {
+        e.stopPropagation();
+        hideToastNow();
+      };
+    }
+
     function showToast(msg, icon = 'fa-check', actionText = '', actionCallback = null) {
       const toast = document.getElementById('toastNotification');
       const toastIcon = document.getElementById('toastIcon');
       const toastMessage = document.getElementById('toastMessage');
       const toastActionContainer = document.getElementById('toastActionContainer');
       if (!toast || !toastIcon || !toastMessage || !toastActionContainer) return;
+
+      if (toastTimer) clearTimeout(toastTimer);
 
       toastIcon.className = `fa-solid ${icon} text-amber-400 text-base`;
       toastMessage.textContent = msg;
@@ -1468,8 +1495,7 @@
         if (btn) {
           btn.onclick = (e) => {
             e.stopPropagation();
-            toast.classList.remove('opacity-100', 'scale-100');
-            toast.classList.add('opacity-0', 'scale-95', 'pointer-events-none');
+            hideToastNow();
             actionCallback();
           };
         }
@@ -1480,9 +1506,8 @@
       toast.classList.remove('opacity-0', 'scale-95', 'pointer-events-none');
       toast.classList.add('opacity-100', 'scale-100');
 
-      setTimeout(() => {
-        toast.classList.remove('opacity-100', 'scale-100');
-        toast.classList.add('opacity-0', 'scale-95', 'pointer-events-none');
+      toastTimer = setTimeout(() => {
+        hideToastNow();
       }, actionText ? 3800 : 2200);
     }
 
