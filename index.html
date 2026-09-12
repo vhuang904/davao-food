@@ -1753,24 +1753,20 @@
         const bigVList = sheetMaster.bigVPicks || [];
         const autoList = sheetMaster.autoDiscovered || [];
 
-        // 1. 海島美食：只收 category 真正標註美食、餐廳、夜生活、飯店的項目
+        // 1. 海島美食：100% 只認試算表 category，徹底廢除 type 混淆
         const islandFood = islandRaw.filter(x => {
           if (!x) return false;
           const cat = safeStr(x.category).toLowerCase();
-          const typ = safeStr(x.type).toLowerCase();
-          return cat.includes('美食') || cat.includes('餐廳') || cat.includes('夜生活') || cat.includes('飯店') || cat.includes('villa') ||
-                 typ.includes('restaurant') || typ.includes('food') || typ.includes('nightlife') || typ.includes('hotel');
+          return cat.includes('美食') || cat.includes('餐廳') || cat.includes('夜生活') || cat.includes('飯店') || cat.includes('villa') || cat.includes('food') || cat.includes('nightlife') || cat.includes('hotel');
         });
 
         allRestaurants = mergeWithPlaceIdDeduplication(bigVList, autoList, islandFood);
 
-        // 2. 海島景點：凡是景觀、景點、沙灘、跳島、生態，100% 歸入景點導覽，絕不流入餐廳！
+        // 2. 海島景點：100% 只認試算表 category，凡是景觀、景點、沙灘、跳島、生態，絕不流入餐廳
         const islandAttractions = islandRaw.filter(x => {
           if (!x) return false;
           const cat = safeStr(x.category).toLowerCase();
-          const typ = safeStr(x.type).toLowerCase();
-          return cat.includes('景點') || cat.includes('景觀') || cat.includes('沙灘') || cat.includes('跳島') || cat.includes('生態') || cat.includes('秘境') ||
-                 typ.includes('attraction') || typ.includes('beach') || typ.includes('hopping') || typ.includes('nature');
+          return cat.includes('景點') || cat.includes('景觀') || cat.includes('沙灘') || cat.includes('跳島') || cat.includes('生態') || cat.includes('秘境') || cat.includes('attraction') || cat.includes('beach');
         });
         allAttractions = (sheetMaster.attractions || []).concat(islandAttractions);
         
