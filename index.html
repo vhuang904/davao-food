@@ -1916,39 +1916,38 @@
 
       if (currentSubFilter !== 'all') {
         filtered = filtered.filter(item => {
-          // 嚴格比對 category 與 type 欄位，杜絕華膳因店名被排入海鮮類
-          const directCat = `${safeStr(item.category)} ${safeStr(item.type)}`.toLowerCase();
+          // 100% 只認試算表 category 與 type 欄位，嚴格排除店名干擾
+          const cat = `${safeStr(item.category)} ${safeStr(item.type)}`.toLowerCase();
 
-          if (currentSubFilter === 'brunch') {
-            return directCat.includes('奢華早午餐') || directCat.includes('早午餐') || directCat.includes('brunch') || directCat.includes('cafe') || directCat.includes('咖啡');
-          }
-          if (currentSubFilter === 'japanese') {
-            return directCat.includes('頂級日料') || directCat.includes('日料') || directCat.includes('日式') || directCat.includes('japanese') || directCat.includes('sushi') || directCat.includes('yakiniku') || directCat.includes('居酒屋');
-          }
-          if (currentSubFilter === 'filipino') {
-            return directCat.includes('菲式御膳') || directCat.includes('菲式') || directCat.includes('菲律賓') || directCat.includes('filipino');
-          }
-          if (currentSubFilter === 'western') {
-            return directCat.includes('西洋美饌') || directCat.includes('西洋') || directCat.includes('西餐') || directCat.includes('western') || directCat.includes('steak') || directCat.includes('bistro');
-          }
-          if (currentSubFilter === 'nightlife') {
-            return directCat.includes('夜生活') || directCat.includes('酒吧') || directCat.includes('nightlife') || directCat.includes('bar') || directCat.includes('lounge');
-          }
           if (currentSubFilter === 'chinese') {
-            return directCat.includes('精緻中餐') || directCat.includes('中餐') || directCat.includes('中式') || directCat.includes('chinese') || directCat.includes('粵菜') || directCat.includes('川菜') || directCat.includes('火鍋') || directCat.includes('dim sum');
+            return cat.includes('中餐') || cat.includes('中式') || cat.includes('粵菜') || cat.includes('川菜') || cat.includes('港式') || cat.includes('點心') || cat.includes('火鍋') || cat.includes('chinese');
           }
           if (currentSubFilter === 'seafood') {
-            return directCat.includes('海鮮盛宴') || directCat.includes('海鮮') || directCat.includes('seafood') || directCat.includes('dampa');
+            return cat.includes('海鮮') || cat.includes('seafood') || cat.includes('dampa');
           }
-
+          if (currentSubFilter === 'japanese') {
+            return cat.includes('日料') || cat.includes('日式') || cat.includes('壽司') || cat.includes('燒肉') || cat.includes('居酒屋') || cat.includes('拉麵') || cat.includes('japanese');
+          }
+          if (currentSubFilter === 'western') {
+            return cat.includes('西洋') || cat.includes('西餐') || cat.includes('牛排') || cat.includes('義式') || cat.includes('餐酒') || cat.includes('western') || cat.includes('steak') || cat.includes('bistro');
+          }
+          if (currentSubFilter === 'filipino') {
+            return cat.includes('菲式') || cat.includes('菲律賓') || cat.includes('filipino') || cat.includes('pinoy');
+          }
+          if (currentSubFilter === 'nightlife') {
+            return cat.includes('夜生活') || cat.includes('酒吧') || cat.includes('夜店') || cat.includes('nightlife') || cat.includes('bar') || cat.includes('lounge') || cat.includes('club');
+          }
+          if (currentSubFilter === 'brunch') {
+            return cat.includes('早午餐') || cat.includes('咖啡') || cat.includes('甜點') || cat.includes('brunch') || cat.includes('cafe');
+          }
           if (currentSubFilter === 'food') {
-            return directCat.includes('food') || directCat.includes('restaurant') || directCat.includes('美食') || directCat.includes('必吃');
+            return cat.includes('food') || cat.includes('restaurant') || cat.includes('美食') || cat.includes('必吃');
           }
           if (currentSubFilter === 'hotel_villa') {
-            return directCat.includes('hotel') || directCat.includes('villa') || directCat.includes('resort') || directCat.includes('飯店') || directCat.includes('民宿');
+            return cat.includes('hotel') || cat.includes('villa') || cat.includes('resort') || cat.includes('飯店') || cat.includes('民宿');
           }
 
-          return directCat.includes(currentSubFilter.toLowerCase());
+          return cat.includes(currentSubFilter.toLowerCase());
         });
       }
 
@@ -2115,22 +2114,28 @@
 
       if (currentSubFilter !== 'all') {
         filtered = filtered.filter(item => {
-          const textAll = `${safeStr(item.category)} ${safeStr(item.type)} ${safeStr(item.name_zh)} ${safeStr(item.name_en)}`.toLowerCase();
+          // 100% 只認試算表 category 與 type 欄位，嚴格排除店名干擾
+          const cat = `${safeStr(item.category)} ${safeStr(item.type)}`.toLowerCase();
           
           if (currentSubFilter === 'casino') {
-            return isCasinoEntity(textAll) || isLuxuryHotelEntity(textAll);
+            return cat.includes('賭場') || cat.includes('casino') || cat.includes('飯店') || cat.includes('酒店') || cat.includes('住宿') || cat.includes('hotel') || cat.includes('resort');
           }
           if (currentSubFilter === 'shopping') {
-            const isPureMall = /mall|shopping|商場|購物|百貨|ayala|greenbelt|power plant|sm |robinsons/i.test(textAll);
-            return isPureMall && !isCasinoEntity(textAll);
+            return cat.includes('商場') || cat.includes('購物') || cat.includes('百貨') || cat.includes('mall') || cat.includes('shopping');
           }
           if (currentSubFilter === 'history') {
-            return textAll.includes('歷史') || textAll.includes('古蹟') || textAll.includes('church') || textAll.includes('museum') || textAll.includes('觀光');
+            return cat.includes('觀光') || cat.includes('歷史') || cat.includes('古蹟') || cat.includes('文化') || cat.includes('博物館') || cat.includes('公園') || cat.includes('地標');
           }
-          if (currentSubFilter === 'beach') return textAll.includes('beach') || textAll.includes('沙灘');
-          if (currentSubFilter === 'island_hopping') return textAll.includes('hopping') || textAll.includes('跳島') || textAll.includes('snorkeling');
-          if (currentSubFilter === 'nature') return textAll.includes('nature') || textAll.includes('生態') || textAll.includes('瀑布');
-          return textAll.includes(currentSubFilter.toLowerCase());
+          if (currentSubFilter === 'beach') {
+            return cat.includes('沙灘') || cat.includes('海灘') || cat.includes('海岸') || cat.includes('beach');
+          }
+          if (currentSubFilter === 'island_hopping') {
+            return cat.includes('跳島') || cat.includes('浮潛') || cat.includes('潛水') || cat.includes('hopping') || cat.includes('snorkeling') || cat.includes('diving');
+          }
+          if (currentSubFilter === 'nature') {
+            return cat.includes('生態') || cat.includes('秘境') || cat.includes('自然') || cat.includes('瀑布') || cat.includes('nature') || cat.includes('falls');
+          }
+          return cat.includes(currentSubFilter.toLowerCase());
         });
       }
 
