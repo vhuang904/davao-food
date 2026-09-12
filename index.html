@@ -739,7 +739,7 @@
       return ISLAND_KEYS.includes(cityKey);
     }
 
-    // ⭐ 子分類設定：整合賭場與五星奢華大飯店
+    // ⭐ 子分類設定：整合賭場娛樂/奢華飯店 與 熱門觀光
     const SUB_FILTERS = {
       food_urban: [
         { key: 'all', label: { 'zh-TW': '全部', 'en': 'All', 'tl': 'Lahat' } },
@@ -761,7 +761,7 @@
         { key: 'all', label: { 'zh-TW': '全部景點', 'en': 'All Attractions', 'tl': 'Lahat ng Pasyalan' } },
         { key: 'casino', label: { 'zh-TW': '🎰 賭場娛樂 / 奢華飯店', 'en': '🎰 Casino / Hotels', 'tl': '🎰 Casino at Luxury Hotel' } },
         { key: 'shopping', label: { 'zh-TW': '🛒 精品商場', 'en': '🛒 Upscale Malls', 'tl': '🛒 Pamilihan' } },
-        { key: 'history', label: { 'zh-TW': '🏛️ 熱門觀光', 'en': '🏛️ Landmarks & Heritage', 'tl': '🏛️ Kasaysayan' } }
+        { key: 'history', label: { 'zh-TW': '🏛️ 熱門觀光', 'en': '🏛️ Top Sights', 'tl': '🏛️ Mga Pasyalan' } }
       ],
       attraction_island: [
         { key: 'all', label: { 'zh-TW': '🏝️ 全部海島景點', 'en': '🏝️ All Island Spots', 'tl': '🏝️ Lahat ng Isla' } },
@@ -2186,14 +2186,23 @@
                  nameAll.includes('mall') || nameAll.includes('ayala') || nameAll.includes('sm ') || nameAll.includes('robinsons');
         }
 
+        // ⭐ 熱門觀光（安全且完整涵蓋歷史古蹟、教堂、博物館與現代主題館）
         if (currentSubFilter === 'history') {
           return itemCat.includes('歷史') || itemCat.includes('history') || itemCat.includes('教堂') || 
                  itemCat.includes('museum') || itemCat.includes('景點') || itemCat.includes('觀光') || 
                  itemCat.includes('park') || itemCat.includes('attraction') || itemCat.includes('ocean') || 
                  itemCat.includes('eagle') || itemCat.includes('art') || 
                  nameAll.includes('cathedral') || nameAll.includes('church') || nameAll.includes('museum') ||
-                 nameAll.includes('mind museum') || nameAll.includes('art in island') || nameAll.includes('ocean park');
+                 nameAll.includes('mind museum') || nameAll.includes('art in island') || nameAll.includes('ocean park') ||
+                 nameAll.includes('malagos') || nameAll.includes('eagle');
         }
+
+        if (currentSubFilter === 'beach') return itemCat.includes('沙灘') || itemCat.includes('beach');
+        if (currentSubFilter === 'island_hopping') return itemCat.includes('跳島') || itemCat.includes('island') || itemCat.includes('hopping');
+        if (currentSubFilter === 'nature') return itemCat.includes('生態') || itemCat.includes('自然') || itemCat.includes('nature') || itemCat.includes('falls') || itemCat.includes('sanctuary');
+
+        return itemCat.includes(currentSubFilter.toLowerCase());
+      });
 
       if (currentSearchQuery) {
         const expandedTerms = expandSearchKeywords(currentSearchQuery);
