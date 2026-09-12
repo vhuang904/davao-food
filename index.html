@@ -317,14 +317,15 @@
       border: 1px solid #EFE8DC !important;
     }
 
-    /* 暖陽模式：會員等級與積分文字連動 */
+    /* 暖陽模式：會員等級與積分文字連動 (徹底消滅隱形問題) */
     html.light #user-modal-level { color: #EA580C !important; }
     html.light #user-modal-level i { color: #F97316 !important; }
-    html.light #user-modal-points-text { color: #1F2937 !important; }
+    html.light #user-modal-points-text { color: #1F2937 !important; font-weight: 800 !important; }
     html.light #level-diff-tip { color: #6B7280 !important; }
     html.light #auth-modal .bg-slate-900\/90 { background-color: #FFFFFF !important; border-color: #FED7AA !important; }
     html.light #auth-modal .bg-slate-950.h-2 { background-color: #F3F4F6 !important; border-color: #E5E7EB !important; }
     html.light #level-progress-fill { background: linear-gradient(90deg, #F97316, #EA580C) !important; }
+
     html.light #btn-logout {
       background-color: #FFFFFF !important;
       border: 1px solid #FCA5A5 !important;
@@ -509,14 +510,16 @@
       background-color: #FFFFFF !important;
       border: 1px solid #EFE4F1 !important;
     }
-    /* 紫霞模式：會員等級與積分文字連動 */
+
+    /* 紫霞模式：會員等級與積分文字連動 (徹底消滅隱形問題) */
     html.amethyst #user-modal-level { color: #7B337F !important; }
     html.amethyst #user-modal-level i { color: #8E4D88 !important; }
-    html.amethyst #user-modal-points-text { color: #2E1A33 !important; }
+    html.amethyst #user-modal-points-text { color: #2E1A33 !important; font-weight: 800 !important; }
     html.amethyst #level-diff-tip { color: #6B5B6E !important; }
     html.amethyst #auth-modal .bg-slate-900\/90 { background-color: #FAF5FB !important; border-color: #E0BEE5 !important; }
     html.amethyst #auth-modal .bg-slate-950.h-2 { background-color: #EFE6F0 !important; border-color: #D5C2D9 !important; }
     html.amethyst #level-progress-fill { background: linear-gradient(90deg, #8E4D88, #6B3E75) !important; }
+
     html.amethyst #btn-logout {
       background-color: #FFFFFF !important;
       border: 1px solid #E8B4C0 !important;
@@ -581,10 +584,10 @@
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col font-sans">
 
-  <!-- 全域 Toast 提示（加寬拓展、呼吸感呼吸槽、獨立右上角關閉錨點） -->
+  <!-- 全域 Toast 提示（拓展寬度、舒適留白、右上角獨立關閉錨點） -->
   <div id="toastNotification" class="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[99999] transition-all duration-300 pointer-events-none opacity-0 scale-95 w-[90vw] max-w-md px-2">
     <div id="toastInnerBox" class="relative bg-slate-950/95 text-white text-xs font-bold p-5 rounded-2xl shadow-2xl flex flex-col items-center justify-center text-center gap-3.5 border border-amber-400/60 backdrop-blur-md pointer-events-auto">
-      <!-- 快速關閉叉叉（獨立右上角，不擠壓內文） -->
+      <!-- 獨立右上角關閉按鈕，不擠壓文字 -->
       <button id="toastCloseBtn" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full bg-slate-800/90 hover:bg-slate-700 active:bg-slate-600 text-slate-300 hover:text-white flex items-center justify-center text-xs cursor-pointer transition active:scale-90 select-none z-10">✕</button>
       
       <div class="flex items-center justify-center gap-2 px-6">
@@ -739,7 +742,7 @@
         <h3 data-i18n="authTitle" class="text-base font-black text-white mb-0.5">加入大V會員</h3>
         <p data-i18n="authSubtitle" class="text-xs text-slate-400 mb-4 leading-relaxed">登入會員解鎖專屬私房口袋名單、撰寫評論賺積分與 AI 管家諮詢服務！</p>
         
-        <button id="btn-google-login" class="w-full bg-white hover:bg-slate-100 text-slate-900 py-2.5 px-3 rounded-xl font-bold text-xs flex items-center justify-center gap-2 shadow-sm transition mb-3">
+        <button id="btn-google-login" type="button" class="relative z-20 w-full bg-white hover:bg-slate-100 text-slate-900 py-2.5 px-3 rounded-xl font-bold text-xs flex items-center justify-center gap-2 shadow-sm transition mb-3 cursor-pointer pointer-events-auto">
           <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" class="w-4 h-4" alt="Google">
           <span data-i18n="btnGoogleLogin">使用 Google 帳號一鍵登入</span>
         </button>
@@ -752,7 +755,7 @@
 
         <div class="space-y-2">
           <input type="email" id="magic-email-input" data-i18n-placeholder="emailPlaceholder" placeholder="輸入電子信箱（免記密碼）" class="w-full bg-white border-2 border-amber-400/70 text-slate-950 font-medium placeholder-slate-400 text-xs rounded-xl px-3.5 py-3 focus:outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-400/30 shadow-inner" />
-          <button id="btn-magic-email" class="w-full bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-slate-950 font-black text-xs py-2.5 rounded-xl transition flex items-center justify-center gap-1.5 shadow-md">
+          <button id="btn-magic-email" type="button" class="relative z-20 w-full bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-slate-950 font-black text-xs py-2.5 rounded-xl transition flex items-center justify-center gap-1.5 shadow-md cursor-pointer pointer-events-auto">
             <i class="fa-solid fa-wand-magic-sparkles text-slate-950"></i> <span data-i18n="btnMagicEmail">發送魔法登入連結</span>
           </button>
         </div>
@@ -796,13 +799,13 @@
           </div>
         </div>
 
-        <!-- 升級進度條槽 -->
+        <!-- 升級進度條槽 (完全適應各色系主題，不再隱形) -->
         <div class="bg-slate-900/90 border border-amber-400/30 rounded-xl p-3 flex flex-col justify-center space-y-2">
           <div class="flex items-center justify-between text-[11px] leading-tight">
-            <span id="user-modal-level" class="font-bold text-amber-300 flex items-center gap-1">
+            <span id="user-modal-level" class="font-bold flex items-center gap-1 text-amber-300">
               <i class="fa-solid fa-medal text-amber-400"></i> LV.1 探店初心者
             </span>
-            <span id="user-modal-points-text" class="font-mono font-bold text-white">50 / 100 PTS</span>
+            <span id="user-modal-points-text" class="font-mono font-bold text-slate-100">50 / 100 PTS</span>
           </div>
           <div class="w-full bg-slate-950 h-2 rounded-full overflow-hidden border border-slate-800">
             <div id="level-progress-fill" class="bg-gradient-to-r from-amber-500 to-amber-400 h-full rounded-full transition-all duration-500" style="width: 50%;"></div>
@@ -928,7 +931,7 @@
     </div>
   </div>
 
-  <!-- 全景點/全餐廳 純淨會員留言互動彈窗 (徹底移除 Google 摘要，回歸純粹點評) -->
+  <!-- 全景點/全餐廳 純淨會員留言互動彈窗 -->
   <div id="comment-modal" class="fixed inset-0 z-[9999] glass-modal hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
     <div class="bg-slate-950 border border-amber-400/40 rounded-t-3xl sm:rounded-2xl w-full max-w-md h-[80vh] max-h-[600px] p-4 shadow-2xl flex flex-col relative text-slate-100">
       <div class="flex items-center justify-between border-b border-slate-800 pb-3">
@@ -1186,7 +1189,7 @@
       return Array.from(new Set(terms));
     }
 
-    // 手機作業系統語言自動判定 (中文體系進繁中，非中文預設英文；手動切換優先記憶)
+    // 手機作業系統語言自動判定
     function detectDefaultAppLanguage() {
       const saved = localStorage.getItem('ph_app_lang');
       if (saved && (saved === 'zh-TW' || saved === 'en')) return saved;
@@ -1206,7 +1209,7 @@
     let currentSubFilter = sessionStorage.getItem('ph_nav_sub') || 'all';
     let currentSearchQuery = '';
     let currentLang = detectDefaultAppLanguage();
-    let isDataLoading = true; // 加載鎖：未載入完成前禁止閃黑卡
+    let isDataLoading = true;
 
     if (deepCity) {
       currentCity = deepCity.toLowerCase().trim();
@@ -1233,7 +1236,6 @@
     let userFavoritesSet = new Set(JSON.parse(localStorage.getItem('bigv_favorites') || '[]'));
     let activeCommentStoreId = '';
 
-    // 滾動深度記憶守護者
     function preserveScrollPosition(actionFn) {
       const scrollY = window.scrollY || document.documentElement.scrollTop;
       actionFn();
@@ -1311,7 +1313,6 @@
       }
     });
 
-    // 推播切換開關 UI 與授權管理 (100% 完整原封不動)
     const pushToggleBtn = document.getElementById('push-toggle-btn');
     const pushToggleThumb = document.getElementById('push-toggle-thumb');
 
@@ -1481,7 +1482,6 @@
       }
     }
 
-    // 綁定右上角叉叉按鈕
     const toastCloseBtn = document.getElementById('toastCloseBtn');
     if (toastCloseBtn) {
       toastCloseBtn.onclick = (e) => {
@@ -1499,7 +1499,7 @@
 
       if (toastTimer) clearTimeout(toastTimer);
 
-      toastIcon.className = `fa-solid ${icon} text-amber-400 text-base`;
+      toastIcon.className = `fa-solid ${icon} text-amber-400 text-base flex-shrink-0`;
       toastMessage.textContent = msg;
 
       if (actionText && actionCallback) {
@@ -1545,7 +1545,6 @@
       }
     }
 
-    // 全域登入狀態廣播監聽 (100% 完整接回)
     window.addEventListener("auth-user-changed", (e) => {
       const { user, profile, isLoggedIn } = e.detail;
       currentUser = user;
@@ -1752,7 +1751,6 @@
       }, 350);
     };
 
-    // 商務去重與 place_id 覆蓋引擎 (BigV 啟用優先，自然店備援沉睡)
     function mergeWithPlaceIdDeduplication(bigVPicks, autoDiscovered, islandDiscovered) {
       const finalItems = [];
       const seenIds = new Set();
@@ -1790,12 +1788,9 @@
         if (!sheetMaster) throw new Error("Master database empty");
 
         const islandRaw = sheetMaster.Island_Discovered || sheetMaster.islandDiscovered || [];
-
-        // ⭐ 補回遺失的宣告，徹底解決 bigVList is not defined 錯誤
         const bigVList = sheetMaster.bigVPicks || [];
         const autoList = sheetMaster.autoDiscovered || [];
 
-        // 1. 海島美食：100% 只認試算表 category，徹底廢除 type 混淆
         const islandFood = islandRaw.filter(x => {
           if (!x) return false;
           const cat = safeStr(x.category).toLowerCase();
@@ -1804,7 +1799,6 @@
 
         allRestaurants = mergeWithPlaceIdDeduplication(bigVList, autoList, islandFood);
 
-        // 2. 海島景點：100% 只認試算表 category，凡是景觀、景點、沙灘、跳島、生態，絕不流入餐廳
         const islandAttractions = islandRaw.filter(x => {
           if (!x) return false;
           const cat = safeStr(x.category).toLowerCase();
@@ -1812,13 +1806,12 @@
         });
         allAttractions = (sheetMaster.attractions || []).concat(islandAttractions);
         
-        // 3. 醫療與特惠
         allMedical = sheetMaster.medical || [];
         allNews = sheetMaster.promotions || [];
       } catch (err) {
         console.error("[App] 讀取資料庫異常:", err);
       } finally {
-        isDataLoading = false; // 解除加載鎖
+        isDataLoading = false;
         if (loadingEl) loadingEl.style.display = 'none';
         applyLanguage(currentLang);
       }
@@ -1960,7 +1953,6 @@
       bindCarouselControls();
     }
 
-    // 1. 美食清單渲染 (嚴格子分類比對、手打絕對優先、店名點擊直達官網/導航)
     function renderRestaurants() {
       const listEl = document.getElementById('restaurant-list');
       const dict = I18N_DICT[currentLang];
@@ -1968,7 +1960,6 @@
 
       if (currentSubFilter !== 'all') {
         filtered = filtered.filter(item => {
-          // 100% 只認試算表 category 與 type 欄位，嚴格排除店名干擾
           const cat = safeStr(item.category).toLowerCase();
 
           if (currentSubFilter === 'chinese') {
@@ -2011,7 +2002,6 @@
         });
       }
 
-      // 加載鎖：未完成前絕不跳出黑卡
       if (isDataLoading) {
         itemCountBadge.textContent = '...';
         return;
@@ -2039,7 +2029,6 @@
         const reviewCount = item.review_count || item.googleReviewCount || item.reviews || 100;
         const tier = getItemTier(item);
 
-        // ⭐ 雙語取值：站長手打點評絕對第一優先，Google 抓取為輔
         let reviewText = '';
         if (currentLang === 'en') {
           reviewText = (item.bigv_comment_en || item.big_v_comment_en || '').trim()
@@ -2094,7 +2083,6 @@
                 <i class="${isFav ? 'fa-solid text-rose-500' : 'fa-regular text-white'} fa-heart"></i>
               </button>
 
-              <!-- 店名可點擊直達官網/粉專或導航 -->
               <a href="${websiteUrl}" target="_blank" rel="noopener noreferrer" title="前往官網或導航" class="absolute bottom-2.5 left-3.5 right-12 text-white text-sm font-bold truncate drop-shadow-md z-20 hover:text-amber-300 transition flex items-center gap-1">
                 <span class="truncate">${name}</span>
                 <i class="fa-solid fa-arrow-up-right-from-square text-[9px] opacity-70"></i>
@@ -2149,24 +2137,13 @@
       }).join('');
     }
 
-    // 2. 景點導覽渲染 (奢華飯店徹底歸位、馬尼拉宿霧達沃全數呈現、店名直達)
     function renderAttractions() {
       const listEl = document.getElementById('attraction-list');
       const dict = I18N_DICT[currentLang];
       let filtered = allAttractions.filter(x => safeStr(x.city) === currentCity);
 
-      const isCasinoEntity = (text) => {
-        return /casino|賭場|okada|solaire|city of dreams|\bcod\b|newport|resorts world|nustar|hann/i.test(text);
-      };
-
-      // 星級飯店放行正規化（徹底救回馬尼拉、宿霧、達沃奢華飯店）
-      const isLuxuryHotelEntity = (text) => {
-        return /hotel|resort|飯店|酒店|住宿|dusit|shangri-la|peninsula|hyatt|sofitel|conrad|marriott|radisson|sedan|marco polo|waterfront/i.test(text);
-      };
-
       if (currentSubFilter !== 'all') {
         filtered = filtered.filter(item => {
-          // 100% 只認試算表 category 與 type 欄位，嚴格排除店名干擾
           const cat = safeStr(item.category).toLowerCase();
           
           if (currentSubFilter === 'casino') {
@@ -2264,7 +2241,6 @@
                 <i class="${isFav ? 'fa-solid text-rose-500' : 'fa-regular text-white'} fa-heart"></i>
               </button>
 
-              <!-- 店名點擊直達官網/導航 -->
               <a href="${websiteUrl}" target="_blank" rel="noopener noreferrer" title="前往官網或導航" class="absolute bottom-2.5 left-3.5 right-12 text-white text-sm font-bold truncate drop-shadow-md z-20 hover:text-amber-300 transition flex items-center gap-1">
                 <span class="truncate">${name}</span>
                 <i class="fa-solid fa-arrow-up-right-from-square text-[9px] opacity-70"></i>
@@ -2285,7 +2261,6 @@
             </div>
 
             <div class="p-2.5 bg-slate-900 border-t border-slate-800 flex items-center justify-between gap-2 text-xs">
-              <!-- 海島與都會景點 100% 統一使用純淨會員留言板 -->
               <button type="button" onclick="window.openUniversalCommentModal('${sId}', '${encodeURIComponent(name)}')" class="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl btn-card-comment font-black transition active:scale-95 shadow-sm">
                 <i class="fa-solid fa-pen-to-square text-xs"></i> <span>${dict.btnComment}</span>
               </button>
@@ -2317,7 +2292,6 @@
       }).join('');
     }
 
-    // 3. 醫療藥局渲染
     function renderMedical() {
       const listEl = document.getElementById('medical-list');
       const dict = I18N_DICT[currentLang];
@@ -2442,7 +2416,6 @@
       }).join('');
     }
 
-    // 4. 精選特惠渲染
     function renderNews() {
       const listEl = document.getElementById('news-list');
       const dict = I18N_DICT[currentLang];
@@ -2506,16 +2479,12 @@
       }).join('');
     }
 
-    // =========================================================================
-    // 全島嶼/都會/景點/餐廳 100% 統一「純淨會員真實留言板」
-    // =========================================================================
     const commentModal = document.getElementById('comment-modal');
     const commentListContainer = document.getElementById('comment-list-container');
     const commentInputText = document.getElementById('comment-input-text');
     const btnSubmitComment = document.getElementById('btn-submit-comment');
 
     window.openUniversalCommentModal = function(storeId, encodedName) {
-      // 1. 未登入嚴格攔截並友善導引
       if (!currentUser) {
         showToast(
           '🔒 請先登入會員，即可發表真實點評賺取 20 積分！', 
@@ -2618,9 +2587,6 @@
     }
     btnSubmitComment.addEventListener('click', handlePostComment);
 
-    // =========================================================================
-    // 會員彈窗核心 (拉升至最高層級 z-[9999]、嚴格互斥、點擊絕對穿透)
-    // =========================================================================
     const authModal = document.getElementById('auth-modal');
     const authStateBtn = document.getElementById('auth-state-btn');
     const closeAuthGuest = document.getElementById('close-auth-btn-guest');
@@ -2628,7 +2594,7 @@
     const closeAuthTasks = document.getElementById('close-auth-btn-tasks');
 
     function openAuthModal() {
-      closeAiChat(); // 強制隱藏 AI 對話視窗，消除任何隱形圖層阻擋
+      closeAiChat();
       updateUserModalView();
       authModal.classList.remove('hidden');
     }
@@ -2654,7 +2620,6 @@
       if (e.target === authModal) closeAuthModal();
     };
 
-    // Google 登入按鈕
     const btnGoogle = document.getElementById('btn-google-login');
     if (btnGoogle) {
       btnGoogle.onclick = async (e) => {
@@ -2678,7 +2643,6 @@
       };
     }
 
-    // Email 魔法連結登入
     const btnMagic = document.getElementById('btn-magic-email');
     const magicInput = document.getElementById('magic-email-input');
     if (btnMagic && magicInput) {
@@ -2709,7 +2673,6 @@
       showToast('已安全登出帳號', 'fa-right-from-bracket');
     });
 
-    // 特殊任務與推薦私房好店
     document.getElementById('btn-open-tasks-subview').addEventListener('click', () => {
       document.getElementById('auth-modal-user-view').classList.add('hidden');
       document.getElementById('auth-modal-tasks-view').classList.remove('hidden');
@@ -2777,7 +2740,6 @@
     }
     btnSubmitRecommend.addEventListener('click', submitRecommendStore);
 
-    // 三大風格切換管理器 (暗夜尊爵 / 暖陽金橘 / 暮光紫霞)
     const themeDropdownBtn = document.getElementById('btn-theme-dropdown');
     const themeDropdownMenu = document.getElementById('theme-dropdown-menu');
     const currentThemeLabel = document.getElementById('current-theme-label');
@@ -2823,9 +2785,6 @@
     }
     applyAppTheme(localStorage.getItem('bigv_app_theme') || 'dark');
 
-    // =========================================================================
-    // AI 管家懸浮球 (解凍上下自由拖曳、放開吸附邊緣、未登入鎖定引導)
-    // =========================================================================
     const fab = document.getElementById('chat-fab');
     const chatModal = document.getElementById('chat-modal');
     const btnCloseChat = document.getElementById('btn-close-chat');
@@ -2843,7 +2802,6 @@
       fab.style.bottom = 'auto';
     }
 
-    // 初始化位置吸附
     setTimeout(() => {
       fabLeft = window.innerWidth - 76;
       fabTop = window.innerHeight - 175;
@@ -2863,7 +2821,6 @@
       if (isHidden) {
         document.getElementById('auth-modal').classList.add('hidden');
         chatModal.classList.remove('hidden');
-        // 定錨至對話窗右下角安全區
         updateFabPos(window.innerWidth - 76, window.innerHeight - 175);
         renderChatUI();
         if (currentUser) chatInput.focus();
@@ -2872,7 +2829,6 @@
       }
     }
 
-    // 觸控與滑鼠拖曳核心 (解凍上下全自由移動)
     function onFabStart(e) {
       if (!chatModal.classList.contains('hidden')) return;
       const pt = e.touches ? e.touches[0] : e;
@@ -2894,7 +2850,6 @@
 
       if (Math.hypot(dx, dy) > 6) hasMoved = true;
 
-      // 自由上下移動，保留上下邊界
       let nx = initialLeft + dx;
       let ny = initialTop + dy;
 
@@ -2911,7 +2866,6 @@
 
       if (hasMoved) {
         const rect = fab.getBoundingClientRect();
-        // 水平吸附至左側或右側，垂直保留自由高度
         const snapRight = (rect.left + rect.width / 2 > window.innerWidth / 2);
         fabLeft = snapRight ? (window.innerWidth - fab.offsetWidth - 16) : 16;
         fabTop = rect.top;
@@ -3039,7 +2993,6 @@
     btnSendChat.addEventListener('click', handleChatSend);
     chatInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') handleChatSend(); });
 
-    // 輪播與橫向滾動輔助
     function parseImages(item, fallback) {
       if (!item) return [fallback || 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=800'];
       if (Array.isArray(item.images) && item.images.length > 0) {
@@ -3135,7 +3088,6 @@
       });
     }
 
-    // 維度與分頁切換
     typeCityBtn.addEventListener('click', () => { 
       currentDimension = 'cities'; 
       currentCity = 'manila'; 
@@ -3195,7 +3147,6 @@
       }
     });
 
-    // 桌面 App 徽章紅點自動清除機制 (100% 完整原版回填)
     function clearAppBadgeOnOpen() {
       if ('clearAppBadge' in navigator) {
         navigator.clearAppBadge().catch(() => {});
@@ -3212,13 +3163,11 @@
       }
     });
 
-    // 啟動引擎
     initVisitorCounter();
     enableHorizontalScroll();
     fetchData();
     initAuthService();
 
-    // 統一註冊 Service Worker (帶版本號 v40.0 杜絕快取阻擋)
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
         navigator.serviceWorker.register('./sw.js?v=20260912-v40.0').then((reg) => {
