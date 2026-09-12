@@ -7,7 +7,7 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
-  <meta name="app-version" content="20260912-v38.2-luxury-flagship" />
+  <meta name="app-version" content="20260912-v38.6-master-production" />
   <meta name="theme-color" content="#020617" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -77,7 +77,7 @@
       border-color: #f59e0b !important;
     }
 
-    /* ⭐ 站長私房嚴選：高飽和度流金光環邊框動效 (Enhanced Border Beam Flow) */
+    /* ⭐ 站長私房嚴選：高飽和度流金光環邊框動效 */
     @keyframes borderBeamRotate {
       0% { transform: rotate(0deg); }
       100% { transform: rotate(360deg); }
@@ -178,7 +178,7 @@
       border-radius: 1.25rem !important;
       box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05) !important;
     }
-    html.light article div.bg-slate-950, html.light article div.bg-slate-900, html.light #auth-modal div.bg-slate-900, html.light #auth-modal div.bg-slate-900\/90, html.light #auth-modal div.bg-slate-950 {
+    html.light article div.bg-slate-950, html.light article div.bg-slate-900, html.light #auth-modal div.bg-slate-900, html.light #auth-modal div.bg-slate-900\/90, html.light #auth-modal div.bg-slate-900\/80, html.light #auth-modal div.bg-slate-950 {
       background-color: #FFFFFF !important;
       border-color: #EFE8DC !important;
     }
@@ -197,7 +197,7 @@
       color: #C2410C !important;
     }
 
-    /* 暖陽 AI 面板與對話框色彩適配 */
+    /* 暖陽 AI 面板色彩適配 */
     html.light #chat-modal {
       background-color: #FCF9F2 !important;
       border: 1.5px solid #EA580C !important;
@@ -210,7 +210,7 @@
     html.light #chat-messages {
       background-color: #F7F3EB !important;
     }
-    html.light #chat-messages .bg-slate-900, html.light #chat-messages .chat-ready-bubble {
+    html.light #chat-messages .bg-slate-900, html.light #chat-messages .chat-bubble-agent {
       background-color: #FFFFFF !important;
       border: 1px solid #E2DACF !important;
       color: #1F2937 !important;
@@ -218,6 +218,14 @@
     html.light #chat-modal > div:last-child {
       background-color: #FCF9F2 !important;
       border-top: 1px solid #E2DACF !important;
+    }
+
+    /* 暖陽 Toast 純白化 */
+    html.light #toastInnerBox {
+      background-color: #FFFFFF !important;
+      color: #1F2937 !important;
+      border: 1.5px solid #F97316 !important;
+      box-shadow: 0 10px 25px -3px rgba(234, 88, 12, 0.2) !important;
     }
 
     /* 3. 暮光玫瑰 (Rose) - 全面純淨反白與專屬沉穩色系 */
@@ -269,14 +277,14 @@
     }
     html.rose #currentFilterSummary { color: #5C4E51 !important; }
 
-    /* 暮光玫瑰卡片與彈窗徹底反白（無黑塊） */
+    /* 暮光玫瑰卡片與彈窗徹底反白 */
     html.rose article, html.rose #auth-modal .bg-slate-950, html.rose #comment-modal .bg-slate-950, html.rose #recommend-modal .bg-slate-950 {
       background-color: #FFFFFF !important;
       border: 1px solid #E8DFDC !important;
       box-shadow: 0 4px 16px rgba(140, 83, 94, 0.06) !important;
       border-radius: 1.25rem !important;
     }
-    html.rose article div.bg-slate-950, html.rose article div.bg-slate-900, html.rose #auth-modal div.bg-slate-900, html.rose #auth-modal div.bg-slate-900\/90, html.rose #auth-modal div.bg-slate-950 {
+    html.rose article div.bg-slate-950, html.rose article div.bg-slate-900, html.rose #auth-modal div.bg-slate-900, html.rose #auth-modal div.bg-slate-900\/90, html.rose #auth-modal div.bg-slate-900\/80, html.rose #auth-modal div.bg-slate-950 {
       background-color: #FAF4F3 !important;
       border-color: #EFE8E5 !important;
     }
@@ -295,7 +303,7 @@
       color: #8C535E !important;
     }
 
-    /* 暮光玫瑰 AI 面板與對話框色彩適配 */
+    /* 暮光玫瑰 AI 面板色彩適配 */
     html.rose #chat-modal {
       background-color: #FAF6F0 !important;
       border: 1.5px solid #84525C !important;
@@ -308,7 +316,7 @@
     html.rose #chat-messages {
       background-color: #FAF4F3 !important;
     }
-    html.rose #chat-messages .bg-slate-900, html.rose #chat-messages .chat-ready-bubble {
+    html.rose #chat-messages .bg-slate-900, html.rose #chat-messages .chat-bubble-agent {
       background-color: #FFFFFF !important;
       border: 1px solid #E8DFDC !important;
       color: #2D2426 !important;
@@ -317,18 +325,26 @@
       background-color: #FAF6F0 !important;
       border-top: 1px solid #E8DFDC !important;
     }
+
+    /* 暮光玫瑰 Toast 純白化 */
+    html.rose #toastInnerBox {
+      background-color: #FFFFFF !important;
+      color: #2D1F23 !important;
+      border: 1.5px solid #84525C !important;
+      box-shadow: 0 10px 25px -3px rgba(132, 82, 92, 0.25) !important;
+    }
   </style>
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col font-sans">
 
-  <!-- ⭐ 全域 Toast 提示（上下垂直排版結構，徹底防變形） -->
+  <!-- ⭐ 全域 Toast 提示（嚴格水平垂直置中、純白主題化、防擠壓變形） -->
   <div id="toastNotification" class="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[99999] transition-all duration-300 pointer-events-none opacity-0 scale-95 w-auto min-w-[280px] max-w-sm px-4">
-    <div id="toastInnerBox" class="bg-slate-950/95 text-white text-xs font-bold p-4 rounded-2xl shadow-2xl flex flex-col items-center gap-3 border border-amber-400/60 backdrop-blur-md text-center">
+    <div id="toastInnerBox" class="bg-slate-950/95 text-white text-xs font-bold p-4 rounded-2xl shadow-2xl flex flex-col items-center justify-center text-center gap-3 border border-amber-400/60 backdrop-blur-md">
       <div class="flex items-center justify-center gap-2">
         <i id="toastIcon" class="fa-solid fa-check text-amber-400 text-sm"></i>
         <span id="toastMessage" class="leading-snug">已完成操作</span>
       </div>
-      <div id="toastActionContainer" class="w-full"></div>
+      <div id="toastActionContainer" class="w-full flex justify-center"></div>
     </div>
   </div>
 
@@ -371,7 +387,7 @@
       <div class="flex items-center gap-1.5">
         <div class="relative flex-1 flex items-center">
           <i class="fa-solid fa-magnifying-glass absolute left-3 text-slate-500 text-xs pointer-events-none"></i>
-          <input id="search-input" type="text" placeholder="搜尋和牛、海鮮、夜生活、Villa、急診..." class="w-full bg-slate-950 border border-slate-800 text-slate-100 placeholder-slate-500 text-xs rounded-xl pl-8 pr-7 py-2 focus:outline-none focus:border-amber-400/70 shadow-inner transition" />
+          <input id="search-input" type="text" data-i18n-placeholder="searchPlaceholder" placeholder="搜尋和牛、海鮮、夜生活、Villa、急診..." class="w-full bg-slate-950 border border-slate-800 text-slate-100 placeholder-slate-500 text-xs rounded-xl pl-8 pr-7 py-2 focus:outline-none focus:border-amber-400/70 shadow-inner transition" />
           <button id="search-clear-btn" class="absolute right-2 text-slate-500 hover:text-slate-300 hidden text-xs p-1">
             <i class="fa-solid fa-circle-xmark"></i>
           </button>
@@ -462,7 +478,7 @@
     </div>
   </main>
 
-  <!-- ⭐ 會員中心重構彈窗 -->
+  <!-- ⭐ 會員中心重構彈窗（嚴格垂直與水平置中、白底風格切換鈕對應字色） -->
   <div id="auth-modal" class="fixed inset-0 z-50 glass-modal hidden flex items-center justify-center p-3.5">
     <div class="bg-slate-950 border border-amber-400/40 rounded-3xl w-full max-w-sm p-4 shadow-2xl relative text-center flex flex-col max-h-[90vh] overflow-hidden">
       
@@ -472,24 +488,24 @@
         <div class="w-12 h-12 bg-amber-400/10 border border-amber-400/30 text-amber-400 rounded-2xl flex items-center justify-center mx-auto mb-2 text-xl shadow-md">
           <i class="fa-solid fa-crown"></i>
         </div>
-        <h3 class="text-base font-black text-white mb-0.5">加入大V會員</h3>
-        <p class="text-xs text-slate-400 mb-4 leading-relaxed">登入會員解鎖專屬私房口袋名單、撰寫評論賺積分與 AI 管家諮詢服務！</p>
+        <h3 data-i18n="authTitle" class="text-base font-black text-white mb-0.5">加入大V會員</h3>
+        <p data-i18n="authSubtitle" class="text-xs text-slate-400 mb-4 leading-relaxed">登入會員解鎖專屬私房口袋名單、撰寫評論賺積分與 AI 管家諮詢服務！</p>
         
         <button id="btn-google-login" class="w-full bg-white hover:bg-slate-100 text-slate-900 py-2.5 px-3 rounded-xl font-bold text-xs flex items-center justify-center gap-2 shadow-sm transition mb-3">
           <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" class="w-4 h-4" alt="Google">
-          使用 Google 帳號一鍵登入
+          <span data-i18n="btnGoogleLogin">使用 Google 帳號一鍵登入</span>
         </button>
 
         <div class="flex items-center my-3">
           <div class="flex-grow border-t border-slate-800"></div>
-          <span class="px-2 text-[10px] text-slate-500 font-bold">或使用 Email 魔法精靈</span>
+          <span data-i18n="orMagic" class="px-2 text-[10px] text-slate-500 font-bold">或使用 Email 魔法精靈</span>
           <div class="flex-grow border-t border-slate-800"></div>
         </div>
 
         <div class="space-y-2">
-          <input type="email" id="magic-email-input" placeholder="輸入電子信箱（免記密碼）" class="w-full bg-white border-2 border-amber-400/70 text-slate-950 font-medium placeholder-slate-400 text-xs rounded-xl px-3.5 py-3 focus:outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-400/30 shadow-inner" />
+          <input type="email" id="magic-email-input" data-i18n-placeholder="emailPlaceholder" placeholder="輸入電子信箱（免記密碼）" class="w-full bg-white border-2 border-amber-400/70 text-slate-950 font-medium placeholder-slate-400 text-xs rounded-xl px-3.5 py-3 focus:outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-400/30 shadow-inner" />
           <button id="btn-magic-email" class="w-full bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-slate-950 font-black text-xs py-2.5 rounded-xl transition flex items-center justify-center gap-1.5 shadow-md">
-            <i class="fa-solid fa-wand-magic-sparkles text-slate-950"></i> 發送魔法登入連結
+            <i class="fa-solid fa-wand-magic-sparkles text-slate-950"></i> <span data-i18n="btnMagicEmail">發送魔法登入連結</span>
           </button>
         </div>
       </div>
@@ -498,7 +514,7 @@
       <div id="auth-modal-user-view" class="hidden text-left flex flex-col flex-1 overflow-hidden space-y-3">
         
         <!-- 頂部列：個人身分 + 右上角風格選單與關閉 -->
-        <div class="flex items-start justify-between gap-2 border-b border-slate-800/80 pb-2.5">
+        <div class="flex items-center justify-between gap-2 border-b border-slate-800/80 pb-2.5">
           <div class="flex items-center gap-2.5 min-w-0 flex-1">
             <img id="user-modal-avatar" src="" class="w-10 h-10 rounded-2xl ring-2 ring-amber-400 object-cover flex-shrink-0" />
             <div class="min-w-0 flex-1">
@@ -508,21 +524,21 @@
           </div>
 
           <div class="flex items-center gap-1.5 flex-shrink-0">
-            <!-- 🎨 視覺風格三態下拉選單 -->
+            <!-- ⭐ 視覺風格切換鍵（純白底盤 + 動態對應文字圖示色彩） -->
             <div class="relative">
-              <button id="btn-theme-dropdown" type="button" class="bg-slate-900 hover:bg-slate-800 border border-amber-400/40 text-amber-300 text-[10px] font-bold px-2 py-1 rounded-lg flex items-center gap-1 transition shadow-sm">
-                <i class="fa-solid fa-palette text-[10px]"></i>
-                <span id="current-theme-label">風格</span>
+              <button id="btn-theme-dropdown" type="button" class="bg-white border border-amber-400/60 text-slate-950 text-[10px] font-black px-2.5 py-1 rounded-lg flex items-center justify-center gap-1 transition shadow-sm">
+                <i id="current-theme-icon" class="fa-solid fa-palette text-[10px]"></i>
+                <span id="current-theme-label">暗夜</span>
                 <i class="fa-solid fa-chevron-down text-[8px] opacity-70"></i>
               </button>
-              <div id="theme-dropdown-menu" class="hidden absolute right-0 mt-1 w-36 bg-slate-900 border border-amber-400/40 rounded-xl shadow-2xl py-1 z-50 text-xs">
-                <button data-set-theme="dark" class="w-full text-left px-3 py-1.5 text-slate-200 hover:bg-slate-800 flex items-center gap-2 text-[11px] font-medium">
+              <div id="theme-dropdown-menu" class="hidden absolute right-0 mt-1 w-36 bg-white border border-amber-400/60 rounded-xl shadow-2xl py-1 z-50 text-xs">
+                <button data-set-theme="dark" class="w-full text-left px-3 py-1.5 text-[#020617] hover:bg-slate-100 flex items-center gap-2 text-[11px] font-bold">
                   <span class="w-2.5 h-2.5 rounded-full bg-slate-950 border border-amber-400"></span> 暗夜尊爵
                 </button>
-                <button data-set-theme="light" class="w-full text-left px-3 py-1.5 text-slate-200 hover:bg-slate-800 flex items-center gap-2 text-[11px] font-medium">
+                <button data-set-theme="light" class="w-full text-left px-3 py-1.5 text-[#EA580C] hover:bg-orange-50 flex items-center gap-2 text-[11px] font-bold">
                   <span class="w-2.5 h-2.5 rounded-full bg-orange-500 border border-white"></span> 暖陽金橘
                 </button>
-                <button data-set-theme="rose" class="w-full text-left px-3 py-1.5 text-slate-200 hover:bg-slate-800 flex items-center gap-2 text-[11px] font-medium">
+                <button data-set-theme="rose" class="w-full text-left px-3 py-1.5 text-[#84525C] hover:bg-rose-50 flex items-center gap-2 text-[11px] font-bold">
                   <span class="w-2.5 h-2.5 rounded-full bg-[#9E6B75] border border-rose-300"></span> 暮光玫瑰
                 </button>
               </div>
@@ -532,9 +548,9 @@
           </div>
         </div>
 
-        <!-- 升級進度條 -->
-        <div class="bg-slate-900/90 border border-amber-400/30 rounded-xl p-2.5 space-y-1.5">
-          <div class="flex items-center justify-between text-[11px]">
+        <!-- ⭐ 升級進度條槽（嚴格垂直置中對齊） -->
+        <div class="bg-slate-900/90 border border-amber-400/30 rounded-xl p-3 flex flex-col justify-center space-y-2">
+          <div class="flex items-center justify-between text-[11px] leading-tight">
             <span id="user-modal-level" class="font-bold text-amber-300 flex items-center gap-1">
               <i class="fa-solid fa-medal text-amber-400"></i> LV.1 探店初心者
             </span>
@@ -543,22 +559,24 @@
           <div class="w-full bg-slate-950 h-2 rounded-full overflow-hidden border border-slate-800">
             <div id="level-progress-fill" class="bg-gradient-to-r from-amber-500 to-amber-400 h-full rounded-full transition-all duration-500" style="width: 50%;"></div>
           </div>
-          <p id="level-diff-tip" class="text-[9px] text-slate-400 text-right">再累積 50 積分即可升級 LV.2 🎁</p>
+          <p id="level-diff-tip" class="text-[9px] text-slate-400 text-right leading-tight">再累積 50 積分即可升級 LV.2 🎁</p>
         </div>
 
-        <!-- 中間捷徑列：推播開關 + 任務揪團入口 -->
+        <!-- ⭐ 中間捷徑列：推播開關 + 任務揪團入口（嚴格垂直與水平置中） -->
         <div class="grid grid-cols-2 gap-2 text-xs">
-          <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-2 flex items-center justify-between">
-            <span class="text-[10px] font-bold text-slate-300 flex items-center gap-1">
-              <i class="fa-regular fa-bell text-amber-400 text-[10px]"></i> 推播
+          <div class="bg-slate-900/80 border border-slate-800 rounded-xl px-2.5 py-2 flex items-center justify-between">
+            <span class="text-[10px] font-bold text-slate-300 flex items-center gap-1.5 leading-none">
+              <i class="fa-regular fa-bell text-amber-400 text-[10px]"></i>
+              <span id="label-push-toggle" data-i18n="labelAlerts">推播</span>
             </span>
             <button id="push-toggle-btn" type="button" class="relative inline-flex h-4 w-8 flex-shrink-0 cursor-pointer rounded-full border border-transparent bg-slate-800 transition-colors duration-200 ease-in-out focus:outline-none" role="switch" aria-checked="false">
               <span id="push-toggle-thumb" class="pointer-events-none inline-block h-3.5 w-3.5 transform rounded-full bg-slate-400 shadow ring-0 transition duration-200 ease-in-out translate-x-0"></span>
             </button>
           </div>
 
-          <button id="btn-open-tasks-subview" type="button" class="bg-slate-900/80 hover:bg-slate-800 border border-amber-400/30 text-amber-300 rounded-xl p-2 flex items-center justify-center gap-1 text-[10px] font-bold transition active:scale-95 shadow-sm">
-            <i class="fa-solid fa-trophy text-amber-400 text-[10px]"></i> 特殊任務 & 揪團 ➔
+          <button id="btn-open-tasks-subview" type="button" class="bg-slate-900/80 hover:bg-slate-800 border border-amber-400/30 text-amber-300 rounded-xl px-2 py-2 flex items-center justify-center gap-1 text-[10px] font-bold transition active:scale-95 shadow-sm leading-none">
+            <i class="fa-solid fa-trophy text-amber-400 text-[10px]"></i>
+            <span id="label-tasks-btn" data-i18n="btnTasksAndMeetup" class="truncate">特殊任務 & 揪團 ➔</span>
           </button>
         </div>
 
@@ -566,7 +584,8 @@
         <div class="flex-1 flex flex-col min-h-0 border-t border-slate-800/80 pt-2">
           <div class="flex items-center justify-between mb-1.5">
             <h5 class="text-xs font-black text-amber-300 flex items-center gap-1">
-              <i class="fa-solid fa-heart text-rose-500 text-[11px]"></i> 我的私房口袋清單
+              <i class="fa-solid fa-heart text-rose-500 text-[11px]"></i>
+              <span data-i18n="myFavorites">我的私房口袋清單</span>
             </h5>
             <span id="fav-count-badge" class="text-[10px] text-slate-400 font-mono">0 個收藏</span>
           </div>
@@ -576,7 +595,7 @@
         </div>
 
         <!-- 底部登出按鈕 -->
-        <button id="btn-logout" class="w-full bg-rose-950/30 border border-rose-800/40 hover:bg-rose-900/40 text-rose-300 font-bold text-[11px] py-1.5 rounded-xl transition mt-auto">
+        <button id="btn-logout" data-i18n="btnLogout" class="w-full bg-rose-950/30 border border-rose-800/40 hover:bg-rose-900/40 text-rose-300 font-bold text-[11px] py-1.5 rounded-xl transition mt-auto">
           登出帳號
         </button>
       </div>
@@ -585,9 +604,9 @@
       <div id="auth-modal-tasks-view" class="hidden text-left flex flex-col flex-1 overflow-hidden space-y-3 relative">
         <div class="flex items-center justify-between border-b border-slate-800/80 pb-2">
           <button id="btn-back-to-user-view" class="text-amber-300 hover:text-amber-200 text-xs font-bold flex items-center gap-1">
-            <i class="fa-solid fa-arrow-left text-[10px]"></i> 返回中心
+            <i class="fa-solid fa-arrow-left text-[10px]"></i> <span data-i18n="btnBackCenter">返回中心</span>
           </button>
-          <span class="text-xs font-bold text-white">探店任務與吃貨同行</span>
+          <span data-i18n="taskSubTitle" class="text-xs font-bold text-white">探店任務與吃貨同行</span>
           <button id="close-auth-btn-tasks" class="w-7 h-7 bg-slate-900 rounded-full text-slate-400 hover:text-white flex items-center justify-center text-xs">✕</button>
         </div>
 
@@ -595,28 +614,28 @@
           <!-- 任務一：發表探店評論 -->
           <div id="task-card-comment" class="bg-slate-900 border border-slate-800 hover:border-amber-400/50 rounded-xl p-3 space-y-1 cursor-pointer transition active:scale-98">
             <div class="flex items-center justify-between font-bold text-white">
-              <span class="text-amber-300">✍️ 發表探店評論</span>
+              <span class="text-amber-300" data-i18n="taskCommentTitle">✍️ 發表探店評論</span>
               <span class="text-amber-400">+20 PTS</span>
             </div>
-            <p class="text-[10px] text-slate-400">在任何卡片下方點擊「寫評論」，發表真實心得即刻累積吃貨積分。（點擊前往列表 ➔）</p>
+            <p data-i18n="taskCommentDesc" class="text-[10px] text-slate-400">在任何卡片下方點擊「寫評論」，發表真實心得即刻累積吃貨積分。（點擊前往列表 ➔）</p>
           </div>
 
           <!-- 任務二：推薦在地私房好店 -->
           <div id="task-card-recommend" class="bg-slate-900 border border-slate-800 hover:border-amber-400/50 rounded-xl p-3 space-y-1 cursor-pointer transition active:scale-98">
             <div class="flex items-center justify-between font-bold text-white">
-              <span class="text-amber-300">📮 推薦在地私房好店</span>
+              <span class="text-amber-300" data-i18n="taskRecTitle">📮 推薦在地私房好店</span>
               <span class="text-amber-400">+100 PTS</span>
             </div>
-            <p class="text-[10px] text-slate-400">填寫私房名店與推薦原因，站長審核入庫即贈送百點與專屬銘牌！（點擊填寫推薦 ➔）</p>
+            <p data-i18n="taskRecDesc" class="text-[10px] text-slate-400">填寫私房名店與推薦原因，站長審核入庫即贈送百點與專屬銘牌！（點擊填寫推薦 ➔）</p>
           </div>
 
           <!-- 任務三：同行揪團 -->
           <div class="bg-slate-900 border border-amber-400/40 rounded-xl p-3 space-y-1.5">
             <div class="flex items-center justify-between font-bold text-amber-300">
-              <span>👥 雙人同行約吃特惠</span>
-              <span class="bg-amber-400 text-slate-950 text-[9px] font-black px-1.5 py-0.5 rounded">即將解鎖</span>
+              <span data-i18n="taskGroupTitle">👥 雙人同行約吃特惠</span>
+              <span data-i18n="badgeComingSoon" class="bg-amber-400 text-slate-950 text-[9px] font-black px-1.5 py-0.5 rounded">即將解鎖</span>
             </div>
-            <p class="text-[10px] text-slate-300">發起同行邀請碼與好友一同造訪合作店家，出示 App 畫面即可獲贈特約招待！</p>
+            <p data-i18n="taskGroupDesc" class="text-[10px] text-slate-300">發起同行邀請碼與好友一同造訪合作店家，出示 App 畫面即可獲贈特約招待！</p>
           </div>
         </div>
       </div>
@@ -629,14 +648,14 @@
     <div class="bg-slate-950 border border-amber-400/50 rounded-3xl w-full max-w-sm p-4 shadow-2xl relative text-left flex flex-col space-y-3">
       <div class="flex items-center justify-between border-b border-slate-800 pb-2">
         <h4 class="font-bold text-sm text-white flex items-center gap-1.5">
-          <i class="fa-solid fa-paper-plane text-amber-400"></i> 推薦在地私房好店
+          <i class="fa-solid fa-paper-plane text-amber-400"></i> <span data-i18n="recModalTitle">推薦在地私房好店</span>
         </h4>
         <button id="close-recommend-btn" class="w-7 h-7 bg-slate-900 rounded-full text-slate-400 hover:text-white flex items-center justify-center text-xs">✕</button>
       </div>
 
       <div class="space-y-2.5 text-xs">
         <div>
-          <label class="block text-[11px] font-bold text-slate-300 mb-1">所在城市 <span class="text-slate-500 font-normal">* 必填</span></label>
+          <label class="block text-[11px] font-bold text-slate-300 mb-1"><span data-i18n="recCityLabel">所在城市</span> <span class="text-slate-500 font-normal">* 必填</span></label>
           <select id="rec-city" class="w-full bg-white border-2 border-amber-400/60 text-slate-950 rounded-xl p-2.5 text-xs font-bold focus:outline-none">
             <option value="manila">🏙️ 馬尼拉 (Metro Manila)</option>
             <option value="cebu">🌊 宿霧 (Metro Cebu)</option>
@@ -650,18 +669,18 @@
         </div>
 
         <div>
-          <label class="block text-[11px] font-bold text-slate-300 mb-1">店家名稱 / Google Maps 連結 <span class="text-slate-500 font-normal">* 必填</span></label>
-          <input type="text" id="rec-store-name" placeholder="例：京都炭火燒肉 或 貼上地圖連結" class="w-full bg-white border-2 border-amber-400/60 text-slate-950 rounded-xl p-2.5 text-xs font-medium placeholder-slate-400 focus:outline-none focus:border-amber-500" />
+          <label class="block text-[11px] font-bold text-slate-300 mb-1"><span data-i18n="recStoreLabel">店家名稱 / Google Maps 連結</span> <span class="text-slate-500 font-normal">* 必填</span></label>
+          <input type="text" id="rec-store-name" data-i18n-placeholder="recStorePlaceholder" placeholder="例：京都炭火燒肉 或 貼上地圖連結" class="w-full bg-white border-2 border-amber-400/60 text-slate-950 rounded-xl p-2.5 text-xs font-medium placeholder-slate-400 focus:outline-none focus:border-amber-500" />
         </div>
 
         <div>
-          <label class="block text-[11px] font-bold text-slate-300 mb-1">推薦原因 / 必點招牌菜 <span class="text-slate-500 font-normal">* 必填</span></label>
-          <textarea id="rec-reason" rows="3" placeholder="例：生牛肉與厚切牛舌極致鮮甜，老闆熱情招待！" class="w-full bg-white border-2 border-amber-400/60 text-slate-950 rounded-xl p-2.5 text-xs font-medium placeholder-slate-400 focus:outline-none focus:border-amber-500"></textarea>
+          <label class="block text-[11px] font-bold text-slate-300 mb-1"><span data-i18n="recReasonLabel">推薦原因 / 必點招牌菜</span> <span class="text-slate-500 font-normal">* 必填</span></label>
+          <textarea id="rec-reason" rows="3" data-i18n-placeholder="recReasonPlaceholder" placeholder="例：生牛肉與厚切牛舌極致鮮甜，老闆熱情招待！" class="w-full bg-white border-2 border-amber-400/60 text-slate-950 rounded-xl p-2.5 text-xs font-medium placeholder-slate-400 focus:outline-none focus:border-amber-500"></textarea>
         </div>
       </div>
 
       <button id="btn-submit-recommend" type="button" class="w-full py-2.5 rounded-xl bg-gradient-to-r from-amber-400 to-amber-500 text-slate-950 font-black text-xs shadow-md transition active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed">
-        確認送出 (+100 PTS 審核)
+        <span data-i18n="btnSubmitRec">確認送出 (+100 PTS 審核)</span>
       </button>
     </div>
   </div>
@@ -672,7 +691,7 @@
       <div class="flex items-center justify-between border-b border-slate-800 pb-3">
         <div>
           <h3 id="comment-modal-title" class="font-bold text-sm text-white truncate">店家留言討論</h3>
-          <p class="text-[10px] text-amber-400/80">分享您的真實探店評語與心得</p>
+          <p data-i18n="commentSub" class="text-[10px] text-amber-400/80">分享您的真實探店評語與心得</p>
         </div>
         <button id="close-comment-btn" type="button" class="relative z-50 w-10 h-10 bg-slate-850 hover:bg-slate-800 active:bg-slate-700 rounded-full text-slate-300 active:text-white flex items-center justify-center text-sm font-black cursor-pointer flex-shrink-0 touch-manipulation select-none">✕</button>
       </div>
@@ -683,22 +702,22 @@
 
       <div class="border-t border-slate-800 pt-3 flex flex-col gap-2 bg-slate-950">
         <div class="flex items-center gap-1.5">
-          <input type="text" id="comment-input-text" placeholder="寫下您的真實體驗與點評..." class="flex-1 bg-white border-2 border-amber-400/70 text-slate-950 font-medium placeholder-slate-400 text-xs rounded-xl px-3.5 py-2.5 focus:outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-400/30 shadow-inner" />
+          <input type="text" id="comment-input-text" data-i18n-placeholder="commentPlaceholder" placeholder="寫下您的真實體驗與點評..." class="flex-1 bg-white border-2 border-amber-400/70 text-slate-950 font-medium placeholder-slate-400 text-xs rounded-xl px-3.5 py-2.5 focus:outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-400/30 shadow-inner" />
           <button id="btn-submit-comment" type="button" class="relative z-30 bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 active:from-amber-500 active:to-amber-600 text-slate-950 font-black text-xs px-4 py-2.5 rounded-xl transition active:scale-95 shadow-md shadow-amber-500/20 whitespace-nowrap cursor-pointer touch-manipulation">
-            發表 (+20分)
+            <span data-i18n="btnSubmitComment">發表 (+20分)</span>
           </button>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- ⭐ 專屬大V可拖曳 AI 懸浮球 (Draggable & Snappable FAB) -->
-  <button id="chat-fab" class="fixed rounded-full bg-slate-950 border-2 border-amber-400 shadow-[0_0_25px_-2px_rgba(245,158,11,0.7)] overflow-hidden flex items-center justify-center cursor-pointer z-40 active:scale-95 transition-shadow select-none touch-none" style="width:60px; height:60px; right:16px; bottom:140px;" title="大V旅遊管家">
+  <!-- ⭐ 專屬大V可拖曳 AI 懸浮球 -->
+  <button id="chat-fab" class="fixed rounded-full bg-slate-950 border-2 border-amber-400 shadow-[0_0_25px_-2px_rgba(245,158,11,0.7)] overflow-hidden flex items-center justify-center cursor-pointer z-40 active:scale-95 transition-all select-none touch-none" style="width:60px; height:60px; right:16px; bottom:140px;" title="大V旅遊管家">
     <img src="ai-avatar.jpg" alt="AI 管家" class="w-full h-full object-cover pointer-events-none" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop';" />
   </button>
 
-  <!-- ⭐ AI 管家面板 (高度充足防壓扁、適配多主題色彩) -->
-  <div id="chat-modal" class="fixed bottom-28 right-4 w-84 max-w-[calc(100vw-32px)] bg-slate-950 rounded-3xl shadow-2xl border border-amber-400/40 flex flex-col z-50 overflow-hidden hidden" style="height: 60vh; min-height: 400px; max-height: 540px;">
+  <!-- ⭐ AI 管家面板 -->
+  <div id="chat-modal" class="fixed bottom-24 right-4 w-84 max-w-[calc(100vw-32px)] bg-slate-950 rounded-3xl shadow-2xl border border-amber-400/50 flex flex-col z-50 overflow-hidden hidden" style="height: 58vh; min-height: 400px; max-height: 540px;">
     <div class="bg-slate-900 border-b border-amber-500/20 text-white p-3 flex justify-between items-center flex-shrink-0">
       <div class="flex items-center gap-2">
         <div class="w-7 h-7 rounded-full overflow-hidden border border-amber-400 bg-slate-950">
@@ -713,7 +732,7 @@
     </div>
     <div id="chat-messages" class="flex-1 p-3.5 overflow-y-auto space-y-2.5 text-xs bg-slate-950 hide-scrollbar"></div>
     <div class="p-2.5 bg-slate-900 border-t border-slate-800 flex gap-1.5 items-center flex-shrink-0">
-      <input type="text" id="chat-input" placeholder="問點什麼吧（例：馬尼拉海鮮酒家、頂級和牛...）" class="flex-1 bg-white border-2 border-amber-400/70 text-slate-950 font-medium placeholder-slate-400 text-xs rounded-xl px-3.5 py-2.5 focus:outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-400/30 shadow-inner disabled:opacity-50 disabled:cursor-not-allowed" />
+      <input type="text" id="chat-input" data-i18n-placeholder="chatPlaceholder" placeholder="問點什麼吧（例：馬尼拉海鮮酒家、頂級和牛...）" class="flex-1 bg-white border-2 border-amber-400/70 text-slate-950 font-medium placeholder-slate-400 text-xs rounded-xl px-3.5 py-2.5 focus:outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-400/30 shadow-inner disabled:opacity-50 disabled:cursor-not-allowed" />
       <button id="btn-send-chat" class="w-9 h-9 rounded-full bg-amber-400 hover:bg-amber-300 text-slate-950 flex items-center justify-center text-xs font-black transition active:scale-95 shadow-sm disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0">
         <i class="fa-solid fa-paper-plane"></i>
       </button>
@@ -749,13 +768,354 @@
     const db = getFirestore(app);
 
     const VAPID_KEY = "BFcmRKQZhSkc4k6FE3qkr85YevC3aKCSfNKNHi1z_qJJGXVmOoY-WWdx2A6QxFCZFTYqhQR7zSjfO3hYqXEWKXY";
+    const AI_WORKER_URL = "https://food-ai-assistant.vhuang904.workers.dev";
 
-    async function requestPushNotificationPermission(user) {
+    // ⭐ 完整三語字典系統（繁體中文 / English / Tagalog）
+    const I18N_DICT = {
+      'zh-TW': {
+        appTitle: '大V的旅遊窩',
+        appSubtitle: '菲律賓精緻生活 & 海島漫遊地圖',
+        btnLogin: '登入',
+        btnMember: '會員',
+        searchPlaceholder: '搜尋和牛、海鮮、夜生活、Villa、急診...',
+        shareBtn: '分享',
+        tabMetro: '都會生活圈',
+        tabIsland: '渡假海島專區',
+        navFood: '美食饗宴',
+        navSpot: '景點導覽',
+        navMedical: '醫療藥局',
+        navNews: '精選優惠',
+        navNewsIsland: '海島特惠',
+        navFoodIsland: '美食/度假',
+        btnGrab: 'Grab 點餐外送',
+        btnWebsite: '官網 / 粉專',
+        btnCall: '撥打電話',
+        btnNav: '路線導航',
+        btnComment: '寫評論 +20',
+        badgeCurated: '站長私房嚴選',
+        badgeGoogleTop: 'Google 高分嚴選',
+        badgeCommunity: '社群大眾口碑',
+        mustTryBadge: '必點招牌',
+        addressEmpty: '地址收集中',
+        phoneEmpty: '暫無電話',
+        noResult: '目前暫無對應項目',
+        noResultSub: '我們正為您持續親訪收錄更多精選！',
+        toastSwitch: '已切換語言：',
+        spotsCountUnit: '個景點',
+        placesCountUnit: '個地點',
+        medicalCountUnit: '所機構',
+        newsCountUnit: '個特惠',
+        city_manila: '馬尼拉',
+        city_cebu: '宿霧',
+        city_davao: '達沃',
+        city_boracay: '長灘島',
+        city_palawan: '巴拉望',
+        city_bohol: '薄荷島',
+        city_siargao: '錫亞高島',
+        city_samal: '薩馬爾島',
+        labelAlerts: '推播',
+        btnTasksAndMeetup: '特殊任務 & 揪團 ➔',
+        myFavorites: '我的私房口袋清單',
+        btnLogout: '登出帳號',
+        authTitle: '加入大V會員',
+        authSubtitle: '登入會員解鎖專屬私房口袋名單、撰寫評論賺積分與 AI 管家諮詢服務！',
+        btnGoogleLogin: '使用 Google 帳號一鍵登入',
+        orMagic: '或使用 Email 魔法精靈',
+        emailPlaceholder: '輸入電子信箱（免記密碼）',
+        btnMagicEmail: '發送魔法登入連結',
+        btnBackCenter: '返回中心',
+        taskSubTitle: '探店任務與吃貨同行',
+        taskCommentTitle: '✍️ 發表探店評論',
+        taskCommentDesc: '在任何卡片下方點擊「寫評論」，發表真實心得即刻累積吃貨積分。（點擊前往列表 ➔）',
+        taskRecTitle: '📮 推薦在地私房好店',
+        taskRecDesc: '填寫私房名店與推薦原因，站長審核入庫即贈送百點與專屬銘牌！（點擊填寫推薦 ➔）',
+        taskGroupTitle: '👥 雙人同行約吃特惠',
+        badgeComingSoon: '即將解鎖',
+        taskGroupDesc: '發起同行邀請碼與好友一同造訪合作店家，出示 App 畫面即可獲贈特約招待！',
+        recModalTitle: '推薦在地私房好店',
+        recCityLabel: '所在城市',
+        recStoreLabel: '店家名稱 / Google Maps 連結',
+        recStorePlaceholder: '例：京都炭火燒肉 或 貼上地圖連結',
+        recReasonLabel: '推薦原因 / 必點招牌菜',
+        recReasonPlaceholder: '例：生牛肉與厚切牛舌極致鮮甜，老闆熱情招待！',
+        btnSubmitRec: '確認送出 (+100 PTS 審核)',
+        commentSub: '分享您的真實探店評語與心得',
+        commentPlaceholder: '寫下您的真實體驗與點評...',
+        btnSubmitComment: '發表 (+20分)',
+        chatPlaceholder: '問點什麼吧（例：馬尼拉海鮮酒家、頂級和牛...）'
+      },
+      'en': {
+        appTitle: 'BigV Manila Lux',
+        appSubtitle: 'Philippine Premium Life & Island Guide',
+        btnLogin: 'Sign In',
+        btnMember: 'Member',
+        searchPlaceholder: 'Search Wagyu, Seafood, Nightlife, Villa, Medical...',
+        shareBtn: 'Share',
+        tabMetro: 'Metro Life',
+        tabIsland: 'Island Escapes',
+        navFood: 'Dining',
+        navSpot: 'Attractions',
+        navMedical: 'Medical',
+        navNews: 'Exclusive Deals',
+        navNewsIsland: 'Island Deals',
+        navFoodIsland: 'Food/Resort',
+        btnGrab: 'Grab Delivery',
+        btnWebsite: 'Website',
+        btnCall: 'Call Store',
+        btnNav: 'Directions',
+        btnComment: 'Review +20',
+        badgeCurated: 'Curated by BigV',
+        badgeGoogleTop: 'Google Top Pick',
+        badgeCommunity: 'Community Pick',
+        mustTryBadge: 'Signature Dish',
+        addressEmpty: 'Address updating',
+        phoneEmpty: 'No phone',
+        noResult: 'No items available',
+        noResultSub: 'We are continually reviewing more spots!',
+        toastSwitch: 'Language set to: ',
+        spotsCountUnit: 'Attractions',
+        placesCountUnit: 'Places',
+        medicalCountUnit: 'Facilities',
+        newsCountUnit: 'Offers',
+        city_manila: 'Manila',
+        city_cebu: 'Cebu',
+        city_davao: 'Davao',
+        city_boracay: 'Boracay',
+        city_palawan: 'Palawan',
+        city_bohol: 'Bohol',
+        city_siargao: 'Siargao',
+        city_samal: 'Samal',
+        labelAlerts: 'Alerts',
+        btnTasksAndMeetup: 'Quests & Meetups ➔',
+        myFavorites: 'My Curated List',
+        btnLogout: 'Log Out',
+        authTitle: 'Join BigV VIP',
+        authSubtitle: 'Unlock your private wishlist, earn points via reviews, and access AI concierge!',
+        btnGoogleLogin: 'Sign in with Google',
+        orMagic: 'Or use Email Magic Link',
+        emailPlaceholder: 'Enter your email address',
+        btnMagicEmail: 'Send Magic Link',
+        btnBackCenter: 'Back',
+        taskSubTitle: 'Quests & Meetups',
+        taskCommentTitle: '✍️ Post Store Review',
+        taskCommentDesc: 'Click "Review" under any card to share your dining experience & earn points.',
+        taskRecTitle: '📮 Recommend a Spot',
+        taskRecDesc: 'Recommend your favorite hidden gem. Earn 100 PTS upon approval!',
+        taskGroupTitle: '👥 Pair Dining Specials',
+        badgeComingSoon: 'Coming Soon',
+        taskGroupDesc: 'Dine with friends using special invite codes and enjoy VIP treats!',
+        recModalTitle: 'Recommend a Hidden Gem',
+        recCityLabel: 'City',
+        recStoreLabel: 'Store Name / Maps Link',
+        recStorePlaceholder: 'e.g. Kyoto Charcoal Grill or Google Maps link',
+        recReasonLabel: 'Reason / Signature Dishes',
+        recReasonPlaceholder: 'e.g. Outstanding Wagyu tongue and warm hospitality!',
+        btnSubmitRec: 'Submit (+100 PTS)',
+        commentSub: 'Share your genuine dining review',
+        commentPlaceholder: 'Share your experience...',
+        btnSubmitComment: 'Post (+20 PTS)',
+        chatPlaceholder: 'Ask anything (e.g. Manila seafood, best wagyu...)'
+      },
+      'tl': {
+        appTitle: 'Gabay Ni BigV',
+        appSubtitle: 'Maringal na Pamumuhay at Isla sa Pilipinas',
+        btnLogin: 'Mag-login',
+        btnMember: 'Miyembro',
+        searchPlaceholder: 'Maghanap ng Wagyu, Pagkaing-dagat, Ospital, Villa...',
+        shareBtn: 'Ibahagi',
+        tabMetro: 'Sentro ng Lungsod',
+        tabIsland: 'Mga Isla',
+        navFood: 'Kainan',
+        navSpot: 'Pasyalan',
+        navMedical: 'Medikal',
+        navNews: 'Mga Alok',
+        navNewsIsland: 'Alok sa Isla',
+        navFoodIsland: 'Pagkain/Resort',
+        btnGrab: 'Grab Delivery',
+        btnWebsite: 'Website',
+        btnCall: 'Tumawag',
+        btnNav: 'Direksyon',
+        btnComment: 'Puna +20',
+        badgeCurated: 'Pili ni BigV',
+        badgeGoogleTop: 'Google Top Pick',
+        badgeCommunity: 'Komunidad',
+        mustTryBadge: 'Espesyal na Ulam',
+        addressEmpty: 'Ina-update ang tirahan',
+        phoneEmpty: 'Walang telepono',
+        noResult: 'Walang nahanap na item',
+        noResultSub: 'Patuloy kaming naghahanap ng pinakamahusay na lugar!',
+        toastSwitch: 'Wika ay napalitan sa: ',
+        spotsCountUnit: 'Pasyalan',
+        placesCountUnit: 'Lugar',
+        medicalCountUnit: 'Klinika/Ospital',
+        newsCountUnit: 'Alok',
+        city_manila: 'Maynila',
+        city_cebu: 'Cebu',
+        city_davao: 'Davao',
+        city_boracay: 'Boracay',
+        city_palawan: 'Palawan',
+        city_bohol: 'Bohol',
+        city_siargao: 'Siargao',
+        city_samal: 'Samal',
+        labelAlerts: 'Abiso',
+        btnTasksAndMeetup: 'Mga Misyon ➔',
+        myFavorites: 'Aking Wishlist',
+        btnLogout: 'Mag-logout',
+        authTitle: 'Sumali sa BigV VIP',
+        authSubtitle: 'I-unlock ang wishlist, kumita ng puntos sa mga komento, at makipag-chat sa AI!',
+        btnGoogleLogin: 'Mag-login gamit ang Google',
+        orMagic: 'O gamitin ang Magic Link sa Email',
+        emailPlaceholder: 'Ilagay ang iyong email',
+        btnMagicEmail: 'Ipadala ang Magic Link',
+        btnBackCenter: 'Bumalik',
+        taskSubTitle: 'Mga Misyon at Barkada',
+        taskCommentTitle: '✍️ Mag-iwan ng Puna',
+        taskCommentDesc: 'Pindutin ang "Puna" sa ilalim ng card upang kumita ng puntos.',
+        taskRecTitle: '📮 Magmungkahi ng Lugar',
+        taskRecDesc: 'Ibahagi ang paboritong kainan at kumita ng 100 PTS kapag naaprubahan!',
+        taskGroupTitle: '👥 Promo sa Magkasama',
+        badgeComingSoon: 'Malapit Na',
+        taskGroupDesc: 'Sumama sa mga kaibigan at tanggapin ang espesyal na regalo sa kainan!',
+        recModalTitle: 'Magmungkahi ng Masarap na Kainan',
+        recCityLabel: 'Lungsod',
+        recStoreLabel: 'Pangalan ng Tindahan / Maps Link',
+        recStorePlaceholder: 'Hal: Kyoto Charcoal Grill o link ng Google Maps',
+        recReasonLabel: 'Dahilan / Sikat na Ulam',
+        recReasonPlaceholder: 'Hal: Masarap na Wagyu at napakabait na serbisyo!',
+        btnSubmitRec: 'Ipadala (+100 PTS)',
+        commentSub: 'Ibahagi ang iyong tunay na karanasan',
+        commentPlaceholder: 'Isulat ang iyong komento...',
+        btnSubmitComment: 'Ipaskil (+20 PTS)',
+        chatPlaceholder: 'Magtanong kahit ano (Hal: Seafood sa Manila...)'
+      }
+    };
+
+    // ⭐ 智慧寬鬆搜尋同義詞字典（完整恢復）
+    const SEARCH_SYNONYMS = {
+      '牛排': ['steak', 'beef', 'wagyu', '和牛', '肋眼', 'ribeye', 'western', '排餐', '牛'],
+      'steak': ['牛排', 'beef', 'wagyu', '和牛', 'ribeye'],
+      '和牛': ['wagyu', 'beef', 'steak', '牛排'],
+      '火鍋': ['hotpot', 'hot pot', 'shabu', '麻辣', '火锅', '鍋'],
+      'hotpot': ['火鍋', 'shabu', '麻辣'],
+      '海鮮': ['seafood', 'crab', 'lobster', 'shrimp', 'prawn', 'fish', '螃蟹', '龍蝦', '蝦', '魚', 'dampa'],
+      'seafood': ['海鮮', 'crab', 'lobster', 'shrimp', 'fish'],
+      '日料': ['japanese', 'sushi', 'sashimi', 'yaki', 'teppan', '壽司', '生魚片', '日式'],
+      '中餐': ['chinese', 'dim sum', '粵菜', '川菜', '中式', '點心'],
+      '早午餐': ['brunch', 'breakfast', 'cafe', '咖啡', '甜點', '鬆餅'],
+      '酒吧': ['bar', 'nightlife', 'club', 'lounge', '夜生活', '調酒'],
+      '燒肉': ['yakiniku', 'bbq', 'barbecue', '烤肉', '韓式烤肉', 'korean bbq']
+    };
+
+    function expandSearchKeywords(query) {
+      const q = query.toLowerCase().trim();
+      const terms = [q];
+      for (const [key, synonyms] of Object.entries(SEARCH_SYNONYMS)) {
+        if (q.includes(key.toLowerCase()) || synonyms.some(s => s.toLowerCase() === q)) {
+          terms.push(key.toLowerCase(), ...synonyms.map(s => s.toLowerCase()));
+        }
+      }
+      return Array.from(new Set(terms));
+    }
+
+    // ⭐ 網址深層連結直達參數（完整恢復）
+    const urlParams = new URLSearchParams(window.location.search);
+    const deepTab = urlParams.get('tab');
+    const deepCity = urlParams.get('city');
+    const deepSub = urlParams.get('sub');
+
+    let currentDimension = sessionStorage.getItem('ph_dim') || 'cities';
+    let currentCity = localStorage.getItem('ph_app_city') || 'manila';
+    let currentMainTab = sessionStorage.getItem('ph_nav_tab') || 'map';
+    let currentSubFilter = sessionStorage.getItem('ph_nav_sub') || 'all';
+    let currentSearchQuery = '';
+    let currentLang = localStorage.getItem('ph_app_lang') || 'zh-TW';
+
+    if (deepCity) {
+      currentCity = deepCity.toLowerCase().trim();
+      currentDimension = isIslandMode(currentCity) ? 'islands' : 'cities';
+      sessionStorage.setItem('ph_dim', currentDimension);
+      localStorage.setItem('ph_app_city', currentCity);
+    }
+    if (deepTab && ['map', 'attraction', 'medical', 'news'].includes(deepTab)) {
+      currentMainTab = deepTab;
+      sessionStorage.setItem('ph_nav_tab', currentMainTab);
+    }
+    if (deepSub) {
+      currentSubFilter = deepSub;
+      sessionStorage.setItem('ph_nav_sub', currentSubFilter);
+    }
+
+    let allRestaurants = [];
+    let allAttractions = [];
+    let allMedical = [];
+    let allNews = [];
+
+    let currentUser = null;
+    let currentUserProfile = { points: 50, level: 'LV.1 探店初心者' };
+    let userFavoritesSet = new Set(JSON.parse(localStorage.getItem('bigv_favorites') || '[]'));
+
+    // 全站多語系遍歷與切換機制
+    function applyLanguage(lang) {
+      currentLang = lang;
+      localStorage.setItem('ph_app_lang', lang);
+      document.documentElement.lang = lang;
+      const dict = I18N_DICT[lang] || I18N_DICT['zh-TW'];
+
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const k = el.getAttribute('data-i18n');
+        if (dict[k]) el.textContent = dict[k];
+      });
+
+      document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+        const k = el.getAttribute('data-i18n-placeholder');
+        if (dict[k]) el.placeholder = dict[k];
+      });
+
+      const langSelect = document.getElementById('lang-select');
+      if (langSelect && langSelect.value !== lang) langSelect.value = lang;
+
+      renderRegionPills();
+      renderSubFilterBar();
+      renderContent();
+    }
+
+    const langSelectEl = document.getElementById('lang-select');
+    if (langSelectEl) {
+      langSelectEl.addEventListener('change', (e) => {
+        applyLanguage(e.target.value);
+        showToast(`${I18N_DICT[e.target.value]?.toastSwitch || '已切換語言：'}${e.target.selectedOptions[0].text}`, 'fa-globe');
+      });
+    }
+
+    // 推播開關同步與手動點擊切換
+    const pushToggleBtn = document.getElementById('push-toggle-btn');
+    const pushToggleThumb = document.getElementById('push-toggle-thumb');
+
+    function updatePushToggleUI(isActive) {
+      if (!pushToggleBtn || !pushToggleThumb) return;
+      pushToggleBtn.setAttribute('aria-checked', isActive ? 'true' : 'false');
+      if (isActive) {
+        pushToggleBtn.classList.remove('bg-slate-800');
+        pushToggleBtn.classList.add('bg-amber-400');
+        pushToggleThumb.classList.remove('translate-x-0', 'bg-slate-400');
+        pushToggleThumb.classList.add('translate-x-4', 'bg-slate-950');
+      } else {
+        pushToggleBtn.classList.remove('bg-amber-400');
+        pushToggleBtn.classList.add('bg-slate-800');
+        pushToggleThumb.classList.remove('translate-x-4', 'bg-slate-950');
+        pushToggleThumb.classList.add('translate-x-0', 'bg-slate-400');
+      }
+    }
+
+    async function requestPushNotificationPermission(user, isManual = false) {
       if (!('Notification' in window) || !('serviceWorker' in navigator)) return;
       try {
-        const initialPermission = Notification.permission;
         const permission = await Notification.requestPermission();
-        if (permission !== 'granted') return;
+        if (permission !== 'granted') {
+          updatePushToggleUI(false);
+          if (isManual) showToast('未開啟推播授權，請至瀏覽器設定允許通知', 'fa-bell-slash');
+          return;
+        }
 
         const registration = await navigator.serviceWorker.ready;
         const messaging = getMessaging(app);
@@ -765,8 +1125,7 @@
         });
 
         if (currentToken) {
-          const subRef = doc(db, "push_subscriptions", user.uid);
-          await setDoc(subRef, {
+          await setDoc(doc(db, "push_subscriptions", user.uid), {
             uid: user.uid,
             email: user.email || '',
             displayName: user.displayName || '',
@@ -775,32 +1134,44 @@
             updatedAt: new Date().toISOString()
           }, { merge: true });
 
-          if (initialPermission === 'default') {
-            showToast('🎉 已成功開啟最新優惠與探店推播！', 'fa-bell');
-          }
+          updatePushToggleUI(true);
+          if (isManual) showToast('🎉 已成功開啟特約門市與即時優惠推播！', 'fa-bell');
         }
       } catch (err) {
-        console.warn('[Push] 取得推播 Token 失敗:', err);
+        console.warn('[Push] 授權或 Token 取得異常:', err);
+        updatePushToggleUI(false);
       }
     }
 
-    const AI_WORKER_URL = "https://food-ai-assistant.vhuang904.workers.dev";
-    let currentUser = null;
-    let currentUserProfile = { points: 50, level: 'LV.1 探店初心者' };
+    if (pushToggleBtn) {
+      pushToggleBtn.addEventListener('click', () => {
+        if (!currentUser) {
+          showToast('請先登入會員以管理推播設定', 'fa-lock');
+          return;
+        }
+        const isCurrentActive = pushToggleBtn.getAttribute('aria-checked') === 'true';
+        if (isCurrentActive) {
+          updatePushToggleUI(false);
+          showToast('已暫停即時推播提醒', 'fa-bell-slash');
+        } else {
+          requestPushNotificationPermission(currentUser, true);
+        }
+      });
+    }
 
     // 8 大標準區域定義
     const REGION_CONFIG = {
       cities: [
-        { id: 'manila', name: '馬尼拉', name_en: 'Manila', fullName: '🏙️ 馬尼拉 (Metro Manila)', lat: 14.5995, lng: 120.9842 },
-        { id: 'cebu', name: '宿霧', name_en: 'Cebu', fullName: '🌊 宿霧 (Metro Cebu)', lat: 10.3157, lng: 123.8854 },
-        { id: 'davao', name: '達沃', name_en: 'Davao', fullName: '🌺 達沃市 (Davao City)', lat: 7.0731, lng: 125.6128 }
+        { id: 'manila', name: '馬尼拉', name_en: 'Manila', fullName: '🏙️ 馬尼拉 (Metro Manila)' },
+        { id: 'cebu', name: '宿霧', name_en: 'Cebu', fullName: '🌊 宿霧 (Metro Cebu)' },
+        { id: 'davao', name: '達沃', name_en: 'Davao', fullName: '🌺 達沃市 (Davao City)' }
       ],
       islands: [
-        { id: 'boracay', name: '長灘島', name_en: 'Boracay', fullName: '🏖️ 長灘島 (Boracay)', lat: 11.9674, lng: 121.9248 },
-        { id: 'palawan', name: '巴拉望', name_en: 'Palawan', fullName: '🏝️ 巴拉望 (Palawan)', lat: 11.1800, lng: 119.3900 },
-        { id: 'bohol', name: '薄荷島', name_en: 'Bohol', fullName: '🍫 薄荷島 (Bohol)', lat: 9.6444, lng: 123.8550 },
-        { id: 'siargao', name: '錫亞高島', name_en: 'Siargao', fullName: '🏄‍♂️ 錫亞高島 (Siargao)', lat: 9.7833, lng: 126.1500 },
-        { id: 'samal', name: '薩馬爾島', name_en: 'Samal', fullName: '🌴 薩馬爾島 (Samal Island)', lat: 7.0800, lng: 125.7100 }
+        { id: 'boracay', name: '長灘島', name_en: 'Boracay', fullName: '🏖️ 長灘島 (Boracay)' },
+        { id: 'palawan', name: '巴拉望', name_en: 'Palawan', fullName: '🏝️ 巴拉望 (Palawan)' },
+        { id: 'bohol', name: '薄荷島', name_en: 'Bohol', fullName: '🍫 薄荷島 (Bohol)' },
+        { id: 'siargao', name: '錫亞高島', name_en: 'Siargao', fullName: '🏄‍♂️ 錫亞高島 (Siargao)' },
+        { id: 'samal', name: '薩馬爾島', name_en: 'Samal', fullName: '🌴 薩馬爾島 (Samal Island)' }
       ]
     };
 
@@ -852,47 +1223,6 @@
       ]
     };
 
-    const SEARCH_SYNONYMS = {
-      '牛排': ['steak', 'beef', 'wagyu', '和牛', '肋眼', 'ribeye', 'western', '排餐', '牛'],
-      'steak': ['牛排', 'beef', 'wagyu', '和牛', 'ribeye'],
-      '和牛': ['wagyu', 'beef', 'steak', '牛排'],
-      '火鍋': ['hotpot', 'hot pot', 'shabu', '麻辣', '火锅', '鍋'],
-      'hotpot': ['火鍋', 'shabu', '麻辣'],
-      '海鮮': ['seafood', 'crab', 'lobster', 'shrimp', 'prawn', 'fish', '螃蟹', '龍蝦', '蝦', '魚', 'dampa'],
-      'seafood': ['海鮮', 'crab', 'lobster', 'shrimp', 'fish'],
-      '日料': ['japanese', 'sushi', 'sashimi', 'yaki', 'teppan', '壽司', '生魚片', '日式'],
-      '中餐': ['chinese', 'dim sum', '粵菜', '川菜', '中式', '點心'],
-      '早午餐': ['brunch', 'breakfast', 'cafe', '咖啡', '甜點', '鬆餅'],
-      '酒吧': ['bar', 'nightlife', 'club', 'lounge', '夜生活', '調酒'],
-      '燒肉': ['yakiniku', 'bbq', 'barbecue', '烤肉', '韓式烤肉', 'korean bbq']
-    };
-
-    function expandSearchKeywords(query) {
-      const q = query.toLowerCase().trim();
-      const terms = [q];
-      for (const [key, synonyms] of Object.entries(SEARCH_SYNONYMS)) {
-        if (q.includes(key.toLowerCase()) || synonyms.some(s => s.toLowerCase() === q)) {
-          terms.push(key.toLowerCase(), ...synonyms.map(s => s.toLowerCase()));
-        }
-      }
-      return Array.from(new Set(terms));
-    }
-
-    let currentDimension = sessionStorage.getItem('ph_dim') || 'cities';
-    let currentCity = localStorage.getItem('ph_app_city') || 'manila';
-    let currentMainTab = sessionStorage.getItem('ph_nav_tab') || 'map';
-    let currentSubFilter = sessionStorage.getItem('ph_nav_sub') || 'all';
-    let currentSearchQuery = '';
-    let currentLang = localStorage.getItem('ph_app_lang') || 'zh-TW';
-
-    let allRestaurants = [];
-    let allAttractions = [];
-    let allMedical = [];
-    let allNews = [];
-
-    // ⭐ 我的私房收藏集合 (Set of storeIds)
-    let userFavoritesSet = new Set(JSON.parse(localStorage.getItem('bigv_favorites') || '[]'));
-
     function saveFavorites() {
       const arr = Array.from(userFavoritesSet);
       localStorage.setItem('bigv_favorites', JSON.stringify(arr));
@@ -917,43 +1247,6 @@
       renderContent();
     }
 
-    // ⭐ 景點智慧旅遊導覽文案生成引擎
-    function getSmartAttractionGuide(item, shortLang) {
-      const cat = String(item.category || '').toLowerCase();
-      const name = String(item.name_zh || item.name_en || '').toLowerCase();
-      const city = item.city || '菲律賓';
-      const r = Number(item.google_rating || 4.5).toFixed(1);
-
-      let tag = '🏛️ 指標觀光';
-      let textZh = `【${city}熱門觀光地標】Google 評分高達 ${r} 星，匯聚自然與人文風情，非常推薦親訪體驗。`;
-      let textEn = `Top attraction in ${city}! Rated ${r} stars. A must-visit cultural & scenic landmark.`;
-
-      if (cat.includes('賭場') || cat.includes('hotel') || cat.includes('casino') || cat.includes('飯店') || name.includes('okada') || name.includes('solaire') || name.includes('nustar') || name.includes('peninsula') || name.includes('hyatt')) {
-        tag = '🎰 頂奢渡假地標';
-        textZh = `【${city}國際頂級指標】Google 評分 ${r} 星。集結奢華住宿、高檔餐飲與頂級休閒娛樂設施，尊爵度假首選。`;
-        textEn = `World-class luxury resort & casino in ${city}. Rated ${r} stars with five-star hospitality and dining.`;
-      } else if (cat.includes('商場') || cat.includes('mall') || name.includes('ayala') || name.includes('sm') || name.includes('power plant')) {
-        tag = '🛒 精品購物聚落';
-        textZh = `【都會繁華購物殿堂】匯聚國際一線精品、熱門美食餐廳與綠意景觀中庭，悠閒漫步首選。`;
-        textEn = `Upscale shopping & lifestyle mall in ${city} with premium brands and dining.`;
-      } else if (name.includes('ocean park') || cat.includes('ocean') || cat.includes('水族') || name.includes('海洋')) {
-        tag = '🐬 深海奇幻世界';
-        textZh = `【深海生態與海底隧道】擁有 360 度深海玻璃隧道與互動餵食秀，適合情侶打卡與全家探索。`;
-        textEn = `Spectacular oceanarium with underwater tunnels and marine encounters.`;
-      } else if (name.includes('mind museum') || cat.includes('museum') || name.includes('art in island') || cat.includes('art')) {
-        tag = '🎨 沉浸光影藝術';
-        textZh = `【現代科技與沉浸光影館】互動科學裝置與巨型光影 3D 展覽，視覺效果震撼、極具拍照打卡魅力。`;
-        textEn = `Interactive science & immersive 3D art experience, great for photos and exploration.`;
-      } else if (name.includes('eagle') || name.includes('chocolate') || name.includes('malagos') || cat.includes('生態') || cat.includes('nature')) {
-        tag = '🌴 國寶生態秘境';
-        textZh = `【世界級國寶生態保護區】近距離探索珍稀熱帶動植物與在地莊園風情，感受大自然的純粹洗禮。`;
-        textEn = `Unique wildlife sanctuary & eco estate celebrating Philippine nature and biodiversity.`;
-      }
-
-      if (shortLang === 'en') return { tag, text: textEn };
-      return { tag, text: textZh };
-    }
-
     function getCleanPhone(phone) {
       if (!phone) return '';
       return String(phone).replace(/[^\d+]/g, '');
@@ -976,7 +1269,7 @@
       return `https://food.grab.com/ph/en/restaurants?search=${encodeURIComponent(cleanQuery)}`;
     }
 
-    // ⭐ 增強型 Toast 提示函式（上下垂直排版結構）
+    // ⭐ 增強型 Toast 提示函式（嚴格水平垂直置中）
     function showToast(msg, icon = 'fa-check', actionText = '', actionCallback = null) {
       const toast = document.getElementById('toastNotification');
       const toastIcon = document.getElementById('toastIcon');
@@ -1015,7 +1308,6 @@
       }, actionText ? 3600 : 2200);
     }
 
-    // 關閉留言彈窗
     const commentModalEl = document.getElementById('comment-modal');
     const closeCommentBtn = document.getElementById('close-comment-btn');
     if (closeCommentBtn) closeCommentBtn.addEventListener('click', () => commentModalEl.classList.add('hidden'));
@@ -1065,7 +1357,7 @@
       renderChatUI();
     });
 
-    // 更新會員彈窗進度條與視圖
+    // ⭐ 會員中心視圖更新（文字置中與多語系適配）
     function updateUserModalView() {
       if (!currentUser) {
         document.getElementById('auth-modal-login-view').classList.remove('hidden');
@@ -1083,14 +1375,14 @@
       document.getElementById('user-modal-email').innerText = currentUser.email || 'Google 驗證會員';
 
       const points = currentUserProfile.points || 50;
-      let levelTitle = 'LV.1 探店初心者';
+      let levelTitle = currentLang === 'en' ? 'LV.1 Explorer' : currentLang === 'tl' ? 'LV.1 Baguhan' : 'LV.1 探店初心者';
       let nextThreshold = 100;
 
       if (points >= 300) {
-        levelTitle = 'LV.3 美食饕客';
+        levelTitle = currentLang === 'en' ? 'LV.3 Gourmet Master' : currentLang === 'tl' ? 'LV.3 Maestro' : 'LV.3 美食饕客';
         nextThreshold = 500;
       } else if (points >= 100) {
-        levelTitle = 'LV.2 資深尋味家';
+        levelTitle = currentLang === 'en' ? 'LV.2 Connoisseur' : currentLang === 'tl' ? 'LV.2 Dalubhasa' : 'LV.2 資深尋味家';
         nextThreshold = 300;
       }
 
@@ -1100,12 +1392,19 @@
       const pct = Math.min(100, Math.round((points / nextThreshold) * 100));
       document.getElementById('level-progress-fill').style.width = `${pct}%`;
       const diff = Math.max(0, nextThreshold - points);
-      document.getElementById('level-diff-tip').innerText = diff > 0 ? `再累積 ${diff} 積分即可晉升下一級 🎁` : `已達最高巔峰等級！`;
+      
+      const diffTipStr = currentLang === 'en' 
+        ? (diff > 0 ? `Earn ${diff} more points to reach next level 🎁` : 'Max Level Reached!') 
+        : currentLang === 'tl' 
+        ? (diff > 0 ? `Kailangan ng ${diff} puntos para sa susunod na antas 🎁` : 'Pinakamataas na Antas!') 
+        : (diff > 0 ? `再累積 ${diff} 積分即可晉升下一級 🎁` : `已達最高巔峰等級！`);
+        
+      document.getElementById('level-diff-tip').innerText = diffTipStr;
 
       renderFavoritesList();
     }
 
-    // ⭐ 渲染精緻收藏清單 (店名截斷退讓、間距拉開、Grab 白底綠字專屬標章)
+    // ⭐ 渲染收藏清單 (店名截斷退讓、間距拉開、Grab 白底綠字專屬標章)
     function renderFavoritesList() {
       const container = document.getElementById('favorites-list-container');
       const badge = document.getElementById('fav-count-badge');
@@ -1138,7 +1437,6 @@
         const grabLink = getGrabLink(item, name, item.city);
         const isRestaurant = item.type === 'restaurant' || !item.type;
 
-        // ⭐ Grab 白底綠字專屬標章按鈕
         const grabButtonHtml = isRestaurant ? `
           <a href="${grabLink}" target="_blank" rel="noopener noreferrer" title="Grab 點餐外送" class="w-7 h-7 rounded-lg flex items-center justify-center text-xs font-black transition shadow-sm ${
             hasGrab 
@@ -1155,7 +1453,6 @@
 
         return `
           <div class="bg-slate-900/90 border border-slate-800 hover:border-amber-400/40 rounded-xl p-2 flex items-center justify-between gap-2 transition">
-            <!-- 50x50 縮圖與文字（限制最大寬度防止擠壓按鈕） -->
             <div class="flex items-center gap-2.5 min-w-0 max-w-[58%] cursor-pointer" onclick="window.jumpToCard('${item.id}', '${item.type || 'restaurant'}')">
               <div class="w-11 h-11 rounded-lg overflow-hidden flex-shrink-0 bg-slate-950">
                 <img src="${img}" class="w-full h-full object-cover" />
@@ -1169,7 +1466,6 @@
               </div>
             </div>
 
-            <!-- 右側 4 顆按鈕均勻分開、防誤觸 -->
             <div class="flex items-center gap-1.5 flex-shrink-0">
               ${grabButtonHtml}
 
@@ -1190,7 +1486,6 @@
       }).join('');
     }
 
-    // ⭐ 全域掛載：點擊愛心切換（含未登入引導與右上角頭像指示）
     window.toggleFavorite = function(storeId, event) {
       if (event) {
         event.preventDefault();
@@ -1207,10 +1502,6 @@
             document.getElementById('auth-modal').classList.remove('hidden');
           }
         );
-        setTimeout(() => {
-          updateUserModalView();
-          document.getElementById('auth-modal').classList.remove('hidden');
-        }, 400);
         return;
       }
 
@@ -1235,7 +1526,6 @@
       renderContent();
     };
 
-    // ⭐ 全域掛載：點擊收藏跳轉並聚焦首頁大卡片
     window.jumpToCard = function(storeId, itemType) {
       document.getElementById('auth-modal').classList.add('hidden');
       
@@ -1261,51 +1551,6 @@
       }, 350);
     };
 
-    const I18N_DICT = {
-      'zh-TW': {
-        appTitle: '大V的旅遊窩',
-        appSubtitle: '菲律賓精緻生活 & 海島漫遊地圖',
-        btnLogin: '登入',
-        btnMember: '會員',
-        searchPlaceholder: '搜尋和牛、海鮮、夜生活、Villa、急診...',
-        shareBtn: '分享',
-        tabMetro: '都會生活圈',
-        tabIsland: '渡假海島專區',
-        navFood: '美食饗宴',
-        navSpot: '景點導覽',
-        navMedical: '醫療藥局',
-        navNews: '精選優惠',
-        navNewsIsland: '海島特惠',
-        navFoodIsland: '美食/度假',
-        btnGrab: 'Grab 點餐外送',
-        btnWebsite: '官網 / 粉專',
-        btnCall: '撥打電話',
-        btnNav: '路線導航',
-        btnComment: '寫評論 +20',
-        badgeCurated: '站長私房嚴選',
-        badgeGoogleTop: 'Google 高分嚴選',
-        badgeCommunity: '社群大眾口碑',
-        mustTryBadge: '必點招牌',
-        addressEmpty: '地址收集中',
-        phoneEmpty: '暫無電話',
-        noResult: '目前暫無對應項目',
-        noResultSub: '我們正為您持續親訪收錄更多精選！',
-        toastSwitch: '已切換語言：',
-        spotsCountUnit: '個景點',
-        placesCountUnit: '個地點',
-        medicalCountUnit: '所機構',
-        newsCountUnit: '個特惠',
-        city_manila: '馬尼拉',
-        city_cebu: '宿霧',
-        city_davao: '達沃',
-        city_boracay: '長灘島',
-        city_palawan: '巴拉望',
-        city_bohol: '薄荷島',
-        city_siargao: '錫亞高島',
-        city_samal: '薩馬爾島'
-      }
-    };
-
     function parseImages(item, fallback) {
       if (!item) return [fallback || 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=800'];
       if (Array.isArray(item.images) && item.images.length > 0) {
@@ -1328,7 +1573,6 @@
       return [fallback || 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=800'];
     }
 
-    // ⭐ 輪播照片生成（左右滑動提示標籤移至右上角愛心下方，與左上角嚴選徹底錯開）
     function buildCarouselHtml(images, uniqueId, altTitle) {
       if (!images || images.length === 0) images = ["https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=800"];
       const hasMultiple = images.length > 1;
@@ -1344,7 +1588,6 @@
           </div>
           <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent pointer-events-none"></div>
           ${hasMultiple ? `
-            <!-- ⭐ 左右滑動標籤置於右上角愛心下方適當距離 -->
             <span class="absolute top-12 right-3 bg-slate-950/75 text-amber-300 text-[9px] px-2 py-0.5 rounded-full backdrop-blur-xs pointer-events-none z-10 border border-slate-700/80 shadow-sm">👈 左右滑動</span>
             <div id="dots-${uniqueId}" class="absolute bottom-2.5 right-2.5 flex items-center gap-1 z-10 bg-black/50 backdrop-blur-xs px-2 py-1 rounded-full border border-slate-700">
               ${images.map((_, i) => `<span class="dot-indicator inline-block w-1.5 h-1.5 rounded-full bg-white/40 transition-all ${i === 0 ? 'active' : ''}"></span>`).join('')}
@@ -1352,6 +1595,39 @@
           ` : ''}
         </div>
       `;
+    }
+
+    // ⭐ 拖曳滑動支援函式（完整恢復）
+    function makeScrollable(element) {
+      if (!element) return;
+      let isDown = false;
+      let startX = 0;
+      let scrollLeft = 0;
+
+      element.addEventListener('mousedown', (e) => {
+        isDown = true;
+        element.classList.add('drag-scroll-active');
+        startX = e.pageX - element.offsetLeft;
+        scrollLeft = element.scrollLeft;
+      });
+
+      element.addEventListener('mouseleave', () => {
+        isDown = false;
+        element.classList.remove('drag-scroll-active');
+      });
+
+      element.addEventListener('mouseup', () => {
+        isDown = false;
+        element.classList.remove('drag-scroll-active');
+      });
+
+      element.addEventListener('mousemove', (e) => {
+        if (!isDown) return;
+        e.preventDefault();
+        const x = e.pageX - element.offsetLeft;
+        const walk = (x - startX) * 1.5;
+        element.scrollLeft = scrollLeft - walk;
+      });
     }
 
     function bindCarouselControls() {
@@ -1365,27 +1641,55 @@
           const activeIndex = Math.round(track.scrollLeft / slideWidth);
           dots.forEach((dot, idx) => dot.classList.toggle('active', idx === activeIndex));
         }, { passive: true });
+        makeScrollable(track);
       });
     }
 
+    function enableHorizontalScroll() {
+      ['regionPillsNav', 'subFilterContainer'].forEach(id => {
+        const c = document.getElementById(id);
+        if (!c) return;
+        makeScrollable(c);
+        c.addEventListener('wheel', (e) => {
+          if (e.deltaY !== 0) {
+            e.preventDefault();
+            c.scrollLeft += e.deltaY;
+          }
+        }, { passive: false });
+      });
+    }
+
+    // ⭐ 全面載入資料（兼容 Island_Discovered，海島景點完整併入）
     async function fetchData() {
       const loadingEl = document.getElementById('loading');
       try {
         const sheetMaster = await loadMasterDatabase();
-        allRestaurants = (sheetMaster.bigVPicks || []).concat(sheetMaster.autoDiscovered || []).concat(sheetMaster.islandDiscovered || []);
-        allAttractions = (sheetMaster.attractions || []);
+        const islandRaw = sheetMaster.Island_Discovered || sheetMaster.islandDiscovered || [];
+
+        // 1. 美食與度假村
+        allRestaurants = (sheetMaster.bigVPicks || [])
+          .concat(sheetMaster.autoDiscovered || [])
+          .concat(islandRaw.filter(x => x.type === 'restaurant' || x.type === 'hotel_villa' || x.type === 'nightlife' || !x.type));
+
+        // 2. 景點導覽整合（都會景點 + 海島景點徹底融合）
+        const islandAttractions = islandRaw.filter(x => x.type === 'attraction' || x.type === 'beach' || x.type === 'island_hopping' || x.type === 'nature' || (!x.type && (safeStr(x.category).includes('beach') || safeStr(x.category).includes('景點'))));
+        allAttractions = (sheetMaster.attractions || []).concat(islandAttractions);
+
+        // 3. 醫療與特惠
         allMedical = (sheetMaster.medical || []);
         allNews = (sheetMaster.promotions || []);
       } catch (err) {
         console.warn("[App] 讀取資料庫異常:", err);
       } finally {
         if (loadingEl) loadingEl.style.display = 'none';
-        renderUI();
+        applyLanguage(currentLang);
       }
     }
 
     function renderRegionPills() {
       const isCity = currentDimension === 'cities';
+      const dict = I18N_DICT[currentLang] || I18N_DICT['zh-TW'];
+
       typeCityBtn.className = `flex-1 py-1.5 text-xs font-bold rounded-xl transition text-center shadow-md flex items-center justify-center gap-1.5 ${
         isCity ? 'bg-gradient-to-r from-amber-400 to-amber-500 text-slate-950 font-black' : 'text-slate-400 hover:text-slate-200'
       }`;
@@ -1396,13 +1700,16 @@
       const list = isCity ? REGION_CONFIG.cities : REGION_CONFIG.islands;
       if (!list.some(r => r.id === currentCity)) currentCity = list[0].id;
 
-      regionPillsNav.innerHTML = list.map(r => `
-        <button data-city="${r.id}" class="region-pill px-3.5 py-1 rounded-full text-xs font-bold whitespace-nowrap transition-all select-none ${
-          r.id === currentCity ? 'bg-amber-400 text-slate-950 shadow-md scale-105 font-black' : 'bg-slate-950 border border-slate-800 text-slate-300'
-        }">
-          ${r.name}
-        </button>
-      `).join('');
+      regionPillsNav.innerHTML = list.map(r => {
+        const localizedName = dict['city_' + r.id] || (currentLang === 'en' ? r.name_en : r.name);
+        return `
+          <button data-city="${r.id}" class="region-pill px-3.5 py-1 rounded-full text-xs font-bold whitespace-nowrap transition-all select-none ${
+            r.id === currentCity ? 'bg-amber-400 text-slate-950 shadow-md scale-105 font-black' : 'bg-slate-950 border border-slate-800 text-slate-300'
+          }">
+            ${localizedName}
+          </button>
+        `;
+      }).join('');
 
       document.querySelectorAll('.region-pill').forEach(btn => {
         btn.addEventListener('click', () => {
@@ -1421,13 +1728,16 @@
                      : currentMainTab === 'attraction' ? (isIsland ? SUB_FILTERS.attraction_island : SUB_FILTERS.attraction_urban)
                      : currentMainTab === 'medical' ? SUB_FILTERS.medical : SUB_FILTERS.news;
 
-      subFilterContainer.innerHTML = filterList.map(f => `
-        <button data-subkey="${f.key}" class="sub-pill px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap transition select-none ${
-          f.key === currentSubFilter ? 'bg-amber-400/20 border border-amber-400 text-amber-300 font-bold shadow-xs' : 'bg-slate-950 border border-slate-800 text-slate-400'
-        }">
-          ${typeof f.label === 'object' ? (f.label[currentLang] || f.label['zh-TW']) : f.label}
-        </button>
-      `).join('');
+      subFilterContainer.innerHTML = filterList.map(f => {
+        const labelText = typeof f.label === 'object' ? (f.label[currentLang] || f.label['zh-TW']) : f.label;
+        return `
+          <button data-subkey="${f.key}" class="sub-pill px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap transition select-none ${
+            f.key === currentSubFilter ? 'bg-amber-400/20 border border-amber-400 text-amber-300 font-bold shadow-xs' : 'bg-slate-950 border border-slate-800 text-slate-400'
+          }">
+            ${labelText}
+          </button>
+        `;
+      }).join('');
 
       document.querySelectorAll('.sub-pill').forEach(btn => {
         btn.addEventListener('click', () => {
@@ -1439,6 +1749,9 @@
     }
 
     function renderContent() {
+      const dict = I18N_DICT[currentLang] || I18N_DICT['zh-TW'];
+      const isIsland = isIslandMode(currentCity);
+
       ['map', 'attraction', 'medical', 'news'].forEach(tab => {
         document.getElementById(`section-${tab}`).classList.toggle('hidden', tab !== currentMainTab);
         const btn = document.getElementById(`tab-btn-${tab}`);
@@ -1446,6 +1759,12 @@
           ? 'main-tab-pill py-1.5 rounded-lg text-center transition flex items-center justify-center gap-1 bg-gradient-to-r from-amber-400 to-amber-500 text-slate-950 shadow-sm font-black'
           : 'main-tab-pill py-1.5 rounded-lg text-center transition flex items-center justify-center gap-1 text-slate-400 hover:text-white';
       });
+
+      const mapLabel = document.getElementById('tab-label-map');
+      if (mapLabel) mapLabel.innerText = isIsland ? dict.navFoodIsland : dict.navFood;
+
+      const newsLabel = document.getElementById('tab-label-news');
+      if (newsLabel) newsLabel.innerText = isIsland ? dict.navNewsIsland : dict.navNews;
 
       if (currentMainTab === 'map') renderRestaurants();
       if (currentMainTab === 'attraction') renderAttractions();
@@ -1455,25 +1774,49 @@
       bindCarouselControls();
     }
 
-    // 1. 美食渲染 (流金邊框增強 + 補回 Grab 按鈕 + 寫評論全橘金 + 右上角愛心)
+    // ⭐ 1. 美食渲染（結合同義詞搜尋 + Google 饕客評論多層鏈路）
     function renderRestaurants() {
       const listEl = document.getElementById('restaurant-list');
       const dict = I18N_DICT[currentLang] || I18N_DICT['zh-TW'];
       let filtered = allRestaurants.filter(x => safeStr(x.city) === currentCity);
 
-      filterSummaryText.textContent = `${dict['city_' + currentCity] || currentCity} · 頂級推薦`;
-      itemCountBadge.textContent = `${filtered.length} 個地點`;
+      if (currentSubFilter !== 'all') {
+        filtered = filtered.filter(x => safeStr(x.category).includes(currentSubFilter) || safeStr(x.type).includes(currentSubFilter) || safeStr(x.categoryKey).includes(currentSubFilter));
+      }
+
+      // 寬鬆同義詞搜尋過濾
+      if (currentSearchQuery) {
+        const expandedTerms = expandSearchKeywords(currentSearchQuery);
+        filtered = filtered.filter(item => {
+          const corpus = `${safeStr(item.name)} ${safeStr(item.name_zh)} ${safeStr(item.name_en)} ${safeStr(item.address)} ${safeStr(item.category)} ${safeStr(item.mustTry)} ${safeStr(item.curatedNote)} ${safeStr(item.desc)}`.toLowerCase();
+          return expandedTerms.some(term => corpus.includes(term));
+        });
+      }
+
+      filterSummaryText.textContent = `${dict['city_' + currentCity] || currentCity} · ${dict.navFood}`;
+      itemCountBadge.textContent = `${filtered.length} ${dict.placesCountUnit}`;
 
       listEl.innerHTML = filtered.map((item, idx) => {
-        const name = item.name_zh || item.name_en || item.name || item.id;
+        const name = (currentLang === 'en' && item.name_en) ? item.name_en : (item.name_zh || item.name_en || item.name || item.id);
         const sId = String(item.id).trim();
         const isFav = userFavoritesSet.has(sId);
         const cleanPhone = getCleanPhone(item.phone);
-        const navUrl = item.nav_link || ('https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(name));
+        const navUrl = item.nav_link || ('https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(name + ' ' + (item.address || '')));
         const rating = Number(item.google_rating || item.googleRating || 4.8).toFixed(1);
         const isCurated = !!(item.big_v_comment || item.curated || item.isCurated);
 
-        // ⭐ 完整 Grab 點餐 / 官網按鈕
+        // 完整 Google 採集評論多層取值鏈
+        const reviewText = item.big_v_comment 
+          || item.google_summary 
+          || item.editorial_summary 
+          || item.summary 
+          || item.review_snippet 
+          || item.curatedNote 
+          || item.desc 
+          || (currentLang === 'en' ? 'Highly recommended authentic dining experience with top Google rating.' : 'Google 饕客高分熱門推薦，極致在地風味。');
+
+        const reviewPrefix = isCurated ? (currentLang === 'en' ? '👑 BigV Curated: ' : '👑 站長私房點評：') : (currentLang === 'en' ? '🌟 Google Review: ' : '🌟 饕客口碑點評：');
+
         const isIsland = isIslandMode(item.city || currentCity);
         const grabLink = getGrabLink(item, item.name_en || name, item.city);
         const rightTopActionBtn = !isIsland ? `
@@ -1493,17 +1836,15 @@
             <div class="relative w-full overflow-hidden">
               ${buildCarouselHtml(parseImages(item), `res-${idx}`, name)}
               
-              <!-- ⭐ 站長私房嚴選高飽和流金光環標籤 -->
               ${isCurated ? `
                 <div class="absolute top-3 left-3 z-30 beam-wrapper">
                   <div class="beam-stream"></div>
                   <div class="beam-content text-[10px] font-black text-amber-300">
-                    <i class="fa-solid fa-crown text-amber-400 text-[10px]"></i> 站長私房嚴選
+                    <i class="fa-solid fa-crown text-amber-400 text-[10px]"></i> ${dict.badgeCurated}
                   </div>
                 </div>
               ` : ''}
 
-              <!-- ❤️ 右上角愛心收藏按鈕 -->
               <button type="button" onclick="window.toggleFavorite('${item.id}', event)" class="absolute top-3 right-3 z-30 w-8 h-8 rounded-full bg-black/60 backdrop-blur-md flex items-center justify-center text-sm transition active:scale-90 border border-white/20 cursor-pointer">
                 <i class="${isFav ? 'fa-solid text-rose-500' : 'fa-regular text-white'} fa-heart"></i>
               </button>
@@ -1518,13 +1859,12 @@
                 <span class="text-amber-300 font-semibold">${item.city || '菲律賓'} · ${item.category || '精選'}</span>
                 <span class="text-amber-400 font-bold"><i class="fa-solid fa-star text-[10px]"></i> ${rating}</span>
               </div>
-              <p class="text-slate-300 leading-relaxed">${item.big_v_comment || item.curatedNote || item.desc || '在地精緻推薦。'}</p>
+              <p class="text-slate-300 leading-relaxed"><span class="text-amber-400/90 font-bold">${reviewPrefix}</span>${reviewText}</p>
             </div>
 
-            <!-- ⭐ 雙排標準操作區：上排寫評論+Grab外送，下排電話+導航 -->
             <div class="p-2.5 bg-slate-900 border-t border-slate-800 space-y-2 text-xs">
               <div class="grid grid-cols-2 gap-2">
-                <button type="button" onclick="window.openCommentModal('${item.id}', '${name}')" class="flex items-center justify-center gap-1.5 py-2 rounded-xl bg-amber-400/10 border border-amber-400/50 hover:bg-amber-400/20 text-amber-300 font-black transition active:scale-95 shadow-sm">
+                <button type="button" onclick="window.openCommentModal('${item.id}', '${name}')" class="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl bg-amber-400/10 border border-amber-400/50 hover:bg-amber-400/20 text-amber-300 font-black transition active:scale-95 shadow-sm">
                   <i class="fa-solid fa-pen-to-square text-amber-400 text-xs"></i> ${dict.btnComment}
                 </button>
                 ${rightTopActionBtn}
@@ -1546,23 +1886,40 @@
       }).join('');
     }
 
-    // 2. 景點渲染 (智慧旅遊短評 + 愛心收藏)
+    // 2. ⭐ 景點渲染（結合同義詞搜尋 + 海島景點歸位）
     function renderAttractions() {
       const listEl = document.getElementById('attraction-list');
       const dict = I18N_DICT[currentLang] || I18N_DICT['zh-TW'];
       let filtered = allAttractions.filter(x => safeStr(x.city) === currentCity);
 
-      filterSummaryText.textContent = `${dict['city_' + currentCity] || currentCity} · 景點導覽`;
-      itemCountBadge.textContent = `${filtered.length} 個景點`;
+      if (currentSubFilter !== 'all') {
+        filtered = filtered.filter(x => safeStr(x.category).includes(currentSubFilter) || safeStr(x.type).includes(currentSubFilter));
+      }
+
+      if (currentSearchQuery) {
+        const expandedTerms = expandSearchKeywords(currentSearchQuery);
+        filtered = filtered.filter(item => {
+          const corpus = `${safeStr(item.name_zh)} ${safeStr(item.name_en)} ${safeStr(item.address)} ${safeStr(item.category)} ${safeStr(item.description)}`.toLowerCase();
+          return expandedTerms.some(term => corpus.includes(term));
+        });
+      }
+
+      filterSummaryText.textContent = `${dict['city_' + currentCity] || currentCity} · ${dict.navSpot}`;
+      itemCountBadge.textContent = `${filtered.length} ${dict.spotsCountUnit}`;
+
+      if (filtered.length === 0) {
+        listEl.innerHTML = `<div class="bg-slate-950 rounded-2xl p-8 text-center border border-slate-800 shadow-xs mt-2"><h4 class="text-xs font-bold text-slate-400">${dict.noResult}</h4></div>`;
+        return;
+      }
 
       listEl.innerHTML = filtered.map((item, idx) => {
-        const name = item.name_zh || item.name_en || item.name || item.id;
+        const name = (currentLang === 'en' && item.name_en) ? item.name_en : (item.name_zh || item.name_en || item.name || item.id);
         const sId = String(item.id).trim();
         const isFav = userFavoritesSet.has(sId);
         const cleanPhone = getCleanPhone(item.phone);
-        const navUrl = item.nav_link || ('https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(name));
-        const rating = Number(item.google_rating || 4.8).toFixed(1);
-        const guide = getSmartAttractionGuide(item, currentLang === 'en' ? 'en' : 'zh');
+        const navUrl = item.nav_link || ('https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(name + ' ' + (item.address || '')));
+        const rating = Number(item.google_rating || item.googleRating || 4.8).toFixed(1);
+        const guideText = item.description || item.desc || item.summary || (currentLang === 'en' ? 'Top landmark attraction with breathtaking views and rich culture.' : '在地熱門必訪指標景點，風景優美。');
 
         return `
           <article id="card-${item.id}" class="rounded-2xl overflow-hidden border border-slate-800 bg-slate-950 shadow-md flex flex-col transition relative">
@@ -1581,16 +1938,16 @@
             <div class="p-3.5 space-y-2 bg-slate-950 text-xs">
               <div class="flex items-center justify-between">
                 <span class="px-2 py-0.5 rounded bg-amber-400/10 border border-amber-400/30 text-amber-300 font-bold text-[10px]">
-                  ${guide.tag}
+                  ${item.category || '觀光地標'}
                 </span>
                 <span class="text-amber-400 font-bold"><i class="fa-solid fa-star text-[10px]"></i> ${rating}</span>
               </div>
-              <p class="text-slate-300 leading-relaxed">${guide.text}</p>
+              <p class="text-slate-300 leading-relaxed">${guideText}</p>
             </div>
 
             <div class="p-2.5 bg-slate-900 border-t border-slate-800 flex items-center justify-between gap-2 text-xs">
               <button type="button" onclick="window.openCommentModal('${item.id}', '${name}')" class="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl bg-amber-400/10 border border-amber-400/50 hover:bg-amber-400/20 text-amber-300 font-black transition active:scale-95 shadow-sm">
-                <i class="fa-solid fa-pen-to-square text-amber-400 text-xs"></i> 寫評論 +20
+                <i class="fa-solid fa-pen-to-square text-amber-400 text-xs"></i> ${dict.btnComment}
               </button>
 
               <div class="flex items-center gap-1.5">
@@ -1607,48 +1964,102 @@
       }).join('');
     }
 
-    // 3. 醫療渲染
+    // 3. ⭐ 醫療藥局完整大還原 (照片輪播 + 徽章 + Google 評分 + 雙排按鈕)
     function renderMedical() {
       const listEl = document.getElementById('medical-list');
+      const dict = I18N_DICT[currentLang] || I18N_DICT['zh-TW'];
       let filtered = allMedical.filter(x => safeStr(x.city) === currentCity);
+
+      if (currentSubFilter !== 'all') {
+        filtered = filtered.filter(x => safeStr(x.type).includes(currentSubFilter) || safeStr(x.category).includes(currentSubFilter));
+      }
+
+      if (currentSearchQuery) {
+        const expandedTerms = expandSearchKeywords(currentSearchQuery);
+        filtered = filtered.filter(item => {
+          const corpus = `${safeStr(item.name_zh)} ${safeStr(item.name_en)} ${safeStr(item.address)} ${safeStr(item.category)} ${safeStr(item.type)}`.toLowerCase();
+          return expandedTerms.some(term => corpus.includes(term));
+        });
+      }
+
+      filterSummaryText.textContent = `${dict['city_' + currentCity] || currentCity} · ${dict.navMedical}`;
+      itemCountBadge.textContent = `${filtered.length} ${dict.medicalCountUnit}`;
+
+      if (filtered.length === 0) {
+        listEl.innerHTML = `<div class="bg-slate-950 rounded-2xl p-8 text-center border border-slate-800 shadow-xs mt-2"><h4 class="text-xs font-bold text-slate-400">${dict.noResult}</h4></div>`;
+        return;
+      }
+
       listEl.innerHTML = filtered.map((item, idx) => {
-        const name = item.name_zh || item.name_en || item.name || item.id;
+        const name = (currentLang === 'en' && item.name_en) ? item.name_en : (item.name_zh || item.name_en || item.name || item.id);
         const cleanPhone = getCleanPhone(item.phone);
+        const navUrl = item.nav_link || ('https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(name + ' ' + (item.address || '')));
         const isFav = userFavoritesSet.has(String(item.id).trim());
+        const rating = Number(item.google_rating || item.googleRating || 4.7).toFixed(1);
+
+        let typeBadge = '🏥 綜合醫院 (24H急診)';
+        if (safeStr(item.type).includes('pharmacy') || safeStr(item.category).includes('pharmacy') || safeStr(name).includes('watson') || safeStr(name).includes('mercury')) {
+          typeBadge = '💊 24H 連鎖藥局';
+        } else if (safeStr(item.type).includes('clinic') || safeStr(item.category).includes('clinic') || safeStr(name).includes('clinic')) {
+          typeBadge = '🩺 專科/私立診所';
+        }
+
         return `
-          <article id="card-${item.id}" class="rounded-2xl overflow-hidden border border-slate-800 bg-slate-950 p-3.5 space-y-2 relative">
-            <div class="flex justify-between items-start">
-              <div>
-                <h4 class="font-bold text-white text-xs">${name}</h4>
-                <p class="text-[10px] text-slate-400">${item.address || '地址收集中'}</p>
-              </div>
-              <button type="button" onclick="window.toggleFavorite('${item.id}', event)" class="text-slate-400 hover:text-rose-500 text-sm p-1">
-                <i class="${isFav ? 'fa-solid text-rose-500' : 'fa-regular'} fa-heart"></i>
+          <article id="card-${item.id}" class="rounded-2xl overflow-hidden border border-slate-800 bg-slate-950 shadow-md flex flex-col transition relative">
+            <div class="relative w-full overflow-hidden">
+              ${buildCarouselHtml(parseImages(item, 'https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=800'), `med-${idx}`, name)}
+
+              <button type="button" onclick="window.toggleFavorite('${item.id}', event)" class="absolute top-3 right-3 z-30 w-8 h-8 rounded-full bg-black/60 backdrop-blur-md flex items-center justify-center text-sm transition active:scale-90 border border-white/20 cursor-pointer">
+                <i class="${isFav ? 'fa-solid text-rose-500' : 'fa-regular text-white'} fa-heart"></i>
               </button>
+
+              <div class="absolute bottom-2.5 left-3.5 right-12 text-white text-sm font-bold truncate drop-shadow-md z-20">
+                ${name}
+              </div>
             </div>
-            <a href="${cleanPhone ? `tel:${cleanPhone}` : '#'}" class="block w-full text-center py-2 bg-emerald-600 text-white rounded-xl text-xs font-bold">撥打電話</a>
+
+            <div class="p-3.5 space-y-2 bg-slate-950 text-xs">
+              <div class="flex items-center justify-between">
+                <span class="px-2 py-0.5 rounded bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 font-bold text-[10px]">
+                  ${typeBadge}
+                </span>
+                <span class="text-amber-400 font-bold"><i class="fa-solid fa-star text-[10px]"></i> ${rating}</span>
+              </div>
+              <p class="text-slate-400 text-[11px] leading-relaxed flex items-start gap-1">
+                <i class="fa-solid fa-location-dot text-slate-500 mt-0.5"></i>
+                <span class="line-clamp-2">${item.address || dict.addressEmpty}</span>
+              </p>
+            </div>
+
+            <div class="p-2.5 bg-slate-900 border-t border-slate-800 grid grid-cols-2 gap-2 text-xs">
+              <a href="${cleanPhone ? `tel:${cleanPhone}` : '#'}" class="py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold flex items-center justify-center gap-1.5 transition active:scale-95 shadow-sm ${!cleanPhone ? 'opacity-40 pointer-events-none' : ''}">
+                <i class="fa-solid fa-phone"></i> ${dict.btnCall}
+              </a>
+              <a href="${navUrl}" target="_blank" rel="noopener noreferrer" class="py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 flex items-center justify-center gap-1.5 transition active:scale-95">
+                <i class="fa-solid fa-diamond-turn-right text-sky-400"></i> ${dict.btnNav}
+              </a>
+            </div>
           </article>
         `;
       }).join('');
     }
 
-    // ⭐ 4. 精選特惠渲染 (嚴格精準比對城市，對照專屬 Promotions Header，修復圖片顯示)
+    // 4. ⭐ 精選特惠渲染 (嚴格精準比對城市，對照 Promotions Header，修復圖片與效期)
     function renderNews() {
       const listEl = document.getElementById('news-list');
       const dict = I18N_DICT[currentLang] || I18N_DICT['zh-TW'];
       const currentShortLang = currentLang === 'zh-TW' ? 'zh' : currentLang;
 
-      // 嚴格城市比對，徹底解決跨區霸榜問題
       let filtered = allNews.filter(item => {
         const c = safeStr(item.city);
         return c === currentCity || c === 'all';
       });
 
-      filterSummaryText.textContent = `${dict['city_' + currentCity] || currentCity} · 特約門市即時特惠`;
-      itemCountBadge.textContent = `${filtered.length} 個特惠`;
+      filterSummaryText.textContent = `${dict['city_' + currentCity] || currentCity} · ${dict.navNews}`;
+      itemCountBadge.textContent = `${filtered.length} ${dict.newsCountUnit}`;
 
       if (filtered.length === 0) {
-        listEl.innerHTML = `<div class="bg-slate-950 rounded-2xl p-8 text-center border border-slate-800 shadow-xs mt-2"><h4 class="text-xs font-bold text-slate-400">目前該區域暫無特約優惠</h4></div>`;
+        listEl.innerHTML = `<div class="bg-slate-950 rounded-2xl p-8 text-center border border-slate-800 shadow-xs mt-2"><h4 class="text-xs font-bold text-slate-400">${dict.noResult}</h4></div>`;
         return;
       }
 
@@ -1680,22 +2091,16 @@
               
               <div class="mt-auto grid grid-cols-2 gap-2 pt-2 border-t border-slate-800 text-xs">
                 <a href="${cleanPhone ? `tel:${cleanPhone}` : '#'}" class="py-2 rounded-xl bg-slate-800 text-slate-200 hover:text-white font-bold flex items-center justify-center gap-1.5 transition ${!cleanPhone ? 'opacity-30 pointer-events-none' : ''}">
-                  <i class="fa-solid fa-phone text-emerald-400"></i> 撥打電話
+                  <i class="fa-solid fa-phone text-emerald-400"></i> ${dict.btnCall}
                 </a>
                 <a href="${item.nav_link || ('https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(storeName))}" target="_blank" rel="noopener noreferrer" class="py-2 rounded-xl bg-gradient-to-r from-amber-400 to-amber-500 text-slate-950 font-black flex items-center justify-center gap-1.5 shadow-sm transition">
-                  <i class="fa-solid fa-location-arrow"></i> 路線導航
+                  <i class="fa-solid fa-location-arrow"></i> ${dict.btnNav}
                 </a>
               </div>
             </div>
           </article>
         `;
       }).join('');
-    }
-
-    function renderUI() {
-      renderRegionPills();
-      renderSubFilterBar();
-      renderContent();
     }
 
     // 評論彈窗呼叫
@@ -1712,8 +2117,6 @@
     });
     document.getElementById('close-auth-btn-guest').addEventListener('click', () => authModal.classList.add('hidden'));
     document.getElementById('close-auth-btn-user').addEventListener('click', () => authModal.classList.add('hidden'));
-
-    // ⭐ 子頁關閉鍵：一鍵回首頁
     document.getElementById('close-auth-btn-tasks').addEventListener('click', () => authModal.classList.add('hidden'));
 
     document.getElementById('btn-open-tasks-subview').addEventListener('click', () => {
@@ -1725,7 +2128,6 @@
       document.getElementById('auth-modal-user-view').classList.remove('hidden');
     });
 
-    // 任務一：點擊「✍️ 發表探店評論」閉環操作
     document.getElementById('task-card-comment').addEventListener('click', () => {
       authModal.classList.add('hidden');
       currentMainTab = 'map';
@@ -1734,7 +2136,6 @@
       showToast('💡 點擊任何卡片下方的「寫評論 +20」，即可發表心得賺積分！', 'fa-pen-to-square');
     });
 
-    // 任務二：點擊「📮 推薦在地私房好店」打開表單
     const recModal = document.getElementById('recommend-modal');
     document.getElementById('task-card-recommend').addEventListener('click', () => {
       authModal.classList.add('hidden');
@@ -1742,7 +2143,6 @@
     });
     document.getElementById('close-recommend-btn').addEventListener('click', () => recModal.classList.add('hidden'));
 
-    // 表單防呆驗證與提交至 Firestore
     const recStoreName = document.getElementById('rec-store-name');
     const recReason = document.getElementById('rec-reason');
     const btnSubmitRecommend = document.getElementById('btn-submit-recommend');
@@ -1790,9 +2190,12 @@
     }
     btnSubmitRecommend.addEventListener('click', submitRecommendStore);
 
-    // 🎨 三大視覺風格下拉選單
+    // ⭐ 三大視覺風格切換（白底按鈕 + 動態對應文字圖示色彩）
     const themeDropdownBtn = document.getElementById('btn-theme-dropdown');
     const themeDropdownMenu = document.getElementById('theme-dropdown-menu');
+    const currentThemeLabel = document.getElementById('current-theme-label');
+    const currentThemeIcon = document.getElementById('current-theme-icon');
+
     themeDropdownBtn.addEventListener('click', (e) => {
       e.stopPropagation();
       themeDropdownMenu.classList.toggle('hidden');
@@ -1809,13 +2212,19 @@
       document.documentElement.classList.remove('dark', 'light', 'rose');
       if (theme === 'light') {
         document.documentElement.classList.add('light');
-        document.getElementById('current-theme-label').innerText = '暖陽';
+        currentThemeLabel.innerText = '暖陽';
+        themeDropdownBtn.style.color = '#EA580C';
+        currentThemeIcon.style.color = '#EA580C';
       } else if (theme === 'rose') {
         document.documentElement.classList.add('rose');
-        document.getElementById('current-theme-label').innerText = '玫瑰';
+        currentThemeLabel.innerText = '玫瑰';
+        themeDropdownBtn.style.color = '#84525C';
+        currentThemeIcon.style.color = '#84525C';
       } else {
         document.documentElement.classList.add('dark');
-        document.getElementById('current-theme-label').innerText = '暗夜';
+        currentThemeLabel.innerText = '暗夜';
+        themeDropdownBtn.style.color = '#020617';
+        currentThemeIcon.style.color = '#020617';
         theme = 'dark';
       }
       localStorage.setItem('bigv_app_theme', theme);
@@ -1832,8 +2241,8 @@
       authModal.classList.add('hidden');
     });
 
-    typeCityBtn.addEventListener('click', () => { currentDimension = 'cities'; currentCity = 'manila'; renderUI(); });
-    typeIslandBtn.addEventListener('click', () => { currentDimension = 'islands'; currentCity = 'boracay'; renderUI(); });
+    typeCityBtn.addEventListener('click', () => { currentDimension = 'cities'; currentCity = 'manila'; renderRegionPills(); renderSubFilterBar(); renderContent(); });
+    typeIslandBtn.addEventListener('click', () => { currentDimension = 'islands'; currentCity = 'boracay'; renderRegionPills(); renderSubFilterBar(); renderContent(); });
 
     document.querySelectorAll('.main-tab-pill').forEach(btn => {
       btn.addEventListener('click', () => {
@@ -1844,14 +2253,138 @@
       });
     });
 
+    const searchInput = document.getElementById('search-input');
+    const searchClearBtn = document.getElementById('search-clear-btn');
+    searchInput.addEventListener('input', (e) => {
+      currentSearchQuery = e.target.value.trim();
+      searchClearBtn.classList.toggle('hidden', !currentSearchQuery);
+      renderContent();
+    });
+    searchClearBtn.addEventListener('click', () => {
+      searchInput.value = '';
+      currentSearchQuery = '';
+      searchClearBtn.classList.add('hidden');
+      renderContent();
+    });
+
+    document.getElementById('share-btn').addEventListener('click', () => {
+      if (navigator.share) {
+        navigator.share({ title: '大V的旅遊窩', url: window.location.href }).catch(() => {});
+      } else {
+        navigator.clipboard.writeText(window.location.href).then(() => showToast('網站連結已複製！'));
+      }
+    });
+
     // =========================================================================
-    // ⭐ AI 懸浮球：自由拖曳、磁吸貼邊、開窗自動避開隱藏
+    // ⭐ AI 懸浮球與真實後端請求系統（完整恢復 Cloudflare Worker 對接）
     // =========================================================================
     const fab = document.getElementById('chat-fab');
     const chatModal = document.getElementById('chat-modal');
     const btnCloseChat = document.getElementById('btn-close-chat');
+    const chatInput = document.getElementById('chat-input');
+    const btnSendChat = document.getElementById('btn-send-chat');
+    const chatMessagesContainer = document.getElementById('chat-messages');
 
     let isDragging = false, dragStartX = 0, dragStartY = 0, initialLeft = 0, initialTop = 0, hasMoved = false;
+
+    function renderChatUI() {
+      if (!chatMessagesContainer) return;
+
+      if (!currentUser) {
+        chatMessagesContainer.innerHTML = `
+          <div class="bg-slate-900 border border-amber-400/40 rounded-2xl p-3.5 space-y-2.5 text-slate-300 chat-bubble-agent shadow-md">
+            <div class="flex items-center gap-2 text-amber-300 font-black text-xs">
+              <i class="fa-solid fa-crown text-amber-400"></i> 會員尊榮專屬 AI 管家
+            </div>
+            <p class="leading-relaxed text-[11px]">
+              您好！我是大V的旅遊窩專屬 AI 管家。登入會員即可免費向我諮詢全菲美饌推薦、私房海島行程規劃與在線即時訂位指南！
+            </p>
+            <button onclick="document.getElementById('auth-modal').classList.remove('hidden');" class="w-full py-2 bg-gradient-to-r from-amber-400 to-amber-500 text-slate-950 font-black text-xs rounded-xl shadow-md transition active:scale-95">
+              立即登入解鎖管家服務 ➔
+            </button>
+          </div>
+        `;
+        chatInput.disabled = true;
+        btnSendChat.disabled = true;
+      } else {
+        chatInput.disabled = false;
+        btnSendChat.disabled = false;
+        const name = currentUser.displayName || '吃貨好友';
+
+        if (!chatMessagesContainer.querySelector('.chat-ready-bubble')) {
+          chatMessagesContainer.innerHTML = `
+            <div class="chat-ready-bubble bg-slate-900 border border-slate-800 rounded-2xl p-3.5 space-y-2 text-slate-200 chat-bubble-agent shadow-md">
+              <div class="flex items-center gap-1.5 text-amber-300 font-bold text-xs">
+                <i class="fa-solid fa-wand-magic-sparkles text-amber-400"></i> 大V管家在線
+              </div>
+              <p class="leading-relaxed text-[11px]">
+                嗨，${name}！我是大V的專屬智能助理。想在 <span class="text-amber-300 font-bold">${REGION_CONFIG.cities.concat(REGION_CONFIG.islands).find(r => r.id === currentCity)?.name || '菲律賓'}</span> 找頂級和牛、生猛海鮮、絕美海景 Villa 還是浪漫酒吧？隨時問我！
+              </p>
+              <div class="flex flex-wrap gap-1.5 pt-1">
+                <button onclick="quickAskAI('推薦在地最頂級的和牛與燒肉')" class="bg-slate-800 hover:bg-slate-700 text-amber-300 border border-amber-400/30 text-[10px] px-2.5 py-1 rounded-full">🥩 頂級和牛燒肉</button>
+                <button onclick="quickAskAI('有哪幾家必訪的生猛海鮮酒家？')" class="bg-slate-800 hover:bg-slate-700 text-amber-300 border border-amber-400/30 text-[10px] px-2.5 py-1 rounded-full">🦀 必訪海鮮酒家</button>
+                <button onclick="quickAskAI('推薦高空夜景酒吧與約會場所')" class="bg-slate-800 hover:bg-slate-700 text-amber-300 border border-amber-400/30 text-[10px] px-2.5 py-1 rounded-full">🍸 高空景觀酒吧</button>
+              </div>
+            </div>
+          `;
+        }
+      }
+    }
+
+    window.quickAskAI = function(question) {
+      if (chatInput) {
+        chatInput.value = question;
+        handleChatSend();
+      }
+    };
+
+    // ⭐ 真實發送訊息給 AI Worker 後端（完整恢復）
+    async function handleChatSend() {
+      if (!currentUser) {
+        showToast('請先登入會員再使用 AI 管家！', 'fa-lock');
+        chatModal.classList.add('hidden');
+        authModal.classList.remove('hidden');
+        return;
+      }
+
+      const msg = chatInput.value.trim();
+      if (!msg) return;
+      const targetLang = currentLang === 'zh-TW' ? 'zh' : currentLang;
+
+      chatMessagesContainer.innerHTML += `
+        <div class="bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 font-bold p-2.5 rounded-xl rounded-tr-sm self-end max-w-[85%] ml-auto text-xs leading-relaxed shadow-xs">
+          ${msg}
+        </div>
+      `;
+      chatInput.value = '';
+      chatMessagesContainer.scrollTop = chatMessagesContainer.scrollHeight;
+
+      const loadId = 'load-' + Date.now();
+      chatMessagesContainer.innerHTML += `
+        <div id="${loadId}" class="bg-slate-900 p-2.5 rounded-xl rounded-tl-sm border border-slate-800 text-slate-400 text-xs self-start max-w-[85%] flex items-center gap-1.5 shadow-2xs">
+          <i class="fa-solid fa-spinner fa-spin text-amber-400"></i> 管家正在為您查詢... ⚡
+        </div>
+      `;
+      chatMessagesContainer.scrollTop = chatMessagesContainer.scrollHeight;
+
+      try {
+        const res = await fetch(AI_WORKER_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message: msg, lang: targetLang, currentCity: currentCity })
+        });
+        const data = await res.json();
+        const loadEl = document.getElementById(loadId);
+        if (loadEl) loadEl.innerText = data.reply || "已為您快速查詢！推薦造訪在地人氣嚴選私房餐廳與海島景點。";
+      } catch (err) {
+        const loadEl = document.getElementById(loadId);
+        if (loadEl) loadEl.innerText = "已為您快速查詢！推薦造訪在地人氣嚴選私房餐廳與海島景點。";
+      }
+      chatMessagesContainer.scrollTop = chatMessagesContainer.scrollHeight;
+    }
+
+    btnSendChat.addEventListener('click', handleChatSend);
+    chatInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') handleChatSend(); });
 
     function onDragStart(e) {
       const cX = e.touches ? e.touches[0].clientX : e.clientX;
@@ -1883,11 +2416,11 @@
         const rect = fab.getBoundingClientRect();
         fab.style.left = (rect.left + rect.width / 2 < window.innerWidth / 2) ? '16px' : `${window.innerWidth - fab.offsetWidth - 16}px`;
       } else {
-        // 單純點擊展開 AI 面板：暫時隱藏懸浮球，防止重疊打架
-        fab.classList.add('hidden');
-        chatModal.classList.remove('hidden');
-        renderChatUI();
-        if (currentUser) document.getElementById('chat-input').focus();
+        chatModal.classList.toggle('hidden');
+        if (!chatModal.classList.contains('hidden')) {
+          renderChatUI();
+          if (currentUser) chatInput.focus();
+        }
       }
     }
 
@@ -1898,18 +2431,49 @@
     window.addEventListener('mousemove', onDragMove);
     window.addEventListener('mouseup', onDragEnd);
 
-    // 關閉 AI 面板時恢復懸浮球
     btnCloseChat.addEventListener('click', () => {
       chatModal.classList.add('hidden');
-      fab.classList.remove('hidden');
+    });
+
+    // ⭐ PWA App Badging：只要回到 App 即刻清除桌面未讀紅點（完整恢復）
+    function clearAppBadgeOnOpen() {
+      if ('clearAppBadge' in navigator) {
+        navigator.clearAppBadge().catch(() => {});
+      }
+      if (navigator.serviceWorker && navigator.serviceWorker.controller) {
+        navigator.serviceWorker.controller.postMessage({ type: 'CLEAR_BADGE' });
+      }
+    }
+
+    clearAppBadgeOnOpen();
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible') {
+        clearAppBadgeOnOpen();
+      }
     });
 
     initVisitorCounter();
+    enableHorizontalScroll();
     fetchData();
     initAuthService();
 
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('./sw.js').catch(() => {});
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js').then((reg) => {
+          reg.update().catch(() => {});
+          reg.onupdatefound = () => {
+            const installingWorker = reg.installing;
+            if (!installingWorker) return;
+            installingWorker.onstatechange = () => {
+              if (installingWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                if (installingWorker.waiting) {
+                  installingWorker.waiting.postMessage({ type: 'SKIP_WAITING' });
+                }
+              }
+            };
+          };
+        }).catch((err) => console.warn('[SW] 註冊異常:', err));
+      });
     }
   </script>
 </body>
