@@ -7,7 +7,7 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
-  <meta name="app-version" content="20260911-v35.0-popup-force" />
+  <meta name="app-version" content="20260912-v36.0-silent-luxury" />
   <meta name="theme-color" content="#020617" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -48,6 +48,13 @@
     }
     .hide-scrollbar::-webkit-scrollbar { display: none; }
     .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+    /* 橫向滑動容器：右側自然霧面淡出，引導向右滑動 */
+    .scroll-hint-mask {
+      -webkit-mask-image: linear-gradient(to right, black 82%, transparent 100%);
+      mask-image: linear-gradient(to right, black 82%, transparent 100%);
+    }
+
     .line-clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
     .line-clamp-3 { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
     .glass-header { background: rgba(2, 6, 23, 0.92); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-bottom: 1px solid rgba(245, 158, 11, 0.2); }
@@ -339,7 +346,7 @@
     html.light #comment-modal #close-comment-btn { background-color: #EFE8DC !important; color: #4B5563 !important; }
     html.light #comment-modal .bg-slate-900 { background-color: #FFFFFF !important; border-color: #E2DACF !important; }
     html.light #comment-modal .text-slate-200, html.light #comment-modal .text-slate-300 { color: #1F2937 !important; }
-    html.light #comment-input-text { background-color: #FFFFFF !important; border-color: #D8CFC4 !important; color: #111827 !important; }
+    html.light #comment-modal #comment-input-text { background-color: #FFFFFF !important; border-color: #D8CFC4 !important; color: #111827 !important; }
 
     html.light #chat-modal { background-color: #FCF9F2 !important; border: 1.5px solid #EA580C !important; box-shadow: 0 15px 35px -5px rgba(234, 88, 12, 0.2) !important; }
     html.light #chat-modal > div.bg-slate-900 { background: linear-gradient(135deg, #F97316, #EA580C) !important; border-bottom: 1px solid #C2410C !important; }
@@ -422,8 +429,8 @@
         </button>
       </div>
 
-      <!-- 第四列：地區膠囊 -->
-      <nav id="regionPillsNav" class="overflow-x-auto hide-scrollbar flex gap-1.5 pb-0.5 items-center cursor-grab"></nav>
+      <!-- 第四列：地區膠囊（加入自然向右滾動漸層遮罩） -->
+      <nav id="regionPillsNav" class="overflow-x-auto hide-scrollbar flex gap-1.5 pb-0.5 items-center cursor-grab scroll-hint-mask pr-4"></nav>
     </div>
 
     <!-- 第五列：四大主分頁 Tab -->
@@ -448,10 +455,10 @@
       </div>
     </div>
 
-    <!-- 第六列：子分類標籤過濾列 -->
+    <!-- 第六列：子分類標籤過濾列（加入自然向右滾動漸層遮罩） -->
     <div class="bg-slate-950/90 border-t border-slate-800/80 mt-1">
       <div class="max-w-md mx-auto px-3.5 py-1.5">
-        <div id="subFilterContainer" class="flex items-center gap-2 overflow-x-auto hide-scrollbar py-0.5 cursor-grab"></div>
+        <div id="subFilterContainer" class="flex items-center gap-2 overflow-x-auto hide-scrollbar py-0.5 cursor-grab scroll-hint-mask pr-4"></div>
       </div>
     </div>
   </header>
@@ -514,7 +521,8 @@
           <div class="flex-grow border-t border-slate-800"></div>
         </div>
 
-        <div class="space-y-2"><input type="email" id="magic-email-input" placeholder="輸入電子信箱（免記密碼）" class="w-full bg-white border-2 border-amber-400/70 text-slate-950 font-medium placeholder-slate-400 text-xs rounded-xl px-3.5 py-3 focus:outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-400/30 shadow-inner" />
+        <div class="space-y-2">
+          <input type="email" id="magic-email-input" placeholder="輸入電子信箱（免記密碼）" class="w-full bg-white border-2 border-amber-400/70 text-slate-950 font-medium placeholder-slate-400 text-xs rounded-xl px-3.5 py-3 focus:outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-400/30 shadow-inner" />
           <button id="btn-magic-email" class="w-full bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-slate-950 font-black text-xs py-2.5 rounded-xl transition flex items-center justify-center gap-1.5 shadow-md">
             <i class="fa-solid fa-wand-magic-sparkles text-slate-950"></i> 發送魔法登入連結
           </button>
@@ -599,7 +607,7 @@
 
       <div class="border-t border-slate-800 pt-3 flex flex-col gap-2 bg-slate-950">
         <div class="flex items-center gap-1.5">
-          <input type="text" id="comment-input-text" placeholder="寫下您的真實體驗與點評..." class="flex-1 bg-slate-900 border border-slate-800 text-white rounded-xl px-3 py-2 text-xs focus:border-amber-400 outline-none placeholder-slate-500" />
+          <input type="text" id="comment-input-text" placeholder="寫下您的真實體驗與點評..." class="flex-1 bg-white border-2 border-amber-400/70 text-slate-950 font-medium placeholder-slate-400 text-xs rounded-xl px-3.5 py-2.5 focus:outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-400/30 shadow-inner" />
           <button id="btn-submit-comment" type="button" class="relative z-30 bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 active:from-amber-500 active:to-amber-600 text-slate-950 font-black text-xs px-4 py-2.5 rounded-xl transition active:scale-95 shadow-md shadow-amber-500/20 whitespace-nowrap cursor-pointer touch-manipulation">
             發表 (+20分)
           </button>
@@ -633,7 +641,7 @@
       <!-- 依登入狀態動態注入歡迎詞或引導登入訊息 -->
     </div>
 
-    <!-- 輸入操作區 -->
+    <!-- 輸入操作區 (白底高對比樣式) -->
     <div class="p-2 bg-slate-900 border-t border-slate-800 flex gap-1.5 items-center">
       <input type="text" id="chat-input" placeholder="問點什麼吧（例：馬尼拉海鮮酒家、頂級和牛...）" class="flex-1 bg-white border-2 border-amber-400/70 text-slate-950 font-medium placeholder-slate-400 text-xs rounded-xl px-3.5 py-2.5 focus:outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-400/30 shadow-inner disabled:opacity-50 disabled:cursor-not-allowed" />
       <button id="btn-send-chat" class="w-8 h-8 rounded-full bg-amber-400 hover:bg-amber-300 text-slate-950 flex items-center justify-center text-xs font-black transition active:scale-95 shadow-sm disabled:opacity-50 disabled:cursor-not-allowed">
@@ -731,7 +739,7 @@
       return ISLAND_KEYS.includes(cityKey);
     }
 
-    // ⭐ 子分類設定：都會生活圈具備「🦀 海鮮盛宴」，海島生活圈海鮮直接整合於「🍽️ Top 必吃美食」
+    // ⭐ 子分類設定：整合賭場與五星奢華大飯店
     const SUB_FILTERS = {
       food_urban: [
         { key: 'all', label: { 'zh-TW': '全部', 'en': 'All', 'tl': 'Lahat' } },
@@ -751,7 +759,7 @@
       ],
       attraction_urban: [
         { key: 'all', label: { 'zh-TW': '全部景點', 'en': 'All Attractions', 'tl': 'Lahat ng Pasyalan' } },
-        { key: 'casino', label: { 'zh-TW': '🎰 賭場娛樂城', 'en': '🎰 Integrated Resorts', 'tl': '🎰 Casino Resorts' } },
+        { key: 'casino', label: { 'zh-TW': '🎰 賭場娛樂城 / 五星奢華飯店', 'en': '🎰 Casino / Luxury Hotels', 'tl': '🎰 Casino at Luxury Hotel' } },
         { key: 'shopping', label: { 'zh-TW': '🛒 精品商場', 'en': '🛒 Upscale Malls', 'tl': '🛒 Pamilihan' } },
         { key: 'history', label: { 'zh-TW': '🏛️ 歷史地標', 'en': '🏛️ Landmarks & Heritage', 'tl': '🏛️ Kasaysayan' } }
       ],
@@ -887,7 +895,6 @@
       return String(val);
     }
 
-    // ⭐ 置中顯示 Toast 通知
     function showToast(msg, icon = 'fa-check') {
       const toast = document.getElementById('toastNotification');
       const toastIcon = document.getElementById('toastIcon');
@@ -1763,7 +1770,8 @@
     }
 
     // ==========================================================
-    // 1. 美食卡片渲染 (大V優先 -> 純依評分自然排序 -> 評論數多到少)
+    // 1. 美食卡片渲染 (站長嚴選優先 -> Google 評分排序 -> 評論數排序)
+    // ⭐ 都會生活圈加入嚴格門檻清洗：非嚴選必須達到 4.5 分且評論數 >= 100
     // ==========================================================
     function renderRestaurants() {
       const listEl = document.getElementById('restaurant-list');
@@ -1774,6 +1782,13 @@
       let filtered = allRestaurants.filter(item => {
         const matchC = isCityMatch(item, currentCity);
         if (!matchC) return false;
+
+        // ⭐ 都會區嚴格品質門檻清洗：非站長嚴選的都會餐廳，必須達到 4.5 分且評論數 >= 100
+        if (!item.isCurated && !isIslandMode(item.city || currentCity)) {
+          const r = parseFloat(String(item.googleRating ?? item.google_rating ?? item.rating ?? 0).replace(/[^\d.]/g, '')) || 0;
+          const c = parseInt(String(item.googleReviewCount ?? item.google_reviews ?? item.review_count ?? item.reviews ?? 0).replace(/[^\d]/g, ''), 10) || 0;
+          if (r < 4.5 || c < 100) return false;
+        }
 
         if (currentSubFilter === 'all') return true;
 
@@ -2141,7 +2156,7 @@
     }
 
     // ==========================================================
-    // 2. 景點導覽渲染 (統一卡片樣式與 Google 評分欄)
+    // 2. 景點導覽渲染 (支援五星奢華飯店與娛樂城品牌自動去重融合)
     // ==========================================================
     function renderAttractions() {
       const listEl = document.getElementById('attraction-list');
@@ -2156,9 +2171,11 @@
         const itemCat = safeStr(item.category);
         const nameAll = (safeStr(item.name_zh) + ' ' + safeStr(item.name_en) + ' ' + safeStr(item.id)).toLowerCase();
 
+        // ⭐ 賭場娛樂城與國際頂級五星奢華大飯店整併
         if (currentSubFilter === 'casino') {
-          if (itemType === 'casino') return true;
-          return itemCat.includes('賭場') || itemCat.includes('casino');
+          if (itemType === 'casino' || itemType === 'hotel') return true;
+          const luxuryKeywords = ['賭場', 'casino', 'resort', 'hotel', '飯店', '酒店', 'nustar', 'solaire', 'okada', 'hyatt', 'peninsula', 'shangri-la', 'dusit', 'radisson', 'seda', 'conrad', 'sofitel'];
+          return luxuryKeywords.some(k => itemCat.includes(k) || nameAll.includes(k));
         }
 
         if (currentSubFilter === 'shopping') {
@@ -2195,6 +2212,19 @@
           return expandedTerms.some(term => corpus.includes(term));
         });
       }
+
+      // ⭐ 娛樂城與飯店同體系品牌自動去重，避免同一實體展示兩次
+      const seenBrands = new Set();
+      filtered = filtered.filter(item => {
+        const checkName = (item.name_zh || item.name_en || item.id || '').toLowerCase();
+        for (const brand of ['nustar', 'solaire', 'okada', 'newport', 'city of dreams', 'dusit thani', 'peninsula', 'shangri-la']) {
+          if (checkName.includes(brand)) {
+            if (seenBrands.has(brand)) return false;
+            seenBrands.add(brand);
+          }
+        }
+        return true;
+      });
 
       filtered.sort((a, b) => {
         const ratingA = Number(a.google_rating || a.googlerating || a.googleRating || a.rating || 0);
@@ -2317,7 +2347,7 @@
     }
 
     // ==========================================================
-    // 3. 醫療藥局渲染 (統一卡片樣式與 Google 評分欄)
+    // 3. 醫療藥局渲染
     // ==========================================================
     function renderMedical() {
       const listEl = document.getElementById('medical-list');
@@ -2830,17 +2860,16 @@
     }
 
     document.getElementById('btn-logout').addEventListener('click', async () => {
-  try {
-    await logoutUser();
-    authModal.classList.add('hidden');
-    // ⭐ 登出時立即把彈窗內部歸位回登入視圖
-    document.getElementById('auth-modal-login-view').classList.remove('hidden');
-    document.getElementById('auth-modal-user-view').classList.add('hidden');
-    showToast('已成功登出');
-  } catch (err) {
-    showToast('登出失敗，請稍候再試');
-  }
-});
+      try {
+        await logoutUser();
+        authModal.classList.add('hidden');
+        document.getElementById('auth-modal-login-view').classList.remove('hidden');
+        document.getElementById('auth-modal-user-view').classList.add('hidden');
+        showToast('已成功登出');
+      } catch (err) {
+        showToast('登出失敗，請稍候再試');
+      }
+    });
 
     typeCityBtn.addEventListener('click', () => {
       currentDimension = 'cities';
@@ -2955,15 +2984,14 @@
         `;
 
         const chatLoginBtn = document.getElementById('btn-chat-modal-login');
-if (chatLoginBtn) {
-  chatLoginBtn.addEventListener('click', () => {
-    chatModal.classList.add('hidden');
-    // ⭐ 強制重設彈窗檢視：隱藏會員卡，顯示登入按鈕
-    document.getElementById('auth-modal-login-view').classList.remove('hidden');
-    document.getElementById('auth-modal-user-view').classList.add('hidden');
-    authModal.classList.remove('hidden');
-  });
-}
+        if (chatLoginBtn) {
+          chatLoginBtn.addEventListener('click', () => {
+            chatModal.classList.add('hidden');
+            document.getElementById('auth-modal-login-view').classList.remove('hidden');
+            document.getElementById('auth-modal-user-view').classList.add('hidden');
+            authModal.classList.remove('hidden');
+          });
+        }
 
         chatInput.disabled = true;
         chatInput.placeholder = "🔒 請先登入會員解鎖 AI 諮詢...";
@@ -3082,43 +3110,30 @@ if (chatLoginBtn) {
     fetchData();
 
     // ⭐ PWA App Badging：只要使用者開啟或回到 App 畫面，即刻自動清除桌面未讀紅點
-function clearAppBadgeOnOpen() {
-  if ('clearAppBadge' in navigator) {
-    navigator.clearAppBadge().catch(() => {});
-  }
-  if (navigator.serviceWorker && navigator.serviceWorker.controller) {
-    navigator.serviceWorker.controller.postMessage({ type: 'CLEAR_BADGE' });
-  }
-}
+    function clearAppBadgeOnOpen() {
+      if ('clearAppBadge' in navigator) {
+        navigator.clearAppBadge().catch(() => {});
+      }
+      if (navigator.serviceWorker && navigator.serviceWorker.controller) {
+        navigator.serviceWorker.controller.postMessage({ type: 'CLEAR_BADGE' });
+      }
+    }
 
-// 1. 網頁載入時清除
-clearAppBadgeOnOpen();
-
-// 2. 當使用者從背景切回前台時清除
-document.addEventListener('visibilitychange', () => {
-  if (document.visibilityState === 'visible') {
     clearAppBadgeOnOpen();
-  }
-});
+
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible') {
+        clearAppBadgeOnOpen();
+      }
+    });
 
     initAuthService();
 
+    // ⭐ 最純粹安靜背景更新：零彈窗打擾、零突發 Reload，幕後靜默下載，下次重開或手動下拉即生效
     if ('serviceWorker' in navigator) {
-      let isRefreshing = false;
-
-      navigator.serviceWorker.addEventListener('controllerchange', () => {
-        if (!isRefreshing) {
-          isRefreshing = true;
-          showToast('✨ 已同步至最新版本！', 'fa-rotate');
-          setTimeout(() => {
-            window.location.reload();
-          }, 800);
-        }
-      });
-
       window.addEventListener('load', () => {
         navigator.serviceWorker.register('./sw.js').then((reg) => {
-          reg.update();
+          reg.update().catch(() => {});
 
           reg.onupdatefound = () => {
             const installingWorker = reg.installing;
