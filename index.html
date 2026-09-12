@@ -7,7 +7,7 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
-  <meta name="app-version" content="20260912-v38.9-master-production" />
+  <meta name="app-version" content="20260912-v39.0-master-production" />
   <meta name="theme-color" content="#020617" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -282,7 +282,7 @@
       color: #0284C7 !important;
     }
 
-    /* 暖陽會員中心純白底零雜色塊 */
+    /* 暖陽會員中心純白底零雜色塊與白底關閉按鈕 */
     html.light #user-favorites-box, html.light #fav-empty-box {
       background-color: #FFFFFF !important;
       border: 1px solid #EFE8DC !important;
@@ -302,8 +302,47 @@
       background-color: #FFFFFF !important;
       border: 1px solid #EFE8DC !important;
     }
+    html.light .btn-modal-close {
+      background-color: #FFFFFF !important;
+      border: 1px solid #E2DACF !important;
+      color: #4B5563 !important;
+    }
 
-    /* 3. 暮光紫霞 (Amethyst) */
+    /* 暖陽 AI 面板主題視覺 */
+    html.light #chat-modal {
+      background-color: #FFFFFF !important;
+      border: 1.5px solid #FDBA74 !important;
+      box-shadow: 0 15px 35px -5px rgba(234, 88, 12, 0.2) !important;
+    }
+    html.light #chat-modal-header {
+      background: linear-gradient(135deg, #F97316, #EA580C) !important;
+      border-bottom: 1px solid #C2410C !important;
+    }
+    html.light #chat-messages {
+      background-color: #FFFFFF !important;
+    }
+    html.light .chat-bubble-agent {
+      background-color: #FFF7ED !important;
+      border: 1px solid #FFEDD5 !important;
+      color: #431407 !important;
+    }
+    html.light .ai-quick-btn {
+      background-color: #FFFFFF !important;
+      border: 1px solid #FDBA74 !important;
+      color: #EA580C !important;
+      font-weight: 700 !important;
+    }
+    html.light #chat-input-bar {
+      background-color: #FFFFFF !important;
+      border-top: 1px solid #FED7AA !important;
+    }
+    html.light #chat-input {
+      background-color: #FFF7ED !important;
+      border: 1.5px solid #FDBA74 !important;
+      color: #431407 !important;
+    }
+
+    /* 3. 暮光紫霞 (Amethyst) - 全面剔除橘色 */
     html.amethyst body {
       background-color: #FAF6F9 !important;
       color: #2E1A33 !important;
@@ -338,12 +377,17 @@
       color: #7B337F !important;
       font-weight: 700 !important;
     }
-    html.amethyst .region-pill.bg-amber-400, html.amethyst .sub-pill.bg-amber-400\/20 {
+    /* 暮光紫霞選中膠囊全面使用深紫色漸層，不再摻雜橘色 */
+    html.amethyst .region-pill.bg-amber-400, 
+    html.amethyst .sub-pill.bg-amber-400\/20,
+    html.amethyst .main-tab-pill.bg-gradient-to-r,
+    html.amethyst #typeCityBtn.bg-gradient-to-r,
+    html.amethyst #typeIslandBtn.bg-gradient-to-r {
       background: linear-gradient(135deg, #8E4D88, #6B3E75) !important;
       border: 1px solid #55285F !important;
       color: #FFFFFF !important;
       font-weight: 800 !important;
-      box-shadow: 0 3px 10px rgba(107, 62, 117, 0.4) !important;
+      box-shadow: 0 3px 10px rgba(107, 62, 117, 0.35) !important;
     }
     html.amethyst #itemCountBadge {
       background-color: #FFFFFF !important;
@@ -406,7 +450,7 @@
       color: #0284C7 !important;
     }
 
-    /* 暮光紫霞會員中心純白底零雜色塊 */
+    /* 暮光紫霞會員中心純白底零雜色塊與白底關閉按鈕 */
     html.amethyst #user-favorites-box, html.amethyst #fav-empty-box {
       background-color: #FFFFFF !important;
       border: 1px solid #EFE4F1 !important;
@@ -425,6 +469,45 @@
     html.amethyst #push-slot-container {
       background-color: #FFFFFF !important;
       border: 1px solid #EFE4F1 !important;
+    }
+    html.amethyst .btn-modal-close {
+      background-color: #FFFFFF !important;
+      border: 1px solid #E0BEE5 !important;
+      color: #55285F !important;
+    }
+
+    /* 暮光紫霞 AI 面板主題視覺 */
+    html.amethyst #chat-modal {
+      background-color: #FFFFFF !important;
+      border: 1.5px solid #D5C2D9 !important;
+      box-shadow: 0 15px 35px -5px rgba(110, 48, 115, 0.25) !important;
+    }
+    html.amethyst #chat-modal-header {
+      background: linear-gradient(135deg, #6B3E75, #8E4D88) !important;
+      border-bottom: 1px solid #55285F !important;
+    }
+    html.amethyst #chat-messages {
+      background-color: #FFFFFF !important;
+    }
+    html.amethyst .chat-bubble-agent {
+      background-color: #FAF5FB !important;
+      border: 1px solid #EFE4F1 !important;
+      color: #2E1A33 !important;
+    }
+    html.amethyst .ai-quick-btn {
+      background-color: #FFFFFF !important;
+      border: 1px solid #D5C2D9 !important;
+      color: #7B337F !important;
+      font-weight: 700 !important;
+    }
+    html.amethyst #chat-input-bar {
+      background-color: #FFFFFF !important;
+      border-top: 1px solid #EFE4F1 !important;
+    }
+    html.amethyst #chat-input {
+      background-color: #FAF5FB !important;
+      border: 1.5px solid #D5C2D9 !important;
+      color: #2E1A33 !important;
     }
 
     /* Grab 品牌綠通用規範 */
@@ -585,7 +668,7 @@
       
       <!-- 登入前檢視 -->
       <div id="auth-modal-login-view">
-        <button id="close-auth-btn-guest" class="absolute top-3 right-3 w-7 h-7 bg-slate-900 rounded-full text-slate-400 hover:text-white flex items-center justify-center text-xs">✕</button>
+        <button id="close-auth-btn-guest" class="btn-modal-close absolute top-3 right-3 w-7 h-7 bg-slate-900 rounded-full text-slate-400 hover:text-white flex items-center justify-center text-xs">✕</button>
         <div class="w-12 h-12 bg-amber-400/10 border border-amber-400/30 text-amber-400 rounded-2xl flex items-center justify-center mx-auto mb-2 text-xl shadow-md">
           <i class="fa-solid fa-crown"></i>
         </div>
@@ -645,7 +728,7 @@
               </div>
             </div>
 
-            <button id="close-auth-btn-user" class="w-7 h-7 bg-slate-900 rounded-full text-slate-400 hover:text-white flex items-center justify-center text-xs">✕</button>
+            <button id="close-auth-btn-user" class="btn-modal-close w-7 h-7 bg-slate-900 rounded-full text-slate-400 hover:text-white flex items-center justify-center text-xs">✕</button>
           </div>
         </div>
 
@@ -706,7 +789,7 @@
             <i class="fa-solid fa-arrow-left text-[10px]"></i> <span data-i18n="btnBackCenter">返回中心</span>
           </button>
           <span data-i18n="taskSubTitle" class="text-xs font-bold text-white">探店任務與吃貨同行</span>
-          <button id="close-auth-btn-tasks" class="w-7 h-7 bg-slate-900 rounded-full text-slate-400 hover:text-white flex items-center justify-center text-xs">✕</button>
+          <button id="close-auth-btn-tasks" class="btn-modal-close w-7 h-7 bg-slate-900 rounded-full text-slate-400 hover:text-white flex items-center justify-center text-xs">✕</button>
         </div>
 
         <div class="flex-1 overflow-y-auto hide-scrollbar space-y-2.5 text-xs text-slate-300 pr-0.5">
@@ -748,7 +831,7 @@
         <h4 class="font-bold text-sm text-white flex items-center gap-1.5">
           <i class="fa-solid fa-paper-plane text-amber-400"></i> <span data-i18n="recModalTitle">推薦在地私房好店</span>
         </h4>
-        <button id="close-recommend-btn" class="w-7 h-7 bg-slate-900 rounded-full text-slate-400 hover:text-white flex items-center justify-center text-xs">✕</button>
+        <button id="close-recommend-btn" class="btn-modal-close w-7 h-7 bg-slate-900 rounded-full text-slate-400 hover:text-white flex items-center justify-center text-xs">✕</button>
       </div>
 
       <div class="space-y-2.5 text-xs">
@@ -814,9 +897,9 @@
     <img src="ai-avatar.jpg" alt="AI 管家" class="w-full h-full object-cover pointer-events-none" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop';" />
   </button>
 
-  <!-- AI 管家面板（展開時懸浮球定錨在右下角，點擊內部完全阻止冒泡保持開啟） -->
+  <!-- AI 管家面板（白底化、發言氣泡主題色系連動、點擊頭像即可直接收回） -->
   <div id="chat-modal" class="fixed bottom-[180px] right-4 w-84 max-w-[calc(100vw-32px)] bg-slate-950 rounded-3xl shadow-2xl border border-amber-400/50 flex flex-col z-50 overflow-hidden hidden transition-all duration-300" style="height: 58vh; min-height: 400px; max-height: 520px;">
-    <div class="bg-slate-900 border-b border-amber-500/20 text-white p-3 flex justify-between items-center flex-shrink-0">
+    <div id="chat-modal-header" class="bg-slate-900 border-b border-amber-500/20 text-white p-3 flex justify-between items-center flex-shrink-0">
       <div class="flex items-center gap-2">
         <div class="w-7 h-7 rounded-full overflow-hidden border border-amber-400 bg-slate-950">
           <img src="ai-avatar.jpg" class="w-full h-full object-cover" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop';" />
@@ -826,10 +909,10 @@
           <span class="text-[9px] text-amber-300">Powered by Gemini</span>
         </div>
       </div>
-      <button id="btn-close-chat" class="w-7 h-7 bg-white/10 rounded-full text-slate-300 hover:text-white text-xs flex items-center justify-center">✕</button>
+      <button id="btn-close-chat" class="btn-modal-close w-7 h-7 bg-white/10 rounded-full text-slate-300 hover:text-white text-xs flex items-center justify-center">✕</button>
     </div>
     <div id="chat-messages" class="flex-1 p-3.5 overflow-y-auto space-y-2.5 text-xs bg-slate-950 hide-scrollbar"></div>
-    <div class="p-2.5 bg-slate-900 border-t border-slate-800 flex gap-1.5 items-center flex-shrink-0">
+    <div id="chat-input-bar" class="p-2.5 bg-slate-900 border-t border-slate-800 flex gap-1.5 items-center flex-shrink-0">
       <input type="text" id="chat-input" data-i18n-placeholder="chatPlaceholder" placeholder="問點什麼吧（例：馬尼拉海鮮酒家、頂級和牛...）" class="flex-1 bg-white border-2 border-amber-400/70 text-slate-950 font-medium placeholder-slate-400 text-xs rounded-xl px-3.5 py-2.5 focus:outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-400/30 shadow-inner disabled:opacity-50 disabled:cursor-not-allowed" />
       <button id="btn-send-chat" class="w-9 h-9 rounded-full bg-amber-400 hover:bg-amber-300 text-slate-950 flex items-center justify-center text-xs font-black transition active:scale-95 shadow-sm disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0">
         <i class="fa-solid fa-paper-plane"></i>
@@ -868,7 +951,7 @@
     const VAPID_KEY = "BFcmRKQZhSkc4k6FE3qkr85YevC3aKCSfNKNHi1z_qJJGXVmOoY-WWdx2A6QxFCZFTYqhQR7zSjfO3hYqXEWKXY";
     const AI_WORKER_URL = "https://food-ai-assistant.vhuang904.workers.dev";
 
-    // 完整三語字典系統
+    // 完整三語字典系統（全面統稱 Google 推薦）
     const I18N_DICT = {
       'zh-TW': {
         appTitle: '大V的旅遊窩',
@@ -891,6 +974,7 @@
         btnNav: '路線導航',
         btnComment: '寫評論 +20',
         badgeCurated: '站長私房嚴選',
+        badgeGoogleRec: 'Google推薦',
         mustTryBadge: '必點招牌',
         addressEmpty: '地址收集中',
         phoneEmpty: '暫無電話',
@@ -961,6 +1045,7 @@
         btnNav: 'Directions',
         btnComment: 'Review +20',
         badgeCurated: 'Curated by BigV',
+        badgeGoogleRec: 'Google Recommended',
         mustTryBadge: 'Signature Dish',
         addressEmpty: 'Address updating',
         phoneEmpty: 'No phone',
@@ -1031,6 +1116,7 @@
         btnNav: 'Direksyon',
         btnComment: 'Puna +20',
         badgeCurated: 'Pili ni BigV',
+        badgeGoogleRec: 'Rekomendado ng Google',
         mustTryBadge: 'Espesyal na Ulam',
         addressEmpty: 'Ina-update ang tirahan',
         phoneEmpty: 'Walang telepono',
@@ -1146,7 +1232,6 @@
     let currentUserProfile = { points: 50, level: 'LV.1 探店初心者' };
     let userFavoritesSet = new Set(JSON.parse(localStorage.getItem('bigv_favorites') || '[]'));
 
-    // 右上角會員按鈕常駐保護
     function updateHeaderAuthBtn() {
       const authBtnText = document.getElementById('auth-btn-text');
       const avatarContainer = document.getElementById('user-avatar-container');
@@ -1201,7 +1286,6 @@
       });
     }
 
-    // 推播開關同步與手動切換
     const pushToggleBtn = document.getElementById('push-toggle-btn');
     const pushToggleThumb = document.getElementById('push-toggle-thumb');
 
@@ -1273,7 +1357,6 @@
       });
     }
 
-    // 8 大標準區域定義
     const REGION_CONFIG = {
       cities: [
         { id: 'manila', name: '馬尼拉', name_en: 'Manila', fullName: '🏙️ 馬尼拉 (Metro Manila)' },
@@ -1294,7 +1377,6 @@
       return ISLAND_KEYS.includes(cityKey);
     }
 
-    // 嚴格對齊 Google Sheets 截圖官方 7 大類別鍵值
     const SUB_FILTERS = {
       food_urban: [
         { key: 'all', label: { 'zh-TW': '全部', 'en': 'All', 'tl': 'Lahat' } },
@@ -1759,14 +1841,13 @@
       });
     }
 
-    // 全面載入資料
     async function fetchData() {
       const loadingEl = document.getElementById('loading');
       try {
         const sheetMaster = await loadMasterDatabase();
         const islandRaw = sheetMaster.Island_Discovered || sheetMaster.islandDiscovered || [];
 
-        // 1. 美食與渡假專區（完整包含海島飯店與 Villa）
+        // 1. 美食與渡假專區
         allRestaurants = (sheetMaster.bigVPicks || [])
           .concat(sheetMaster.autoDiscovered || [])
           .concat(islandRaw.filter(x => x.type === 'restaurant' || x.type === 'hotel_villa' || x.type === 'hotel' || x.type === 'resort' || x.type === 'nightlife' || !x.type));
@@ -1814,11 +1895,21 @@
       document.querySelectorAll('.region-pill').forEach(btn => {
         btn.addEventListener('click', () => {
           currentCity = btn.getAttribute('data-city');
-          // 切換城市時強制重設為 all 並瞬間置頂回到第一筆
+          
+          // 切換城市時雙重強制歸位：主 Tab 回到美食饗宴 (map)，子分類回到全部 (all)
+          currentMainTab = 'map';
+          sessionStorage.setItem('ph_nav_tab', 'map');
           currentSubFilter = 'all';
           sessionStorage.setItem('ph_nav_sub', 'all');
+
           renderRegionPills();
           renderSubFilterBar();
+
+          // 子分類橫向滾動條強制歸零
+          const subBar = document.getElementById('subFilterContainer');
+          if (subBar) subBar.scrollTo({ left: 0, behavior: 'instant' });
+
+          // 頁面垂直視窗瞬間置頂
           window.scrollTo({ top: 0, behavior: 'instant' });
           renderContent();
         });
@@ -2037,7 +2128,7 @@
           </a>
         `;
 
-        // 徽章生成
+        // 徽章生成：第二層全面統稱為 Google 推薦
         let badgeHtml = '';
         if (tier === 1) {
           badgeHtml = `
@@ -2049,7 +2140,7 @@
           badgeHtml = `
             <div class="absolute top-3 left-3 z-30 flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-gradient-to-r from-sky-500 to-blue-600 border border-sky-300 text-white text-[10px] font-black shadow-md">
               <i class="fa-solid fa-gem text-[10px]"></i>
-              <span>${item.isPartner ? '💎 特約認證名店' : '🌟 高口碑精選'}</span>
+              <span>${dict.badgeGoogleRec}</span>
             </div>
           `;
         }
@@ -2117,21 +2208,28 @@
       }).join('');
     }
 
-    // 2. 景點導覽渲染
+    // 2. 景點導覽渲染（賭場 100% 鎖死在賭場娛樂，精品商場嚴格排他排除賭場）
     function renderAttractions() {
       const listEl = document.getElementById('attraction-list');
       const dict = I18N_DICT[currentLang] || I18N_DICT['zh-TW'];
       let filtered = allAttractions.filter(x => safeStr(x.city) === currentCity);
+
+      // 賭場關鍵字判斷函式
+      const isCasinoEntity = (text) => {
+        return /casino|賭場|okada|solaire|city of dreams|\bcod\b|newport|resorts world|nustar|hann/i.test(text);
+      };
 
       if (currentSubFilter !== 'all') {
         filtered = filtered.filter(item => {
           const textAll = `${safeStr(item.category)} ${safeStr(item.type)} ${safeStr(item.name_zh)} ${safeStr(item.name_en)} ${safeStr(item.id)}`.toLowerCase();
           
           if (currentSubFilter === 'casino') {
-            return textAll.includes('casino') || textAll.includes('賭場') || textAll.includes('hotel') || textAll.includes('飯店') || textAll.includes('酒店') || textAll.includes('resort') || textAll.includes('okada') || textAll.includes('solaire') || textAll.includes('nustar') || textAll.includes('peninsula') || textAll.includes('shangri-la') || textAll.includes('hyatt');
+            return isCasinoEntity(textAll);
           }
           if (currentSubFilter === 'shopping') {
-            return textAll.includes('mall') || textAll.includes('shopping') || textAll.includes('商場') || textAll.includes('購物') || textAll.includes('百貨') || textAll.includes('ayala') || textAll.includes('sm ') || textAll.includes('robinsons') || textAll.includes('power plant') || textAll.includes('greenbelt');
+            // 精品商場必須是純購物百貨，且嚴格排他排除任何賭場！
+            const isPureMall = /mall|shopping|商場|購物|百貨|ayala|greenbelt|power plant|sm |robinsons|shangri-la plaza/i.test(textAll);
+            return isPureMall && !isCasinoEntity(textAll);
           }
           if (currentSubFilter === 'history') {
             return textAll.includes('歷史') || textAll.includes('古蹟') || textAll.includes('church') || textAll.includes('教堂') || textAll.includes('museum') || textAll.includes('博物館') || textAll.includes('park') || textAll.includes('公園') || textAll.includes('ocean') || textAll.includes('海洋') || textAll.includes('art') || textAll.includes('mind museum') || textAll.includes('intramuros') || textAll.includes('fort santiago') || textAll.includes('觀光');
@@ -2190,7 +2288,7 @@
           badgeHtml = `
             <div class="absolute top-3 left-3 z-30 flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-gradient-to-r from-sky-500 to-blue-600 border border-sky-300 text-white text-[10px] font-black shadow-md">
               <i class="fa-solid fa-gem text-[10px]"></i>
-              <span>${item.isPartner ? '💎 特約景點' : '🌟 高口碑景點'}</span>
+              <span>${dict.badgeGoogleRec}</span>
             </div>
           `;
         }
@@ -2311,7 +2409,7 @@
           badgeHtml = `
             <div class="absolute top-3 left-3 z-30 flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-gradient-to-r from-sky-500 to-blue-600 border border-sky-300 text-white text-[10px] font-black shadow-md">
               <i class="fa-solid fa-gem text-[10px]"></i>
-              <span>${item.isPartner ? '💎 特約醫療' : '🌟 指標大院'}</span>
+              <span>${dict.badgeGoogleRec}</span>
             </div>
           `;
         }
@@ -2552,11 +2650,14 @@
       } else {
         document.documentElement.classList.add('dark');
         currentThemeLabel.innerText = '暗夜';
-        themeDropdownBtn.className = 'bg-slate-900 border border-amber-400/40 text-amber-300 text-[10px] font-bold px-2.5 py-1 rounded-lg flex items-center justify-center gap-1 transition shadow-sm';
+        themeDropdownBtn.className = 'bg-slate-900 border border-amber-400/40 text-amber-300 text-[10px] font-bold px-2 py-1 rounded-lg flex items-center justify-center gap-1 transition shadow-sm';
         currentThemeIcon.style.color = '#F59E0B';
         theme = 'dark';
       }
       localStorage.setItem('bigv_app_theme', theme);
+      renderRegionPills();
+      renderSubFilterBar();
+      renderContent();
     }
     applyAppTheme(localStorage.getItem('bigv_app_theme') || 'dark');
 
@@ -2601,6 +2702,10 @@
       currentSubFilter = 'all';
       sessionStorage.setItem('ph_nav_sub', 'all');
       renderSubFilterBar();
+      
+      const subBar = document.getElementById('subFilterContainer');
+      if (subBar) subBar.scrollTo({ left: 0, behavior: 'instant' });
+
       window.scrollTo({ top: 0, behavior: 'instant' });
       renderContent();
     };
@@ -2634,7 +2739,7 @@
     });
 
     // =========================================================================
-    // AI 懸浮球（嚴格限制物理拖曳下限、定錨右下角、自訂位置記憶與冒泡阻止）
+    // AI 懸浮球（嚴格限制物理拖曳下限、定錨右下角、自訂位置記憶、點擊頭像收回與冒泡阻止）
     // =========================================================================
     const fab = document.getElementById('chat-fab');
     const chatModal = document.getElementById('chat-modal');
@@ -2732,8 +2837,16 @@
       if (!msg) return;
       const targetLang = currentLang === 'zh-TW' ? 'zh' : currentLang;
 
+      // 使用者氣泡樣式配合當前主題
+      let userBubbleClass = 'bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950';
+      if (document.documentElement.classList.contains('light')) {
+        userBubbleClass = 'bg-gradient-to-r from-orange-500 to-orange-600 text-white';
+      } else if (document.documentElement.classList.contains('amethyst')) {
+        userBubbleClass = 'bg-gradient-to-r from-[#8E4D88] to-[#6B3E75] text-white';
+      }
+
       chatMessagesContainer.innerHTML += `
-        <div class="bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 font-bold p-2.5 rounded-xl rounded-tr-sm self-end max-w-[85%] ml-auto text-xs leading-relaxed shadow-xs">
+        <div class="${userBubbleClass} font-bold p-2.5 rounded-xl rounded-tr-sm self-end max-w-[85%] ml-auto text-xs leading-relaxed shadow-xs">
           ${msg}
         </div>
       `;
@@ -2742,7 +2855,7 @@
 
       const loadId = 'load-' + Date.now();
       chatMessagesContainer.innerHTML += `
-        <div id="${loadId}" class="bg-slate-900 p-2.5 rounded-xl rounded-tl-sm border border-slate-800 text-slate-400 text-xs self-start max-w-[85%] flex items-center gap-1.5 shadow-2xs">
+        <div id="${loadId}" class="bg-slate-900 p-2.5 rounded-xl rounded-tl-sm border border-slate-800 text-slate-400 text-xs self-start max-w-[85%] flex items-center gap-1.5 shadow-2xs chat-bubble-agent">
           <i class="fa-solid fa-spinner fa-spin text-amber-400"></i> 管家正在為您查詢... ⚡
         </div>
       `;
@@ -2798,7 +2911,7 @@
     }
 
     function onDragEnd() {
-      if (!isDragging || !chatModal.classList.contains('hidden')) return;
+      if (!isDragging) return;
       isDragging = false;
       fab.style.transition = 'all 0.35s cubic-bezier(0.25, 1, 0.5, 1)';
       if (hasMoved) {
@@ -2828,6 +2941,7 @@
         renderChatUI();
         if (currentUser) chatInput.focus();
       } else {
+        // 再次點擊頭像即可直接收合
         closeAiChat();
       }
     }
@@ -2839,7 +2953,18 @@
     window.addEventListener('mousemove', onDragMove);
     window.addEventListener('mouseup', onDragEnd);
 
-    btnCloseChat.addEventListener('click', closeAiChat);
+    // 點選頭像本身直接觸發 toggle (開/關)
+    fab.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (!hasMoved) {
+        toggleAiChat();
+      }
+    });
+
+    btnCloseChat.addEventListener('click', (e) => {
+      e.stopPropagation();
+      closeAiChat();
+    });
 
     // 對話視窗內部點擊全面阻止冒泡，避免點選任何選項時對話視窗被誤傷收起
     chatModal.addEventListener('click', (e) => {
