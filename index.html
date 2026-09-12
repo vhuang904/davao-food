@@ -7,7 +7,7 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
-  <meta name="app-version" content="20260912-v40.0-dual-lang" />
+  <meta name="app-version" content="20260912-v40.0-master-production" />
   <meta name="theme-color" content="#020617" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -123,10 +123,8 @@
 
     /* 3. AI 懸浮球與對話視窗過渡系統 */
     #chat-fab {
-      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),
-                  box-shadow 0.2s ease,
-                  bottom 0.25s ease,
-                  right 0.25s ease;
+      transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+                  box-shadow 0.2s ease;
       touch-action: none;
       z-index: 90;
     }
@@ -156,6 +154,11 @@
       background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%) !important;
       color: #020617 !important;
       box-shadow: 0 2px 8px rgba(245, 158, 11, 0.45) !important;
+    }
+    html.dark .empty-state-box {
+      background-color: #020617 !important;
+      border-color: #1E293B !important;
+      color: #94A3B8 !important;
     }
 
     html.dark .btn-card-comment {
@@ -211,6 +214,11 @@
       background: #FFFFFF !important;
       color: #C2410C !important;
       box-shadow: 0 2px 8px rgba(0,0,0,0.15) !important;
+    }
+    html.light .empty-state-box {
+      background-color: #FCF9F2 !important;
+      border-color: #E2DACF !important;
+      color: #78350F !important;
     }
 
     html.light #search-input {
@@ -386,6 +394,11 @@
       background: #FFFFFF !important;
       color: #6B3E75 !important;
       box-shadow: 0 2px 8px rgba(0,0,0,0.18) !important;
+    }
+    html.amethyst .empty-state-box {
+      background-color: #FAF5FB !important;
+      border-color: #EFE4F1 !important;
+      color: #55285F !important;
     }
 
     html.amethyst #search-input {
@@ -597,7 +610,7 @@
         </div>
       </div>
 
-      <!-- 第二列：搜尋欄 + 右上角現代「雙態膠囊語系切換鈕」 -->
+      <!-- 第二列：搜尋欄 + 右上角現代雙態膠囊語系切換鈕 [ 中文 | EN ] -->
       <div class="flex items-center gap-1.5">
         <div class="relative flex-1 flex items-center">
           <i class="fa-solid fa-magnifying-glass absolute left-3 text-slate-500 text-xs pointer-events-none"></i>
@@ -607,7 +620,7 @@
           </button>
         </div>
         
-        <!-- 膠囊雙態切換開關 [ 中文 | EN ] -->
+        <!-- 膠囊雙態切換開關 -->
         <div class="lang-toggle-container p-0.5 rounded-xl flex items-center flex-shrink-0 transition-all">
           <button type="button" id="lang-btn-zh" class="lang-toggle-btn active px-2.5 py-1.5 text-[11px] font-black rounded-lg transition-all">中文</button>
           <button type="button" id="lang-btn-en" class="lang-toggle-btn px-2.5 py-1.5 text-[11px] font-black rounded-lg transition-all">EN</button>
@@ -693,8 +706,8 @@
     </div>
   </main>
 
-  <!-- 會員中心彈窗 -->
-  <div id="auth-modal" class="fixed inset-0 z-50 glass-modal hidden flex items-center justify-center p-3.5">
+  <!-- 會員中心彈窗 (提升至最高層級 z-[9999] 徹底阻絕死鎖) -->
+  <div id="auth-modal" class="fixed inset-0 z-[9999] glass-modal hidden flex items-center justify-center p-3.5">
     <div class="bg-slate-950 border border-amber-400/40 rounded-3xl w-full max-w-sm p-4 shadow-2xl relative text-center flex flex-col max-h-[90vh] overflow-hidden">
       
       <!-- 登入前檢視 -->
@@ -854,7 +867,7 @@
   </div>
 
   <!-- 推薦私房好店表單彈窗 -->
-  <div id="recommend-modal" class="fixed inset-0 z-50 glass-modal hidden flex items-center justify-center p-4">
+  <div id="recommend-modal" class="fixed inset-0 z-[9999] glass-modal hidden flex items-center justify-center p-4">
     <div class="bg-slate-950 border border-amber-400/50 rounded-3xl w-full max-w-sm p-4 shadow-2xl relative text-left flex flex-col space-y-3">
       <div class="flex items-center justify-between border-b border-slate-800 pb-2">
         <h4 class="font-bold text-sm text-white flex items-center gap-1.5">
@@ -895,20 +908,18 @@
     </div>
   </div>
 
-  <!-- 詳情與評論留言彈窗 -->
-  <div id="comment-modal" class="fixed inset-0 z-50 glass-modal hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
+  <!-- 全景點/全餐廳 純淨會員留言互動彈窗 (徹底移除 Google 摘要，回歸純粹點評) -->
+  <div id="comment-modal" class="fixed inset-0 z-[9999] glass-modal hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
     <div class="bg-slate-950 border border-amber-400/40 rounded-t-3xl sm:rounded-2xl w-full max-w-md h-[80vh] max-h-[600px] p-4 shadow-2xl flex flex-col relative text-slate-100">
       <div class="flex items-center justify-between border-b border-slate-800 pb-3">
         <div>
-          <h3 id="comment-modal-title" class="font-bold text-sm text-white truncate">店家評論與介紹</h3>
+          <h3 id="comment-modal-title" class="font-bold text-sm text-white truncate">店家真實點評討論</h3>
           <p data-i18n="commentSub" class="text-[10px] text-amber-400/80">分享您的真實探店評語與心得</p>
         </div>
         <button id="close-comment-btn" type="button" class="relative z-50 w-10 h-10 bg-slate-800 hover:bg-slate-700 active:bg-slate-600 rounded-full text-slate-300 active:text-white flex items-center justify-center text-sm font-black cursor-pointer flex-shrink-0 touch-manipulation select-none">✕</button>
       </div>
 
-      <!-- 完整官方摘要/熱評區塊 -->
-      <div id="modal-description-box" class="mt-2 p-3 bg-slate-900 border border-amber-400/30 rounded-xl text-xs text-slate-200 leading-relaxed max-h-[140px] overflow-y-auto hide-scrollbar"></div>
-
+      <!-- 專屬會員點評動態列表區 -->
       <div id="comment-list-container" class="flex-1 overflow-y-auto hide-scrollbar py-3 space-y-2.5 text-xs">
         <p class="text-center text-slate-500 py-6">載入留言中...</p>
       </div>
@@ -924,7 +935,7 @@
     </div>
   </div>
 
-  <!-- AI 懸浮球 -->
+  <!-- AI 懸浮球 (解凍全向拖曳、定錨右下角) -->
   <button id="chat-fab" class="fixed rounded-full bg-slate-950 border-2 border-amber-400 shadow-[0_0_25px_-2px_rgba(245,158,11,0.7)] overflow-hidden flex items-center justify-center cursor-pointer z-40 active:scale-95 transition-all select-none touch-none" style="width:60px; height:60px; right:16px; bottom:115px;" title="大V旅遊管家">
     <img src="ai-avatar.jpg" alt="AI 管家" class="w-full h-full object-cover pointer-events-none" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop';" />
   </button>
@@ -952,7 +963,7 @@
     </div>
   </div>
 
-  <!-- Firebase SDK 與核心模組 -->
+  <!-- Firebase SDK 與核心邏輯模組 -->
   <script type="module">
     import { initializeApp, getApps, getApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getMessaging, getToken } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-messaging.js";
@@ -962,7 +973,8 @@
       initAuthService, 
       loginWithGoogle, 
       sendMagicEmailLink, 
-      logoutUser 
+      logoutUser, 
+      addStoreComment 
     } from './authService.js';
 
     const firebaseConfig = {
@@ -981,7 +993,7 @@
     const VAPID_KEY = "BFcmRKQZhSkc4k6FE3qkr85YevC3aKCSfNKNHi1z_qJJGXVmOoY-WWdx2A6QxFCZFTYqhQR7zSjfO3hYqXEWKXY";
     const AI_WORKER_URL = "https://food-ai-assistant.vhuang904.workers.dev";
 
-    // 旗艦純雙語字典 (繁中 / 英文)
+    // 旗艦雙語字典 (繁體中文 / 英文)
     const I18N_DICT = {
       'zh-TW': {
         appTitle: '大V的旅遊窩',
@@ -1127,11 +1139,37 @@
       }
     };
 
-    // 智慧語系偵測引擎 (中文體系 ➔ 繁中；其餘非中文 100% 預設為英文)
+    // 寬鬆搜尋同義詞字典
+    const SEARCH_SYNONYMS = {
+      '牛排': ['steak', 'beef', 'wagyu', '和牛', '肋眼', 'ribeye', 'western', '排餐', '牛'],
+      'steak': ['牛排', 'beef', 'wagyu', '和牛', 'ribeye'],
+      '和牛': ['wagyu', 'beef', 'steak', '牛排'],
+      '火鍋': ['hotpot', 'hot pot', 'shabu', '麻辣', '火锅', '鍋'],
+      'hotpot': ['火鍋', 'shabu', '麻辣'],
+      '海鮮': ['seafood', 'crab', 'lobster', 'shrimp', 'prawn', 'fish', '螃蟹', '龍蝦', '蝦', '魚', 'dampa'],
+      'seafood': ['海鮮', 'crab', 'lobster', 'shrimp', 'fish'],
+      '日料': ['japanese', 'sushi', 'sashimi', 'yaki', 'teppan', '壽司', '生魚片', '日式', '居酒屋', '拉麵'],
+      '中餐': ['chinese', 'dim sum', '粵菜', '川菜', '中式', '點心'],
+      '早午餐': ['brunch', 'breakfast', 'cafe', '咖啡', '甜點', '鬆餅'],
+      '酒吧': ['bar', 'nightlife', 'club', 'lounge', '夜生活', '調酒'],
+      '燒肉': ['yakiniku', 'bbq', 'barbecue', '烤肉', '韓式烤肉', 'korean bbq']
+    };
+
+    function expandSearchKeywords(query) {
+      const q = query.toLowerCase().trim();
+      const terms = [q];
+      for (const [key, synonyms] of Object.entries(SEARCH_SYNONYMS)) {
+        if (q.includes(key.toLowerCase()) || synonyms.some(s => s.toLowerCase() === q)) {
+          terms.push(key.toLowerCase(), ...synonyms.map(s => s.toLowerCase()));
+        }
+      }
+      return Array.from(new Set(terms));
+    }
+
+    // 手機作業系統語言自動判定 (中文體系進繁中，非中文預設英文；手動切換優先記憶)
     function detectDefaultAppLanguage() {
       const saved = localStorage.getItem('ph_app_lang');
       if (saved && (saved === 'zh-TW' || saved === 'en')) return saved;
-      
       const sys = (navigator.language || (navigator.languages && navigator.languages[0]) || 'en').toLowerCase();
       if (sys.startsWith('zh')) return 'zh-TW';
       return 'en';
@@ -1148,6 +1186,7 @@
     let currentSubFilter = sessionStorage.getItem('ph_nav_sub') || 'all';
     let currentSearchQuery = '';
     let currentLang = detectDefaultAppLanguage();
+    let isDataLoading = true; // 加載鎖：未載入完成前禁止閃黑卡
 
     if (deepCity) {
       currentCity = deepCity.toLowerCase().trim();
@@ -1172,6 +1211,7 @@
     let currentUser = null;
     let currentUserProfile = { points: 50, level: 'LV.1 探店初心者' };
     let userFavoritesSet = new Set(JSON.parse(localStorage.getItem('bigv_favorites') || '[]'));
+    let activeCommentStoreId = '';
 
     // 滾動深度記憶守護者
     function preserveScrollPosition(actionFn) {
@@ -1203,7 +1243,6 @@
       }
     }
 
-    // 切換並套用語系
     function applyLanguage(lang) {
       currentLang = (lang === 'en') ? 'en' : 'zh-TW';
       localStorage.setItem('ph_app_lang', currentLang);
@@ -1220,7 +1259,6 @@
         if (dict[k]) el.placeholder = dict[k];
       });
 
-      // 同步右上角雙態膠囊按鈕
       const btnZh = document.getElementById('lang-btn-zh');
       const btnEn = document.getElementById('lang-btn-en');
       if (btnZh && btnEn) {
@@ -1252,6 +1290,78 @@
         showToast('Language set to: English', 'fa-globe');
       }
     });
+
+    // 推播切換開關 UI 與授權管理 (100% 完整原封不動)
+    const pushToggleBtn = document.getElementById('push-toggle-btn');
+    const pushToggleThumb = document.getElementById('push-toggle-thumb');
+
+    function updatePushToggleUI(isActive) {
+      if (!pushToggleBtn || !pushToggleThumb) return;
+      pushToggleBtn.setAttribute('aria-checked', isActive ? 'true' : 'false');
+      if (isActive) {
+        pushToggleBtn.classList.remove('bg-slate-800');
+        pushToggleBtn.classList.add('bg-amber-400');
+        pushToggleThumb.classList.remove('translate-x-0', 'bg-slate-400');
+        pushToggleThumb.classList.add('translate-x-4', 'bg-slate-950');
+      } else {
+        pushToggleBtn.classList.remove('bg-amber-400');
+        pushToggleBtn.classList.add('bg-slate-800');
+        pushToggleThumb.classList.remove('translate-x-4', 'bg-slate-950');
+        pushToggleThumb.classList.add('translate-x-0', 'bg-slate-400');
+      }
+    }
+
+    async function requestPushNotificationPermission(user, isManual = false) {
+      if (!('Notification' in window) || !('serviceWorker' in navigator)) return;
+      try {
+        const permission = await Notification.requestPermission();
+        if (permission !== 'granted') {
+          updatePushToggleUI(false);
+          if (isManual) showToast('未開啟推播授權，請至瀏覽器設定允許通知', 'fa-bell-slash');
+          return;
+        }
+
+        const registration = await navigator.serviceWorker.ready;
+        const messaging = getMessaging(app);
+        const currentToken = await getToken(messaging, {
+          vapidKey: VAPID_KEY,
+          serviceWorkerRegistration: registration
+        });
+
+        if (currentToken) {
+          await setDoc(doc(db, "push_subscriptions", user.uid), {
+            uid: user.uid,
+            email: user.email || '',
+            displayName: user.displayName || '',
+            pushToken: currentToken,
+            platform: navigator.userAgent || 'unknown',
+            updatedAt: new Date().toISOString()
+          }, { merge: true });
+
+          updatePushToggleUI(true);
+          if (isManual) showToast('🎉 已成功開啟特約門市與即時優惠推播！', 'fa-bell');
+        }
+      } catch (err) {
+        console.warn('[Push] 授權或 Token 異常:', err);
+        updatePushToggleUI(false);
+      }
+    }
+
+    if (pushToggleBtn) {
+      pushToggleBtn.addEventListener('click', () => {
+        if (!currentUser) {
+          showToast('請先登入會員以管理推播設定', 'fa-lock');
+          return;
+        }
+        const isCurrentActive = pushToggleBtn.getAttribute('aria-checked') === 'true';
+        if (isCurrentActive) {
+          updatePushToggleUI(false);
+          showToast('已暫停即時推播提醒', 'fa-bell-slash');
+        } else {
+          requestPushNotificationPermission(currentUser, true);
+        }
+      });
+    }
 
     const REGION_CONFIG = {
       cities: [
@@ -1373,38 +1483,258 @@
       setTimeout(() => {
         toast.classList.remove('opacity-100', 'scale-100');
         toast.classList.add('opacity-0', 'scale-95', 'pointer-events-none');
-      }, actionText ? 3600 : 2200);
+      }, actionText ? 3800 : 2200);
     }
 
-    // 商務解約備援與 place_id 唯一識別聚合引擎
+    async function initVisitorCounter() {
+      try {
+        const statsRef = doc(db, "stats", "global");
+        const snap = await getDoc(statsRef);
+        let count = 3856;
+        if (!snap.exists()) {
+          await setDoc(statsRef, { viewCount: 3856 });
+        } else {
+          await updateDoc(statsRef, { viewCount: increment(1) });
+          count = (snap.data().viewCount || 3856) + 1;
+        }
+        document.getElementById('visit-count-val').innerText = Number(count).toLocaleString();
+      } catch (err) {
+        document.getElementById('visit-count-val').innerText = "3,856";
+      }
+    }
+
+    // 全域登入狀態廣播監聽 (100% 完整接回)
+    window.addEventListener("auth-user-changed", (e) => {
+      const { user, profile, isLoggedIn } = e.detail;
+      currentUser = user;
+      currentUserProfile = profile || { points: 50, level: 'LV.1 探店初心者' };
+
+      if (isLoggedIn && user) {
+        requestPushNotificationPermission(user);
+        syncUserFavoritesFromCloud(user.uid);
+      }
+
+      updateHeaderAuthBtn();
+      updateUserModalView();
+      renderChatUI();
+    });
+
+    function updateUserModalView() {
+      if (!currentUser) {
+        document.getElementById('auth-modal-login-view').classList.remove('hidden');
+        document.getElementById('auth-modal-user-view').classList.add('hidden');
+        document.getElementById('auth-modal-tasks-view').classList.add('hidden');
+        return;
+      }
+
+      document.getElementById('auth-modal-login-view').classList.add('hidden');
+      document.getElementById('auth-modal-user-view').classList.remove('hidden');
+      document.getElementById('auth-modal-tasks-view').classList.add('hidden');
+
+      document.getElementById('user-modal-name').innerText = currentUserProfile.displayName || currentUser.displayName || '吃貨會員';
+      document.getElementById('user-modal-avatar').src = currentUserProfile.photoURL || currentUser.photoURL || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200';
+      document.getElementById('user-modal-email').innerText = currentUser.email || 'Google 驗證會員';
+
+      const points = currentUserProfile.points || 50;
+      let levelTitle = currentLang === 'en' ? 'LV.1 Explorer' : 'LV.1 探店初心者';
+      let nextThreshold = 100;
+
+      if (points >= 300) {
+        levelTitle = currentLang === 'en' ? 'LV.3 Gourmet Master' : 'LV.3 美食饕客';
+        nextThreshold = 500;
+      } else if (points >= 100) {
+        levelTitle = currentLang === 'en' ? 'LV.2 Connoisseur' : 'LV.2 資深尋味家';
+        nextThreshold = 300;
+      }
+
+      document.getElementById('user-modal-level').innerHTML = `<i class="fa-solid fa-medal text-amber-400"></i> ${levelTitle}`;
+      document.getElementById('user-modal-points-text').innerText = `${points} / ${nextThreshold} PTS`;
+      
+      const pct = Math.min(100, Math.round((points / nextThreshold) * 100));
+      document.getElementById('level-progress-fill').style.width = `${pct}%`;
+      const diff = Math.max(0, nextThreshold - points);
+      
+      const diffTipStr = currentLang === 'en' 
+        ? (diff > 0 ? `Earn ${diff} more points to reach next level 🎁` : 'Max Level Reached!') 
+        : (diff > 0 ? `再累積 ${diff} 積分即可晉升下一級 🎁` : `已達最高巔峰等級！`);
+        
+      document.getElementById('level-diff-tip').innerText = diffTipStr;
+      renderFavoritesList();
+    }
+
+    function saveFavorites() {
+      const arr = Array.from(userFavoritesSet);
+      localStorage.setItem('bigv_favorites', JSON.stringify(arr));
+      if (currentUser) {
+        setDoc(doc(db, "user_favorites", currentUser.uid), {
+          favorites: arr,
+          updatedAt: new Date().toISOString()
+        }, { merge: true }).catch(() => {});
+      }
+      renderFavoritesList();
+    }
+
+    async function syncUserFavoritesFromCloud(uid) {
+      try {
+        const snap = await getDoc(doc(db, "user_favorites", uid));
+        if (snap.exists() && Array.isArray(snap.data().favorites)) {
+          snap.data().favorites.forEach(id => userFavoritesSet.add(id));
+          localStorage.setItem('bigv_favorites', JSON.stringify(Array.from(userFavoritesSet)));
+        }
+      } catch (e) {}
+      renderFavoritesList();
+      preserveScrollPosition(() => renderContent());
+    }
+
+    function renderFavoritesList() {
+      const container = document.getElementById('favorites-list-container');
+      const badge = document.getElementById('fav-count-badge');
+      if (!container) return;
+
+      const favIds = Array.from(userFavoritesSet);
+      if (badge) badge.innerText = `${favIds.length} 個收藏`;
+
+      if (favIds.length === 0) {
+        container.innerHTML = `
+          <div id="fav-empty-box" class="text-center py-6 text-slate-500 rounded-xl border transition-colors">
+            <i class="fa-regular fa-heart text-xl mb-1 text-slate-600 block"></i>
+            <span class="text-[11px]">尚未收藏任何地點</span>
+            <p class="text-[9px] text-slate-600 mt-0.5">點擊店家卡片右上角愛心即可快速加入！</p>
+          </div>
+        `;
+        return;
+      }
+
+      const allItems = [...allRestaurants, ...allAttractions, ...allMedical];
+      const matchedItems = favIds.map(id => allItems.find(x => String(x.id || x.place_id).trim().toLowerCase() === String(id).trim().toLowerCase())).filter(Boolean);
+
+      container.innerHTML = matchedItems.map(item => {
+        const name = item.name_zh || item.name_en || item.name || item.id;
+        const img = (item.images && item.images[0]) || 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=200';
+        const cleanPhone = getCleanPhone(item.phone);
+        const navUrl = item.nav_link || ('https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(name + ' ' + (item.address || '')));
+        const sId = String(item.id || item.place_id).trim();
+
+        return `
+          <div class="bg-slate-900/90 border border-slate-800 hover:border-amber-400/40 rounded-xl p-2 flex items-center justify-between gap-2 transition">
+            <div class="flex items-center gap-2.5 min-w-0 max-w-[65%] cursor-pointer" onclick="window.jumpToCard('${sId}', '${item.type || 'restaurant'}')">
+              <div class="w-11 h-11 rounded-lg overflow-hidden flex-shrink-0 bg-slate-950">
+                <img src="${img}" class="w-full h-full object-cover" />
+              </div>
+              <div class="min-w-0 flex-1">
+                <h6 class="font-bold text-xs text-white truncate leading-tight hover:text-amber-400 transition">${name}</h6>
+                <div class="flex items-center gap-1.5 text-[9px] text-slate-400 mt-0.5">
+                  <span class="truncate">${item.city || '菲律賓'} · ${item.category || '精選'}</span>
+                  <span class="text-amber-400 font-bold flex items-center gap-0.5 flex-shrink-0"><i class="fa-solid fa-star text-[8px]"></i>${Number(item.google_rating || item.googleRating || 4.8).toFixed(1)}</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="flex items-center gap-1.5 flex-shrink-0">
+              <a href="${cleanPhone ? `tel:${cleanPhone}` : '#'}" title="撥打電話" class="w-7 h-7 rounded-lg bg-slate-800 text-emerald-400 hover:bg-slate-700 flex items-center justify-center text-xs transition ${!cleanPhone ? 'opacity-30 pointer-events-none' : ''}">
+                <i class="fa-solid fa-phone"></i>
+              </a>
+              <a href="${navUrl}" target="_blank" rel="noopener noreferrer" title="路線導航" class="w-7 h-7 rounded-lg bg-slate-800 text-sky-400 hover:bg-slate-700 flex items-center justify-center text-xs transition">
+                <i class="fa-solid fa-location-arrow"></i>
+              </a>
+              <button type="button" title="取消收藏" onclick="window.toggleFavorite('${sId}', event)" class="w-7 h-7 rounded-lg bg-slate-800 text-rose-500 hover:bg-rose-950/60 flex items-center justify-center text-xs transition">
+                <i class="fa-solid fa-heart"></i>
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    window.toggleFavorite = function(storeId, event) {
+      if (event) {
+        event.preventDefault();
+        event.stopPropagation();
+      }
+
+      if (!currentUser) {
+        showToast(
+          '🔒 請先登入會員，解鎖專屬私房收藏服務！', 
+          'fa-lock', 
+          '立即登入', 
+          () => {
+            closeAiChat();
+            openAuthModal();
+          }
+        );
+        return;
+      }
+
+      const sId = String(storeId).trim();
+      if (userFavoritesSet.has(sId)) {
+        userFavoritesSet.delete(sId);
+        showToast('💔 已自私房口袋名單移除', 'fa-heart-crack');
+      } else {
+        userFavoritesSet.add(sId);
+        showToast(
+          '❤️ 已成功收藏！請點右上角頭像查看私房名單', 
+          'fa-heart', 
+          '直接查看私房清單', 
+          () => {
+            closeAiChat();
+            openAuthModal();
+          }
+        );
+      }
+      saveFavorites();
+      preserveScrollPosition(() => renderContent());
+    };
+
+    window.jumpToCard = function(storeId, itemType) {
+      document.getElementById('auth-modal').classList.add('hidden');
+      
+      let targetTab = 'map';
+      if (itemType === 'attraction') targetTab = 'attraction';
+      if (itemType === 'hospital' || itemType === 'clinic' || itemType === 'pharmacy' || itemType === 'medical') targetTab = 'medical';
+
+      currentMainTab = targetTab;
+      sessionStorage.setItem('ph_nav_tab', currentMainTab);
+      currentSubFilter = 'all';
+      sessionStorage.setItem('ph_nav_sub', 'all');
+
+      renderSubFilterBar();
+      renderContent();
+
+      setTimeout(() => {
+        const targetEl = document.getElementById(`card-${storeId}`);
+        if (targetEl) {
+          targetEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          targetEl.classList.add('highlight-card-pulse');
+          setTimeout(() => targetEl.classList.remove('highlight-card-pulse'), 2500);
+        }
+      }, 350);
+    };
+
+    // 商務去重與 place_id 覆蓋引擎 (BigV 啟用優先，自然店備援沉睡)
     function mergeWithPlaceIdDeduplication(bigVPicks, autoDiscovered, islandDiscovered) {
       const finalItems = [];
-      const activeBigVPlaceIds = new Set();
-      const activeBigVNames = new Set();
+      const seenIds = new Set();
+      const seenNames = new Set();
 
       (bigVPicks || []).forEach(item => {
-        const isActive = (String(item.is_active || 'true').toUpperCase() !== 'FALSE' && item.is_active !== false);
-        if (isActive) {
-          const pId = String(item.place_id || item.id || '').trim();
-          const nEn = String(item.name_en || '').toLowerCase().trim();
-          if (pId) activeBigVPlaceIds.add(pId);
-          if (nEn) activeBigVNames.add(nEn);
-          finalItems.push({ ...item, isBigV: true });
-        }
+        if (!item) return;
+        const pId = String(item.place_id || item.id || '').trim();
+        const nEn = String(item.name_en || item.name || '').toLowerCase().trim();
+        if (pId) seenIds.add(pId);
+        if (nEn) seenNames.add(nEn);
+        finalItems.push({ ...item, isBigV: true });
       });
 
       const secondaryPool = (autoDiscovered || []).concat(islandDiscovered || []);
       secondaryPool.forEach(item => {
-        const isActive = (String(item.is_active || 'true').toUpperCase() !== 'FALSE' && item.is_active !== false);
-        if (!isActive) return;
-
+        if (!item) return;
         const pId = String(item.place_id || item.id || '').trim();
-        const nEn = String(item.name_en || '').toLowerCase().trim();
+        const nEn = String(item.name_en || item.name || '').toLowerCase().trim();
 
-        if (pId && activeBigVPlaceIds.has(pId)) return;
-        if (nEn && activeBigVNames.has(nEn)) return;
+        if (pId && seenIds.has(pId)) return;
+        if (nEn && seenNames.has(nEn)) return;
 
-        finalItems.push(item);
+        finalItems.push({ ...item, isBigV: false });
       });
 
       return finalItems;
@@ -1413,26 +1743,30 @@
     async function fetchData() {
       const loadingEl = document.getElementById('loading');
       try {
+        isDataLoading = true;
         const sheetMaster = await loadMasterDatabase();
+        if (!sheetMaster) throw new Error("Master database empty");
+
         const islandRaw = sheetMaster.Island_Discovered || sheetMaster.islandDiscovered || [];
 
-        // 1. 美食饗宴與海島渡假 (依 place_id 去重覆蓋)
-        allRestaurants = mergeWithPlaceIdDeduplication(
-          sheetMaster.bigVPicks || [],
-          sheetMaster.autoDiscovered || [],
-          islandRaw.filter(x => x.type === 'restaurant' || x.type === 'hotel_villa' || x.type === 'hotel' || x.type === 'resort' || x.type === 'nightlife' || !x.type)
-        );
+        // 1. 美食清單防呆整合 (place_id 去重覆蓋)
+        const bigVList = sheetMaster.bigVPicks || [];
+        const autoList = sheetMaster.autoDiscovered || [];
+        const islandFood = islandRaw.filter(x => x && (x.type === 'restaurant' || x.type === 'hotel_villa' || x.type === 'hotel' || x.type === 'resort' || x.type === 'nightlife' || !x.type));
 
-        // 2. 景點商場導覽
-        const islandAttractions = islandRaw.filter(x => x.type === 'attraction' || x.type === 'beach' || x.type === 'island_hopping' || x.type === 'nature' || (!x.type && (safeStr(x.category).includes('beach') || safeStr(x.category).includes('景點'))));
+        allRestaurants = mergeWithPlaceIdDeduplication(bigVList, autoList, islandFood);
+
+        // 2. 景點清單防呆整合
+        const islandAttractions = islandRaw.filter(x => x && (x.type === 'attraction' || x.type === 'beach' || x.type === 'island_hopping' || x.type === 'nature' || (!x.type && (safeStr(x.category).includes('beach') || safeStr(x.category).includes('景點')))));
         allAttractions = (sheetMaster.attractions || []).concat(islandAttractions);
 
-        // 3. 醫療與優惠特惠
-        allMedical = (sheetMaster.medical || []);
-        allNews = (sheetMaster.promotions || []);
+        // 3. 醫療與特惠
+        allMedical = sheetMaster.medical || [];
+        allNews = sheetMaster.promotions || [];
       } catch (err) {
-        console.warn("[App] 讀取資料庫異常:", err);
+        console.error("[App] 讀取資料庫異常:", err);
       } finally {
+        isDataLoading = false; // 解除加載鎖
         if (loadingEl) loadingEl.style.display = 'none';
         applyLanguage(currentLang);
       }
@@ -1574,7 +1908,7 @@
       bindCarouselControls();
     }
 
-    // 1. 美食饗宴清單 (嚴格 category 比對，修復華膳誤判海鮮；中英雙語評論精準對齊)
+    // 1. 美食清單渲染 (嚴格子分類比對、手打絕對優先、店名點擊直達官網/導航)
     function renderRestaurants() {
       const listEl = document.getElementById('restaurant-list');
       const dict = I18N_DICT[currentLang];
@@ -1582,7 +1916,7 @@
 
       if (currentSubFilter !== 'all') {
         filtered = filtered.filter(item => {
-          // 嚴格比對試算表 category 與 type 欄位，徹底排除店名干擾
+          // 嚴格比對 category 與 type 欄位，杜絕華膳因店名被排入海鮮類
           const directCat = `${safeStr(item.category)} ${safeStr(item.type)}`.toLowerCase();
 
           if (currentSubFilter === 'brunch') {
@@ -1619,11 +1953,17 @@
       }
 
       if (currentSearchQuery) {
-        const q = currentSearchQuery.toLowerCase();
+        const expandedTerms = expandSearchKeywords(currentSearchQuery);
         filtered = filtered.filter(item => {
           const corpus = `${safeStr(item.name_zh)} ${safeStr(item.name_en)} ${safeStr(item.address)} ${safeStr(item.category)} ${safeStr(item.description)} ${safeStr(item.description_en)}`.toLowerCase();
-          return corpus.includes(q);
+          return expandedTerms.some(term => corpus.includes(term));
         });
+      }
+
+      // 加載鎖：未完成前絕不跳出黑卡
+      if (isDataLoading) {
+        itemCountBadge.textContent = '...';
+        return;
       }
 
       filtered.sort(universalSort);
@@ -1632,7 +1972,7 @@
       itemCountBadge.textContent = `${filtered.length} ${dict.placesCountUnit}`;
 
       if (filtered.length === 0) {
-        listEl.innerHTML = `<div class="bg-slate-950 rounded-2xl p-8 text-center border border-slate-800 shadow-xs mt-2"><h4 class="text-xs font-bold text-slate-400">${dict.noResult}</h4></div>`;
+        listEl.innerHTML = `<div class="empty-state-box rounded-2xl p-8 text-center border shadow-xs mt-2"><h4 class="text-xs font-bold">${dict.noResult}</h4></div>`;
         return;
       }
 
@@ -1642,16 +1982,22 @@
         const isFav = userFavoritesSet.has(sId);
         const cleanPhone = getCleanPhone(item.phone);
         const navUrl = item.nav_link || ('https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(name + ' ' + (item.address || '')));
+        const websiteUrl = (item.website && item.website.trim().startsWith('http')) ? item.website.trim() : navUrl;
+
         const rating = Number(item.google_rating || item.googleRating || 4.8).toFixed(1);
         const reviewCount = item.review_count || item.googleReviewCount || item.reviews || 100;
         const tier = getItemTier(item);
 
-        // 雙語評論/摘要動態切換核心
+        // ⭐ 雙語取值：站長手打點評絕對第一優先，Google 抓取為輔
         let reviewText = '';
         if (currentLang === 'en') {
-          reviewText = item.description_en || item.bigv_comment_en || item.desc_en || item.editorial_summary || (tier === 1 ? 'Handpicked luxury dining destination curated by BigV.' : 'Top Google-rated dining experience with exceptional culinary flavors.');
+          reviewText = (item.bigv_comment_en || item.big_v_comment_en || '').trim()
+                    || (item.description_en || '').trim()
+                    || (tier === 1 ? 'Handpicked luxury dining destination curated by BigV.' : 'Top Google-rated dining experience.');
         } else {
-          reviewText = item.description || item.bigv_comment_zh || item.big_v_comment || item.desc || (tier === 1 ? '大V親訪私房嚴選，頂奢美饌極致饗宴。' : 'Google 饕客高分熱門推薦，極致在地風味。');
+          reviewText = (item.bigv_comment_zh || item.big_v_comment_zh || item.big_v_comment || '').trim()
+                    || (item.description || '').trim()
+                    || (tier === 1 ? '大V親訪私房嚴選，頂奢美饌極致饗宴。' : 'Google 饕客高分熱門推薦，在地高口碑精選。');
         }
 
         const reviewPrefix = (tier === 1) ? (currentLang === 'en' ? '👑 BigV Note: ' : '👑 站長私房點評：') : (currentLang === 'en' ? '🌟 Google Review: ' : '🌟 饕客口碑點評：');
@@ -1665,7 +2011,7 @@
             <span class="text-[11px]">${dict.btnGrab}</span>
           </a>
         ` : `
-          <a href="${item.website || navUrl}" target="_blank" rel="noopener noreferrer" class="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl btn-card-website font-bold transition active:scale-95 shadow-sm">
+          <a href="${websiteUrl}" target="_blank" rel="noopener noreferrer" class="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl btn-card-website font-bold transition active:scale-95 shadow-sm">
             <i class="fa-solid fa-globe text-xs"></i>
             <span class="text-[11px]">${dict.btnWebsite}</span>
           </a>
@@ -1688,7 +2034,7 @@
         }
 
         const innerCardHtml = `
-          <article id="card-${item.id}" class="rounded-2xl overflow-hidden ${tier === 2 ? 'partner-card-frame' : 'border border-slate-800'} bg-slate-950 shadow-md flex flex-col transition relative">
+          <article id="card-${sId}" class="rounded-2xl overflow-hidden ${tier === 2 ? 'partner-card-frame' : 'border border-slate-800'} bg-slate-950 shadow-md flex flex-col transition relative">
             <div class="relative w-full overflow-hidden">
               ${buildCarouselHtml(parseImages(item), `res-${idx}`, name)}
               ${badgeHtml}
@@ -1697,9 +2043,11 @@
                 <i class="${isFav ? 'fa-solid text-rose-500' : 'fa-regular text-white'} fa-heart"></i>
               </button>
 
-              <div class="absolute bottom-2.5 left-3.5 right-12 text-white text-sm font-bold truncate drop-shadow-md z-20">
-                ${name}
-              </div>
+              <!-- 店名可點擊直達官網/粉專或導航 -->
+              <a href="${websiteUrl}" target="_blank" rel="noopener noreferrer" title="前往官網或導航" class="absolute bottom-2.5 left-3.5 right-12 text-white text-sm font-bold truncate drop-shadow-md z-20 hover:text-amber-300 transition flex items-center gap-1">
+                <span class="truncate">${name}</span>
+                <i class="fa-solid fa-arrow-up-right-from-square text-[9px] opacity-70"></i>
+              </a>
             </div>
 
             <div class="p-3.5 space-y-2 bg-slate-950 text-xs">
@@ -1715,7 +2063,7 @@
 
             <div class="p-2.5 bg-slate-900 border-t border-slate-800 space-y-2 text-xs">
               <div class="grid grid-cols-2 gap-2">
-                <button type="button" onclick="window.openDetailModal('${sId}', '${encodeURIComponent(name)}', '${encodeURIComponent(reviewText)}')" class="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl btn-card-comment font-black transition active:scale-95 shadow-sm">
+                <button type="button" onclick="window.openUniversalCommentModal('${sId}', '${encodeURIComponent(name)}')" class="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl btn-card-comment font-black transition active:scale-95 shadow-sm">
                   <i class="fa-solid fa-pen-to-square text-xs"></i> <span>${dict.btnComment}</span>
                 </button>
                 ${rightTopActionBtn}
@@ -1750,7 +2098,7 @@
       }).join('');
     }
 
-    // 2. 景點導覽渲染 (雙語評論套版)
+    // 2. 景點導覽渲染 (奢華飯店徹底歸位、馬尼拉宿霧達沃全數呈現、店名直達)
     function renderAttractions() {
       const listEl = document.getElementById('attraction-list');
       const dict = I18N_DICT[currentLang];
@@ -1760,11 +2108,18 @@
         return /casino|賭場|okada|solaire|city of dreams|\bcod\b|newport|resorts world|nustar|hann/i.test(text);
       };
 
+      // 星級飯店放行正規化（徹底救回馬尼拉、宿霧、達沃奢華飯店）
+      const isLuxuryHotelEntity = (text) => {
+        return /hotel|resort|飯店|酒店|住宿|dusit|shangri-la|peninsula|hyatt|sofitel|conrad|marriott|radisson|sedan|marco polo|waterfront/i.test(text);
+      };
+
       if (currentSubFilter !== 'all') {
         filtered = filtered.filter(item => {
-          const textAll = `${safeStr(item.category)} ${safeStr(item.type)}`.toLowerCase();
+          const textAll = `${safeStr(item.category)} ${safeStr(item.type)} ${safeStr(item.name_zh)} ${safeStr(item.name_en)}`.toLowerCase();
           
-          if (currentSubFilter === 'casino') return isCasinoEntity(textAll);
+          if (currentSubFilter === 'casino') {
+            return isCasinoEntity(textAll) || isLuxuryHotelEntity(textAll);
+          }
           if (currentSubFilter === 'shopping') {
             const isPureMall = /mall|shopping|商場|購物|百貨|ayala|greenbelt|power plant|sm |robinsons/i.test(textAll);
             return isPureMall && !isCasinoEntity(textAll);
@@ -1780,11 +2135,16 @@
       }
 
       if (currentSearchQuery) {
-        const q = currentSearchQuery.toLowerCase();
+        const expandedTerms = expandSearchKeywords(currentSearchQuery);
         filtered = filtered.filter(item => {
           const corpus = `${safeStr(item.name_zh)} ${safeStr(item.name_en)} ${safeStr(item.address)} ${safeStr(item.category)} ${safeStr(item.description)} ${safeStr(item.description_en)}`.toLowerCase();
-          return corpus.includes(q);
+          return expandedTerms.some(term => corpus.includes(term));
         });
+      }
+
+      if (isDataLoading) {
+        itemCountBadge.textContent = '...';
+        return;
       }
 
       filtered.sort(universalSort);
@@ -1793,7 +2153,7 @@
       itemCountBadge.textContent = `${filtered.length} ${dict.spotsCountUnit}`;
 
       if (filtered.length === 0) {
-        listEl.innerHTML = `<div class="bg-slate-950 rounded-2xl p-8 text-center border border-slate-800 shadow-xs mt-2"><h4 class="text-xs font-bold text-slate-400">${dict.noResult}</h4></div>`;
+        listEl.innerHTML = `<div class="empty-state-box rounded-2xl p-8 text-center border shadow-xs mt-2"><h4 class="text-xs font-bold">${dict.noResult}</h4></div>`;
         return;
       }
 
@@ -1803,12 +2163,21 @@
         const isFav = userFavoritesSet.has(sId);
         const cleanPhone = getCleanPhone(item.phone);
         const navUrl = item.nav_link || ('https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(name + ' ' + (item.address || '')));
+        const websiteUrl = (item.website && item.website.trim().startsWith('http')) ? item.website.trim() : navUrl;
+
         const rating = Number(item.google_rating || item.googleRating || 4.8).toFixed(1);
         const reviewCount = item.review_count || item.googleReviewCount || 50;
         
-        const guideText = (currentLang === 'en')
-          ? (item.description_en || item.desc_en || 'Top landmark attraction with breathtaking views and rich culture.')
-          : (item.description || item.desc || '在地熱門必訪指標景點，風景優美。');
+        let guideText = '';
+        if (currentLang === 'en') {
+          guideText = (item.bigv_comment_en || item.big_v_comment_en || '').trim()
+                   || (item.description_en || item.desc_en || '').trim()
+                   || 'Top landmark attraction with breathtaking views and rich culture.';
+        } else {
+          guideText = (item.bigv_comment_zh || item.big_v_comment_zh || item.big_v_comment || '').trim()
+                   || (item.description || item.desc || '').trim()
+                   || '在地熱門必訪指標景點，風景優美。';
+        }
 
         const tier = getItemTier(item);
 
@@ -1829,7 +2198,7 @@
         }
 
         const innerCardHtml = `
-          <article id="card-${item.id}" class="rounded-2xl overflow-hidden ${tier === 2 ? 'partner-card-frame' : 'border border-slate-800'} bg-slate-950 shadow-md flex flex-col transition relative">
+          <article id="card-${sId}" class="rounded-2xl overflow-hidden ${tier === 2 ? 'partner-card-frame' : 'border border-slate-800'} bg-slate-950 shadow-md flex flex-col transition relative">
             <div class="relative w-full overflow-hidden">
               ${buildCarouselHtml(parseImages(item), `attr-${idx}`, name)}
               ${badgeHtml}
@@ -1838,9 +2207,11 @@
                 <i class="${isFav ? 'fa-solid text-rose-500' : 'fa-regular text-white'} fa-heart"></i>
               </button>
 
-              <div class="absolute bottom-2.5 left-3.5 right-12 text-white text-sm font-bold truncate drop-shadow-md z-20">
-                ${name}
-              </div>
+              <!-- 店名點擊直達官網/導航 -->
+              <a href="${websiteUrl}" target="_blank" rel="noopener noreferrer" title="前往官網或導航" class="absolute bottom-2.5 left-3.5 right-12 text-white text-sm font-bold truncate drop-shadow-md z-20 hover:text-amber-300 transition flex items-center gap-1">
+                <span class="truncate">${name}</span>
+                <i class="fa-solid fa-arrow-up-right-from-square text-[9px] opacity-70"></i>
+              </a>
             </div>
 
             <div class="p-3.5 space-y-2 bg-slate-950 text-xs">
@@ -1857,7 +2228,8 @@
             </div>
 
             <div class="p-2.5 bg-slate-900 border-t border-slate-800 flex items-center justify-between gap-2 text-xs">
-              <button type="button" onclick="window.openDetailModal('${sId}', '${encodeURIComponent(name)}', '${encodeURIComponent(guideText)}')" class="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl btn-card-comment font-black transition active:scale-95 shadow-sm">
+              <!-- 海島與都會景點 100% 統一使用純淨會員留言板 -->
+              <button type="button" onclick="window.openUniversalCommentModal('${sId}', '${encodeURIComponent(name)}')" class="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl btn-card-comment font-black transition active:scale-95 shadow-sm">
                 <i class="fa-solid fa-pen-to-square text-xs"></i> <span>${dict.btnComment}</span>
               </button>
 
@@ -1899,11 +2271,16 @@
       }
 
       if (currentSearchQuery) {
-        const q = currentSearchQuery.toLowerCase();
+        const expandedTerms = expandSearchKeywords(currentSearchQuery);
         filtered = filtered.filter(item => {
           const corpus = `${safeStr(item.name_zh)} ${safeStr(item.name_en)} ${safeStr(item.address)} ${safeStr(item.category)} ${safeStr(item.type)}`.toLowerCase();
-          return corpus.includes(q);
+          return expandedTerms.some(term => corpus.includes(term));
         });
+      }
+
+      if (isDataLoading) {
+        itemCountBadge.textContent = '...';
+        return;
       }
 
       filtered.sort(universalSort);
@@ -1912,7 +2289,7 @@
       itemCountBadge.textContent = `${filtered.length} ${dict.medicalCountUnit}`;
 
       if (filtered.length === 0) {
-        listEl.innerHTML = `<div class="bg-slate-950 rounded-2xl p-8 text-center border border-slate-800 shadow-xs mt-2"><h4 class="text-xs font-bold text-slate-400">${dict.noResult}</h4></div>`;
+        listEl.innerHTML = `<div class="empty-state-box rounded-2xl p-8 text-center border shadow-xs mt-2"><h4 class="text-xs font-bold">${dict.noResult}</h4></div>`;
         return;
       }
 
@@ -1920,6 +2297,7 @@
         const name = (currentLang === 'en' && item.name_en) ? item.name_en : (item.name_zh || item.name_en || item.name || item.id);
         const cleanPhone = getCleanPhone(item.phone);
         const navUrl = item.nav_link || ('https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(name + ' ' + (item.address || '')));
+        const websiteUrl = (item.website && item.website.trim().startsWith('http')) ? item.website.trim() : navUrl;
         const sId = String(item.id || item.place_id).trim();
         const isFav = userFavoritesSet.has(sId);
         const rating = Number(item.google_rating || item.googleRating || 4.7).toFixed(1);
@@ -1950,7 +2328,7 @@
         }
 
         const innerCardHtml = `
-          <article id="card-${item.id}" class="rounded-2xl overflow-hidden ${tier === 2 ? 'partner-card-frame' : 'border border-slate-800'} bg-slate-950 shadow-md flex flex-col transition relative">
+          <article id="card-${sId}" class="rounded-2xl overflow-hidden ${tier === 2 ? 'partner-card-frame' : 'border border-slate-800'} bg-slate-950 shadow-md flex flex-col transition relative">
             <div class="relative w-full overflow-hidden">
               ${buildCarouselHtml(parseImages(item, 'https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=800'), `med-${idx}`, name)}
               ${badgeHtml}
@@ -1959,9 +2337,10 @@
                 <i class="${isFav ? 'fa-solid text-rose-500' : 'fa-regular text-white'} fa-heart"></i>
               </button>
 
-              <div class="absolute bottom-2.5 left-3.5 right-12 text-white text-sm font-bold truncate drop-shadow-md z-20">
-                ${name}
-              </div>
+              <a href="${websiteUrl}" target="_blank" rel="noopener noreferrer" title="前往機構或導航" class="absolute bottom-2.5 left-3.5 right-12 text-white text-sm font-bold truncate drop-shadow-md z-20 hover:text-amber-300 transition flex items-center gap-1">
+                <span class="truncate">${name}</span>
+                <i class="fa-solid fa-arrow-up-right-from-square text-[9px] opacity-70"></i>
+              </a>
             </div>
 
             <div class="p-3.5 space-y-2 bg-slate-950 text-xs">
@@ -2017,11 +2396,16 @@
         return c === currentCity || c === 'all';
       });
 
+      if (isDataLoading) {
+        itemCountBadge.textContent = '...';
+        return;
+      }
+
       filterSummaryText.textContent = `${dict['city_' + currentCity] || currentCity} · ${dict.navNews}`;
       itemCountBadge.textContent = `${filtered.length} ${dict.newsCountUnit}`;
 
       if (filtered.length === 0) {
-        listEl.innerHTML = `<div class="bg-slate-950 rounded-2xl p-8 text-center border border-slate-800 shadow-xs mt-2"><h4 class="text-xs font-bold text-slate-400">${dict.noResult}</h4></div>`;
+        listEl.innerHTML = `<div class="empty-state-box rounded-2xl p-8 text-center border shadow-xs mt-2"><h4 class="text-xs font-bold">${dict.noResult}</h4></div>`;
         return;
       }
 
@@ -2065,37 +2449,276 @@
       }).join('');
     }
 
-    // 詳情與評論彈窗（展開完整雙語評語與官方摘要）
-    window.openDetailModal = function(storeId, encodedName, encodedDesc) {
-      closeAiChat();
-      const storeName = decodeURIComponent(encodedName || '');
-      const storeDesc = decodeURIComponent(encodedDesc || '');
+    // =========================================================================
+    // 全島嶼/都會/景點/餐廳 100% 統一「純淨會員真實留言板」
+    // =========================================================================
+    const commentModal = document.getElementById('comment-modal');
+    const commentListContainer = document.getElementById('comment-list-container');
+    const commentInputText = document.getElementById('comment-input-text');
+    const btnSubmitComment = document.getElementById('btn-submit-comment');
 
-      document.getElementById('comment-modal-title').innerText = `${storeName}`;
-      const descBox = document.getElementById('modal-description-box');
-      if (descBox) {
-        descBox.innerHTML = `
-          <div class="flex items-center gap-1.5 text-amber-400 font-bold mb-1">
-            <i class="fa-solid fa-quote-left text-[10px]"></i> <span>官方摘要與精華點評</span>
-          </div>
-          <p class="text-slate-200 leading-relaxed">${storeDesc}</p>
-        `;
+    window.openUniversalCommentModal = function(storeId, encodedName) {
+      // 1. 未登入嚴格攔截並友善導引
+      if (!currentUser) {
+        showToast(
+          '🔒 請先登入會員，即可發表真實點評賺取 20 積分！', 
+          'fa-lock', 
+          '立即登入', 
+          () => {
+            closeAiChat();
+            openAuthModal();
+          }
+        );
+        return;
       }
-      document.getElementById('comment-modal').classList.remove('hidden');
+
+      closeAiChat();
+      activeCommentStoreId = String(storeId).trim();
+      const sName = decodeURIComponent(encodedName || '');
+      document.getElementById('comment-modal-title').innerText = `${sName} 點評`;
+      
+      commentModal.classList.remove('hidden');
+      loadStoreComments(activeCommentStoreId);
     };
 
     window.openCommentModal = function(storeId, storeName) {
-      window.openDetailModal(storeId, encodeURIComponent(storeName), encodeURIComponent(''));
+      window.openUniversalCommentModal(storeId, encodeURIComponent(storeName));
     };
 
-    // 關閉詳情彈窗（保護目前滾動深度）
-    const commentModalEl = document.getElementById('comment-modal');
-    const closeCommentBtn = document.getElementById('close-comment-btn');
-    if (closeCommentBtn) {
-      closeCommentBtn.addEventListener('click', () => {
-        preserveScrollPosition(() => commentModalEl.classList.add('hidden'));
-      });
+    document.getElementById('close-comment-btn').addEventListener('click', () => {
+      commentModal.classList.add('hidden');
+    });
+
+    async function loadStoreComments(storeId) {
+      if (!commentListContainer) return;
+      commentListContainer.innerHTML = '<p class="text-center text-slate-500 py-6">載入會員點評中...</p>';
+
+      try {
+        const q = query(
+          collection(db, "store_comments"),
+          where("storeId", "==", storeId),
+          orderBy("createdAt", "desc")
+        );
+        const snap = await getDocs(q);
+        
+        if (snap.empty) {
+          commentListContainer.innerHTML = `
+            <div class="text-center py-8 text-slate-500">
+              <i class="fa-regular fa-comment-dots text-2xl mb-1.5 block text-slate-600"></i>
+              <span>尚無會員留下點評</span>
+              <p class="text-[10px] text-slate-500 mt-0.5">搶先留下真實探店心得，即可獲得 20 積分！</p>
+            </div>
+          `;
+          return;
+        }
+
+        commentListContainer.innerHTML = snap.docs.map(docSnap => {
+          const d = docSnap.data();
+          const uName = d.userName || '吃貨好友';
+          const timeStr = d.createdAt ? new Date(d.createdAt).toLocaleDateString() : '剛剛';
+          return `
+            <div class="bg-slate-900 border border-slate-800 rounded-xl p-2.5 space-y-1">
+              <div class="flex items-center justify-between text-[11px]">
+                <span class="font-bold text-amber-300 flex items-center gap-1">
+                  <i class="fa-regular fa-user text-[9px]"></i> ${uName}
+                </span>
+                <span class="text-[9px] text-slate-500">${timeStr}</span>
+              </div>
+              <p class="text-slate-200 leading-relaxed text-xs">${d.comment}</p>
+            </div>
+          `;
+        }).join('');
+      } catch (err) {
+        commentListContainer.innerHTML = '<p class="text-center text-slate-500 py-6">目前無公開評論，成為第一位評論者吧！</p>';
+      }
     }
+
+    async function handlePostComment() {
+      if (!currentUser) {
+        showToast('請先登入會員！', 'fa-lock');
+        return;
+      }
+      const text = commentInputText.value.trim();
+      if (!text) {
+        showToast('請輸入評論內容！', 'fa-circle-exclamation');
+        return;
+      }
+
+      btnSubmitComment.disabled = true;
+      btnSubmitComment.innerText = '發表中...';
+
+      try {
+        await addStoreComment(activeCommentStoreId, text);
+        commentInputText.value = '';
+        showToast('🎉 點評發表成功！已為您累計 +20 積分！', 'fa-award');
+        loadStoreComments(activeCommentStoreId);
+      } catch (err) {
+        showToast('發表失敗，請稍後再試');
+      } finally {
+        btnSubmitComment.disabled = false;
+        btnSubmitComment.innerText = '發表 (+20分)';
+      }
+    }
+    btnSubmitComment.addEventListener('click', handlePostComment);
+
+    // =========================================================================
+    // 會員彈窗核心 (拉升至最高層級 z-[9999]、嚴格互斥、點擊絕對穿透)
+    // =========================================================================
+    const authModal = document.getElementById('auth-modal');
+    const authStateBtn = document.getElementById('auth-state-btn');
+    const closeAuthGuest = document.getElementById('close-auth-btn-guest');
+    const closeAuthUser = document.getElementById('close-auth-btn-user');
+    const closeAuthTasks = document.getElementById('close-auth-btn-tasks');
+
+    function openAuthModal() {
+      closeAiChat(); // 強制隱藏 AI 對話視窗，消除任何隱形圖層阻擋
+      updateUserModalView();
+      authModal.classList.remove('hidden');
+    }
+
+    function closeAuthModal() {
+      authModal.classList.add('hidden');
+    }
+
+    window.openAuthModalDirect = openAuthModal;
+    if (authStateBtn) {
+      authStateBtn.onclick = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        openAuthModal();
+      };
+    }
+
+    if (closeAuthGuest) closeAuthGuest.onclick = closeAuthModal;
+    if (closeAuthUser) closeAuthUser.onclick = closeAuthModal;
+    if (closeAuthTasks) closeAuthTasks.onclick = closeAuthModal;
+
+    authModal.onclick = (e) => {
+      if (e.target === authModal) closeAuthModal();
+    };
+
+    // Google 登入按鈕
+    const btnGoogle = document.getElementById('btn-google-login');
+    if (btnGoogle) {
+      btnGoogle.onclick = async (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        try {
+          btnGoogle.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> <span>登入中...</span>';
+          await loginWithGoogle();
+          updateHeaderAuthBtn();
+          updateUserModalView();
+          showToast('🎉 歡迎回來！已成功登入會員', 'fa-check');
+        } catch (err) {
+          console.error("[Auth] 登入異常:", err);
+          showToast('登入取消或失敗，請再試一次', 'fa-triangle-exclamation');
+        } finally {
+          btnGoogle.innerHTML = `
+            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" class="w-4 h-4" alt="Google">
+            <span data-i18n="btnGoogleLogin">使用 Google 帳號一鍵登入</span>
+          `;
+        }
+      };
+    }
+
+    // Email 魔法連結登入
+    const btnMagic = document.getElementById('btn-magic-email');
+    const magicInput = document.getElementById('magic-email-input');
+    if (btnMagic && magicInput) {
+      btnMagic.onclick = async (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const email = magicInput.value.trim();
+        if (!email) {
+          showToast('請先輸入電子信箱！', 'fa-circle-exclamation');
+          return;
+        }
+        try {
+          btnMagic.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> 發送中...';
+          await sendMagicEmailLink(email);
+          showToast('✨ 魔法登入信已發送，請至信箱點擊連結！', 'fa-paper-plane');
+        } catch (err) {
+          showToast('發送失敗，請確認信箱格式', 'fa-triangle-exclamation');
+        } finally {
+          btnMagic.innerHTML = '<i class="fa-solid fa-wand-magic-sparkles text-slate-950"></i> <span>發送魔法登入連結</span>';
+        }
+      };
+    }
+
+    document.getElementById('btn-logout').addEventListener('click', async () => {
+      await logoutUser();
+      authModal.classList.add('hidden');
+      updateHeaderAuthBtn();
+      showToast('已安全登出帳號', 'fa-right-from-bracket');
+    });
+
+    // 特殊任務與推薦私房好店
+    document.getElementById('btn-open-tasks-subview').addEventListener('click', () => {
+      document.getElementById('auth-modal-user-view').classList.add('hidden');
+      document.getElementById('auth-modal-tasks-view').classList.remove('hidden');
+    });
+    document.getElementById('btn-back-to-user-view').addEventListener('click', () => {
+      document.getElementById('auth-modal-tasks-view').classList.add('hidden');
+      document.getElementById('auth-modal-user-view').classList.remove('hidden');
+    });
+
+    document.getElementById('task-card-comment').addEventListener('click', () => {
+      showToast('💡 探店評論為常態活動：在任何卡片下方點擊「寫評論 +20」即可累積積分！', 'fa-pen-to-square');
+    });
+
+    const recModal = document.getElementById('recommend-modal');
+    document.getElementById('task-card-recommend').addEventListener('click', () => {
+      authModal.classList.add('hidden');
+      recModal.classList.remove('hidden');
+    });
+    document.getElementById('close-recommend-btn').addEventListener('click', () => recModal.classList.add('hidden'));
+
+    const recStoreName = document.getElementById('rec-store-name');
+    const recReason = document.getElementById('rec-reason');
+    const btnSubmitRecommend = document.getElementById('btn-submit-recommend');
+
+    async function submitRecommendStore() {
+      if (!currentUser) {
+        recModal.classList.add('hidden');
+        openAuthModal();
+        showToast('請先登入會員再推薦好店！', 'fa-lock');
+        return;
+      }
+      const city = document.getElementById('rec-city').value;
+      const store = recStoreName.value.trim();
+      const reason = recReason.value.trim();
+
+      if (!store || !reason) {
+        showToast('請完整填寫店家名稱與推薦原因！', 'fa-circle-exclamation');
+        return;
+      }
+
+      btnSubmitRecommend.disabled = true;
+      btnSubmitRecommend.innerText = '提交中...';
+
+      try {
+        await addDoc(collection(db, "user_recommendations"), {
+          userId: currentUser.uid,
+          userEmail: currentUser.email || '',
+          userName: currentUser.displayName || '吃貨會員',
+          city,
+          storeName: store,
+          reason,
+          createdAt: new Date().toISOString()
+        });
+
+        recModal.classList.add('hidden');
+        recStoreName.value = '';
+        recReason.value = '';
+        showToast('🎉 推薦成功！審核通過入庫後將為您派發 100 積分！', 'fa-gift');
+      } catch (err) {
+        showToast('提交失敗，請稍後再試');
+      } finally {
+        btnSubmitRecommend.disabled = false;
+        btnSubmitRecommend.innerText = '確認送出 (+100 PTS 審核)';
+      }
+    }
+    btnSubmitRecommend.addEventListener('click', submitRecommendStore);
 
     // 三大風格切換管理器 (暗夜尊爵 / 暖陽金橘 / 暮光紫霞)
     const themeDropdownBtn = document.getElementById('btn-theme-dropdown');
@@ -2143,7 +2766,223 @@
     }
     applyAppTheme(localStorage.getItem('bigv_app_theme') || 'dark');
 
-    // 輪播、滾動與圖片輔助工具
+    // =========================================================================
+    // AI 管家懸浮球 (解凍上下自由拖曳、放開吸附邊緣、未登入鎖定引導)
+    // =========================================================================
+    const fab = document.getElementById('chat-fab');
+    const chatModal = document.getElementById('chat-modal');
+    const btnCloseChat = document.getElementById('btn-close-chat');
+    const chatInput = document.getElementById('chat-input');
+    const btnSendChat = document.getElementById('btn-send-chat');
+    const chatMessagesContainer = document.getElementById('chat-messages');
+
+    let isDragging = false, dragStartX = 0, dragStartY = 0, initialLeft = 0, initialTop = 0, hasMoved = false;
+    let fabLeft = window.innerWidth - 76, fabTop = window.innerHeight - 175;
+
+    function updateFabPos(x, y) {
+      fab.style.left = `${x}px`;
+      fab.style.top = `${y}px`;
+      fab.style.right = 'auto';
+      fab.style.bottom = 'auto';
+    }
+
+    // 初始化位置吸附
+    setTimeout(() => {
+      fabLeft = window.innerWidth - 76;
+      fabTop = window.innerHeight - 175;
+      updateFabPos(fabLeft, fabTop);
+    }, 50);
+
+    function closeAiChat() {
+      if (!chatModal.classList.contains('hidden')) {
+        chatModal.classList.add('hidden');
+        updateFabPos(fabLeft, fabTop);
+      }
+    }
+    window.closeAiChat = closeAiChat;
+
+    function toggleAiChat() {
+      const isHidden = chatModal.classList.contains('hidden');
+      if (isHidden) {
+        document.getElementById('auth-modal').classList.add('hidden');
+        chatModal.classList.remove('hidden');
+        // 定錨至對話窗右下角安全區
+        updateFabPos(window.innerWidth - 76, window.innerHeight - 175);
+        renderChatUI();
+        if (currentUser) chatInput.focus();
+      } else {
+        closeAiChat();
+      }
+    }
+
+    // 觸控與滑鼠拖曳核心 (解凍上下全自由移動)
+    function onFabStart(e) {
+      if (!chatModal.classList.contains('hidden')) return;
+      const pt = e.touches ? e.touches[0] : e;
+      dragStartX = pt.clientX;
+      dragStartY = pt.clientY;
+      const rect = fab.getBoundingClientRect();
+      initialLeft = rect.left;
+      initialTop = rect.top;
+      hasMoved = false;
+      isDragging = true;
+      fab.style.transition = 'none';
+    }
+
+    function onFabMove(e) {
+      if (!isDragging || !chatModal.classList.contains('hidden')) return;
+      const pt = e.touches ? e.touches[0] : e;
+      const dx = pt.clientX - dragStartX;
+      const dy = pt.clientY - dragStartY;
+
+      if (Math.hypot(dx, dy) > 6) hasMoved = true;
+
+      // 自由上下移動，保留上下邊界
+      let nx = initialLeft + dx;
+      let ny = initialTop + dy;
+
+      nx = Math.max(8, Math.min(nx, window.innerWidth - fab.offsetWidth - 8));
+      ny = Math.max(60, Math.min(ny, window.innerHeight - fab.offsetHeight - 90));
+
+      updateFabPos(nx, ny);
+    }
+
+    function onFabEnd() {
+      if (!isDragging) return;
+      isDragging = false;
+      fab.style.transition = 'all 0.3s cubic-bezier(0.25, 1, 0.5, 1)';
+
+      if (hasMoved) {
+        const rect = fab.getBoundingClientRect();
+        // 水平吸附至左側或右側，垂直保留自由高度
+        const snapRight = (rect.left + rect.width / 2 > window.innerWidth / 2);
+        fabLeft = snapRight ? (window.innerWidth - fab.offsetWidth - 16) : 16;
+        fabTop = rect.top;
+        updateFabPos(fabLeft, fabTop);
+      } else {
+        toggleAiChat();
+      }
+    }
+
+    fab.addEventListener('touchstart', onFabStart, { passive: true });
+    window.addEventListener('touchmove', onFabMove, { passive: true });
+    window.addEventListener('touchend', onFabEnd);
+
+    fab.addEventListener('mousedown', onFabStart);
+    window.addEventListener('mousemove', onFabMove);
+    window.addEventListener('mouseup', onFabEnd);
+
+    fab.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (!hasMoved) toggleAiChat();
+    });
+
+    btnCloseChat.addEventListener('click', (e) => {
+      e.stopPropagation();
+      closeAiChat();
+    });
+    chatModal.addEventListener('click', (e) => e.stopPropagation());
+    document.addEventListener('click', (e) => {
+      if (!chatModal.classList.contains('hidden') && !chatModal.contains(e.target) && !fab.contains(e.target)) {
+        closeAiChat();
+      }
+    });
+
+    function renderChatUI() {
+      if (!chatMessagesContainer) return;
+      if (!currentUser) {
+        chatMessagesContainer.innerHTML = `
+          <div class="bg-slate-900 border border-amber-400/40 rounded-2xl p-3.5 space-y-2.5 text-slate-300 chat-bubble-agent shadow-md">
+            <div class="flex items-center gap-2 text-amber-300 font-black text-xs">
+              <i class="fa-solid fa-crown text-amber-400"></i> 會員尊榮專屬 AI 管家
+            </div>
+            <p class="leading-relaxed text-[11px]">
+              您好！我是大V的旅遊窩專屬 AI 管家。登入會員即可免費向我諮詢全菲美饌推薦、私房海島行程規劃與在線即時訂位指南！
+            </p>
+            <button onclick="window.openAuthModalDirect()" class="w-full py-2 bg-gradient-to-r from-amber-400 to-amber-500 text-slate-950 font-black text-xs rounded-xl shadow-md transition active:scale-95">
+              立即登入解鎖管家服務 ➔
+            </button>
+          </div>
+        `;
+        chatInput.disabled = true;
+        btnSendChat.disabled = true;
+      } else {
+        chatInput.disabled = false;
+        btnSendChat.disabled = false;
+        const name = currentUser.displayName || '吃貨好友';
+
+        if (!chatMessagesContainer.querySelector('.chat-ready-bubble')) {
+          chatMessagesContainer.innerHTML = `
+            <div class="chat-ready-bubble bg-slate-900 border border-slate-800 rounded-2xl p-3.5 space-y-2 text-slate-200 chat-bubble-agent shadow-md">
+              <div class="flex items-center gap-1.5 text-amber-300 font-bold text-xs">
+                <i class="fa-solid fa-wand-magic-sparkles text-amber-400"></i> 大V管家在線
+              </div>
+              <p class="leading-relaxed text-[11px]">
+                嗨，${name}！我是大V的專屬智能助理。想在 <span class="text-amber-300 font-bold">${REGION_CONFIG.cities.concat(REGION_CONFIG.islands).find(r => r.id === currentCity)?.name || '菲律賓'}</span> 找頂級和牛、生猛海鮮、絕美海景 Villa 還是浪漫酒吧？隨時問我！
+              </p>
+              <div class="flex flex-wrap gap-1.5 pt-1">
+                <button onclick="window.quickAskAI('推薦在地最頂級的和牛與燒肉', event)" class="ai-quick-btn bg-slate-800 hover:bg-slate-700 text-amber-300 border border-amber-400/30 text-[10px] px-2.5 py-1 rounded-full active:scale-95">🥩 頂級和牛燒肉</button>
+                <button onclick="window.quickAskAI('有哪幾家必訪的生猛海鮮酒家？', event)" class="ai-quick-btn bg-slate-800 hover:bg-slate-700 text-amber-300 border border-amber-400/30 text-[10px] px-2.5 py-1 rounded-full active:scale-95">🦀 必訪海鮮酒家</button>
+                <button onclick="window.quickAskAI('推薦高空夜景酒吧與約會場所', event)" class="ai-quick-btn bg-slate-800 hover:bg-slate-700 text-amber-300 border border-amber-400/30 text-[10px] px-2.5 py-1 rounded-full active:scale-95">🍸 高空景觀酒吧</button>
+              </div>
+            </div>
+          `;
+        }
+      }
+    }
+
+    window.quickAskAI = function(question, event) {
+      if (event) {
+        event.preventDefault();
+        event.stopPropagation();
+      }
+      if (chatInput) {
+        chatInput.value = question;
+        handleChatSend();
+      }
+    };
+
+    async function handleChatSend() {
+      if (!currentUser) return;
+      const msg = chatInput.value.trim();
+      if (!msg) return;
+
+      chatMessagesContainer.innerHTML += `
+        <div class="bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 font-bold p-2.5 rounded-xl rounded-tr-sm self-end max-w-[85%] ml-auto text-xs leading-relaxed shadow-xs">
+          ${msg}
+        </div>
+      `;
+      chatInput.value = '';
+      chatMessagesContainer.scrollTop = chatMessagesContainer.scrollHeight;
+
+      const loadId = 'load-' + Date.now();
+      chatMessagesContainer.innerHTML += `
+        <div id="${loadId}" class="bg-slate-900 p-2.5 rounded-xl rounded-tl-sm border border-slate-800 text-slate-400 text-xs self-start max-w-[85%] flex items-center gap-1.5 shadow-2xs chat-bubble-agent">
+          <i class="fa-solid fa-spinner fa-spin text-amber-400"></i> 管家正在為您查詢... ⚡
+        </div>
+      `;
+      chatMessagesContainer.scrollTop = chatMessagesContainer.scrollHeight;
+
+      try {
+        const res = await fetch(AI_WORKER_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message: msg, lang: currentLang === 'en' ? 'en' : 'zh', currentCity: currentCity })
+        });
+        const data = await res.json();
+        const loadEl = document.getElementById(loadId);
+        if (loadEl) loadEl.innerText = data.reply || "已為您快速查詢！推薦造訪在地人氣嚴選私房餐廳與海島景點。";
+      } catch (err) {
+        const loadEl = document.getElementById(loadId);
+        if (loadEl) loadEl.innerText = "已為您快速查詢！推薦造訪在地人氣嚴選私房餐廳與海島景點。";
+      }
+      chatMessagesContainer.scrollTop = chatMessagesContainer.scrollHeight;
+    }
+
+    btnSendChat.addEventListener('click', handleChatSend);
+    chatInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') handleChatSend(); });
+
+    // 輪播與橫向滾動輔助
     function parseImages(item, fallback) {
       if (!item) return [fallback || 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=800'];
       if (Array.isArray(item.images) && item.images.length > 0) {
@@ -2239,174 +3078,7 @@
       });
     }
 
-    // 收藏管理
-    window.toggleFavorite = function(storeId, event) {
-      if (event) {
-        event.preventDefault();
-        event.stopPropagation();
-      }
-      if (!currentUser) {
-        showToast('🔒 請先登入會員以收藏私房清單！', 'fa-lock', '立即登入', () => {
-          closeAiChat();
-          updateUserModalView();
-          document.getElementById('auth-modal').classList.remove('hidden');
-        });
-        return;
-      }
-
-      const sId = String(storeId).trim();
-      if (userFavoritesSet.has(sId)) {
-        userFavoritesSet.delete(sId);
-        showToast('💔 已自私房口袋名單移除', 'fa-heart-crack');
-      } else {
-        userFavoritesSet.add(sId);
-        showToast('❤️ 已成功加入私房名單！', 'fa-heart');
-      }
-
-      localStorage.setItem('bigv_favorites', JSON.stringify(Array.from(userFavoritesSet)));
-      if (currentUser) {
-        setDoc(doc(db, "user_favorites", currentUser.uid), {
-          favorites: Array.from(userFavoritesSet),
-          updatedAt: new Date().toISOString()
-        }, { merge: true }).catch(() => {});
-      }
-      preserveScrollPosition(() => renderContent());
-    };
-
-    // AI 管家懸浮球邏輯
-    const fab = document.getElementById('chat-fab');
-    const chatModal = document.getElementById('chat-modal');
-    const btnCloseChat = document.getElementById('btn-close-chat');
-    const chatInput = document.getElementById('chat-input');
-    const btnSendChat = document.getElementById('btn-send-chat');
-    const chatMessagesContainer = document.getElementById('chat-messages');
-
-    let savedFabBottom = 115, savedFabRight = 16;
-    let isDragging = false, dragStartX = 0, dragStartY = 0, initialLeft = 0, initialTop = 0, hasMoved = false;
-
-    function applyFabPosition(bottom, right) {
-      fab.style.bottom = `${bottom}px`;
-      fab.style.right = `${right}px`;
-      fab.style.top = 'auto';
-      fab.style.left = 'auto';
-    }
-    applyFabPosition(savedFabBottom, savedFabRight);
-
-    function closeAiChat() {
-      if (!chatModal.classList.contains('hidden')) {
-        chatModal.classList.add('hidden');
-        applyFabPosition(savedFabBottom, savedFabRight);
-      }
-    }
-
-    function toggleAiChat() {
-      const isHidden = chatModal.classList.contains('hidden');
-      if (isHidden) {
-        document.getElementById('auth-modal').classList.add('hidden');
-        chatModal.classList.remove('hidden');
-        fab.style.bottom = '120px';
-        fab.style.right = '16px';
-        renderChatUI();
-        if (currentUser) chatInput.focus();
-      } else {
-        closeAiChat();
-      }
-    }
-
-    fab.addEventListener('click', (e) => {
-      e.stopPropagation();
-      if (!hasMoved) toggleAiChat();
-    });
-    btnCloseChat.addEventListener('click', (e) => {
-      e.stopPropagation();
-      closeAiChat();
-    });
-    chatModal.addEventListener('click', (e) => e.stopPropagation());
-    document.addEventListener('click', (e) => {
-      if (!chatModal.classList.contains('hidden') && !chatModal.contains(e.target) && !fab.contains(e.target)) {
-        closeAiChat();
-      }
-    });
-
-    function renderChatUI() {
-      if (!chatMessagesContainer) return;
-      if (!currentUser) {
-        chatMessagesContainer.innerHTML = `
-          <div class="bg-slate-900 border border-amber-400/40 rounded-2xl p-3.5 space-y-2.5 text-slate-300 chat-bubble-agent shadow-md">
-            <div class="flex items-center gap-2 text-amber-300 font-black text-xs">
-              <i class="fa-solid fa-crown text-amber-400"></i> 會員尊榮專屬 AI 管家
-            </div>
-            <p class="leading-relaxed text-[11px]">
-              您好！我是大V的旅遊窩專屬 AI 管家。登入會員即可免費向我諮詢全菲美饌推薦、私房海島行程規劃與在線即時訂位指南！
-            </p>
-            <button onclick="document.getElementById('auth-modal').classList.remove('hidden'); closeAiChat();" class="w-full py-2 bg-gradient-to-r from-amber-400 to-amber-500 text-slate-950 font-black text-xs rounded-xl shadow-md transition active:scale-95">
-              立即登入解鎖管家服務 ➔
-            </button>
-          </div>
-        `;
-        chatInput.disabled = true;
-        btnSendChat.disabled = true;
-      } else {
-        chatInput.disabled = false;
-        btnSendChat.disabled = false;
-        const name = currentUser.displayName || '吃貨好友';
-
-        if (!chatMessagesContainer.querySelector('.chat-ready-bubble')) {
-          chatMessagesContainer.innerHTML = `
-            <div class="chat-ready-bubble bg-slate-900 border border-slate-800 rounded-2xl p-3.5 space-y-2 text-slate-200 chat-bubble-agent shadow-md">
-              <div class="flex items-center gap-1.5 text-amber-300 font-bold text-xs">
-                <i class="fa-solid fa-wand-magic-sparkles text-amber-400"></i> 大V管家在線
-              </div>
-              <p class="leading-relaxed text-[11px]">
-                嗨，${name}！我是大V的專屬智能助理。想找頂級和牛、生猛海鮮、絕美海景 Villa 還是浪漫酒吧？隨時問我！
-              </p>
-            </div>
-          `;
-        }
-      }
-    }
-
-    async function handleChatSend() {
-      if (!currentUser) return;
-      const msg = chatInput.value.trim();
-      if (!msg) return;
-
-      chatMessagesContainer.innerHTML += `
-        <div class="bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 font-bold p-2.5 rounded-xl rounded-tr-sm self-end max-w-[85%] ml-auto text-xs leading-relaxed shadow-xs">
-          ${msg}
-        </div>
-      `;
-      chatInput.value = '';
-      chatMessagesContainer.scrollTop = chatMessagesContainer.scrollHeight;
-
-      const loadId = 'load-' + Date.now();
-      chatMessagesContainer.innerHTML += `
-        <div id="${loadId}" class="bg-slate-900 p-2.5 rounded-xl rounded-tl-sm border border-slate-800 text-slate-400 text-xs self-start max-w-[85%] flex items-center gap-1.5 shadow-2xs chat-bubble-agent">
-          <i class="fa-solid fa-spinner fa-spin text-amber-400"></i> 管家正在為您查詢... ⚡
-        </div>
-      `;
-      chatMessagesContainer.scrollTop = chatMessagesContainer.scrollHeight;
-
-      try {
-        const res = await fetch(AI_WORKER_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ message: msg, lang: currentLang === 'en' ? 'en' : 'zh', currentCity: currentCity })
-        });
-        const data = await res.json();
-        const loadEl = document.getElementById(loadId);
-        if (loadEl) loadEl.innerText = data.reply || "已為您快速查詢！推薦造訪在地人氣嚴選私房餐廳與海島景點。";
-      } catch (err) {
-        const loadEl = document.getElementById(loadId);
-        if (loadEl) loadEl.innerText = "已為您快速查詢！推薦造訪在地人氣嚴選私房餐廳與海島景點。";
-      }
-      chatMessagesContainer.scrollTop = chatMessagesContainer.scrollHeight;
-    }
-
-    btnSendChat.addEventListener('click', handleChatSend);
-    chatInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') handleChatSend(); });
-
-    // 主切換與搜尋
+    // 維度與分頁切換
     typeCityBtn.addEventListener('click', () => { 
       currentDimension = 'cities'; 
       currentCity = 'manila'; 
@@ -2466,14 +3138,33 @@
       }
     });
 
-    // 啟動核心
+    // 桌面 App 徽章紅點自動清除機制 (100% 完整原版回填)
+    function clearAppBadgeOnOpen() {
+      if ('clearAppBadge' in navigator) {
+        navigator.clearAppBadge().catch(() => {});
+      }
+      if (navigator.serviceWorker && navigator.serviceWorker.controller) {
+        navigator.serviceWorker.controller.postMessage({ type: 'CLEAR_BADGE' });
+      }
+    }
+
+    clearAppBadgeOnOpen();
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible') {
+        clearAppBadgeOnOpen();
+      }
+    });
+
+    // 啟動引擎
+    initVisitorCounter();
     enableHorizontalScroll();
     fetchData();
     initAuthService();
-    // 註冊 Service Worker 並帶上全局統一版本號，確保每次發布均觸發熱更新
+
+    // 統一註冊 Service Worker (帶版本號 v40.0 杜絕快取阻擋)
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js?v=20260912-v40.0-dual-lang').then((reg) => {
+        navigator.serviceWorker.register('./sw.js?v=20260912-v40.0').then((reg) => {
           reg.update().catch(() => {});
           reg.onupdatefound = () => {
             const installingWorker = reg.installing;
