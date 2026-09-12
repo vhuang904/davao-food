@@ -1749,6 +1749,10 @@
 
         const islandRaw = sheetMaster.Island_Discovered || sheetMaster.islandDiscovered || [];
 
+        // ⭐ 補回遺失的宣告，徹底解決 bigVList is not defined 錯誤
+        const bigVList = sheetMaster.bigVPicks || [];
+        const autoList = sheetMaster.autoDiscovered || [];
+
         // 1. 海島美食：只收 category 真正標註美食、餐廳、夜生活、飯店的項目
         const islandFood = islandRaw.filter(x => {
           if (!x) return false;
@@ -1768,6 +1772,7 @@
           return cat.includes('景點') || cat.includes('景觀') || cat.includes('沙灘') || cat.includes('跳島') || cat.includes('生態') || cat.includes('秘境') ||
                  typ.includes('attraction') || typ.includes('beach') || typ.includes('hopping') || typ.includes('nature');
         });
+        allAttractions = (sheetMaster.attractions || []).concat(islandAttractions);
         
         // 3. 醫療與特惠
         allMedical = sheetMaster.medical || [];
