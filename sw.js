@@ -7,7 +7,7 @@
  */
 
 // 👉 每次重大發布修改此版本號，強制手機客戶端熱更新
-const CACHE_VERSION = 'v20260912-v36.0-badge';
+const CACHE_VERSION = 'v20260912-v37.0-headsup';
 const STATIC_CACHE_NAME = `bigv-static-${CACHE_VERSION}`;
 const IMAGE_CACHE_NAME = `bigv-images-${CACHE_VERSION}`;
 
@@ -180,9 +180,11 @@ self.addEventListener('push', (event) => {
     data: {
       url: (data.data && data.data.url) || data.url || '/'
     },
-    vibrate: [200, 100, 200], // 強化雙震動節奏
-    tag: 'bigv-push-notification',
-    renotify: true
+    vibrate: [300, 150, 300, 150, 300], // 強效長震動節奏
+    tag: 'bigv-push-notification-' + Date.now(), // 每次產生獨立通知，強制喚醒浮動橫幅
+    renotify: true,
+    requireInteraction: true, // ⭐ 強制常駐快顯 (Android Heads-up 關鍵)
+    silent: false             // ⭐ 禁止靜音處理，確保觸發系統喚醒
   };
 
   // ⭐ 背景亮起桌面 App Icon 紅點徽章
