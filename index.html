@@ -1749,17 +1749,26 @@
 
         const islandRaw = sheetMaster.Island_Discovered || sheetMaster.islandDiscovered || [];
 
-        // 1. 美食清單防呆整合 (place_id 去重覆蓋)
-        const bigVList = sheetMaster.bigVPicks || [];
-        const autoList = sheetMaster.autoDiscovered || [];
-        const islandFood = islandRaw.filter(x => x && (x.type === 'restaurant' || x.type === 'hotel_villa' || x.type === 'hotel' || x.type === 'resort' || x.type === 'nightlife' || !x.type));
+        // 1. 海島美食：只收 category 真正標註美食、餐廳、夜生活、飯店的項目
+        const islandFood = islandRaw.filter(x => {
+          if (!x) return false;
+          const cat = safeStr(x.category).toLowerCase();
+          const typ = safeStr(x.type).toLowerCase();
+          return cat.includes('美食') || cat.includes('餐廳') || cat.includes('夜生活') || cat.includes('飯店') || cat.includes('villa') ||
+                 typ.includes('restaurant') || typ.includes('food') || typ.includes('nightlife') || typ.includes('hotel');
+        });
 
         allRestaurants = mergeWithPlaceIdDeduplication(bigVList, autoList, islandFood);
 
-        // 2. 景點清單防呆整合
-        const islandAttractions = islandRaw.filter(x => x && (x.type === 'attraction' || x.type === 'beach' || x.type === 'island_hopping' || x.type === 'nature' || (!x.type && (safeStr(x.category).includes('beach') || safeStr(x.category).includes('景點')))));
-        allAttractions = (sheetMaster.attractions || []).concat(islandAttractions);
-
+        // 2. 海島景點：凡是景觀、景點、沙灘、跳島、生態，100% 歸入景點導覽，絕不流入餐廳！
+        const islandAttractions = islandRaw.filter(x => {
+          if (!x) return false;
+          const cat = safeStr(x.category).toLowerCase();
+          const typ = safeStr(x.type).toLowerCase();
+          return cat.includes('景點') || cat.includes('景觀') || cat.includes('沙灘') || cat.includes('跳島') || cat.includes('生態') || cat.includes('秘境') ||
+                 typ.includes('attraction') || typ.includes('beach') || typ.includes('hopping') || typ.includes('nature');
+        });
+        
         // 3. 醫療與特惠
         allMedical = sheetMaster.medical || [];
         allNews = sheetMaster.promotions || [];
