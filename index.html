@@ -2831,14 +2831,17 @@
     }
 
     document.getElementById('btn-logout').addEventListener('click', async () => {
-      try {
-        await logoutUser();
-        authModal.classList.add('hidden');
-        showToast('已成功登出');
-      } catch (err) {
-        showToast('登出失敗，請稍候再試');
-      }
-    });
+  try {
+    await logoutUser();
+    authModal.classList.add('hidden');
+    // ⭐ 登出時立即把彈窗內部歸位回登入視圖
+    document.getElementById('auth-modal-login-view').classList.remove('hidden');
+    document.getElementById('auth-modal-user-view').classList.add('hidden');
+    showToast('已成功登出');
+  } catch (err) {
+    showToast('登出失敗，請稍候再試');
+  }
+});
 
     typeCityBtn.addEventListener('click', () => {
       currentDimension = 'cities';
@@ -2953,12 +2956,15 @@
         `;
 
         const chatLoginBtn = document.getElementById('btn-chat-modal-login');
-        if (chatLoginBtn) {
-          chatLoginBtn.addEventListener('click', () => {
-            chatModal.classList.add('hidden');
-            authModal.classList.remove('hidden');
-          });
-        }
+if (chatLoginBtn) {
+  chatLoginBtn.addEventListener('click', () => {
+    chatModal.classList.add('hidden');
+    // ⭐ 強制重設彈窗檢視：隱藏會員卡，顯示登入按鈕
+    document.getElementById('auth-modal-login-view').classList.remove('hidden');
+    document.getElementById('auth-modal-user-view').classList.add('hidden');
+    authModal.classList.remove('hidden');
+  });
+}
 
         chatInput.disabled = true;
         chatInput.placeholder = "🔒 請先登入會員解鎖 AI 諮詢...";
