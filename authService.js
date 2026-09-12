@@ -50,7 +50,8 @@ setPersistence(auth, browserLocalPersistence).catch(err => {
 });
 
 const googleProvider = new GoogleAuthProvider();
-googleProvider.setCustomParameters({ prompt: 'select_account' });
+// ⭐ 拿掉 prompt: 'select_account'，讓瀏覽器記住上次選取的帳號，實現真正的一鍵靜默授權
+googleProvider.setCustomParameters({});
 
 let currentUserProfile = null;
 
