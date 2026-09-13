@@ -837,6 +837,74 @@
   overflow-y: auto;
   padding-right: 4px;
 }
+
+  /* =======================================================
+       會員中心：暖陽 (橘) / 紫霞 (紫) 深度系統色全面連動
+       ======================================================= */
+    
+    /* --- 1. 暖陽金橘 (Light 模式) --- */
+    html.light {
+      --primary-color: #EA580C !important;
+      --border-color: #FED7AA !important;
+    }
+    /* 推播開關：鈴鐺圖示與開啟狀態底色 */
+    html.light #push-slot-container .fa-bell { color: #EA580C !important; }
+    html.light #push-toggle-btn.bg-amber-400 { background-color: #EA580C !important; }
+    /* 雙 Tab：選中時文字與底線 */
+    html.light .profile-tab-btn.active {
+      color: #EA580C !important;
+      border-bottom-color: #EA580C !important;
+    }
+    /* 全部已讀按鈕 */
+    html.light .btn-mark-read {
+      color: #EA580C !important;
+      border-color: #FED7AA !important;
+    }
+    /* 站內信箱：卡片邊框、標題與標籤文字 */
+    html.light .inbox-list > div {
+      background-color: #FFFFFF !important;
+      border-color: #EFE8DC !important;
+    }
+    html.light .inbox-list h6 { color: #111827 !important; }
+    html.light .inbox-list p { color: #4B5563 !important; }
+    html.light .inbox-list .text-amber-300,
+    html.light .inbox-list .text-amber-400 { color: #EA580C !important; }
+    /* 私房清單卡片內的星號 */
+    html.light #favorites-list-container .fa-star,
+    html.light #favorites-list-container .text-amber-400 { color: #EA580C !important; }
+
+
+    /* --- 2. 暮光紫霞 (Amethyst 模式) --- */
+    html.amethyst {
+      --primary-color: #7B337F !important;
+      --border-color: #E0BEE5 !important;
+    }
+    /* 推播開關：鈴鐺圖示與開啟狀態底色 */
+    html.amethyst #push-slot-container .fa-bell { color: #8E4D88 !important; }
+    html.amethyst #push-toggle-btn.bg-amber-400 { background-color: #7B337F !important; }
+    /* 雙 Tab：選中時文字與底線 */
+    html.amethyst .profile-tab-btn.active {
+      color: #7B337F !important;
+      border-bottom-color: #7B337F !important;
+    }
+    /* 全部已讀按鈕 */
+    html.amethyst .btn-mark-read {
+      color: #7B337F !important;
+      border-color: #D5C2D9 !important;
+    }
+    /* 站內信箱：卡片邊框、標題與標籤文字 */
+    html.amethyst .inbox-list > div {
+      background-color: #FAF5FB !important;
+      border-color: #EFE4F1 !important;
+    }
+    html.amethyst .inbox-list h6 { color: #28142C !important; }
+    html.amethyst .inbox-list p { color: #553E59 !important; }
+    html.amethyst .inbox-list .text-amber-300,
+    html.amethyst .inbox-list .text-amber-400 { color: #7B337F !important; }
+    /* 私房清單卡片內的星號 */
+    html.amethyst #favorites-list-container .fa-star,
+    html.amethyst #favorites-list-container .text-amber-400 { color: #8E4D88 !important; }
+    
   </style>
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col font-sans">
