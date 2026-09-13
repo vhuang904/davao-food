@@ -7,7 +7,7 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
-  <meta name="app-version" content="20260913-v42.9" />
+  <meta name="app-version" content="20260913-v43.0" />
   <meta name="theme-color" content="#020617" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -284,7 +284,23 @@
     html.light header.glass-header { background: var(--theme-header-bg) !important; border-bottom: 2px solid var(--theme-header-border) !important; }
     html.amethyst header.glass-header { background: var(--theme-header-bg) !important; border-bottom: 2px solid var(--theme-header-border) !important; }
     html.light header *, html.amethyst header * { color: #FFFFFF; }
-    
+
+    /* 暗夜尊爵版語系膠囊外框與高亮 */
+html.dark .lang-toggle-container,
+html:not(.light):not(.amethyst) .lang-toggle-container {
+  background-color: #0B0F19 !important;
+  border: 1px solid rgba(245, 158, 11, 0.4) !important;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.6) !important;
+}
+html.dark .lang-toggle-btn {
+  color: #94A3B8 !important;
+}
+html.dark .lang-toggle-btn.active {
+  background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%) !important;
+  color: #020617 !important;
+  font-weight: 900 !important;
+  box-shadow: 0 2px 8px rgba(245, 158, 11, 0.4) !important;
+}
     html.light .lang-toggle-container, html.amethyst .lang-toggle-container { background: rgba(255, 255, 255, 0.25) !important; border: 1px solid rgba(255, 255, 255, 0.45) !important; }
     html.light .lang-toggle-btn.active, html.amethyst .lang-toggle-btn.active { background: #FFFFFF !important; color: var(--theme-primary) !important; }
     html.light #visit-count-container, html.amethyst #visit-count-container { background-color: #FFFFFF !important; border-color: var(--theme-border) !important; }
@@ -448,6 +464,26 @@
       color: #94A3B8 !important;
     }
 
+    /* 登出按鈕：淺色模式警示紅，暗夜模式尊爵黑紅 */
+html.light #btn-logout {
+  background-color: #FEF2F2 !important;
+  border: 1.5px solid #FCA5A5 !important;
+  color: #DC2626 !important;
+  font-weight: 900 !important;
+}
+html.amethyst #btn-logout {
+  background-color: #FFF1F2 !important;
+  border: 1.5px solid #FECDD3 !important;
+  color: #E11D48 !important;
+  font-weight: 900 !important;
+}
+html.dark #btn-logout {
+  background-color: rgba(76, 5, 25, 0.4) !important;
+  border: 1px solid rgba(244, 63, 94, 0.4) !important;
+  color: #FDA4AF !important;
+  font-weight: 800 !important;
+}
+    
     /* [四、會員雙 Tab & 信箱] */
     html.light #user-favorites-box, html.amethyst #user-favorites-box { background-color: var(--theme-card-sub-bg) !important; border-color: var(--theme-card-border) !important; }
     html.light .inbox-list > div, html.amethyst .inbox-list > div { background-color: var(--theme-card-sub-bg) !important; border-color: var(--theme-card-border) !important; }
@@ -3771,7 +3807,7 @@
       }
 
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js?v=20260913-v42.9').then((reg) => {
+        navigator.serviceWorker.register('./sw.js?v=20260913-v43.0').then((reg) => {
           if (reg.waiting) {
             showPwaUpdateModal(reg.waiting);
           }
