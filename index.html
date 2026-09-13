@@ -1777,6 +1777,7 @@ function showToast(msg, icon = 'fa-check', actionText = '', actionCallback = nul
       if (isLoggedIn && user) {
         requestPushNotificationPermission(user);
         syncUserFavoritesFromCloud(user.uid);
+        loadUserInboxMessages();
       }
 
       updateHeaderAuthBtn();
@@ -3546,10 +3547,138 @@ btnSubmitComment.addEventListener('click', handlePostComment);
       window.clearNotificationBadges();
       showToast('📬 所有訊息已標記為已讀', 'fa-envelope-open');
     };
+
+    // =======================================================
+    // 站內信箱 Firestore 讀取、渲染與紅點比對核心邏輯
+    // =======================================================
+    let currentInboxList = [];
+
+    async function loadUserInboxMessages() {
+      const listContainer = document.getElementById('inbox-list-container');
+      if (!listContainer) return;
+
+      try {
+        const lastReadTime = parseInt(localStorage.getItem('bigv_last_read_inbox_time') || '0', 10);
+        let combinedMessages = [];
+
+        // 1. 讀取全站廣播公告 (每週探索週報、專屬優惠)
+        try {
+          const annQuery = query(collection(db, "announcements"), orderBy("createdAt", "desc"));
+          const annSnap = await getDocs(annQuery);
+          annSnap.forEach(d => {
+            const data = d.data();
+            combinedMessages.push({
+              id: d.id,
+              isGlobal: true,
+              ...data,
+              timestamp: typeof data.createdAt === 'number' ? data.createdAt : (data.createdAt?.toMillis ? data.createdAt.toMillis() : new Date(data.createdAt || Date.now()).getTime())
+            });
+          });
+        } catch (e) {
+          console.warn("[Inbox] 公告表讀取略過或暫無資料:", e);
+        }
+
+        // 2. 讀取個人專屬通知 (違規處分、點數異動)
+        if (currentUser) {
+          try {
+            const userNotifQuery = query(collection(db, "users", currentUser.uid, "notifications"), orderBy("createdAt", "desc"));
+            const userNotifSnap = await getDocs(userNotifQuery);
+            userNotifSnap.forEach(d => {
+              const data = d.data();
+              combinedMessages.push({
+                id: d.id,
+                isGlobal: false,
+                ...data,
+                timestamp: typeof data.createdAt === 'number' ? data.createdAt : (data.createdAt?.toMillis ? data.createdAt.toMillis() : new Date(data.createdAt || Date.now()).getTime())
+              });
+            });
+          } catch (e) {
+            console.warn("[Inbox] 個人通知讀取略過:", e);
+          }
+        }
+
+        // 3. 依照時間排序 (最新在最上面)
+        combinedMessages.sort((a, b) => b.timestamp - a.timestamp);
+        currentInboxList = combinedMessages;
+
+        // 4. 比對是否有新信件並亮起未讀紅點
+        const hasUnread = combinedMessages.some(m => m.timestamp > lastReadTime);
+        const avatarBadge = document.getElementById('user-avatar-badge');
+        const tabBadge = document.getElementById('tab-inbox-badge');
+
+        if (hasUnread) {
+          if (avatarBadge) avatarBadge.classList.remove('hidden');
+          if (tabBadge) tabBadge.classList.remove('hidden');
+        } else {
+          if (avatarBadge) avatarBadge.classList.add('hidden');
+          if (tabBadge) tabBadge.classList.add('hidden');
+        }
+
+        // 5. 渲染信箱列表
+        renderInboxUI(combinedMessages, lastReadTime);
+
+      } catch (err) {
+        console.error("[Inbox] 載入失敗:", err);
+      }
+    }
+
+    function renderInboxUI(messages, lastReadTime) {
+      const container = document.getElementById('inbox-list-container');
+      if (!container) return;
+
+      if (!messages || messages.length === 0) {
+        container.innerHTML = `
+          <div class="text-center py-8 text-slate-500">
+            <i class="fa-regular fa-envelope-open text-2xl mb-1.5 text-slate-600 block"></i>
+            <span class="text-[11px] font-bold">信箱空空如也</span>
+            <p class="text-[9px] text-slate-500 mt-0.5">有最新好店探索或優惠時將第一時間送達！</p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = messages.map(m => {
+        const isUnread = m.timestamp > lastReadTime;
+        const timeStr = new Date(m.timestamp).toLocaleDateString();
+        const hasTarget = !!m.targetId;
+
+        // 根據信件類型顯示不同徽章色彩
+        let badgeTag = '<span class="text-amber-300 font-bold">🌟 每週探索</span>';
+        if (m.type === 'offer') {
+          badgeTag = '<span class="text-rose-400 font-bold">🔥 限時特惠</span>';
+        } else if (m.type === 'penalty' || !m.isGlobal) {
+          badgeTag = '<span class="text-amber-400 font-bold">⚠️ 系統通知</span>';
+        }
+
+        return `
+          <div class="bg-slate-900 border ${isUnread ? 'border-amber-400/60' : 'border-slate-800'} rounded-xl p-2.5 space-y-1 transition relative ${hasTarget ? 'cursor-pointer active:scale-98' : ''}" 
+               ${hasTarget ? `onclick="window.handleInboxCardClick('${m.targetId}')"` : ''}>
+            <div class="flex items-center justify-between text-[11px]">
+              <div class="flex items-center gap-1.5">
+                ${badgeTag}
+                ${isUnread ? '<span class="w-1.5 h-1.5 rounded-full bg-rose-500 shadow-sm"></span>' : ''}
+              </div>
+              <span class="text-[9px] text-slate-500">${timeStr}</span>
+            </div>
+            <h6 class="font-bold text-xs text-white leading-tight">${m.title || '最新動態'}</h6>
+            <p class="text-[10px] text-slate-300 leading-relaxed">${m.content || ''}</p>
+            ${hasTarget ? '<span class="text-[9px] text-amber-400 font-bold flex items-center gap-0.5 pt-0.5">點擊前往查看店家 ➔</span>' : ''}
+          </div>
+        `;
+      }).join('');
+    }
+
+    // 點擊帶有 targetId 的信件時直接跳轉店家卡片
+    window.handleInboxCardClick = function(targetId) {
+      if (!targetId) return;
+      document.getElementById('auth-modal')?.classList.add('hidden');
+      window.jumpToCard(targetId, 'restaurant');
+    };
     
     initVisitorCounter();
     enableHorizontalScroll();
     fetchData();
+    loadUserInboxMessages();
     initAuthService();
 
     if ('serviceWorker' in navigator) {
