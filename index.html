@@ -640,6 +640,107 @@
       color: #00B14F !important;
     }
     .btn-card-grab * { color: #00B14F !important; }
+    /* =======================================================
+   雙 Tab（私房清單 / 站內信箱）多主題通用樣式
+   ======================================================= */
+/* 頂部頭像左上角未讀紅點（邊框自動貼合主題背景） */
+.avatar-badge {
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  width: 9px;
+  height: 9px;
+  background-color: #ff4757;
+  border: 1.5px solid var(--bg-card, #1a1a1a);
+  border-radius: 50%;
+  box-shadow: 0 0 6px rgba(255, 71, 87, 0.8);
+  z-index: 10;
+}
+
+/* 雙 Tab 列排版：底線跟隨主題分界線 */
+.profile-tabs-header {
+  display: flex;
+  gap: 8px;
+  margin: 16px 0 12px 0;
+  border-bottom: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
+  padding-bottom: 4px;
+}
+
+/* 未選中的 Tab：使用主題次要文字色 */
+.profile-tab-btn {
+  flex: 1;
+  position: relative;
+  background: transparent;
+  border: none;
+  color: var(--text-muted, #888);
+  font-size: 14px;
+  font-weight: bold;
+  padding: 8px 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+  border-bottom: 2px solid transparent;
+}
+
+/* 選中的 Tab：文字與底線自動跟隨主題主色（金 / 橘 / 紫） */
+.profile-tab-btn.active {
+  color: var(--primary-color, #f5a623);
+  border-bottom: 2px solid var(--primary-color, #f5a623);
+}
+
+/* Tab 按鈕上的小紅點 */
+.tab-badge {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  background-color: #ff4757;
+  border-radius: 50%;
+  box-shadow: 0 0 5px #ff4757;
+  margin-left: 2px;
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* 信箱工具列 */
+.inbox-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 0 10px 0;
+}
+.inbox-subtitle {
+  font-size: 12px;
+  color: var(--text-muted, #888);
+}
+
+/* 全部標為已讀按鈕：線條與文字跟隨主題色 */
+.btn-mark-read {
+  background: transparent;
+  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.2));
+  color: var(--primary-color, #f5a623);
+  font-size: 11px;
+  padding: 3px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+.btn-mark-read:active {
+  opacity: 0.7;
+}
+
+.inbox-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-height: 320px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
   </style>
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col font-sans">
@@ -705,11 +806,12 @@
 
         <div class="flex items-center gap-1.5 flex-shrink-0">
           <button id="auth-state-btn" class="bg-slate-900 hover:bg-slate-800 border border-amber-400/50 text-amber-300 rounded-full px-2.5 py-1 text-[11px] font-bold flex items-center gap-1.5 transition active:scale-95 whitespace-nowrap shadow-sm">
-            <span id="user-avatar-container" class="inline-flex items-center justify-center">
-              <i id="user-avatar-icon" class="fa-regular fa-user text-[10px]"></i>
-            </span>
-            <span id="auth-btn-text">登入</span>
-          </button>
+  <span id="user-avatar-container" class="inline-flex items-center justify-center relative">
+    <i id="user-avatar-icon" class="fa-regular fa-user text-[10px]"></i>
+    <span id="user-avatar-badge" class="avatar-badge hidden"></span>
+  </span>
+  <span id="auth-btn-text">登入</span>
+</button>
           <button id="share-btn" class="w-8 h-8 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 flex items-center justify-center transition active:scale-95 shadow-sm">
             <i class="fa-solid fa-share-nodes text-[11px]"></i>
           </button>
@@ -914,16 +1016,48 @@
           </button>
         </div>
 
-        <!-- 我的私房口袋收藏 -->
-        <div id="user-favorites-box" class="flex-1 flex flex-col min-h-0 border-t border-slate-800/80 pt-2 p-2 rounded-2xl transition-colors">
-          <div class="flex items-center justify-between mb-1.5">
-            <h5 class="text-xs font-black text-amber-300 flex items-center gap-1">
-              <i class="fa-solid fa-heart text-rose-500 text-[11px]"></i>
-              <span data-i18n="myFavorites">我的私房口袋清單</span>
-            </h5>
-            <span id="fav-count-badge" class="text-[10px] text-slate-400 font-mono">0 個收藏</span>
+        <!-- 我的私房口袋收藏 & 站內信箱 雙 Tab 區塊 -->
+        <div id="user-favorites-box" class="flex-1 flex flex-col min-h-0 border-t border-slate-800/80 pt-1 p-2 rounded-2xl transition-colors">
+          
+          <!-- 雙 Tab 切換標籤列 -->
+          <div class="profile-tabs-header">
+            <button type="button" id="tab-btn-favorites" class="profile-tab-btn active" onclick="window.switchProfileTab('favorites')">
+              <i class="fa-solid fa-heart text-rose-500 text-xs"></i>
+              <span>私房清單</span>
+              <span id="fav-count-badge" class="text-[10px] opacity-70 font-mono">(0)</span>
+            </button>
+            <button type="button" id="tab-btn-inbox" class="profile-tab-btn" onclick="window.switchProfileTab('inbox')">
+              <i class="fa-solid fa-inbox text-xs"></i>
+              <span>站內信箱</span>
+              <span id="tab-inbox-badge" class="tab-badge hidden"></span>
+            </button>
           </div>
-          <div id="favorites-list-container" class="flex-1 overflow-y-auto hide-scrollbar space-y-1.5 max-h-[190px] pr-0.5"></div>
+
+          <!-- Tab 1: 私房清單列表 -->
+          <div id="tab-content-favorites" class="profile-tab-content flex-1 flex flex-col min-h-0">
+            <div id="favorites-list-container" class="flex-1 overflow-y-auto hide-scrollbar space-y-1.5 max-h-[190px] pr-0.5"></div>
+          </div>
+
+          <!-- Tab 2: 站內信箱列表 -->
+          <div id="tab-content-inbox" class="profile-tab-content flex-1 flex flex-col min-h-0" style="display: none;">
+            <div class="inbox-toolbar">
+              <span class="inbox-subtitle">每週探索、特惠與通知</span>
+              <button type="button" id="btn-mark-all-read" class="btn-mark-read" onclick="window.markAllNotificationsRead()">
+                <i class="fa-solid fa-check-double"></i> 全部已讀
+              </button>
+            </div>
+            <div id="inbox-list-container" class="inbox-list max-h-[160px]">
+              <!-- 示範信件展示 -->
+              <div class="bg-slate-900 border border-amber-400/40 rounded-xl p-2.5 space-y-1">
+                <div class="flex items-center justify-between text-[11px]">
+                  <span class="font-bold text-amber-300">🌟【每週探索週報】</span>
+                  <span class="text-[9px] text-slate-500">本週精選</span>
+                </div>
+                <p class="text-[10px] text-slate-300 leading-relaxed">達沃與宿霧新增私房海鮮與日式燒肉，快點擊地圖探訪！</p>
+              </div>
+            </div>
+          </div>
+
         </div>
 
         <!-- 底部登出按鈕 -->
@@ -3373,6 +3507,46 @@ btnSubmitComment.addEventListener('click', handlePostComment);
       }
     });
 
+    // =======================================================
+    // 雙 Tab（私房清單 / 站內信箱）切換與紅點連動邏輯
+    // =======================================================
+    window.switchProfileTab = function(tabName) {
+      const tabFav = document.getElementById('tab-btn-favorites');
+      const tabInbox = document.getElementById('tab-btn-inbox');
+      const contentFav = document.getElementById('tab-content-favorites');
+      const contentInbox = document.getElementById('tab-content-inbox');
+
+      if (tabName === 'favorites') {
+        if (tabFav) tabFav.classList.add('active');
+        if (tabInbox) tabInbox.classList.remove('active');
+        if (contentFav) contentFav.style.display = 'flex';
+        if (contentInbox) contentInbox.style.display = 'none';
+      } else if (tabName === 'inbox') {
+        if (tabInbox) tabInbox.classList.add('active');
+        if (tabFav) tabFav.classList.remove('active');
+        if (contentFav) contentFav.style.display = 'none';
+        if (contentInbox) contentInbox.style.display = 'flex';
+
+        // 點進信箱分頁時，自動消除未讀紅點
+        window.clearNotificationBadges();
+      }
+    };
+
+    // 消除頭像與 Tab 上的未讀紅點
+    window.clearNotificationBadges = function() {
+      const avatarBadge = document.getElementById('user-avatar-badge');
+      const tabBadge = document.getElementById('tab-inbox-badge');
+      if (avatarBadge) avatarBadge.classList.add('hidden');
+      if (tabBadge) tabBadge.classList.add('hidden');
+      localStorage.setItem('bigv_last_read_inbox_time', Date.now().toString());
+    };
+
+    // 全部標為已讀按鈕
+    window.markAllNotificationsRead = function() {
+      window.clearNotificationBadges();
+      showToast('📬 所有訊息已標記為已讀', 'fa-envelope-open');
+    };
+    
     initVisitorCounter();
     enableHorizontalScroll();
     fetchData();
