@@ -7,7 +7,7 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
-  <meta name="app-version" content="20260912-v41.1" />
+  <meta name="app-version" content="20260912-v41.2" />
   <meta name="theme-color" content="#020617" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -3379,53 +3379,53 @@ btnSubmitComment.addEventListener('click', handlePostComment);
     initAuthService();
 
     if ('serviceWorker' in navigator) {
-      let refreshing = false;
+      let isUpdating = false;
+
+      // 只有在使用者親自點了「立即套用新版本」後，接管時才准重載畫面
       navigator.serviceWorker.addEventListener('controllerchange', () => {
-        if (!refreshing) {
-          refreshing = true;
+        if (isUpdating) {
           window.location.reload();
         }
       });
 
       function showPwaUpdateModal(worker) {
-        // 延遲 1.2 秒等主畫面資料載入穩定後再浮現，避免被初次渲染蓋台
-        setTimeout(() => {
-          const modal = document.getElementById('pwa-update-modal');
-          const btnApply = document.getElementById('btn-apply-pwa-update');
-          const btnClose = document.getElementById('btn-close-pwa-modal');
-          if (!modal || !btnApply) return;
+        const modal = document.getElementById('pwa-update-modal');
+        const btnApply = document.getElementById('btn-apply-pwa-update');
+        const btnClose = document.getElementById('btn-close-pwa-modal');
+        if (!modal || !btnApply) return;
 
-          modal.classList.remove('hidden');
-          requestAnimationFrame(() => {
-            modal.classList.remove('scale-90', 'opacity-0');
-            modal.classList.add('scale-100', 'opacity-100');
-          });
+        // 強制解鎖並浮現卡片
+        modal.classList.remove('hidden');
+        requestAnimationFrame(() => {
+          modal.classList.remove('scale-90', 'opacity-0');
+          modal.classList.add('scale-100', 'opacity-100');
+        });
 
-          btnApply.onclick = (e) => {
+        btnApply.onclick = (e) => {
+          e.stopPropagation();
+          isUpdating = true; // 標記為使用者主動升級
+          btnApply.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> 正在更新套用中...';
+          worker.postMessage({ type: 'SKIP_WAITING' });
+        };
+
+        if (btnClose) {
+          btnClose.onclick = (e) => {
             e.stopPropagation();
-            btnApply.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> 正在更新套用中...';
-            worker.postMessage({ type: 'SKIP_WAITING' });
+            modal.classList.remove('scale-100', 'opacity-100');
+            modal.classList.add('scale-90', 'opacity-0');
+            setTimeout(() => modal.classList.add('hidden'), 300);
           };
-
-          if (btnClose) {
-            btnClose.onclick = (e) => {
-              e.stopPropagation();
-              modal.classList.remove('scale-100', 'opacity-100');
-              modal.classList.add('scale-90', 'opacity-0');
-              setTimeout(() => modal.classList.add('hidden'), 300);
-            };
-          }
-        }, 1200);
+        }
       }
 
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js?v=20260913-v41.1').then((reg) => {
-          reg.update().catch(() => {});
-
+        navigator.serviceWorker.register('./sw.js?v=20260913-v41.2').then((reg) => {
+          // 1. 如果背景早就下載好、正卡在 waiting 狀態，直接強制跳出卡片
           if (reg.waiting) {
             showPwaUpdateModal(reg.waiting);
           }
 
+          // 2. 當前剛好抓到新檔案並下載完成
           reg.onupdatefound = () => {
             const installingWorker = reg.installing;
             if (!installingWorker) return;
@@ -3436,6 +3436,18 @@ btnSubmitComment.addEventListener('click', handlePostComment);
             };
           };
         }).catch((err) => console.warn('[SW] 註冊異常:', err));
+      });
+
+      // 當使用者切回 App (或解鎖螢幕) 時，順手檢查一次
+      document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'visible') {
+          navigator.serviceWorker.getRegistration().then(reg => {
+            if (reg) {
+              if (reg.waiting) showPwaUpdateModal(reg.waiting);
+              reg.update().catch(() => {});
+            }
+          });
+        }
       });
     }
   </script>
