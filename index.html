@@ -640,6 +640,59 @@
       color: #00B14F !important;
     }
     .btn-card-grab * { color: #00B14F !important; }
+
+    /* 會員中心私房收藏按鈕 (暗夜 / 暖陽 / 紫霞 自適應底框) */
+    html.dark .btn-fav-action, html:not(.light):not(.amethyst) .btn-fav-action {
+      background-color: #0F172A !important;
+      border: 1px solid #334155 !important;
+    }
+    html.light .btn-fav-action {
+      background-color: #FFF7ED !important;
+      border: 1px solid #FED7AA !important;
+      box-shadow: 0 1px 3px rgba(234, 88, 12, 0.08) !important;
+    }
+    html.amethyst .btn-fav-action {
+      background-color: #FAF5FB !important;
+      border: 1px solid #E9D5FF !important;
+      box-shadow: 0 1px 3px rgba(142, 77, 136, 0.08) !important;
+    }
+
+    /* =======================================================
+       卡片內部文字與評分星號主題色彩自動連動系統
+       ======================================================= */
+    /* 1. 暗夜尊爵 (黑金) */
+    html.dark .card-meta-tag, html:not(.light):not(.amethyst) .card-meta-tag { color: #FCD34D !important; }
+    html.dark .card-rating-star, html:not(.light):not(.amethyst) .card-rating-star { color: #F59E0B !important; }
+    html.dark .card-rating-star i, html:not(.light):not(.amethyst) .card-rating-star i { color: #F59E0B !important; }
+    html.dark .card-review-prefix, html:not(.light):not(.amethyst) .card-review-prefix { color: #FBBF24 !important; }
+    html.dark .card-pill-tag, html:not(.light):not(.amethyst) .card-pill-tag {
+      background-color: rgba(245, 158, 11, 0.1) !important;
+      border: 1px solid rgba(245, 158, 11, 0.3) !important;
+      color: #FCD34D !important;
+    }
+
+    /* 2. 暖陽金橘 (活力橘) */
+    html.light .card-meta-tag { color: #EA580C !important; font-weight: 800 !important; }
+    html.light .card-rating-star { color: #EA580C !important; }
+    html.light .card-rating-star i { color: #F97316 !important; }
+    html.light .card-review-prefix { color: #EA580C !important; }
+    html.light .card-pill-tag {
+      background-color: #FFF7ED !important;
+      border: 1px solid #FED7AA !important;
+      color: #EA580C !important;
+    }
+
+    /* 3. 暮光紫霞 (雅緻紫) */
+    html.amethyst .card-meta-tag { color: #7B337F !important; font-weight: 800 !important; }
+    html.amethyst .card-rating-star { color: #8E4D88 !important; }
+    html.amethyst .card-rating-star i { color: #8E4D88 !important; }
+    html.amethyst .card-review-prefix { color: #7B337F !important; }
+    html.amethyst .card-pill-tag {
+      background-color: #FAF5FB !important;
+      border: 1px solid #E9D5FF !important;
+      color: #7B337F !important;
+    }
+    
     /* =======================================================
    雙 Tab（私房清單 / 站內信箱）多主題通用樣式
    ======================================================= */
@@ -2011,16 +2064,16 @@ function showToast(msg, icon = 'fa-check', actionText = '', actionCallback = nul
             </div>
 
             <div class="flex items-center gap-1.5 flex-shrink-0">
-              <a href="${cleanPhone ? `tel:${cleanPhone}` : '#'}" title="撥打電話" class="w-7 h-7 rounded-lg bg-slate-800 text-emerald-400 hover:bg-slate-700 flex items-center justify-center text-xs transition ${!cleanPhone ? 'opacity-30 pointer-events-none' : ''}">
-                <i class="fa-solid fa-phone"></i>
-              </a>
-              <a href="${navUrl}" target="_blank" rel="noopener noreferrer" title="路線導航" class="w-7 h-7 rounded-lg bg-slate-800 text-sky-400 hover:bg-slate-700 flex items-center justify-center text-xs transition">
-                <i class="fa-solid fa-location-arrow"></i>
-              </a>
-              <button type="button" title="取消收藏" onclick="window.toggleFavorite('${sId}', event)" class="w-7 h-7 rounded-lg bg-slate-800 text-rose-500 hover:bg-rose-950/60 flex items-center justify-center text-xs transition">
-                <i class="fa-solid fa-heart"></i>
-              </button>
-            </div>
+  <a href="${cleanPhone ? `tel:${cleanPhone}` : '#'}" title="撥打電話" class="btn-fav-action w-7 h-7 rounded-lg flex items-center justify-center text-xs transition ${!cleanPhone ? 'opacity-30 pointer-events-none' : ''} text-emerald-500">
+    <i class="fa-solid fa-phone"></i>
+  </a>
+  <a href="${navUrl}" target="_blank" rel="noopener noreferrer" title="路線導航" class="btn-fav-action w-7 h-7 rounded-lg flex items-center justify-center text-xs transition text-sky-500">
+    <i class="fa-solid fa-location-arrow"></i>
+  </a>
+  <button type="button" title="取消收藏" onclick="window.toggleFavorite('${sId}', event)" class="btn-fav-action w-7 h-7 rounded-lg flex items-center justify-center text-xs transition text-rose-500">
+    <i class="fa-solid fa-heart"></i>
+  </button>
+</div>
           </div>
         `;
       }).join('');
@@ -2437,15 +2490,15 @@ function showToast(msg, icon = 'fa-check', actionText = '', actionCallback = nul
               </a>
             </div>
 
-            <div class="p-3.5 space-y-2 bg-slate-950 text-xs">
+            <div class="p-3.5 space-y-2 bg-slate-950 text-xs card-info-box">
               <div class="flex items-center justify-between">
-                <span class="text-amber-300 font-semibold">${item.city || '菲律賓'} · ${item.category || '精選'}</span>
-                <span class="text-amber-400 font-bold flex items-center gap-1">
+                <span class="card-meta-tag font-semibold">${item.city || '菲律賓'} · ${item.category || '精選'}</span>
+                <span class="card-rating-star font-bold flex items-center gap-1">
                   <i class="fa-solid fa-star text-[10px]"></i> ${rating}
                   <span class="text-slate-500 text-[10px] font-normal">(${reviewCount}則評價)</span>
                 </span>
               </div>
-              <p class="text-slate-300 leading-relaxed line-clamp-2"><span class="text-amber-400/90 font-bold">${reviewPrefix}</span>${reviewText}</p>
+              <p class="text-slate-300 leading-relaxed line-clamp-2"><span class="card-review-prefix font-bold">${reviewPrefix}</span>${reviewText}</p>
             </div>
 
             <div class="p-2.5 bg-slate-900 border-t border-slate-800 space-y-2 text-xs">
@@ -2595,12 +2648,12 @@ function showToast(msg, icon = 'fa-check', actionText = '', actionCallback = nul
               </a>
             </div>
 
-            <div class="p-3.5 space-y-2 bg-slate-950 text-xs">
+            <div class="p-3.5 space-y-2 bg-slate-950 text-xs card-info-box">
               <div class="flex items-center justify-between">
-                <span class="px-2 py-0.5 rounded bg-amber-400/10 border border-amber-400/30 text-amber-300 font-bold text-[10px]">
+                <span class="card-pill-tag px-2 py-0.5 rounded font-bold text-[10px]">
                   ${item.category || '觀光地標'}
                 </span>
-                <span class="text-amber-400 font-bold flex items-center gap-1">
+                <span class="card-rating-star font-bold flex items-center gap-1">
                   <i class="fa-solid fa-star text-[10px]"></i> ${rating}
                   <span class="text-slate-500 text-[10px] font-normal">(${reviewCount}則評價)</span>
                 </span>
@@ -2727,7 +2780,7 @@ function showToast(msg, icon = 'fa-check', actionText = '', actionCallback = nul
                 <span class="px-2 py-0.5 rounded bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 font-bold text-[10px]">
                   ${typeBadge}
                 </span>
-                <span class="text-amber-400 font-bold flex items-center gap-1">
+                <span class="card-rating-star font-bold flex items-center gap-1">
                   <i class="fa-solid fa-star text-[10px]"></i> ${rating}
                   <span class="text-slate-500 text-[10px] font-normal">(${reviewCount}則評價)</span>
                 </span>
