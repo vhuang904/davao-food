@@ -264,6 +264,30 @@ export async function addStoreComment(storeId, commentPayload) {
   };
 }
 
+// 4-1. 讀取店家雲端真實評論
+export async function getStoreComments(storeId) {
+  if (!storeId) return [];
+  try {
+    const q = query(
+      collection(db, "comments"),
+      where("storeId", "==", String(storeId))
+    );
+    const snap = await getDocs(q);
+    const comments = [];
+    snap.forEach((d) => {
+      comments.push({ id: d.id, ...d.data() });
+    });
+    return comments.sort((a, b) => {
+      const ta = a.createdAt?.toMillis ? a.createdAt.toMillis() : 0;
+      const tb = b.createdAt?.toMillis ? b.createdAt.toMillis() : 0;
+      return tb - ta;
+    });
+  } catch (err) {
+    console.warn("[AuthService] 讀取評論異常:", err);
+    return [];
+  }
+}
+
 // 5. 初始化認證監聽（支援魔法連結驗證、轉址回傳相容與全域狀態）
 export function initAuthService() {
   // A. 檢查 Email 魔法連結跳回
