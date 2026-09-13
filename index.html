@@ -2822,17 +2822,18 @@ function showToast(msg, icon = 'fa-check', actionText = '', actionCallback = nul
     window.closeAiChat = closeAiChat;
 
     function toggleAiChat() {
-      const isHidden = chatModal.classList.contains('hidden');
-      if (isHidden) {
-        document.getElementById('auth-modal').classList.add('hidden');
-        chatModal.classList.remove('hidden');
-        updateFabPos(window.innerWidth - 76, window.innerHeight - 175);
-        renderChatUI();
-        if (currentUser) chatInput.focus();
-      } else {
-        closeAiChat();
-      }
-    }
+   const isHidden = chatModal.classList.contains('hidden');
+   if (isHidden) {
+     document.getElementById('auth-modal').classList.add('hidden');
+     chatModal.classList.remove('hidden');
+     // 定錨至對話窗右下角安全區待命
+     updateFabPos(window.innerWidth - 76, window.innerHeight - 175);
+     renderChatUI();
+     // ⭐ 徹底移除 chatInput.focus()，禁止主動彈出鍵盤，讓使用者手動點擊輸入框才喚起
+   } else {
+     closeAiChat();
+   }
+ }
 
     function onFabStart(e) {
    if (!chatModal.classList.contains('hidden')) return;
