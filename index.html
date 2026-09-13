@@ -7,7 +7,7 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
-  <meta name="app-version" content="20260913-v43.1" />
+  <meta name="app-version" content="20260913-v43.2" />
   <meta name="theme-color" content="#020617" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -405,13 +405,44 @@ html.dark .lang-toggle-btn.active {
     }
     html.dark .btn-card-nav * { color: #38BDF8 !important; }
 
-    /* 卡片輪播浮層元件（愛心反白、左右滑動提示） */
-    html.light .carousel-slide + div + span, html.amethyst .carousel-slide + div + span,
-    html.light .carousel-track ~ span, html.amethyst .carousel-track ~ span {
-      background: var(--theme-gradient) !important;
-      color: var(--theme-badge-text) !important;
-      border: 1px solid var(--theme-header-border) !important;
+    /* 卡片輪播浮層元件：左右滑動提示三主題分流 */
+    .carousel-hint-pill {
+      position: absolute;
+      top: 3rem;
+      right: 0.75rem;
+      padding: 2px 8px;
+      border-radius: 9999px;
+      font-size: 9px;
+      font-weight: 800;
+      pointer-events: none;
+      z-index: 10;
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
     }
+    /* 1. 暗夜尊爵：半透明黑底 + 金黃字 + 琥珀金細框 */
+    html.dark .carousel-hint-pill,
+    html:not(.light):not(.amethyst) .carousel-hint-pill {
+      background-color: rgba(2, 6, 23, 0.85) !important;
+      color: #FCD34D !important;
+      border: 1px solid rgba(245, 158, 11, 0.45) !important;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5) !important;
+    }
+    /* 2. 暖陽金橘：白底 + 橘字 + 橘框 */
+    html.light .carousel-hint-pill {
+      background-color: rgba(255, 255, 255, 0.9) !important;
+      color: #EA580C !important;
+      border: 1px solid #FED7AA !important;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1) !important;
+    }
+    /* 3. 暮光紫霞：白底 + 紫字 + 紫框 */
+    html.amethyst .carousel-hint-pill {
+      background-color: rgba(255, 255, 255, 0.9) !important;
+      color: #7B337F !important;
+      border: 1px solid #E0BEE5 !important;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1) !important;
+    }
+
+    /* 卡片愛心按鈕在淺色模式下的反白 */
     html.light button[onclick*="toggleFavorite"], html.amethyst button[onclick*="toggleFavorite"] {
       background-color: rgba(255, 255, 255, 0.85) !important;
       border: 1px solid var(--theme-border) !important;
@@ -3488,7 +3519,7 @@ html.dark #btn-logout {
           </div>
           <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent pointer-events-none"></div>
           ${hasMultiple ? `
-            <span class="absolute top-12 right-3 px-2 py-0.5 rounded-full backdrop-blur-xs pointer-events-none z-10 border shadow-sm text-[9px] font-bold">👈 左右滑動</span>
+            <span class="carousel-hint-pill">👈 左右滑動</span>
             <div id="dots-${uniqueId}" class="absolute bottom-2.5 right-2.5 flex items-center gap-1 z-10 bg-black/50 backdrop-blur-xs px-2 py-1 rounded-full border border-slate-700">
               ${images.map((_, i) => `<span class="dot-indicator inline-block w-1.5 h-1.5 rounded-full bg-white/40 transition-all ${i === 0 ? 'active' : ''}"></span>`).join('')}
             </div>
@@ -3846,7 +3877,7 @@ html.dark #btn-logout {
       }
 
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js?v=20260913-v43.1').then((reg) => {
+        navigator.serviceWorker.register('./sw.js?v=20260913-v43.2').then((reg) => {
           if (reg.waiting) {
             showPwaUpdateModal(reg.waiting);
           }
