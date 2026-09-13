@@ -268,7 +268,7 @@
       border: 1px solid rgba(255, 255, 255, 0.6) !important;
     }
     html.light #share-btn i { color: #EA580C !important; }
-
+    
     html.light article, html.light #auth-modal .bg-slate-950, html.light #comment-modal .bg-slate-950, html.light #recommend-modal .bg-slate-950 {
       background-color: #FCF9F2 !important;
       border-color: #E2DACF !important;
@@ -284,6 +284,36 @@
     }
     html.light article p, html.light #auth-modal p, html.light #auth-modal span.text-slate-400, html.light #auth-modal span.text-slate-300 {
       color: #374151 !important;
+    }
+    /* 暖陽模式：評論彈窗、留言卡片與輸入框全面白底黑字 */
+    html.light #comment-modal-title {
+      color: #111827 !important;
+    }
+    html.light #comment-modal p[data-i18n="commentSub"] {
+      color: #EA580C !important;
+    }
+    html.light #comment-list-container > div {
+      background-color: #FFFFFF !important;
+      border: 1px solid #EFE8DC !important;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+    }
+    html.light #comment-list-container span.font-bold {
+      color: #EA580C !important;
+    }
+    html.light #comment-list-container p {
+      color: #1F2937 !important;
+    }
+    html.light #comment-input {
+      background-color: #FFFFFF !important;
+      color: #111827 !important;
+      border: 1.5px solid #FED7AA !important;
+    }
+    html.light #comment-input::placeholder {
+      color: #9CA3AF !important;
+    }
+    html.light #comment-modal .border-t {
+      background-color: #FCF9F2 !important;
+      border-top-color: #E2DACF !important;
     }
     html.light article .border-t.border-slate-800 {
       background-color: #F5EFE6 !important;
@@ -482,6 +512,36 @@
     html.amethyst article .border-t.border-slate-800 {
       background-color: #FAF5FB !important;
       border-top: 1px solid #EFE4F1 !important;
+    }
+    /* 紫霞模式：評論彈窗、留言卡片與輸入框全面白底紫字 */
+    html.amethyst #comment-modal-title {
+      color: #28142C !important;
+    }
+    html.amethyst #comment-modal p[data-i18n="commentSub"] {
+      color: #7B337F !important;
+    }
+    html.amethyst #comment-list-container > div {
+      background-color: #FFFFFF !important;
+      border: 1px solid #EFE4F1 !important;
+      box-shadow: 0 1px 3px rgba(107, 62, 117, 0.05) !important;
+    }
+    html.amethyst #comment-list-container span.font-bold {
+      color: #7B337F !important;
+    }
+    html.amethyst #comment-list-container p {
+      color: #2E1A33 !important;
+    }
+    html.amethyst #comment-input {
+      background-color: #FFFFFF !important;
+      color: #2E1A33 !important;
+      border: 1.5px solid #D5C2D9 !important;
+    }
+    html.amethyst #comment-input::placeholder {
+      color: #A48FA8 !important;
+    }
+    html.amethyst #comment-modal .border-t {
+      background-color: #FAF5FB !important;
+      border-top-color: #EFE4F1 !important;
     }
 
     html.amethyst .btn-card-comment {
