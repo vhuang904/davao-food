@@ -7,7 +7,7 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
-  <meta name="app-version" content="20260913-v42.4" />
+  <meta name="app-version" content="20260913-v42.5" />
   <meta name="theme-color" content="#020617" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -49,7 +49,6 @@
     .hide-scrollbar::-webkit-scrollbar { display: none; }
     .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-    /* 橫向滑動遮罩提示 */
     .scroll-hint-mask {
       -webkit-mask-image: linear-gradient(to right, black 84%, transparent 100%);
       mask-image: linear-gradient(to right, black 84%, transparent 100%);
@@ -65,7 +64,6 @@
     .drag-scroll-active { cursor: grabbing !important; cursor: -webkit-grabbing !important; }
     .dot-indicator.active { width: 14px; border-radius: 4px; background: #fbbf24; }
 
-    /* 高亮跳轉聚焦動畫 */
     @keyframes focusPulse {
       0% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.8); transform: scale(1); }
       50% { box-shadow: 0 0 25px 5px rgba(245, 158, 11, 0.9); transform: scale(1.02); }
@@ -76,7 +74,6 @@
       border-color: #f59e0b !important;
     }
 
-    /* 1. 第一層：👑 站長私房嚴選（加粗 3.5px 流金轉動動效光環） */
     @keyframes borderBeamRotate {
       0% { transform: rotate(0deg); }
       100% { transform: rotate(360deg); }
@@ -115,16 +112,13 @@
       height: 100%;
     }
 
-    /* 2. 第二層：💎 特約認證名店 / 高口碑精選（經典立體天藍框） */
     .partner-card-frame {
       border: 2px solid rgba(56, 189, 248, 0.9) !important;
       box-shadow: 0 0 18px -2px rgba(56, 189, 248, 0.45) !important;
     }
 
-    /* 3. AI 懸浮球與對話視窗過渡系統 */
     #chat-fab {
-      transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1),
-                  box-shadow 0.2s ease;
+      transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease;
       touch-action: none;
       z-index: 90;
     }
@@ -133,787 +127,280 @@
       transition: opacity 0.25s ease, transform 0.25s ease;
     }
 
-    /* ==========================================================================
-       三套專屬視覺主題系統：Dark (暗夜尊爵) / Light (暖陽金橘) / Amethyst (暮光紫霞)
-       ========================================================================== */
+    /* 雙 Tab 排版通用樣式 */
+    .avatar-badge {
+      position: absolute;
+      top: -2px;
+      left: -2px;
+      width: 9px;
+      height: 9px;
+      background-color: #ff4757;
+      border: 1.5px solid var(--bg-card, #1a1a1a);
+      border-radius: 50%;
+      box-shadow: 0 0 6px rgba(255, 71, 87, 0.8);
+      z-index: 10;
+    }
+    .profile-tabs-header {
+      display: flex;
+      gap: 8px;
+      margin: 16px 0 12px 0;
+      border-bottom: 1px solid var(--theme-border, rgba(255, 255, 255, 0.1));
+      padding-bottom: 4px;
+    }
+    .profile-tab-btn {
+      flex: 1;
+      position: relative;
+      background: transparent;
+      border: none;
+      color: var(--text-muted, #888);
+      font-size: 14px;
+      font-weight: bold;
+      padding: 8px 12px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+      border-bottom: 2px solid transparent;
+    }
+    .profile-tab-btn.active {
+      color: var(--theme-primary, #F59E0B) !important;
+      border-bottom: 2px solid var(--theme-primary, #F59E0B) !important;
+    }
+    .tab-badge {
+      display: inline-block;
+      width: 7px;
+      height: 7px;
+      background-color: #ff4757;
+      border-radius: 50%;
+      box-shadow: 0 0 5px #ff4757;
+      margin-left: 2px;
+    }
+    .hidden { display: none !important; }
+    .inbox-toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 6px 0 10px 0;
+    }
+    .inbox-subtitle {
+      font-size: 12px;
+      color: var(--text-muted, #888);
+    }
+    .btn-mark-read {
+      background: transparent;
+      border: 1px solid var(--theme-border, rgba(255, 255, 255, 0.2));
+      color: var(--theme-primary, #F59E0B);
+      font-size: 11px;
+      padding: 3px 8px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+    .btn-mark-read:active { opacity: 0.7; }
+    .inbox-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-height: 320px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
 
+    /* =======================================================
+       全域 43 器官語意主題變數引擎 (Theme Token Matrix)
+       ======================================================= */
+    
     /* 1. 暗夜尊爵 (Dark Default) */
-    html.dark body, html:not(.light):not(.amethyst) body {
-      background-color: #020617 !important;
-      color: #F8FAFC !important;
-    }
-    html.dark .lang-toggle-container {
-      background: #0B0F19 !important;
-      border: 1px solid rgba(245, 158, 11, 0.35) !important;
-      box-shadow: inset 0 1px 3px rgba(0,0,0,0.6) !important;
-    }
-    html.dark .lang-toggle-btn {
-      color: #94A3B8 !important;
-    }
-    html.dark .lang-toggle-btn.active {
-      background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%) !important;
-      color: #020617 !important;
-      box-shadow: 0 2px 8px rgba(245, 158, 11, 0.45) !important;
-    }
-    html.dark .empty-state-box {
-      background-color: #020617 !important;
-      border-color: #1E293B !important;
-      color: #94A3B8 !important;
+    html.dark, html:not(.light):not(.amethyst) {
+      --theme-primary: #F59E0B;
+      --theme-primary-hover: #D97706;
+      --theme-primary-text: #FCD34D;
+      --theme-primary-light: rgba(245, 158, 11, 0.12);
+      --theme-border: rgba(245, 158, 11, 0.35);
+      --theme-border-focus: rgba(245, 158, 11, 0.8);
+      --theme-header-bg: rgba(2, 6, 23, 0.92);
+      --theme-header-border: rgba(245, 158, 11, 0.2);
+      --theme-card-bg: #020617;
+      --theme-card-sub-bg: #0F172A;
+      --theme-card-border: #1E293B;
+      --theme-text-title: #FFFFFF;
+      --theme-text-body: #94A3B8;
+      --theme-gradient: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+      --theme-badge-text: #020617;
+      --theme-glow: 0 0 25px -2px rgba(245, 158, 11, 0.5);
     }
 
-    html.dark .btn-card-comment {
-      background: #F59E0B !important;
-      border: 1px solid #D97706 !important;
-      color: #020617 !important;
-      font-weight: 900 !important;
-    }
-    html.dark .btn-card-comment * { color: #020617 !important; font-weight: 900 !important; }
-    html.dark .btn-card-website {
-      background-color: rgba(15, 23, 42, 0.9) !important;
-      border: 1px solid rgba(245, 158, 11, 0.4) !important;
-      color: #FCD34D !important;
-    }
-    html.dark .btn-card-phone {
-      background-color: rgba(15, 23, 42, 0.9) !important;
-      border: 1px solid rgba(16, 185, 129, 0.4) !important;
-      color: #34D399 !important;
-    }
-    html.dark .btn-card-nav {
-      background-color: rgba(15, 23, 42, 0.9) !important;
-      border: 1px solid rgba(14, 165, 233, 0.4) !important;
-      color: #38BDF8 !important;
-    }
-    html.dark .btn-card-grab {
-      background-color: rgba(15, 23, 42, 0.9) !important;
-      border: 1px solid #00B14F !important;
-      color: #00B14F !important;
-    }
-    html.dark .btn-card-grab * { color: #00B14F !important; }
-
-    /* 2. 暖陽金橘 (Light) */
-    html.light body {
-      background-color: #F7F3EB !important;
-      color: #1F2937 !important;
-    }
-    html.light header.glass-header {
-      background: linear-gradient(180deg, #F97316 0%, #EA580C 100%) !important;
-      border-bottom: 2px solid #C2410C !important;
-      box-shadow: 0 4px 20px -2px rgba(234, 88, 12, 0.3) !important;
-    }
-    html.light header * { color: #FFFFFF; }
-    
-    html.light .lang-toggle-container {
-      background: rgba(255, 255, 255, 0.25) !important;
-      border: 1px solid rgba(255, 255, 255, 0.45) !important;
-      box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.15) !important;
-    }
-    html.light .lang-toggle-btn {
-      color: #FFEDD5 !important;
-    }
-    html.light .lang-toggle-btn.active {
-      background: #FFFFFF !important;
-      color: #C2410C !important;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.15) !important;
-    }
-    html.light .empty-state-box {
-      background-color: #FCF9F2 !important;
-      border-color: #E2DACF !important;
-      color: #78350F !important;
-    }
-
-    html.light #search-input {
-      background-color: #FFFFFF !important;
-      color: #1F2937 !important;
-      border: 1px solid rgba(255, 255, 255, 0.6) !important;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06) !important;
-    }
-    html.light #search-input::placeholder { color: #9CA3AF !important; }
-    html.light #search-input + button i, html.light .fa-magnifying-glass { color: #9CA3AF !important; }
-    html.light header .bg-slate-950, html.light header .bg-slate-900 {
-      background-color: rgba(255, 255, 255, 0.22) !important;
-      border-color: rgba(255, 255, 255, 0.3) !important;
-    }
-    html.light #typeCityBtn:not(.bg-gradient-to-r), html.light #typeIslandBtn:not(.bg-gradient-to-r), html.light .main-tab-pill:not(.bg-gradient-to-r) {
-      color: #FFF7ED !important;
-    }
-    html.light header > div.bg-slate-950\/90 {
-      background: linear-gradient(180deg, #EFE2D3 0%, #E8D7C3 100%) !important;
-      border-top: 1px solid rgba(194, 65, 12, 0.2) !important;
-    }
-    html.light .region-pill, html.light .sub-pill {
-      background-color: #FFFFFF !important;
-      border: 1px solid #D8CFC4 !important;
-      color: #EA580C !important;
-      font-weight: 700 !important;
-    }
-    html.light .region-pill.bg-amber-400, html.light .sub-pill.bg-amber-400\/20 {
-      background: linear-gradient(135deg, #F97316, #EA580C) !important;
-      border: 1px solid #C2410C !important;
-      color: #FFFFFF !important;
-      font-weight: 800 !important;
-    }
-    html.light #itemCountBadge {
-      background-color: #FFFFFF !important;
-      color: #EA580C !important;
-      border: 1px solid #FDBA74 !important;
-    }
-    html.light #currentFilterSummary { color: #4B5563 !important; }
-    html.light #visit-count-container {
-      background-color: #FFFFFF !important;
-      border: 1px solid #FDBA74 !important;
-    }
-    html.light #visit-count-container * { color: #EA580C !important; }
-    html.light #share-btn {
-      background-color: #FFFFFF !important;
-      border: 1px solid rgba(255, 255, 255, 0.6) !important;
-    }
-    html.light #share-btn i { color: #EA580C !important; }
-    
-    html.light article, html.light #auth-modal .bg-slate-950, html.light #comment-modal .bg-slate-950, html.light #recommend-modal .bg-slate-950 {
-      background-color: #FCF9F2 !important;
-      border-color: #E2DACF !important;
-      border-radius: 1.25rem !important;
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05) !important;
-    }
-    html.light article div.bg-slate-950, html.light article div.bg-slate-900, html.light #auth-modal div.bg-slate-900, html.light #auth-modal div.bg-slate-900\/90, html.light #auth-modal div.bg-slate-900\/80, html.light #auth-modal div.bg-slate-950 {
-      background-color: #FFFFFF !important;
-      border-color: #EFE8DC !important;
-    }
-    html.light article h2, html.light article h4, html.light article h6, html.light #auth-modal h3, html.light #auth-modal h4, html.light #auth-modal h5, html.light #auth-modal h6 {
-      color: #111827 !important;
-    }
-    html.light article p, html.light #auth-modal p, html.light #auth-modal span.text-slate-400, html.light #auth-modal span.text-slate-300 {
-      color: #374151 !important;
-    }
-    /* 暖陽模式：評論彈窗、留言卡片與輸入框全面白底黑字 */
-    html.light #comment-modal-title {
-      color: #111827 !important;
-    }
-    html.light #comment-modal p[data-i18n="commentSub"] {
-      color: #EA580C !important;
-    }
-    html.light #comment-list-container > div {
-      background-color: #FFFFFF !important;
-      border: 1px solid #EFE8DC !important;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
-    }
-    html.light #comment-list-container span.font-bold {
-      color: #EA580C !important;
-    }
-    html.light #comment-list-container p {
-      color: #1F2937 !important;
-    }
-    html.light #comment-input {
-      background-color: #FFFFFF !important;
-      color: #111827 !important;
-      border: 1.5px solid #FED7AA !important;
-    }
-    html.light #comment-input::placeholder {
-      color: #9CA3AF !important;
-    }
-    html.light #comment-modal .border-t {
-      background-color: #FCF9F2 !important;
-      border-top-color: #E2DACF !important;
-    }
-    html.light article .border-t.border-slate-800 {
-      background-color: #F5EFE6 !important;
-      border-top: 1px solid #EAE1D5 !important;
-    }
-
-    html.light .btn-card-comment {
-      background: linear-gradient(135deg, #F97316 0%, #EA580C 100%) !important;
-      border: 1px solid #C2410C !important;
-      color: #FFFFFF !important;
-    }
-    html.light .btn-card-comment * { color: #FFFFFF !important; font-weight: 900 !important; }
-    html.light .btn-card-website {
-      background-color: #FFFFFF !important;
-      border: 1px solid #FED7AA !important;
-      color: #EA580C !important;
-    }
-    html.light .btn-card-phone {
-      background-color: #FFFFFF !important;
-      border: 1px solid #A7F3D0 !important;
-      color: #059669 !important;
-    }
-    html.light .btn-card-nav {
-      background-color: #FFFFFF !important;
-      border: 1px solid #BAE6FD !important;
-      color: #0284C7 !important;
-    }
-
-    html.light #user-favorites-box, html.light #fav-empty-box {
-      background-color: #FFFFFF !important;
-      border: 1px solid #EFE8DC !important;
-    }
-
-    /* 暖陽模式：會員等級與積分文字連動 (徹底消滅隱形問題) */
-    html.light #user-modal-level { color: #EA580C !important; }
-    html.light #user-modal-level i { color: #F97316 !important; }
-    html.light #user-modal-points-text { color: #1F2937 !important; font-weight: 800 !important; }
-    html.light #level-diff-tip { color: #6B7280 !important; }
-    html.light #auth-modal .bg-slate-900\/90 { background-color: #FFFFFF !important; border-color: #FED7AA !important; }
-    html.light #auth-modal .bg-slate-950.h-2 { background-color: #F3F4F6 !important; border-color: #E5E7EB !important; }
-    html.light #level-progress-fill { background: linear-gradient(90deg, #F97316, #EA580C) !important; }
-
-    html.light #btn-logout {
-      background-color: #FFFFFF !important;
-      border: 1px solid #FCA5A5 !important;
-      color: #DC2626 !important;
-    }
-    html.light #btn-open-tasks-subview {
-      background-color: #FFFFFF !important;
-      border: 1px solid #FDBA74 !important;
-      color: #EA580C !important;
-    }
-    html.light #btn-open-tasks-subview * { color: #EA580C !important; }
-    html.light #push-slot-container {
-      background-color: #FFFFFF !important;
-      border: 1px solid #EFE8DC !important;
-    }
-    html.light .btn-modal-close {
-      background-color: #FFFFFF !important;
-      border: 1px solid #E2DACF !important;
-      color: #4B5563 !important;
-    }
-
-    html.light #chat-modal {
-      background-color: #FFFFFF !important;
-      border: 1.5px solid #FDBA74 !important;
-      box-shadow: 0 15px 35px -5px rgba(234, 88, 12, 0.2) !important;
-    }
-    html.light #chat-modal-header {
-      background: linear-gradient(135deg, #F97316, #EA580C) !important;
-      border-bottom: 1px solid #C2410C !important;
-    }
-    html.light #chat-messages {
-      background-color: #FFFFFF !important;
-    }
-    html.light .chat-bubble-agent {
-      background-color: #FFF7ED !important;
-      border: 1px solid #FFEDD5 !important;
-      color: #431407 !important;
-    }
-    html.light .ai-quick-btn {
-      background-color: #FFFFFF !important;
-      border: 1px solid #FDBA74 !important;
-      color: #EA580C !important;
-      font-weight: 700 !important;
-    }
-    html.light #chat-input-bar {
-      background-color: #FFFFFF !important;
-      border-top: 1px solid #FED7AA !important;
-    }
-    html.light #chat-input {
-      background-color: #FFF7ED !important;
-      border: 1.5px solid #FDBA74 !important;
-      color: #431407 !important;
-    }
-
-    /* 3. 暮光紫霞 (Amethyst) */
-    html.amethyst body {
-      background-color: #FAF6F9 !important;
-      color: #2E1A33 !important;
-    }
-    html.amethyst header.glass-header {
-      background: linear-gradient(180deg, #6B3E75 0%, #8E4D88 100%) !important;
-      border-bottom: 2px solid #55285F !important;
-      box-shadow: 0 4px 20px -2px rgba(110, 48, 115, 0.35) !important;
-    }
-    html.amethyst header * { color: #FFFFFF; }
-
-    html.amethyst .lang-toggle-container {
-      background: rgba(255, 255, 255, 0.22) !important;
-      border: 1px solid rgba(255, 255, 255, 0.4) !important;
-      box-shadow: inset 0 1px 3px rgba(0,0,0,0.2) !important;
-    }
-    html.amethyst .lang-toggle-btn {
-      color: #F3E8F5 !important;
-    }
-    html.amethyst .lang-toggle-btn.active {
-      background: #FFFFFF !important;
-      color: #6B3E75 !important;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.18) !important;
-    }
-    html.amethyst .empty-state-box {
-      background-color: #FAF5FB !important;
-      border-color: #EFE4F1 !important;
-      color: #55285F !important;
-    }
-
-    html.amethyst #search-input {
-      background-color: #FFFFFF !important;
-      color: #2E1A33 !important;
-      border: 1px solid rgba(255, 255, 255, 0.6) !important;
-    }
-    html.amethyst #search-input::placeholder { color: #A48FA8 !important; }
-    html.amethyst #search-input + button i, html.amethyst .fa-magnifying-glass { color: #A48FA8 !important; }
-    html.amethyst header .bg-slate-950, html.amethyst header .bg-slate-900 {
-      background-color: rgba(255, 255, 255, 0.22) !important;
-      border-color: rgba(255, 255, 255, 0.3) !important;
-    }
-    html.amethyst #typeCityBtn:not(.bg-gradient-to-r), html.amethyst #typeIslandBtn:not(.bg-gradient-to-r), html.amethyst .main-tab-pill:not(.bg-gradient-to-r) {
-      color: #FDF4FF !important;
-    }
-    html.amethyst header > div.bg-slate-950\/90 {
-      background: linear-gradient(180deg, #EFE6F0 0%, #E6DAE8 100%) !important;
-      border-top: 1px solid rgba(142, 77, 136, 0.2) !important;
-    }
-    html.amethyst .region-pill, html.amethyst .sub-pill {
-      background-color: #FFFFFF !important;
-      border: 1px solid #D5C2D9 !important;
-      color: #7B337F !important;
-      font-weight: 700 !important;
-    }
-    html.amethyst .region-pill.bg-amber-400, 
-    html.amethyst .sub-pill.bg-amber-400\/20,
-    html.amethyst .main-tab-pill.bg-gradient-to-r,
-    html.amethyst #typeCityBtn.bg-gradient-to-r,
-    html.amethyst #typeIslandBtn.bg-gradient-to-r {
-      background: linear-gradient(135deg, #8E4D88, #6B3E75) !important;
-      border: 1px solid #55285F !important;
-      color: #FFFFFF !important;
-      font-weight: 800 !important;
-      box-shadow: 0 3px 10px rgba(107, 62, 117, 0.35) !important;
-    }
-    html.amethyst #itemCountBadge {
-      background-color: #FFFFFF !important;
-      color: #7B337F !important;
-      border: 1px solid #E0BEE5 !important;
-    }
-    html.amethyst #currentFilterSummary { color: #5B445E !important; }
-    html.amethyst #visit-count-container {
-      background-color: #FFFFFF !important;
-      border: 1px solid #E0BEE5 !important;
-    }
-    html.amethyst #visit-count-container * { color: #7B337F !important; }
-    html.amethyst #share-btn {
-      background-color: #FFFFFF !important;
-      border: 1px solid rgba(255, 255, 255, 0.6) !important;
-    }
-    html.amethyst #share-btn i { color: #7B337F !important; }
-
-    html.amethyst article, html.amethyst #auth-modal .bg-slate-950, html.amethyst #comment-modal .bg-slate-950, html.amethyst #recommend-modal .bg-slate-950 {
-      background-color: #FFFFFF !important;
-      border: 1px solid #E8DFDC !important;
-      box-shadow: 0 4px 16px rgba(107, 62, 117, 0.08) !important;
-      border-radius: 1.25rem !important;
-    }
-    html.amethyst article div.bg-slate-950, html.amethyst article div.bg-slate-900, html.amethyst #auth-modal div.bg-slate-900, html.amethyst #auth-modal div.bg-slate-900\/90, html.amethyst #auth-modal div.bg-slate-900\/80, html.amethyst #auth-modal div.bg-slate-950 {
-      background-color: #FAF5FB !important;
-      border-color: #EFE4F1 !important;
-    }
-    html.amethyst article h2, html.amethyst article h4, html.amethyst article h6, html.amethyst #auth-modal h3, html.amethyst #auth-modal h4, html.amethyst #auth-modal h5, html.amethyst #auth-modal h6 {
-      color: #28142C !important;
-    }
-    html.amethyst article p, html.amethyst #auth-modal p, html.amethyst #auth-modal span.text-slate-400, html.amethyst #auth-modal span.text-slate-300 {
-      color: #553E59 !important;
-    }
-    html.amethyst article .border-t.border-slate-800 {
-      background-color: #FAF5FB !important;
-      border-top: 1px solid #EFE4F1 !important;
-    }
-    /* 紫霞模式：評論彈窗、留言卡片與輸入框全面白底紫字 */
-    html.amethyst #comment-modal-title {
-      color: #28142C !important;
-    }
-    html.amethyst #comment-modal p[data-i18n="commentSub"] {
-      color: #7B337F !important;
-    }
-    html.amethyst #comment-list-container > div {
-      background-color: #FFFFFF !important;
-      border: 1px solid #EFE4F1 !important;
-      box-shadow: 0 1px 3px rgba(107, 62, 117, 0.05) !important;
-    }
-    html.amethyst #comment-list-container span.font-bold {
-      color: #7B337F !important;
-    }
-    html.amethyst #comment-list-container p {
-      color: #2E1A33 !important;
-    }
-    html.amethyst #comment-input {
-      background-color: #FFFFFF !important;
-      color: #2E1A33 !important;
-      border: 1.5px solid #D5C2D9 !important;
-    }
-    html.amethyst #comment-input::placeholder {
-      color: #A48FA8 !important;
-    }
-    html.amethyst #comment-modal .border-t {
-      background-color: #FAF5FB !important;
-      border-top-color: #EFE4F1 !important;
-    }
-
-    html.amethyst .btn-card-comment {
-      background: linear-gradient(135deg, #8E4D88 0%, #6B3E75 100%) !important;
-      border: 1px solid #55285F !important;
-      color: #FFFFFF !important;
-    }
-    html.amethyst .btn-card-comment * { color: #FFFFFF !important; font-weight: 900 !important; }
-    html.amethyst .btn-card-website {
-      background-color: #FFFFFF !important;
-      border: 1px solid #E0BEE5 !important;
-      color: #7B337F !important;
-    }
-    html.amethyst .btn-card-phone {
-      background-color: #FFFFFF !important;
-      border: 1px solid #A7F3D0 !important;
-      color: #059669 !important;
-    }
-    html.amethyst .btn-card-nav {
-      background-color: #FFFFFF !important;
-      border: 1px solid #BAE6FD !important;
-      color: #0284C7 !important;
-    }
-
-    html.amethyst #user-favorites-box, html.amethyst #fav-empty-box {
-      background-color: #FFFFFF !important;
-      border: 1px solid #EFE4F1 !important;
-    }
-
-    /* 紫霞模式：會員等級與積分文字連動 (徹底消滅隱形問題) */
-    html.amethyst #user-modal-level { color: #7B337F !important; }
-    html.amethyst #user-modal-level i { color: #8E4D88 !important; }
-    html.amethyst #user-modal-points-text { color: #2E1A33 !important; font-weight: 800 !important; }
-    html.amethyst #level-diff-tip { color: #6B5B6E !important; }
-    html.amethyst #auth-modal .bg-slate-900\/90 { background-color: #FAF5FB !important; border-color: #E0BEE5 !important; }
-    html.amethyst #auth-modal .bg-slate-950.h-2 { background-color: #EFE6F0 !important; border-color: #D5C2D9 !important; }
-    html.amethyst #level-progress-fill { background: linear-gradient(90deg, #8E4D88, #6B3E75) !important; }
-
-    html.amethyst #btn-logout {
-      background-color: #FFFFFF !important;
-      border: 1px solid #E8B4C0 !important;
-      color: #842A45 !important;
-    }
-    html.amethyst #btn-open-tasks-subview {
-      background-color: #FFFFFF !important;
-      border: 1px solid #D5C2D9 !important;
-      color: #7B337F !important;
-    }
-    html.amethyst #btn-open-tasks-subview * { color: #7B337F !important; }
-    html.amethyst #push-slot-container {
-      background-color: #FFFFFF !important;
-      border: 1px solid #EFE4F1 !important;
-    }
-    html.amethyst .btn-modal-close {
-      background-color: #FFFFFF !important;
-      border: 1px solid #E0BEE5 !important;
-      color: #55285F !important;
-    }
-
-    html.amethyst #chat-modal {
-      background-color: #FFFFFF !important;
-      border: 1.5px solid #D5C2D9 !important;
-      box-shadow: 0 15px 35px -5px rgba(110, 48, 115, 0.25) !important;
-    }
-    html.amethyst #chat-modal-header {
-      background: linear-gradient(135deg, #6B3E75, #8E4D88) !important;
-      border-bottom: 1px solid #55285F !important;
-    }
-    html.amethyst #chat-messages {
-      background-color: #FFFFFF !important;
-    }
-    html.amethyst .chat-bubble-agent {
-      background-color: #FAF5FB !important;
-      border: 1px solid #EFE4F1 !important;
-      color: #2E1A33 !important;
-    }
-    html.amethyst .ai-quick-btn {
-      background-color: #FFFFFF !important;
-      border: 1px solid #D5C2D9 !important;
-      color: #7B337F !important;
-      font-weight: 700 !important;
-    }
-    html.amethyst #chat-input-bar {
-      background-color: #FFFFFF !important;
-      border-top: 1px solid #EFE4F1 !important;
-    }
-    html.amethyst #chat-input {
-      background-color: #FAF5FB !important;
-      border: 1.5px solid #D5C2D9 !important;
-      color: #2E1A33 !important;
-    }
-
-    .btn-card-grab {
-      background-color: #FFFFFF !important;
-      border: 1px solid #00B14F !important;
-      color: #00B14F !important;
-    }
-    .btn-card-grab * { color: #00B14F !important; }
-
-    /* 會員中心私房收藏按鈕 (暗夜 / 暖陽 / 紫霞 自適應底框) */
-    html.dark .btn-fav-action, html:not(.light):not(.amethyst) .btn-fav-action {
-      background-color: #0F172A !important;
-      border: 1px solid #334155 !important;
-    }
-    html.light .btn-fav-action {
-      background-color: #FFF7ED !important;
-      border: 1px solid #FED7AA !important;
-      box-shadow: 0 1px 3px rgba(234, 88, 12, 0.08) !important;
-    }
-    html.amethyst .btn-fav-action {
-      background-color: #FAF5FB !important;
-      border: 1px solid #E9D5FF !important;
-      box-shadow: 0 1px 3px rgba(142, 77, 136, 0.08) !important;
-    }
-
-    /* =======================================================
-       卡片內部文字與評分星號主題色彩自動連動系統
-       ======================================================= */
-    /* 1. 暗夜尊爵 (黑金) */
-    html.dark .card-meta-tag, html:not(.light):not(.amethyst) .card-meta-tag { color: #FCD34D !important; }
-    html.dark .card-rating-star, html:not(.light):not(.amethyst) .card-rating-star { color: #F59E0B !important; }
-    html.dark .card-rating-star i, html:not(.light):not(.amethyst) .card-rating-star i { color: #F59E0B !important; }
-    html.dark .card-review-prefix, html:not(.light):not(.amethyst) .card-review-prefix { color: #FBBF24 !important; }
-    html.dark .card-pill-tag, html:not(.light):not(.amethyst) .card-pill-tag {
-      background-color: rgba(245, 158, 11, 0.1) !important;
-      border: 1px solid rgba(245, 158, 11, 0.3) !important;
-      color: #FCD34D !important;
-    }
-
-    /* 2. 暖陽金橘 (活力橘) */
-    html.light .card-meta-tag { color: #EA580C !important; font-weight: 800 !important; }
-    html.light .card-rating-star { color: #EA580C !important; }
-    html.light .card-rating-star i { color: #F97316 !important; }
-    html.light .card-review-prefix { color: #EA580C !important; }
-    html.light .card-pill-tag {
-      background-color: #FFF7ED !important;
-      border: 1px solid #FED7AA !important;
-      color: #EA580C !important;
-    }
-
-    /* 3. 暮光紫霞 (雅緻紫) */
-    html.amethyst .card-meta-tag { color: #7B337F !important; font-weight: 800 !important; }
-    html.amethyst .card-rating-star { color: #8E4D88 !important; }
-    html.amethyst .card-rating-star i { color: #8E4D88 !important; }
-    html.amethyst .card-review-prefix { color: #7B337F !important; }
-    html.amethyst .card-pill-tag {
-      background-color: #FAF5FB !important;
-      border: 1px solid #E9D5FF !important;
-      color: #7B337F !important;
-    }
-
-    /* =======================================================
-       特殊任務視窗：文字、按鈕、積分與徽章多主題連動樣式
-       ======================================================= */
-    /* 1. 暗夜尊爵 (Dark) */
-    html.dark .task-view-title, html:not(.light):not(.amethyst) .task-view-title { color: #FFFFFF !important; }
-    html.dark .task-theme-btn, html:not(.light):not(.amethyst) .task-theme-btn { color: #FCD34D !important; }
-    html.dark .task-theme-title, html:not(.light):not(.amethyst) .task-theme-title { color: #FCD34D !important; }
-    html.dark .task-theme-pts, html:not(.light):not(.amethyst) .task-theme-pts { color: #F59E0B !important; }
-    html.dark .task-theme-badge, html:not(.light):not(.amethyst) .task-theme-badge {
-      background: #F59E0B !important;
-      color: #020617 !important;
-    }
-
-    /* 2. 暖陽金橘 (Light) */
-    html.light .task-view-title { color: #111827 !important; font-weight: 900 !important; }
-    html.light .task-theme-btn { color: #EA580C !important; }
-    html.light .task-theme-title { color: #EA580C !important; font-weight: 800 !important; }
-    html.light .task-theme-pts { color: #EA580C !important; }
-    html.light .task-theme-badge {
-      background: linear-gradient(135deg, #F97316, #EA580C) !important;
-      color: #FFFFFF !important;
-    }
-    html.light #auth-modal-tasks-view .bg-slate-900 {
-      background-color: #FFFFFF !important;
-      border: 1px solid #EFE8DC !important;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
-    }
-
-    /* 3. 暮光紫霞 (Amethyst) */
-    html.amethyst .task-view-title { color: #28142C !important; font-weight: 900 !important; }
-    html.amethyst .task-theme-btn { color: #7B337F !important; }
-    html.amethyst .task-theme-title { color: #7B337F !important; font-weight: 800 !important; }
-    html.amethyst .task-theme-pts { color: #8E4D88 !important; }
-    html.amethyst .task-theme-badge {
-      background: linear-gradient(135deg, #8E4D88, #6B3E75) !important;
-      color: #FFFFFF !important;
-    }
-    html.amethyst #auth-modal-tasks-view .bg-slate-900 {
-      background-color: #FAF5FB !important;
-      border: 1px solid #EFE4F1 !important;
-      box-shadow: 0 1px 3px rgba(107, 62, 117, 0.05) !important;
-    }
-    
-    /* =======================================================
-   雙 Tab（私房清單 / 站內信箱）多主題通用樣式
-   ======================================================= */
-/* 頂部頭像左上角未讀紅點（邊框自動貼合主題背景） */
-.avatar-badge {
-  position: absolute;
-  top: -2px;
-  left: -2px;
-  width: 9px;
-  height: 9px;
-  background-color: #ff4757;
-  border: 1.5px solid var(--bg-card, #1a1a1a);
-  border-radius: 50%;
-  box-shadow: 0 0 6px rgba(255, 71, 87, 0.8);
-  z-index: 10;
-}
-
-/* 雙 Tab 列排版：底線跟隨主題分界線 */
-.profile-tabs-header {
-  display: flex;
-  gap: 8px;
-  margin: 16px 0 12px 0;
-  border-bottom: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
-  padding-bottom: 4px;
-}
-
-/* 未選中的 Tab：使用主題次要文字色 */
-.profile-tab-btn {
-  flex: 1;
-  position: relative;
-  background: transparent;
-  border: none;
-  color: var(--text-muted, #888);
-  font-size: 14px;
-  font-weight: bold;
-  padding: 8px 12px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  transition: all 0.2s ease;
-  border-bottom: 2px solid transparent;
-}
-
-/* 選中的 Tab：文字與底線自動跟隨主題主色（金 / 橘 / 紫） */
-.profile-tab-btn.active {
-  color: var(--primary-color, #f5a623);
-  border-bottom: 2px solid var(--primary-color, #f5a623);
-}
-
-/* Tab 按鈕上的小紅點 */
-.tab-badge {
-  display: inline-block;
-  width: 7px;
-  height: 7px;
-  background-color: #ff4757;
-  border-radius: 50%;
-  box-shadow: 0 0 5px #ff4757;
-  margin-left: 2px;
-}
-
-.hidden {
-  display: none !important;
-}
-
-/* 信箱工具列 */
-.inbox-toolbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 6px 0 10px 0;
-}
-.inbox-subtitle {
-  font-size: 12px;
-  color: var(--text-muted, #888);
-}
-
-/* 全部標為已讀按鈕：線條與文字跟隨主題色 */
-.btn-mark-read {
-  background: transparent;
-  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.2));
-  color: var(--primary-color, #f5a623);
-  font-size: 11px;
-  padding: 3px 8px;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: opacity 0.2s;
-}
-.btn-mark-read:active {
-  opacity: 0.7;
-}
-
-.inbox-list {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  max-height: 320px;
-  overflow-y: auto;
-  padding-right: 4px;
-}
-
-  /* =======================================================
-       會員中心：暖陽 (橘) / 紫霞 (紫) 深度系統色全面連動
-       ======================================================= */
-    
-    /* --- 1. 暖陽金橘 (Light 模式) --- */
+    /* 2. 暖陽金橘 (Light Mode) */
     html.light {
-      --primary-color: #EA580C !important;
-      --border-color: #FED7AA !important;
+      --theme-primary: #EA580C;
+      --theme-primary-hover: #C2410C;
+      --theme-primary-text: #EA580C;
+      --theme-primary-light: #FFF7ED;
+      --theme-border: #FED7AA;
+      --theme-border-focus: #F97316;
+      --theme-header-bg: linear-gradient(180deg, #F97316 0%, #EA580C 100%);
+      --theme-header-border: #C2410C;
+      --theme-card-bg: #FCF9F2;
+      --theme-card-sub-bg: #FFFFFF;
+      --theme-card-border: #EFE8DC;
+      --theme-text-title: #111827;
+      --theme-text-body: #4B5563;
+      --theme-gradient: linear-gradient(135deg, #F97316 0%, #EA580C 100%);
+      --theme-badge-text: #FFFFFF;
+      --theme-glow: 0 0 25px -2px rgba(234, 88, 12, 0.35);
     }
-    /* 推播開關：鈴鐺圖示與開啟狀態底色 */
-    html.light #push-slot-container .fa-bell { color: #EA580C !important; }
-    html.light #push-toggle-btn.bg-amber-400 { background-color: #EA580C !important; }
-    /* 雙 Tab：選中時文字與底線 */
-    html.light .profile-tab-btn.active {
-      color: #EA580C !important;
-      border-bottom-color: #EA580C !important;
-    }
-    /* 全部已讀按鈕 */
-    html.light .btn-mark-read {
-      color: #EA580C !important;
-      border-color: #FED7AA !important;
-    }
-    /* 站內信箱：卡片邊框、標題與標籤文字 */
-    html.light .inbox-list > div {
-      background-color: #FFFFFF !important;
-      border-color: #EFE8DC !important;
-    }
-    html.light .inbox-list h6 { color: #111827 !important; }
-    html.light .inbox-list p { color: #4B5563 !important; }
-    html.light .inbox-list .text-amber-300,
-    html.light .inbox-list .text-amber-400 { color: #EA580C !important; }
-    /* 私房清單卡片內的星號 */
-    html.light #favorites-list-container .fa-star,
-    html.light #favorites-list-container .text-amber-400 { color: #EA580C !important; }
 
-
-    /* --- 2. 暮光紫霞 (Amethyst 模式) --- */
+    /* 3. 暮光紫霞 (Amethyst Mode) */
     html.amethyst {
-      --primary-color: #7B337F !important;
-      --border-color: #E0BEE5 !important;
+      --theme-primary: #7B337F;
+      --theme-primary-hover: #55285F;
+      --theme-primary-text: #7B337F;
+      --theme-primary-light: #FAF5FB;
+      --theme-border: #E0BEE5;
+      --theme-border-focus: #8E4D88;
+      --theme-header-bg: linear-gradient(180deg, #6B3E75 0%, #8E4D88 100%);
+      --theme-header-border: #55285F;
+      --theme-card-bg: #FFFFFF;
+      --theme-card-sub-bg: #FAF5FB;
+      --theme-card-border: #EFE4F1;
+      --theme-text-title: #28142C;
+      --theme-text-body: #553E59;
+      --theme-gradient: linear-gradient(135deg, #8E4D88 0%, #6B3E75 100%);
+      --theme-badge-text: #FFFFFF;
+      --theme-glow: 0 0 25px -2px rgba(110, 48, 115, 0.35);
     }
-    /* 推播開關：鈴鐺圖示與開啟狀態底色 */
-    html.amethyst #push-slot-container .fa-bell { color: #8E4D88 !important; }
-    html.amethyst #push-toggle-btn.bg-amber-400 { background-color: #7B337F !important; }
-    /* 雙 Tab：選中時文字與底線 */
-    html.amethyst .profile-tab-btn.active {
-      color: #7B337F !important;
-      border-bottom-color: #7B337F !important;
-    }
-    /* 全部已讀按鈕 */
-    html.amethyst .btn-mark-read {
-      color: #7B337F !important;
-      border-color: #D5C2D9 !important;
-    }
-    /* 站內信箱：卡片邊框、標題與標籤文字 */
-    html.amethyst .inbox-list > div {
-      background-color: #FAF5FB !important;
-      border-color: #EFE4F1 !important;
-    }
-    html.amethyst .inbox-list h6 { color: #28142C !important; }
-    html.amethyst .inbox-list p { color: #553E59 !important; }
-    html.amethyst .inbox-list .text-amber-300,
-    html.amethyst .inbox-list .text-amber-400 { color: #7B337F !important; }
-    /* 私房清單卡片內的星號 */
-    html.amethyst #favorites-list-container .fa-star,
-    html.amethyst #favorites-list-container .text-amber-400 { color: #8E4D88 !important; }
+
+    /* =======================================================
+       43 個變色器官通用綁定 (自動讀取對應主題變數)
+       ======================================================= */
     
+    /* 基礎頁面底色與文字色 */
+    html.light body { background-color: #F7F3EB !important; color: #1F2937 !important; }
+    html.amethyst body { background-color: #FAF6F9 !important; color: #2E1A33 !important; }
+
+    /* [一、頂部 Header] */
+    html.light header.glass-header, html.amethyst header.glass-header { background: var(--theme-header-bg) !important; border-bottom: 2px solid var(--theme-header-border) !important; }
+    html.light header *, html.amethyst header * { color: #FFFFFF; }
+    html.light .lang-toggle-container, html.amethyst .lang-toggle-container { background: rgba(255, 255, 255, 0.25) !important; border: 1px solid rgba(255, 255, 255, 0.45) !important; }
+    html.light .lang-toggle-btn.active, html.amethyst .lang-toggle-btn.active { background: #FFFFFF !important; color: var(--theme-primary) !important; }
+    html.light #visit-count-container, html.amethyst #visit-count-container { background-color: #FFFFFF !important; border-color: var(--theme-border) !important; }
+    html.light #visit-count-container *, html.amethyst #visit-count-container * { color: var(--theme-primary) !important; }
+    html.light #search-input, html.amethyst #search-input { background-color: #FFFFFF !important; color: #1F2937 !important; border: 1px solid rgba(255, 255, 255, 0.6) !important; }
+    html.light #search-input::placeholder, html.amethyst #search-input::placeholder { color: #9CA3AF !important; }
+    html.light header .bg-slate-950, html.light header .bg-slate-900,
+    html.amethyst header .bg-slate-950, html.amethyst header .bg-slate-900 { background-color: rgba(255, 255, 255, 0.22) !important; border-color: rgba(255, 255, 255, 0.3) !important; }
+    html.light header > div.bg-slate-950\/90, html.amethyst header > div.bg-slate-950\/90 { background: var(--theme-card-bg) !important; border-top: 1px solid var(--theme-border) !important; }
+    html.light .region-pill, html.amethyst .region-pill { background-color: #FFFFFF !important; border: 1px solid var(--theme-border) !important; color: var(--theme-primary) !important; }
+    html.light .region-pill.bg-amber-400, html.amethyst .region-pill.bg-amber-400,
+    html.light #typeCityBtn.bg-gradient-to-r, html.amethyst #typeCityBtn.bg-gradient-to-r,
+    html.light #typeIslandBtn.bg-gradient-to-r, html.amethyst #typeIslandBtn.bg-gradient-to-r,
+    html.light .main-tab-pill.bg-gradient-to-r, html.amethyst .main-tab-pill.bg-gradient-to-r {
+      background: var(--theme-gradient) !important;
+      color: var(--theme-badge-text) !important;
+    }
+    html.light .sub-pill.bg-amber-400\/20, html.amethyst .sub-pill.bg-amber-400\/20 {
+      background-color: var(--theme-primary-light) !important;
+      border: 1px solid var(--theme-primary) !important;
+      color: var(--theme-primary) !important;
+      font-weight: 800 !important;
+    }
+    html.light #itemCountBadge, html.amethyst #itemCountBadge {
+      background-color: #FFFFFF !important;
+      border: 1px solid var(--theme-border) !important;
+      color: var(--theme-primary) !important;
+    }
+
+    /* [二、主清單卡片] */
+    html.light article, html.amethyst article { background-color: var(--theme-card-bg) !important; border-color: var(--theme-card-border) !important; }
+    html.light article div.bg-slate-950, html.amethyst article div.bg-slate-950 { background-color: var(--theme-card-bg) !important; }
+    html.light article div.bg-slate-900, html.amethyst article div.bg-slate-900 { background-color: var(--theme-card-sub-bg) !important; border-top: 1px solid var(--theme-card-border) !important; }
+    html.light article h2, html.light article h4, html.light article h6,
+    html.amethyst article h2, html.amethyst article h4, html.amethyst article h6 { color: var(--theme-text-title) !important; }
+    html.light article p, html.amethyst article p { color: var(--theme-text-body) !important; }
+    html.light .btn-card-comment, html.amethyst .btn-card-comment { background: var(--theme-gradient) !important; color: var(--theme-badge-text) !important; }
+    html.light .btn-card-website, html.amethyst .btn-card-website { background-color: #FFFFFF !important; color: var(--theme-primary) !important; border-color: var(--theme-border) !important; }
+    html.light .btn-card-phone, html.amethyst .btn-card-phone { background-color: #FFFFFF !important; }
+    html.light .btn-card-nav, html.amethyst .btn-card-nav { background-color: #FFFFFF !important; }
+    html.light .card-pill-tag, html.amethyst .card-pill-tag { background-color: var(--theme-primary-light) !important; border-color: var(--theme-border) !important; color: var(--theme-primary) !important; }
+    html.light .card-meta-tag, html.amethyst .card-meta-tag { color: var(--theme-primary) !important; }
+    html.light .card-rating-star, html.amethyst .card-rating-star,
+    html.light .card-rating-star i, html.amethyst .card-rating-star i { color: var(--theme-primary) !important; }
+    html.light .card-review-prefix, html.amethyst .card-review-prefix { color: var(--theme-primary) !important; }
+
+    /* [三、會員中心面板] */
+    html.light #auth-modal .bg-slate-950, html.amethyst #auth-modal .bg-slate-950 { background-color: var(--theme-card-bg) !important; border-color: var(--theme-border) !important; }
+    html.light #auth-modal .bg-slate-900\/90, html.amethyst #auth-modal .bg-slate-900\/90 { background-color: var(--theme-card-sub-bg) !important; border-color: var(--theme-border) !important; }
+    html.light #auth-modal h3, html.light #auth-modal h4, html.light #auth-modal h5, html.light #auth-modal h6,
+    html.amethyst #auth-modal h3, html.amethyst #auth-modal h4, html.amethyst #auth-modal h5, html.amethyst #auth-modal h6 { color: var(--theme-text-title) !important; }
+    html.light #auth-modal p, html.amethyst #auth-modal p { color: var(--theme-text-body) !important; }
+    html.light #user-modal-level, html.amethyst #user-modal-level { color: var(--theme-primary) !important; }
+    html.light #user-modal-level i, html.amethyst #user-modal-level i { color: var(--theme-primary) !important; }
+    html.light #user-modal-points-text, html.amethyst #user-modal-points-text { color: var(--theme-text-title) !important; }
+    html.light #auth-modal .bg-slate-950.h-2, html.amethyst #auth-modal .bg-slate-950.h-2 { background-color: #E5E7EB !important; border-color: var(--theme-border) !important; }
+    html.light #level-progress-fill, html.amethyst #level-progress-fill { background: var(--theme-gradient) !important; }
+    html.light #push-slot-container, html.amethyst #push-slot-container { background-color: var(--theme-card-sub-bg) !important; border-color: var(--theme-border) !important; }
+    html.light #push-slot-container .fa-bell, html.amethyst #push-slot-container .fa-bell { color: var(--theme-primary) !important; }
+    html.light #push-toggle-btn.bg-amber-400, html.amethyst #push-toggle-btn.bg-amber-400 { background-color: var(--theme-primary) !important; }
+    html.light #btn-open-tasks-subview, html.amethyst #btn-open-tasks-subview { background-color: var(--theme-card-sub-bg) !important; border-color: var(--theme-border) !important; color: var(--theme-primary) !important; }
+    html.light #btn-open-tasks-subview *, html.amethyst #btn-open-tasks-subview * { color: var(--theme-primary) !important; }
+
+    /* [四、會員雙 Tab & 信箱] */
+    html.light #user-favorites-box, html.amethyst #user-favorites-box { background-color: var(--theme-card-sub-bg) !important; border-color: var(--theme-card-border) !important; }
+    html.light .inbox-list > div, html.amethyst .inbox-list > div { background-color: var(--theme-card-sub-bg) !important; border-color: var(--theme-card-border) !important; }
+    html.light .inbox-list h6, html.amethyst .inbox-list h6 { color: var(--theme-text-title) !important; }
+    html.light .inbox-list p, html.amethyst .inbox-list p { color: var(--theme-text-body) !important; }
+    html.light .inbox-list .text-amber-300, html.light .inbox-list .text-amber-400,
+    html.amethyst .inbox-list .text-amber-300, html.amethyst .inbox-list .text-amber-400 { color: var(--theme-primary) !important; }
+    html.light #favorites-list-container .fa-star, html.amethyst #favorites-list-container .fa-star { color: var(--theme-primary) !important; }
+    html.light .btn-fav-action, html.amethyst .btn-fav-action { background-color: var(--theme-primary-light) !important; border: 1px solid var(--theme-border) !important; }
+
+    /* [五、特殊任務子視窗] */
+    .task-theme-btn { color: var(--theme-primary) !important; }
+    .task-theme-title { color: var(--theme-primary) !important; }
+    .task-theme-pts { color: var(--theme-primary) !important; }
+    .task-theme-badge { background: var(--theme-gradient) !important; color: var(--theme-badge-text) !important; }
+    html.light .task-view-title { color: #111827 !important; }
+    html.amethyst .task-view-title { color: #28142C !important; }
+    html.light #auth-modal-tasks-view .bg-slate-900, html.amethyst #auth-modal-tasks-view .bg-slate-900 { background-color: var(--theme-card-sub-bg) !important; border: 1px solid var(--theme-card-border) !important; }
+
+    /* [六、AI 旅遊管家] */
+    #chat-fab { box-shadow: var(--theme-glow) !important; }
+    html.light #chat-modal, html.amethyst #chat-modal { background-color: #FFFFFF !important; border: 1.5px solid var(--theme-border) !important; }
+    html.light #chat-modal-header, html.amethyst #chat-modal-header { background: var(--theme-gradient) !important; }
+    html.light #chat-messages, html.amethyst #chat-messages { background-color: #FFFFFF !important; }
+    html.light .chat-bubble-agent, html.amethyst .chat-bubble-agent { background-color: var(--theme-primary-light) !important; border-color: var(--theme-border) !important; color: var(--theme-text-title) !important; }
+    html.light .ai-quick-btn, html.amethyst .ai-quick-btn { background-color: #FFFFFF !important; border-color: var(--theme-border) !important; color: var(--theme-primary) !important; }
+    html.light #chat-input-bar, html.amethyst #chat-input-bar { background-color: #FFFFFF !important; border-top: 1px solid var(--theme-border) !important; }
+    html.light #chat-input, html.amethyst #chat-input { background-color: var(--theme-primary-light) !important; border: 1.5px solid var(--theme-border) !important; color: var(--theme-text-title) !important; }
+    html.light #btn-send-chat, html.amethyst #btn-send-chat { background: var(--theme-gradient) !important; color: var(--theme-badge-text) !important; }
+
+    /* [七、推薦好店彈窗] */
+    html.light #recommend-modal > div, html.amethyst #recommend-modal > div { background-color: var(--theme-card-bg) !important; border: 1px solid var(--theme-border) !important; }
+    html.light #recommend-modal .fa-paper-plane, html.amethyst #recommend-modal .fa-paper-plane { color: var(--theme-primary) !important; }
+    html.light #rec-city, html.amethyst #rec-city,
+    html.light #rec-store-name, html.amethyst #rec-store-name,
+    html.light #rec-reason, html.amethyst #rec-reason { border: 2px solid var(--theme-border) !important; }
+    html.light #btn-submit-recommend, html.amethyst #btn-submit-recommend { background: var(--theme-gradient) !important; color: var(--theme-badge-text) !important; }
+
+    /* [八、登入前遊客視窗] */
+    html.light #auth-modal-login-view .text-amber-400, html.amethyst #auth-modal-login-view .text-amber-400 { color: var(--theme-primary) !important; }
+    html.light #magic-email-input, html.amethyst #magic-email-input { border: 2px solid var(--theme-border) !important; }
+    html.light #btn-magic-email, html.amethyst #btn-magic-email { background: var(--theme-gradient) !important; color: var(--theme-badge-text) !important; }
+
+    /* [九、全域反饋與特效] */
+    html.light #toastInnerBox, html.amethyst #toastInnerBox { border: 1px solid var(--theme-border) !important; }
+    html.light #toastIcon, html.amethyst #toastIcon { color: var(--theme-primary) !important; }
+    html.light #toastActionBtn, html.amethyst #toastActionBtn { background: var(--theme-gradient) !important; color: var(--theme-badge-text) !important; }
+    html.light .beam-card-container, html.amethyst .beam-card-container { box-shadow: var(--theme-glow) !important; }
   </style>
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col font-sans">
 
-  <!-- 獨立 PWA 醒目版本更新通知 (螢幕 1/3 黃金視線區、絕不阻礙底層操作) -->
+  <!-- 獨立 PWA 醒目版本更新通知 -->
   <div id="pwa-update-modal" class="hidden fixed inset-x-0 top-[28%] z-[99999] flex justify-center px-4 pointer-events-none transition-all duration-300 transform scale-90 opacity-0">
     <div class="pointer-events-auto bg-slate-950/95 border-2 border-amber-400 rounded-2xl p-4 shadow-[0_10px_35px_rgba(245,158,11,0.45)] backdrop-blur-md w-full max-w-sm flex flex-col gap-3 relative text-white animate-bounce-short">
-      
-      <!-- 右上角關閉按鈕 -->
       <button id="btn-close-pwa-modal" type="button" class="absolute top-2.5 right-2.5 w-7 h-7 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-full flex items-center justify-center text-xs transition cursor-pointer">✕</button>
 
       <div class="flex items-center gap-3">
@@ -932,10 +419,9 @@
     </div>
   </div>
 
-  <!-- 全域 Toast 提示（拓展寬度、舒適留白、右上角獨立關閉錨點） -->
+  <!-- 全域 Toast 提示 -->
   <div id="toastNotification" class="hidden fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[99999] transition-all duration-300 pointer-events-none opacity-0 scale-95 w-[90vw] max-w-md px-2">
     <div id="toastInnerBox" class="relative bg-slate-950/95 text-white text-xs font-bold p-5 rounded-2xl shadow-2xl flex flex-col items-center justify-center text-center gap-3.5 border border-amber-400/60 backdrop-blur-md pointer-events-auto">
-      <!-- 獨立右上角關閉按鈕，不擠壓文字 -->
       <button id="toastCloseBtn" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full bg-slate-800/90 hover:bg-slate-700 active:bg-slate-600 text-slate-300 hover:text-white flex items-center justify-center text-xs cursor-pointer transition active:scale-90 select-none z-10">✕</button>
       
       <div class="flex items-center justify-center gap-2 px-6">
@@ -970,19 +456,19 @@
 
         <div class="flex items-center gap-1.5 flex-shrink-0">
           <button id="auth-state-btn" class="bg-slate-900 hover:bg-slate-800 border border-amber-400/50 text-amber-300 rounded-full px-2.5 py-1 text-[11px] font-bold flex items-center gap-1.5 transition active:scale-95 whitespace-nowrap shadow-sm">
-  <span id="user-avatar-container" class="inline-flex items-center justify-center relative">
-    <i id="user-avatar-icon" class="fa-regular fa-user text-[10px]"></i>
-    <span id="user-avatar-badge" class="avatar-badge hidden"></span>
-  </span>
-  <span id="auth-btn-text">登入</span>
-</button>
+            <span id="user-avatar-container" class="inline-flex items-center justify-center relative">
+              <i id="user-avatar-icon" class="fa-regular fa-user text-[10px]"></i>
+              <span id="user-avatar-badge" class="avatar-badge hidden"></span>
+            </span>
+            <span id="auth-btn-text">登入</span>
+          </button>
           <button id="share-btn" class="w-8 h-8 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 flex items-center justify-center transition active:scale-95 shadow-sm">
             <i class="fa-solid fa-share-nodes text-[11px]"></i>
           </button>
         </div>
       </div>
 
-      <!-- 第二列：搜尋欄 + 右上角現代雙態膠囊語系切換鈕 [ 中文 | EN ] -->
+      <!-- 第二列：搜尋欄 + 雙態語系按鈕 -->
       <div class="flex items-center gap-1.5">
         <div class="relative flex-1 flex items-center">
           <i class="fa-solid fa-magnifying-glass absolute left-3 text-slate-500 text-xs pointer-events-none"></i>
@@ -992,7 +478,6 @@
           </button>
         </div>
         
-        <!-- 膠囊雙態切換開關 -->
         <div class="lang-toggle-container p-0.5 rounded-xl flex items-center flex-shrink-0 transition-all">
           <button type="button" id="lang-btn-zh" class="lang-toggle-btn active px-2.5 py-1.5 text-[11px] font-black rounded-lg transition-all">中文</button>
           <button type="button" id="lang-btn-en" class="lang-toggle-btn px-2.5 py-1.5 text-[11px] font-black rounded-lg transition-all">EN</button>
@@ -1053,7 +538,6 @@
       <span id="itemCountBadge" class="bg-slate-950 border border-slate-800 text-amber-400 px-2 py-0.5 rounded-full text-[11px] font-mono font-bold">0</span>
     </div>
 
-    <!-- 1. 美食清單 -->
     <div id="section-map" class="tab-panel flex flex-col gap-4">
       <div id="loading" class="text-center py-12 text-slate-500 text-xs">
         <i class="fa-solid fa-spinner fa-spin text-amber-400 text-base mb-2 block"></i>
@@ -1062,23 +546,20 @@
       <div id="restaurant-list" class="flex flex-col gap-4"></div>
     </div>
 
-    <!-- 2. 景點清單 -->
     <div id="section-attraction" class="tab-panel hidden flex flex-col gap-4">
       <div id="attraction-list" class="flex flex-col gap-4"></div>
     </div>
 
-    <!-- 3. 醫療藥局清單 -->
     <div id="section-medical" class="tab-panel hidden flex flex-col gap-4">
       <div id="medical-list" class="flex flex-col gap-4"></div>
     </div>
 
-    <!-- 4. 特惠清單 -->
     <div id="section-news" class="tab-panel hidden flex flex-col gap-4">
       <div id="news-list" class="flex flex-col gap-4"></div>
     </div>
   </main>
 
-  <!-- 會員中心彈窗 (提升至最高層級 z-[9999] 徹底阻絕死鎖) -->
+  <!-- 會員中心彈窗 -->
   <div id="auth-modal" class="fixed inset-0 z-[9999] glass-modal hidden flex items-center justify-center p-3.5">
     <div class="bg-slate-950 border border-amber-400/40 rounded-3xl w-full max-w-sm p-4 shadow-2xl relative text-center flex flex-col max-h-[90vh] overflow-hidden">
       
@@ -1124,7 +605,6 @@
           </div>
 
           <div class="flex items-center gap-1.5 flex-shrink-0">
-            <!-- 風格切換選單按鈕 -->
             <div class="relative">
               <button id="btn-theme-dropdown" type="button" class="bg-slate-900 border border-amber-400/40 text-amber-300 text-[10px] font-bold px-2 py-1 rounded-lg flex items-center justify-center gap-1 transition shadow-sm">
                 <i id="current-theme-icon" class="fa-solid fa-palette text-[10px]"></i>
@@ -1148,7 +628,7 @@
           </div>
         </div>
 
-        <!-- 升級進度條槽 (完全適應各色系主題，不再隱形) -->
+        <!-- 升級進度條槽 -->
         <div class="bg-slate-900/90 border border-amber-400/30 rounded-xl p-3 flex flex-col justify-center space-y-2">
           <div class="flex items-center justify-between text-[11px] leading-tight">
             <span id="user-modal-level" class="font-bold flex items-center gap-1 text-amber-300">
@@ -1180,10 +660,9 @@
           </button>
         </div>
 
-        <!-- 我的私房口袋收藏 & 站內信箱 雙 Tab 區塊 -->
+        <!-- 私房口袋收藏 & 站內信箱 雙 Tab 區塊 -->
         <div id="user-favorites-box" class="flex-1 flex flex-col min-h-0 border-t border-slate-800/80 pt-1 p-2 rounded-2xl transition-colors">
           
-          <!-- 雙 Tab 切換標籤列 -->
           <div class="profile-tabs-header">
             <button type="button" id="tab-btn-favorites" class="profile-tab-btn active" onclick="window.switchProfileTab('favorites')">
               <i class="fa-solid fa-heart text-rose-500 text-xs"></i>
@@ -1211,7 +690,6 @@
               </button>
             </div>
             <div id="inbox-list-container" class="inbox-list max-h-[160px]">
-              <!-- 示範信件展示 -->
               <div class="bg-slate-900 border border-amber-400/40 rounded-xl p-2.5 space-y-1">
                 <div class="flex items-center justify-between text-[11px]">
                   <span class="font-bold text-amber-300">🌟【每週探索週報】</span>
@@ -1224,7 +702,6 @@
 
         </div>
 
-        <!-- 底部登出按鈕 -->
         <button id="btn-logout" data-i18n="btnLogout" class="w-full bg-rose-950/30 border border-rose-800/40 hover:bg-rose-900/40 text-rose-300 font-bold text-[11px] py-1.5 rounded-xl transition mt-auto flex items-center justify-center">
           登出帳號
         </button>
@@ -1312,11 +789,9 @@
     </div>
   </div>
 
- <!-- 全景點/全餐廳 純淨會員留言互動彈窗 (VisualViewport 行動專用版) -->
+  <!-- 全景點/全餐廳 純淨會員留言互動彈窗 -->
   <div id="comment-modal" class="fixed inset-0 z-[9999] hidden flex flex-col justify-end sm:justify-center items-center p-0 sm:p-4 overflow-hidden bg-black/70 backdrop-blur-xs">
     <div id="commentModalCard" class="bg-slate-950 border border-amber-400/40 rounded-t-3xl sm:rounded-2xl w-full max-w-md flex flex-col relative text-slate-100 overflow-hidden shadow-2xl transition-all duration-75">
-      
-      <!-- 1. 置頂 Header (強制保留高度，禁止壓縮) -->
       <div id="commentModalHeader" class="flex-shrink-0 flex items-center justify-between border-b border-slate-800 px-4 py-3 bg-slate-950 z-30">
         <div class="min-w-0 flex-1 pr-2">
           <h3 id="comment-modal-title" class="font-bold text-sm text-white truncate">店家真實點評討論</h3>
@@ -1325,27 +800,22 @@
         <button id="close-comment-btn" type="button" class="flex-shrink-0 w-8 h-8 bg-slate-800 hover:bg-slate-700 active:bg-slate-600 rounded-full text-slate-300 active:text-white flex items-center justify-center text-sm cursor-pointer transition">✕</button>
       </div>
 
-      <!-- 2. 中間獨立滾動留言區 -->
       <div id="comment-list-container" class="flex-1 overflow-y-auto hide-scrollbar p-3 space-y-2.5 text-xs overscroll-contain">
         <p class="text-center text-slate-500 py-6">載入留言中...</p>
       </div>
 
-      <!-- 3. 底部評論輸入列 -->
       <div class="flex-shrink-0 p-3 border-t border-slate-800 bg-slate-950 flex items-center gap-2 z-30">
         <input id="comment-input" type="text" maxlength="150" placeholder="寫下您的真實體驗與點評..." class="flex-1 bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-amber-400 placeholder-slate-500">
         <button id="btn-submit-comment" type="button" class="flex-shrink-0 bg-gradient-to-r from-amber-400 to-amber-500 text-slate-950 font-black text-xs px-3.5 py-2.5 rounded-xl active:scale-95 transition shadow">
           發表 (+20分)
         </button>
       </div>
-
     </div>
   </div>
 
-  <!-- 站長專屬社群管理行動面板 (Action Sheet) -->
+  <!-- 站長專屬社群管理行動面板 -->
   <div id="admin-action-sheet" class="fixed inset-0 z-[10000] hidden flex items-end justify-center bg-black/75 backdrop-blur-xs transition-opacity duration-200">
     <div class="bg-slate-950 border-t-2 border-amber-400 rounded-t-3xl w-full max-w-md p-4 shadow-2xl flex flex-col gap-3 text-slate-100 max-h-[85vh] overflow-y-auto">
-      
-      <!-- 面板 Header -->
       <div class="flex items-center justify-between border-b border-slate-800 pb-2">
         <h4 class="text-xs font-black text-amber-300 flex items-center gap-1.5">
           <i class="fa-solid fa-shield-halved text-amber-400"></i> 站長社群管理面板
@@ -1353,7 +823,6 @@
         <button type="button" onclick="window.closeAdminActionSheet()" class="w-7 h-7 bg-slate-800 rounded-full text-slate-400 hover:text-white flex items-center justify-center text-xs">✕</button>
       </div>
 
-      <!-- 違規者身分卡 (完整顯示頭像、暱稱、Email、UID、累犯次數) -->
       <div class="bg-slate-900 border border-slate-800 rounded-2xl p-3 flex items-center gap-3">
         <div id="sheet-user-avatar" class="w-12 h-12 rounded-full overflow-hidden bg-slate-950 border border-amber-400/40 flex-shrink-0 flex items-center justify-center text-slate-500">
           <i class="fa-regular fa-user text-base"></i>
@@ -1368,42 +837,35 @@
         </div>
       </div>
 
-      <!-- 留言內容摘錄 -->
       <div class="bg-slate-900/60 border-l-2 border-amber-400/60 p-2.5 rounded-r-xl text-[11px] text-slate-300 leading-relaxed break-words">
         <span class="text-slate-500 font-bold block text-[9px] mb-0.5">違規留言內容：</span>
         <span id="sheet-comment-text">...</span>
       </div>
 
-      <!-- 處分操作按鈕群組 -->
       <div class="flex flex-col gap-2 pt-1 text-xs">
-        <!-- 處分 1: 僅刪除 -->
         <button type="button" onclick="window.executeAdminAction('delete_only')" class="w-full py-2.5 px-3 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-200 font-bold flex items-center justify-between transition active:scale-98">
           <span class="flex items-center gap-1.5"><i class="fa-regular fa-trash-can text-slate-400"></i> 僅刪除此留言</span>
           <span class="text-[9px] text-slate-500">不扣分、不處置</span>
         </button>
 
-        <!-- 處分 2: 刪除 + 扣回 20 積分 -->
         <button type="button" onclick="window.executeAdminAction('delete_deduct')" class="w-full py-2.5 px-3 rounded-xl bg-slate-900 hover:bg-slate-800 border border-amber-400/40 text-amber-300 font-bold flex items-center justify-between transition active:scale-98">
           <span class="flex items-center gap-1.5"><i class="fa-solid fa-coins text-amber-400"></i> 刪除留言 + 扣回 20 積分</span>
           <span class="text-[9px] text-amber-400/70">發送站內警告信</span>
         </button>
 
-        <!-- 處分 3: 刪除 + 扣分 + 階梯式禁言 (動態計算天數) -->
         <button type="button" id="sheet-btn-tier-punish" onclick="window.executeAdminAction('delete_tier_punish')" class="w-full py-2.5 px-3 rounded-xl bg-gradient-to-r from-rose-900/60 to-rose-950/80 hover:from-rose-900 border border-rose-500/60 text-white font-black flex items-center justify-between transition active:scale-98 shadow-sm">
           <span class="flex items-center gap-1.5"><i class="fa-solid fa-ban text-rose-400"></i> <span id="sheet-tier-punish-label">刪除 + 扣分 + 階梯禁言</span></span>
           <span id="sheet-tier-punish-sub" class="text-[9px] text-rose-300">智慧計算天數</span>
         </button>
 
-        <!-- 取消關閉按鈕 -->
         <button type="button" onclick="window.closeAdminActionSheet()" class="w-full py-2 rounded-xl bg-transparent text-slate-400 hover:text-white font-bold text-center mt-1">
           取消
         </button>
       </div>
-
     </div>
   </div>
   
-  <!-- AI 懸浮球 (解凍全向拖曳、定錨右下角) -->
+  <!-- AI 懸浮球 -->
   <button id="chat-fab" class="fixed rounded-full bg-slate-950 border-2 border-amber-400 shadow-[0_0_25px_-2px_rgba(245,158,11,0.7)] overflow-hidden flex items-center justify-center cursor-pointer z-40 active:scale-95 transition-all select-none touch-none" style="width:60px; height:60px; right:16px; bottom:115px;" title="大V旅遊管家">
     <img src="ai-avatar.jpg" alt="AI 管家" class="w-full h-full object-cover pointer-events-none" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop';" />
   </button>
@@ -1461,7 +923,6 @@
     const VAPID_KEY = "BFcmRKQZhSkc4k6FE3qkr85YevC3aKCSfNKNHi1z_qJJGXVmOoY-WWdx2A6QxFCZFTYqhQR7zSjfO3hYqXEWKXY";
     const AI_WORKER_URL = "https://food-ai-assistant.vhuang904.workers.dev";
 
-    // 旗艦雙語字典 (繁體中文 / 英文)
     const I18N_DICT = {
       'zh-TW': {
         appTitle: '大V的旅遊窩',
@@ -1607,7 +1068,6 @@
       }
     };
 
-    // 寬鬆搜尋同義詞字典
     const SEARCH_SYNONYMS = {
       '牛排': ['steak', 'beef', 'wagyu', '和牛', '肋眼', 'ribeye', 'western', '排餐', '牛'],
       'steak': ['牛排', 'beef', 'wagyu', '和牛', 'ribeye'],
@@ -1634,7 +1094,6 @@
       return Array.from(new Set(terms));
     }
 
-    // 手機作業系統語言自動判定
     function detectDefaultAppLanguage() {
       const saved = localStorage.getItem('ph_app_lang');
       if (saved && (saved === 'zh-TW' || saved === 'en')) return saved;
@@ -1690,43 +1149,37 @@
     }
 
     function updateHeaderAuthBtn() {
-  const authBtnText = document.getElementById('auth-btn-text');
-  const avatarContainer = document.getElementById('user-avatar-container');
-  const dict = I18N_DICT[currentLang] || I18N_DICT['zh-TW'];
-  const ptsUnit = currentLang === 'zh-TW' ? '分' : 'PTS';
+      const authBtnText = document.getElementById('auth-btn-text');
+      const avatarContainer = document.getElementById('user-avatar-container');
+      const dict = I18N_DICT[currentLang] || I18N_DICT['zh-TW'];
+      const ptsUnit = currentLang === 'zh-TW' ? '分' : 'PTS';
 
-  // 確保頭像外層具備 relative 定位，讓未讀紅點能精準釘在右上角
-  if (avatarContainer) {
-    avatarContainer.classList.add('relative');
-  }
+      if (avatarContainer) avatarContainer.classList.add('relative');
 
-  // 檢查目前是否仍有未讀通知
-  const hasUnread = window._hasUnreadNotifications || false;
-  const redDotHtml = `<span id="header-unread-dot" class="absolute -top-1 -left-1 w-3 h-3 bg-rose-500 rounded-full border-2 border-slate-950 shadow-[0_0_8px_#f43f5e] ${hasUnread ? '' : 'hidden'} animate-pulse z-20 pointer-events-none"></span>`;
+      const hasUnread = window._hasUnreadNotifications || false;
+      const redDotHtml = `<span id="header-unread-dot" class="absolute -top-1 -left-1 w-3 h-3 bg-rose-500 rounded-full border-2 border-slate-950 shadow-[0_0_8px_#f43f5e] ${hasUnread ? '' : 'hidden'} animate-pulse z-20 pointer-events-none"></span>`;
 
-  if (currentUser) {
-    const dName = currentUserProfile.displayName || currentUser.displayName || dict.btnMember;
-    const pts = currentUserProfile.points || 50;
-    authBtnText.innerText = `${dName.split(' ')[0]} · ${pts}${ptsUnit}`;
-    if (currentUser.photoURL) {
-      avatarContainer.innerHTML = `<img id="user-avatar-icon" src="${currentUser.photoURL}" class="w-4 h-4 rounded-full ring-1 ring-amber-400 object-cover inline-block" />${redDotHtml}`;
-    } else {
-      avatarContainer.innerHTML = `<i id="user-avatar-icon" class="fa-solid fa-crown text-[11px] text-amber-400"></i>${redDotHtml}`;
+      if (currentUser) {
+        const dName = currentUserProfile.displayName || currentUser.displayName || dict.btnMember;
+        const pts = currentUserProfile.points || 50;
+        authBtnText.innerText = `${dName.split(' ')[0]} · ${pts}${ptsUnit}`;
+        if (currentUser.photoURL) {
+          avatarContainer.innerHTML = `<img id="user-avatar-icon" src="${currentUser.photoURL}" class="w-4 h-4 rounded-full ring-1 ring-amber-400 object-cover inline-block" />${redDotHtml}`;
+        } else {
+          avatarContainer.innerHTML = `<i id="user-avatar-icon" class="fa-solid fa-crown text-[11px] text-amber-400"></i>${redDotHtml}`;
+        }
+      } else {
+        authBtnText.innerText = dict.btnLogin;
+        avatarContainer.innerHTML = `<i id="user-avatar-icon" class="fa-regular fa-user text-[10px]"></i>`;
+      }
     }
-  } else {
-    authBtnText.innerText = dict.btnLogin;
-    avatarContainer.innerHTML = `<i id="user-avatar-icon" class="fa-regular fa-user text-[10px]"></i>`;
-  }
-}
 
-    // 全域檢查未讀信件並同步首頁外層頭像紅點
     window.checkUserUnreadNotifications = async function() {
       if (!currentUser) return;
       try {
         const lastReadTime = parseInt(localStorage.getItem('bigv_last_read_inbox_time') || '0', 10);
         let hasUnread = false;
 
-        // 1. 檢查全站公告
         try {
           const annSnap = await getDocs(query(collection(db, "announcements"), orderBy("createdAt", "desc")));
           annSnap.forEach(d => {
@@ -1736,7 +1189,6 @@
           });
         } catch (e) {}
 
-        // 2. 檢查個人專屬通知
         try {
           const userNotifSnap = await getDocs(query(collection(db, "users", currentUser.uid, "notifications"), orderBy("createdAt", "desc")));
           userNotifSnap.forEach(d => {
@@ -1746,7 +1198,6 @@
           });
         } catch (e) {}
 
-        // 3. 點亮外層頭像左上角紅點與會員視窗內的 Tab 紅點
         const avatarBadge = document.getElementById('user-avatar-badge');
         const tabBadge = document.getElementById('tab-inbox-badge');
         if (hasUnread) {
@@ -1974,68 +1425,68 @@
     }
 
     let toastTimer = null;
-function hideToastNow() {
-  const toast = document.getElementById('toastNotification');
-  if (toast) {
-    toast.classList.remove('opacity-100', 'scale-100', 'pointer-events-auto');
-    toast.classList.add('opacity-0', 'scale-95', 'pointer-events-none');
-    setTimeout(() => { toast.classList.add('hidden'); }, 300);
-  }
-  if (toastTimer) {
-    clearTimeout(toastTimer);
-    toastTimer = null;
-  }
-}
+    function hideToastNow() {
+      const toast = document.getElementById('toastNotification');
+      if (toast) {
+        toast.classList.remove('opacity-100', 'scale-100', 'pointer-events-auto');
+        toast.classList.add('opacity-0', 'scale-95', 'pointer-events-none');
+        setTimeout(() => { toast.classList.add('hidden'); }, 300);
+      }
+      if (toastTimer) {
+        clearTimeout(toastTimer);
+        toastTimer = null;
+      }
+    }
 
-const toastCloseBtn = document.getElementById('toastCloseBtn');
-if (toastCloseBtn) {
-  toastCloseBtn.onclick = (e) => {
-    e.stopPropagation();
-    hideToastNow();
-  };
-}
-
-function showToast(msg, icon = 'fa-check', actionText = '', actionCallback = null) {
-  const toast = document.getElementById('toastNotification');
-  const toastIcon = document.getElementById('toastIcon');
-  const toastMessage = document.getElementById('toastMessage');
-  const toastActionContainer = document.getElementById('toastActionContainer');
-  if (!toast || !toastIcon || !toastMessage || !toastActionContainer) return;
-
-  if (toastTimer) clearTimeout(toastTimer);
-
-  toast.classList.remove('hidden');
-
-  toastIcon.className = `fa-solid ${icon} text-amber-400 text-base flex-shrink-0`;
-  toastMessage.textContent = msg;
-
-  if (actionText && actionCallback) {
-    toastActionContainer.innerHTML = `
-      <button id="toastActionBtn" type="button" class="w-full py-2 px-4 rounded-xl bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-slate-950 font-black text-xs shadow-md transition active:scale-95 cursor-pointer pointer-events-auto">
-        ${actionText} ➔
-      </button>
-    `;
-    const btn = document.getElementById('toastActionBtn');
-    if (btn) {
-      btn.onclick = (e) => {
+    const toastCloseBtn = document.getElementById('toastCloseBtn');
+    if (toastCloseBtn) {
+      toastCloseBtn.onclick = (e) => {
         e.stopPropagation();
         hideToastNow();
-        actionCallback();
       };
     }
-  } else {
-    toastActionContainer.innerHTML = '';
-  }
 
-  requestAnimationFrame(() => {
-    toast.classList.remove('opacity-0', 'scale-95', 'pointer-events-none');
-    toast.classList.add('opacity-100', 'scale-100', 'pointer-events-auto');
-  });
+    function showToast(msg, icon = 'fa-check', actionText = '', actionCallback = null) {
+      const toast = document.getElementById('toastNotification');
+      const toastIcon = document.getElementById('toastIcon');
+      const toastMessage = document.getElementById('toastMessage');
+      const toastActionContainer = document.getElementById('toastActionContainer');
+      if (!toast || !toastIcon || !toastMessage || !toastActionContainer) return;
 
-  toastTimer = setTimeout(() => {
-    hideToastNow();
-  }, actionText ? 3800 : 2200);
-}
+      if (toastTimer) clearTimeout(toastTimer);
+
+      toast.classList.remove('hidden');
+
+      toastIcon.className = `fa-solid ${icon} text-base flex-shrink-0`;
+      toastMessage.textContent = msg;
+
+      if (actionText && actionCallback) {
+        toastActionContainer.innerHTML = `
+          <button id="toastActionBtn" type="button" class="w-full py-2 px-4 rounded-xl font-black text-xs shadow-md transition active:scale-95 cursor-pointer pointer-events-auto">
+            ${actionText} ➔
+          </button>
+        `;
+        const btn = document.getElementById('toastActionBtn');
+        if (btn) {
+          btn.onclick = (e) => {
+            e.stopPropagation();
+            hideToastNow();
+            actionCallback();
+          };
+        }
+      } else {
+        toastActionContainer.innerHTML = '';
+      }
+
+      requestAnimationFrame(() => {
+        toast.classList.remove('opacity-0', 'scale-95', 'pointer-events-none');
+        toast.classList.add('opacity-100', 'scale-100', 'pointer-events-auto');
+      });
+
+      toastTimer = setTimeout(() => {
+        hideToastNow();
+      }, actionText ? 3800 : 2200);
+    }
 
     async function initVisitorCounter() {
       try {
@@ -2099,7 +1550,7 @@ function showToast(msg, icon = 'fa-check', actionText = '', actionCallback = nul
         nextThreshold = 300;
       }
 
-      document.getElementById('user-modal-level').innerHTML = `<i class="fa-solid fa-medal text-amber-400"></i> ${levelTitle}`;
+      document.getElementById('user-modal-level').innerHTML = `<i class="fa-solid fa-medal"></i> ${levelTitle}`;
       document.getElementById('user-modal-points-text').innerText = `${points} / ${nextThreshold} PTS`;
       
       const pct = Math.min(100, Math.round((points / nextThreshold) * 100));
@@ -2177,22 +1628,22 @@ function showToast(msg, icon = 'fa-check', actionText = '', actionCallback = nul
                 <h6 class="font-bold text-xs text-white truncate leading-tight hover:text-amber-400 transition">${name}</h6>
                 <div class="flex items-center gap-1.5 text-[9px] text-slate-400 mt-0.5">
                   <span class="truncate">${item.city || '菲律賓'} · ${item.category || '精選'}</span>
-                  <span class="text-amber-400 font-bold flex items-center gap-0.5 flex-shrink-0"><i class="fa-solid fa-star text-[8px]"></i>${Number(item.google_rating || item.googleRating || 4.8).toFixed(1)}</span>
+                  <span class="font-bold flex items-center gap-0.5 flex-shrink-0"><i class="fa-solid fa-star text-[8px]"></i>${Number(item.google_rating || item.googleRating || 4.8).toFixed(1)}</span>
                 </div>
               </div>
             </div>
 
             <div class="flex items-center gap-1.5 flex-shrink-0">
-  <a href="${cleanPhone ? `tel:${cleanPhone}` : '#'}" title="撥打電話" class="btn-fav-action w-7 h-7 rounded-lg flex items-center justify-center text-xs transition ${!cleanPhone ? 'opacity-30 pointer-events-none' : ''} text-emerald-500">
-    <i class="fa-solid fa-phone"></i>
-  </a>
-  <a href="${navUrl}" target="_blank" rel="noopener noreferrer" title="路線導航" class="btn-fav-action w-7 h-7 rounded-lg flex items-center justify-center text-xs transition text-sky-500">
-    <i class="fa-solid fa-location-arrow"></i>
-  </a>
-  <button type="button" title="取消收藏" onclick="window.toggleFavorite('${sId}', event)" class="btn-fav-action w-7 h-7 rounded-lg flex items-center justify-center text-xs transition text-rose-500">
-    <i class="fa-solid fa-heart"></i>
-  </button>
-</div>
+              <a href="${cleanPhone ? `tel:${cleanPhone}` : '#'}" title="撥打電話" class="btn-fav-action w-7 h-7 rounded-lg flex items-center justify-center text-xs transition ${!cleanPhone ? 'opacity-30 pointer-events-none' : ''} text-emerald-500">
+                <i class="fa-solid fa-phone"></i>
+              </a>
+              <a href="${navUrl}" target="_blank" rel="noopener noreferrer" title="路線導航" class="btn-fav-action w-7 h-7 rounded-lg flex items-center justify-center text-xs transition text-sky-500">
+                <i class="fa-solid fa-location-arrow"></i>
+              </a>
+              <button type="button" title="取消收藏" onclick="window.toggleFavorite('${sId}', event)" class="btn-fav-action w-7 h-7 rounded-lg flex items-center justify-center text-xs transition text-rose-500">
+                <i class="fa-solid fa-heart"></i>
+              </button>
+            </div>
           </div>
         `;
       }).join('');
@@ -2340,7 +1791,6 @@ function showToast(msg, icon = 'fa-check', actionText = '', actionCallback = nul
       }`;
 
       const list = isCity ? REGION_CONFIG.cities : REGION_CONFIG.islands;
-      // 確保如果 currentCity 不在當前維度清單中，才取第一個，否則維持用戶選定的城市
       if (!list.some(r => r.id === currentCity)) {
         currentCity = list[0].id;
         localStorage.setItem('ph_app_city', currentCity);
@@ -2360,10 +1810,8 @@ function showToast(msg, icon = 'fa-check', actionText = '', actionCallback = nul
       document.querySelectorAll('.region-pill').forEach(btn => {
         btn.addEventListener('click', () => {
           const selectedCity = btn.getAttribute('data-city');
-          
-          // 切換城市時，嚴格遵循規則：重置為「美食推薦 ➔ 全部美食」
           currentCity = selectedCity;
-          localStorage.setItem('ph_app_city', currentCity); // ⭐ 牢牢鎖定在 localStorage，滑動絕不丟失！
+          localStorage.setItem('ph_app_city', currentCity);
 
           currentMainTab = 'map';
           sessionStorage.setItem('ph_nav_tab', 'map');
@@ -2725,12 +2173,12 @@ function showToast(msg, icon = 'fa-check', actionText = '', actionCallback = nul
         let guideText = '';
         if (currentLang === 'en') {
           guideText = (item.bigv_comment_en || item.big_v_comment_en || '').trim()
-                   || (item.description_en || item.desc_en || '').trim()
-                   || 'Top landmark attraction with breathtaking views and rich culture.';
+                    || (item.description_en || item.desc_en || '').trim()
+                    || 'Top landmark attraction with breathtaking views and rich culture.';
         } else {
           guideText = (item.bigv_comment_zh || item.big_v_comment_zh || item.big_v_comment || '').trim()
-                   || (item.description || item.desc || '').trim()
-                   || '在地熱門必訪指標景點，風景優美。';
+                    || (item.description || item.desc || '').trim()
+                    || '在地熱門必訪指標景點，風景優美。';
         }
 
         const tier = getItemTier(item);
@@ -3000,391 +2448,359 @@ function showToast(msg, icon = 'fa-check', actionText = '', actionCallback = nul
     }
 
     const commentModal = document.getElementById('comment-modal');
-const commentModalCard = document.getElementById('commentModalCard');
-const commentListContainer = document.getElementById('comment-list-container');
-const commentInputText = document.getElementById('comment-input');
-const btnSubmitComment = document.getElementById('btn-submit-comment');
-const closeCommentBtn = document.getElementById('close-comment-btn');
+    const commentModalCard = document.getElementById('commentModalCard');
+    const commentListContainer = document.getElementById('comment-list-container');
+    const commentInputText = document.getElementById('comment-input');
+    const btnSubmitComment = document.getElementById('btn-submit-comment');
+    const closeCommentBtn = document.getElementById('close-comment-btn');
 
-function updateModalVisualViewport() {
-  if (!commentModal || commentModal.classList.contains('hidden')) return;
-  
-  if (window.visualViewport) {
-    const vv = window.visualViewport;
-    const isMobile = window.innerWidth < 640;
-    
-    // 將彈窗外框精確對齊可視區域，防止外層被推到螢幕頂端外
-    commentModal.style.top = `${vv.offsetTop}px`;
-    commentModal.style.left = `${vv.offsetLeft}px`;
-    commentModal.style.width = `${vv.width}px`;
-    commentModal.style.height = `${vv.height}px`;
+    function updateModalVisualViewport() {
+      if (!commentModal || commentModal.classList.contains('hidden')) return;
+      
+      if (window.visualViewport) {
+        const vv = window.visualViewport;
+        const isMobile = window.innerWidth < 640;
+        
+        commentModal.style.top = `${vv.offsetTop}px`;
+        commentModal.style.left = `${vv.offsetLeft}px`;
+        commentModal.style.width = `${vv.width}px`;
+        commentModal.style.height = `${vv.height}px`;
 
-    if (commentModalCard) {
-      if (isMobile) {
-        // 手機/平板端在鍵盤開啟時直接填滿可視區域，Header 永遠卡在 offsetTop 頂部
-        commentModalCard.style.height = `${vv.height}px`;
-      } else {
-        commentModalCard.style.height = '620px';
+        if (commentModalCard) {
+          if (isMobile) {
+            commentModalCard.style.height = `${vv.height}px`;
+          } else {
+            commentModalCard.style.height = '620px';
+          }
+        }
       }
     }
-  }
-}
 
-if (window.visualViewport) {
-  window.visualViewport.addEventListener('resize', updateModalVisualViewport);
-  window.visualViewport.addEventListener('scroll', updateModalVisualViewport);
-}
-
-function resetModalVisualViewport() {
-  if (!commentModal) return;
-  commentModal.style.top = '';
-  commentModal.style.left = '';
-  commentModal.style.width = '';
-  commentModal.style.height = '';
-  if (commentModalCard) commentModalCard.style.height = '';
-
-  // ⭐ 關鍵：解除 body 的 fixed 鎖定並恢復原先捲動位置
-  const scrollY = document.body.style.top;
-  document.body.style.position = '';
-  document.body.style.width = '';
-  document.body.style.top = '';
-  if (scrollY) {
-    window.scrollTo(0, parseInt(scrollY || '0') * -1);
-  }
-}
-    
-// 綁定右上角 ✕ 關閉按鈕與點擊背景關閉
-if (closeCommentBtn) {
-  closeCommentBtn.onclick = (e) => {
-    e.stopPropagation();
-    commentModal.classList.add('hidden');
-    resetModalVisualViewport();
-  };
-}
-if (commentModal) {
-  commentModal.onclick = (e) => {
-    if (e.target === commentModal) {
-      commentModal.classList.add('hidden');
-      resetModalVisualViewport();
-    }
-  };
-}
-
-// 阻斷點擊輸入框時 Android 的頁面向上強制捲動
-if (commentInputText) {
-  commentInputText.addEventListener('focus', () => {
-    setTimeout(() => {
-      window.scrollTo(0, 0);
-      updateModalVisualViewport();
-    }, 50);
-  });
-}
-
-const ADMIN_EMAILS = ['vhuang904@gmail.com'];
-
-async function loadStoreComments(storeId) {
-  if (!commentListContainer) return;
-  commentListContainer.innerHTML = '<div class="text-center py-6 text-slate-500 text-xs"><i class="fa-solid fa-spinner fa-spin mr-1.5 text-amber-400"></i>載入老饕點評中...</div>';
-
-  try {
-    const { getStoreComments } = await import('./authService.js');
-    const comments = await getStoreComments(storeId);
-
-    if (!comments || comments.length === 0) {
-      commentListContainer.innerHTML = `
-        <div class="text-center py-8">
-          <i class="fa-regular fa-comment-dots text-slate-600 text-3xl mb-2 block"></i>
-          <p class="text-slate-400 text-xs font-bold">目前暫無公開評論，成為第一位老饕評論者吧！</p>
-          <p class="text-amber-400/80 text-[10px] mt-1">分享真實體驗現賺 +20 積分</p>
-        </div>
-      `;
-      return;
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener('resize', updateModalVisualViewport);
+      window.visualViewport.addEventListener('scroll', updateModalVisualViewport);
     }
 
-    const isAdmin = currentUser && ADMIN_EMAILS.includes((currentUser.email || '').toLowerCase().trim());
+    function resetModalVisualViewport() {
+      if (!commentModal) return;
+      commentModal.style.top = '';
+      commentModal.style.left = '';
+      commentModal.style.width = '';
+      commentModal.style.height = '';
+      if (commentModalCard) commentModalCard.style.height = '';
 
-    commentListContainer.innerHTML = comments.map(c => {
-      const uName = c.userName || '吃貨好友';
-      const timeStr = c.createdAt ? new Date(c.createdAt.toMillis ? c.createdAt.toMillis() : c.createdAt).toLocaleDateString() : '剛剛';
-      const userPhoto = c.userPhoto ? `<img src="${c.userPhoto}" class="w-full h-full object-cover">` : `<i class="fa-regular fa-user text-[9px]"></i>`;
-      // 將留言資料緩存進全域變數，徹底杜絕引號衝突
-      if (!window._commentCache) window._commentCache = {};
-      window._commentCache[c.id] = c;
-
-      const deleteBtnHtml = isAdmin ? `
-        <button type="button" title="站長審核與處分" onclick="window.openAdminActionSheet('${c.id}', event)" class="text-rose-400 hover:text-rose-300 p-1 transition active:scale-90 cursor-pointer ml-1.5">
-          <i class="fa-regular fa-trash-can text-xs"></i>
-        </button>
-      ` : '';
-
-      return `
-        <div class="bg-slate-900 border border-slate-800 rounded-xl p-3 space-y-1.5">
-          <div class="flex items-center justify-between text-[11px]">
-            <span class="font-bold text-amber-300 flex items-center gap-1.5">
-              <span class="w-5 h-5 rounded-full bg-amber-400/20 flex items-center justify-center overflow-hidden inline-block text-center leading-5">${userPhoto}</span>
-              ${uName}
-            </span>
-            <div class="flex items-center gap-1">
-              <span class="text-[9px] text-slate-500">${timeStr}</span>
-              ${deleteBtnHtml}
-            </div>
-          </div>
-          <p class="text-slate-200 leading-relaxed text-xs break-words pl-6.5">${c.comment || c.content || ''}</p>
-        </div>
-      `;
-    }).join('');
-  } catch (err) {
-    console.warn("[Comment] 載入失敗:", err);
-    commentListContainer.innerHTML = '<p class="text-center text-slate-500 py-6 text-xs">載入評論異常，請稍後再試</p>';
-  }
-}
-
-// =======================================================
-// 站長社群管理 Action Sheet 核心邏輯
-// =======================================================
-let currentTargetComment = null;
-let currentTargetUserHistory = { count: 0, points: 50 };
-
-// 階梯禁言天數表：第1次 3天、第2次 7天、第3次 30天、第4次永久停權
-const TIER_BAN_DAYS = [3, 7, 30, 3650]; 
-
-window.openAdminActionSheet = async function(commentId, event) {
-  if (event) {
-    event.preventDefault();
-    event.stopPropagation();
-  }
-
-  const sheet = document.getElementById('admin-action-sheet');
-  if (!sheet) {
-    console.error("[Admin] 找不到 admin-action-sheet 元素！");
-    return;
-  }
-
-  // 從全域快取直接取出乾淨完整的留言物件
-  const rawData = (window._commentCache && window._commentCache[commentId]) || {};
-  const targetUid = rawData.userId || rawData.uid || '';
-  currentTargetComment = { 
-    id: commentId, 
-    userId: targetUid,
-    userName: rawData.userName || rawData.displayName || '吃貨好友',
-    userPhoto: rawData.userPhoto || rawData.photoURL || '',
-    userEmail: rawData.userEmail || rawData.email || '',
-    content: rawData.comment || rawData.content || ''
-  };
-
-  try {
-    // 1. 填充身分卡基礎 UI
-    document.getElementById('sheet-user-name').innerText = currentTargetComment.userName;
-    document.getElementById('sheet-user-email').innerText = currentTargetComment.userEmail || (currentUser && targetUid === currentUser.uid ? currentUser.email : '未公開信箱');
-    document.getElementById('sheet-user-uid').innerText = `UID: ${targetUid ? (targetUid.slice(0, 8) + '...' + targetUid.slice(-6)) : '未知'}`;
-    document.getElementById('sheet-comment-text').innerText = currentTargetComment.content || '(無文字內容)';
-    
-    const avatarBox = document.getElementById('sheet-user-avatar');
-    if (currentTargetComment.userPhoto) {
-      avatarBox.innerHTML = `<img src="${currentTargetComment.userPhoto}" class="w-full h-full object-cover">`;
-    } else {
-      avatarBox.innerHTML = `<i class="fa-regular fa-user text-base text-slate-500"></i>`;
+      const scrollY = document.body.style.top;
+      document.body.style.position = '';
+      document.body.style.width = '';
+      document.body.style.top = '';
+      if (scrollY) {
+        window.scrollTo(0, parseInt(scrollY || '0') * -1);
+      }
+    }
+        
+    if (closeCommentBtn) {
+      closeCommentBtn.onclick = (e) => {
+        e.stopPropagation();
+        commentModal.classList.add('hidden');
+        resetModalVisualViewport();
+      };
+    }
+    if (commentModal) {
+      commentModal.onclick = (e) => {
+        if (e.target === commentModal) {
+          commentModal.classList.add('hidden');
+          resetModalVisualViewport();
+        }
+      };
     }
 
-    // 重設按鈕預設載入文字
-    document.getElementById('sheet-violation-count').innerText = '讀取紀錄中...';
-    document.getElementById('sheet-tier-punish-label').innerText = '刪除 + 扣分 + 階梯禁言';
-    document.getElementById('sheet-tier-punish-sub').innerText = '讀取天數中...';
+    if (commentInputText) {
+      commentInputText.addEventListener('focus', () => {
+        setTimeout(() => {
+          window.scrollTo(0, 0);
+          updateModalVisualViewport();
+        }, 50);
+      });
+    }
 
-    // 彈出 Action Sheet 面板
-    sheet.classList.remove('hidden');
+    const ADMIN_EMAILS = ['vhuang904@gmail.com'];
 
-    // 2. 從 Firestore 讀取該用戶的最新累犯次數與資料
-    let violationCount = 0;
-    if (targetUid) {
+    async function loadStoreComments(storeId) {
+      if (!commentListContainer) return;
+      commentListContainer.innerHTML = '<div class="text-center py-6 text-slate-500 text-xs"><i class="fa-solid fa-spinner fa-spin mr-1.5 text-amber-400"></i>載入老饕點評中...</div>';
+
       try {
-        const uRef = doc(db, "users", targetUid);
-        const uSnap = await getDoc(uRef);
-        if (uSnap.exists()) {
-          const uData = uSnap.data();
-          violationCount = uData.violationCount || 0;
-          currentTargetUserHistory = { count: violationCount, points: uData.points || 50 };
-          if (uData.email) document.getElementById('sheet-user-email').innerText = uData.email;
+        const { getStoreComments } = await import('./authService.js');
+        const comments = await getStoreComments(storeId);
+
+        if (!comments || comments.length === 0) {
+          commentListContainer.innerHTML = `
+            <div class="text-center py-8">
+              <i class="fa-regular fa-comment-dots text-slate-600 text-3xl mb-2 block"></i>
+              <p class="text-slate-400 text-xs font-bold">目前暫無公開評論，成為第一位老饕評論者吧！</p>
+              <p class="text-amber-400/80 text-[10px] mt-1">分享真實體驗現賺 +20 積分</p>
+            </div>
+          `;
+          return;
         }
+
+        const isAdmin = currentUser && ADMIN_EMAILS.includes((currentUser.email || '').toLowerCase().trim());
+
+        commentListContainer.innerHTML = comments.map(c => {
+          const uName = c.userName || '吃貨好友';
+          const timeStr = c.createdAt ? new Date(c.createdAt.toMillis ? c.createdAt.toMillis() : c.createdAt).toLocaleDateString() : '剛剛';
+          const userPhoto = c.userPhoto ? `<img src="${c.userPhoto}" class="w-full h-full object-cover">` : `<i class="fa-regular fa-user text-[9px]"></i>`;
+          if (!window._commentCache) window._commentCache = {};
+          window._commentCache[c.id] = c;
+
+          const deleteBtnHtml = isAdmin ? `
+            <button type="button" title="站長審核與處分" onclick="window.openAdminActionSheet('${c.id}', event)" class="text-rose-400 hover:text-rose-300 p-1 transition active:scale-90 cursor-pointer ml-1.5">
+              <i class="fa-regular fa-trash-can text-xs"></i>
+            </button>
+          ` : '';
+
+          return `
+            <div class="bg-slate-900 border border-slate-800 rounded-xl p-3 space-y-1.5">
+              <div class="flex items-center justify-between text-[11px]">
+                <span class="font-bold text-amber-300 flex items-center gap-1.5">
+                  <span class="w-5 h-5 rounded-full bg-amber-400/20 flex items-center justify-center overflow-hidden inline-block text-center leading-5">${userPhoto}</span>
+                  ${uName}
+                </span>
+                <div class="flex items-center gap-1">
+                  <span class="text-[9px] text-slate-500">${timeStr}</span>
+                  ${deleteBtnHtml}
+                </div>
+              </div>
+              <p class="text-slate-200 leading-relaxed text-xs break-words pl-6.5">${c.comment || c.content || ''}</p>
+            </div>
+          `;
+        }).join('');
       } catch (err) {
-        console.warn("[Admin] 讀取用戶違規記錄略過:", err);
+        console.warn("[Comment] 載入失敗:", err);
+        commentListContainer.innerHTML = '<p class="text-center text-slate-500 py-6 text-xs">載入評論異常，請稍後再試</p>';
       }
     }
 
-    // 3. 動態計算階梯懲罰天數
-    const nextCount = violationCount + 1;
-    const banDays = TIER_BAN_DAYS[Math.min(violationCount, TIER_BAN_DAYS.length - 1)];
-    const banText = banDays >= 365 ? '永久停權' : `禁言 ${banDays} 天`;
+    let currentTargetComment = null;
+    let currentTargetUserHistory = { count: 0, points: 50 };
+    const TIER_BAN_DAYS = [3, 7, 30, 3650]; 
 
-    document.getElementById('sheet-violation-count').innerText = `歷史違規：${violationCount} 次 (本次第 ${nextCount} 次)`;
-    document.getElementById('sheet-tier-punish-label').innerText = `刪除 + 扣分 + ${banText}`;
-    document.getElementById('sheet-tier-punish-sub').innerText = `累犯階梯處分`;
-
-  } catch (e) {
-    console.error("[Admin] 開啟面板失敗:", e);
-  }
-};
-
-window.closeAdminActionSheet = function() {
-  const sheet = document.getElementById('admin-action-sheet');
-  if (sheet) sheet.classList.add('hidden');
-  currentTargetComment = null;
-};
-
-// 執行處分邏輯（強化版：自動容錯 UID + 即時刷新信箱與錯誤提示）
-window.executeAdminAction = async function(actionType) {
-  if (!currentTargetComment || !currentUser) return;
-
-  const commentId = currentTargetComment.id;
-  // 雙重容錯：優先取用留言紀錄中的 userId / uid，若為本人測試則降級取用 currentUser.uid
-  const targetUid = currentTargetComment.userId || currentTargetComment.uid || currentUser.uid;
-  const content = currentTargetComment.content || '';
-
-  try {
-    showToast('正在執行管理處分...', 'fa-spinner fa-spin');
-    const { deleteStoreComment } = await import('./authService.js');
-
-    // 1. 永久刪除該則留言
-    await deleteStoreComment(commentId);
-
-    // 2. 處理後續處置
-    if (actionType === 'delete_only') {
-      showToast('🗑️ 已刪除該留言（不處置）', 'fa-trash-can');
-    } else if (targetUid) {
-      const userRef = doc(db, "users", targetUid);
-      const now = Date.now();
-
-      if (actionType === 'delete_deduct') {
-        // 處分選項 A：扣回 20 積分 + 發送警告站內信
-        await updateDoc(userRef, {
-          points: increment(-20),
-          updatedAt: new Date().toISOString()
-        }).catch(e => console.warn("[Admin] 扣分失敗:", e));
-
-        // 寫入專屬站內信通知該用戶
-        await addDoc(collection(db, "users", targetUid, "notifications"), {
-          title: "⚠️ 社群規範違規通知",
-          content: `您在探店討論區發表的留言「${content.slice(0, 30)}...」因違反社群規範已被移除，並扣回該次發文獎勵 20 積分。請共同維護良好的討論氛圍。`,
-          type: "penalty",
-          createdAt: now,
-          isRead: false
-        });
-
-        showToast('⚠️ 已刪除留言並扣回 20 積分', 'fa-coins');
-
-      } else if (actionType === 'delete_tier_punish') {
-        // 處分選項 B：階梯懲罰（扣 20 分 + 累加違規次數 + 設定禁言期限 + 發送處分信）
-        const currentCount = currentTargetUserHistory.count || 0;
-        const banDays = TIER_BAN_DAYS[Math.min(currentCount, TIER_BAN_DAYS.length - 1)];
-        const mutedUntil = now + (banDays * 86400000);
-        const unbanDateStr = new Date(mutedUntil).toLocaleDateString();
-
-        await updateDoc(userRef, {
-          points: increment(-20),
-          violationCount: increment(1),
-          mutedUntil: mutedUntil,
-          updatedAt: new Date().toISOString()
-        }).catch(e => console.warn("[Admin] 處分記錄失敗:", e));
-
-        const banNotice = banDays >= 365 ? '永久禁止發言' : `暫停發表評論權限 ${banDays} 天（解禁日期：${unbanDateStr}）`;
-
-        // 寫入專屬站內信
-        await addDoc(collection(db, "users", targetUid, "notifications"), {
-          title: "🚫 社群違規處分與禁言通知",
-          content: `您的留言涉及違規已被移除，系統已扣回 20 積分。因累計第 ${currentCount + 1} 次違規，已對您的帳號施以「${banNotice}」處分。如有異議請洽官方客服。`,
-          type: "penalty",
-          createdAt: now,
-          isRead: false
-        });
-
-        showToast(`🚫 處分完成：扣20分並${banNotice}`, 'fa-ban');
+    window.openAdminActionSheet = async function(commentId, event) {
+      if (event) {
+        event.preventDefault();
+        event.stopPropagation();
       }
 
-      // 若被處分對象是當前登入者本人（站長測試自己），即時更新本地個人資料與外層頭像紅點
-      if (currentUser && targetUid === currentUser.uid) {
-        if (currentUserProfile) {
-          currentUserProfile.points = Math.max(0, (currentUserProfile.points || 50) - 20);
+      const sheet = document.getElementById('admin-action-sheet');
+      if (!sheet) return;
+
+      const rawData = (window._commentCache && window._commentCache[commentId]) || {};
+      const targetUid = rawData.userId || rawData.uid || '';
+      currentTargetComment = { 
+        id: commentId, 
+        userId: targetUid,
+        userName: rawData.userName || rawData.displayName || '吃貨好友',
+        userPhoto: rawData.userPhoto || rawData.photoURL || '',
+        userEmail: rawData.userEmail || rawData.email || '',
+        content: rawData.comment || rawData.content || ''
+      };
+
+      try {
+        document.getElementById('sheet-user-name').innerText = currentTargetComment.userName;
+        document.getElementById('sheet-user-email').innerText = currentTargetComment.userEmail || (currentUser && targetUid === currentUser.uid ? currentUser.email : '未公開信箱');
+        document.getElementById('sheet-user-uid').innerText = `UID: ${targetUid ? (targetUid.slice(0, 8) + '...' + targetUid.slice(-6)) : '未知'}`;
+        document.getElementById('sheet-comment-text').innerText = currentTargetComment.content || '(無文字內容)';
+        
+        const avatarBox = document.getElementById('sheet-user-avatar');
+        if (currentTargetComment.userPhoto) {
+          avatarBox.innerHTML = `<img src="${currentTargetComment.userPhoto}" class="w-full h-full object-cover">`;
+        } else {
+          avatarBox.innerHTML = `<i class="fa-regular fa-user text-base text-slate-500"></i>`;
         }
-        // 標記有未讀通知並點亮首頁外層紅點
-        window._hasUnreadNotifications = true;
-        updateHeaderAuthBtn();
-        if (typeof updateUserModalView === 'function') updateUserModalView();
-        if (typeof window.checkUserUnreadNotifications === 'function') {
-          await window.checkUserUnreadNotifications();
+
+        document.getElementById('sheet-violation-count').innerText = '讀取紀錄中...';
+        document.getElementById('sheet-tier-punish-label').innerText = '刪除 + 扣分 + 階梯禁言';
+        document.getElementById('sheet-tier-punish-sub').innerText = '讀取天數中...';
+
+        sheet.classList.remove('hidden');
+
+        let violationCount = 0;
+        if (targetUid) {
+          try {
+            const uRef = doc(db, "users", targetUid);
+            const uSnap = await getDoc(uRef);
+            if (uSnap.exists()) {
+              const uData = uSnap.data();
+              violationCount = uData.violationCount || 0;
+              currentTargetUserHistory = { count: violationCount, points: uData.points || 50 };
+              if (uData.email) document.getElementById('sheet-user-email').innerText = uData.email;
+            }
+          } catch (err) {
+            console.warn("[Admin] 讀取用戶違規記錄略過:", err);
+          }
         }
+
+        const nextCount = violationCount + 1;
+        const banDays = TIER_BAN_DAYS[Math.min(violationCount, TIER_BAN_DAYS.length - 1)];
+        const banText = banDays >= 365 ? '永久停權' : `禁言 ${banDays} 天`;
+
+        document.getElementById('sheet-violation-count').innerText = `歷史違規：${violationCount} 次 (本次第 ${nextCount} 次)`;
+        document.getElementById('sheet-tier-punish-label').innerText = `刪除 + 扣分 + ${banText}`;
+        document.getElementById('sheet-tier-punish-sub').innerText = `累犯階梯處分`;
+
+      } catch (e) {
+        console.error("[Admin] 開啟面板失敗:", e);
+      }
+    };
+
+    window.closeAdminActionSheet = function() {
+      const sheet = document.getElementById('admin-action-sheet');
+      if (sheet) sheet.classList.add('hidden');
+      currentTargetComment = null;
+    };
+
+    window.executeAdminAction = async function(actionType) {
+      if (!currentTargetComment || !currentUser) return;
+
+      const commentId = currentTargetComment.id;
+      const targetUid = currentTargetComment.userId || currentTargetComment.uid || currentUser.uid;
+      const content = currentTargetComment.content || '';
+
+      try {
+        showToast('正在執行管理處分...', 'fa-spinner fa-spin');
+        const { deleteStoreComment } = await import('./authService.js');
+
+        await deleteStoreComment(commentId);
+
+        if (actionType === 'delete_only') {
+          showToast('🗑️ 已刪除該留言（不處置）', 'fa-trash-can');
+        } else if (targetUid) {
+          const userRef = doc(db, "users", targetUid);
+          const now = Date.now();
+
+          if (actionType === 'delete_deduct') {
+            await updateDoc(userRef, {
+              points: increment(-20),
+              updatedAt: new Date().toISOString()
+            }).catch(e => console.warn("[Admin] 扣分失敗:", e));
+
+            await addDoc(collection(db, "users", targetUid, "notifications"), {
+              title: "⚠️ 社群規範違規通知",
+              content: `您在探店討論區發表的留言「${content.slice(0, 30)}...」因違反社群規範已被移除，並扣回該次發文獎勵 20 積分。請共同維護良好的討論氛圍。`,
+              type: "penalty",
+              createdAt: now,
+              isRead: false
+            });
+
+            showToast('⚠️ 已刪除留言並扣回 20 積分', 'fa-coins');
+
+          } else if (actionType === 'delete_tier_punish') {
+            const currentCount = currentTargetUserHistory.count || 0;
+            const banDays = TIER_BAN_DAYS[Math.min(currentCount, TIER_BAN_DAYS.length - 1)];
+            const mutedUntil = now + (banDays * 86400000);
+            const unbanDateStr = new Date(mutedUntil).toLocaleDateString();
+
+            await updateDoc(userRef, {
+              points: increment(-20),
+              violationCount: increment(1),
+              mutedUntil: mutedUntil,
+              updatedAt: new Date().toISOString()
+            }).catch(e => console.warn("[Admin] 處分記錄失敗:", e));
+
+            const banNotice = banDays >= 365 ? '永久禁止發言' : `暫停發表評論權限 ${banDays} 天（解禁日期：${unbanDateStr}）`;
+
+            await addDoc(collection(db, "users", targetUid, "notifications"), {
+              title: "🚫 社群違規處分與禁言通知",
+              content: `您的留言涉及違規已被移除，系統已扣回 20 積分。因累計第 ${currentCount + 1} 次違規，已對您的帳號施以「${banNotice}」處分。如有異議請洽官方客服。`,
+              type: "penalty",
+              createdAt: now,
+              isRead: false
+            });
+
+            showToast(`🚫 處分完成：扣20分並${banNotice}`, 'fa-ban');
+          }
+
+          if (currentUser && targetUid === currentUser.uid) {
+            if (currentUserProfile) {
+              currentUserProfile.points = Math.max(0, (currentUserProfile.points || 50) - 20);
+            }
+            window._hasUnreadNotifications = true;
+            updateHeaderAuthBtn();
+            if (typeof updateUserModalView === 'function') updateUserModalView();
+            if (typeof window.checkUserUnreadNotifications === 'function') {
+              await window.checkUserUnreadNotifications();
+            }
+          }
+        }
+
+        window.closeAdminActionSheet();
+        await loadStoreComments(activeCommentStoreId);
+
+      } catch (err) {
+        console.error("[Admin] 處分異常:", err);
+        showToast(`處分異常: ${err.message || '請確認權限'}`, 'fa-triangle-exclamation');
+      }
+    };
+
+    window.openUniversalCommentModal = function(storeId, encodedName) {
+      if (!currentUser) {
+        showToast(
+          '🔒 請先登入會員，即可發表真實點評賺取 20 積分！',
+          'fa-lock',
+          '立即登入',
+          () => {
+            closeAiChat();
+            openAuthModal();
+          }
+        );
+        return;
+      }
+
+      closeAiChat();
+      activeCommentStoreId = String(storeId).trim();
+      const sName = decodeURIComponent(encodedName || '');
+      const titleEl = document.getElementById('comment-modal-title');
+      if (titleEl) titleEl.innerText = `${sName} 點評`;
+
+      if (commentInputText) commentInputText.value = '';
+      commentModal.classList.remove('hidden');
+      document.body.style.position = 'fixed';
+      document.body.style.width = '100%';
+      document.body.style.top = `-${window.scrollY}px`;
+
+      loadStoreComments(activeCommentStoreId);
+    };
+
+    async function handlePostComment() {
+      if (!currentUser) {
+        showToast('請先登入會員！', 'fa-lock');
+        return;
+      }
+      const text = (commentInputText?.value || '').trim();
+      if (!text) {
+        showToast('請輸入評論內容！', 'fa-circle-exclamation');
+        return;
+      }
+
+      btnSubmitComment.disabled = true;
+      btnSubmitComment.innerText = '發表中...';
+
+      try {
+        const { addStoreComment } = await import('./authService.js');
+        await addStoreComment(activeCommentStoreId, text);
+        if (commentInputText) commentInputText.value = '';
+        showToast('🎉 點評發表成功！已為您累計 +20 積分！', 'fa-award');
+        await loadStoreComments(activeCommentStoreId);
+      } catch (err) {
+        console.error("發表點評失敗:", err);
+        showToast(err.message || '發表失敗，請稍後再試', 'fa-triangle-exclamation');
+      } finally {
+        btnSubmitComment.disabled = false;
+        btnSubmitComment.innerText = '發表 (+20分)';
       }
     }
 
-    // 關閉面板並重新整理留言清單
-    window.closeAdminActionSheet();
-    await loadStoreComments(activeCommentStoreId);
-
-  } catch (err) {
-    console.error("[Admin] 處分異常:", err);
-    // 直接在手機畫面上把錯誤原因彈出來（若遇權限問題會一目了然）
-    showToast(`處分異常: ${err.message || '請確認權限'}`, 'fa-triangle-exclamation');
-  }
-};
-
-window.openUniversalCommentModal = function(storeId, encodedName) {
-  if (!currentUser) {
-    showToast(
-      '🔒 請先登入會員，即可發表真實點評賺取 20 積分！',
-      'fa-lock',
-      '立即登入',
-      () => {
-        closeAiChat();
-        openAuthModal();
-      }
-    );
-    return;
-  }
-
-  closeAiChat();
-  activeCommentStoreId = String(storeId).trim();
-  const sName = decodeURIComponent(encodedName || '');
-  const titleEl = document.getElementById('comment-modal-title');
-  if (titleEl) titleEl.innerText = `${sName} 點評`;
-
-  if (commentInputText) commentInputText.value = '';
-  commentModal.classList.remove('hidden');
-  document.body.style.position = 'fixed';
-  document.body.style.width = '100%';
-  document.body.style.top = `-${window.scrollY}px`;
-
-  loadStoreComments(activeCommentStoreId);
-};
-
-async function handlePostComment() {
-  if (!currentUser) {
-    showToast('請先登入會員！', 'fa-lock');
-    return;
-  }
-  const text = (commentInputText?.value || '').trim();
-  if (!text) {
-    showToast('請輸入評論內容！', 'fa-circle-exclamation');
-    return;
-  }
-
-  btnSubmitComment.disabled = true;
-  btnSubmitComment.innerText = '發表中...';
-
-  try {
-    const { addStoreComment } = await import('./authService.js');
-    await addStoreComment(activeCommentStoreId, text);
-    if (commentInputText) commentInputText.value = '';
-    showToast('🎉 點評發表成功！已為您累計 +20 積分！', 'fa-award');
-    await loadStoreComments(activeCommentStoreId);
-  } catch (err) {
-    console.error("發表點評失敗:", err);
-    showToast(err.message || '發表失敗，請稍後再試', 'fa-triangle-exclamation');
-  } finally {
-    btnSubmitComment.disabled = false;
-    btnSubmitComment.innerText = '發表 (+20分)';
-  }
-}
-
-btnSubmitComment.addEventListener('click', handlePostComment);
+    btnSubmitComment.addEventListener('click', handlePostComment);
 
     const authModal = document.getElementById('auth-modal');
     const authStateBtn = document.getElementById('auth-state-btn');
@@ -3494,7 +2910,6 @@ btnSubmitComment.addEventListener('click', handlePostComment);
         );
         return;
       }
-      // 已登入用戶：提示並提供直接探索的快捷按鈕
       showToast(
         '💡 探店評論為常態活動：在首頁任何店家卡片下方點擊「寫評論 +20」即可累積積分！',
         'fa-pen-to-square',
@@ -3645,79 +3060,77 @@ btnSubmitComment.addEventListener('click', handlePostComment);
     window.closeAiChat = closeAiChat;
 
     function toggleAiChat() {
-   const isHidden = chatModal.classList.contains('hidden');
-   if (isHidden) {
-     document.getElementById('auth-modal').classList.add('hidden');
-     chatModal.classList.remove('hidden');
-     // 定錨至對話窗右下角安全區待命
-     updateFabPos(window.innerWidth - 76, window.innerHeight - 175);
-     renderChatUI();
-     // ⭐ 徹底移除 chatInput.focus()，禁止主動彈出鍵盤，讓使用者手動點擊輸入框才喚起
-   } else {
-     closeAiChat();
-   }
- }
+      const isHidden = chatModal.classList.contains('hidden');
+      if (isHidden) {
+        document.getElementById('auth-modal').classList.add('hidden');
+        chatModal.classList.remove('hidden');
+        updateFabPos(window.innerWidth - 76, window.innerHeight - 175);
+        renderChatUI();
+      } else {
+        closeAiChat();
+      }
+    }
 
     function onFabStart(e) {
-   if (!chatModal.classList.contains('hidden')) return;
-   const pt = e.touches ? e.touches[0] : e;
-   dragStartX = pt.clientX;
-   dragStartY = pt.clientY;
-   const rect = fab.getBoundingClientRect();
-   initialLeft = rect.left;
-   initialTop = rect.top;
-   hasMoved = false;
-   isDragging = true;
-   fab.style.transition = 'none';
- }
+      if (!chatModal.classList.contains('hidden')) return;
+      const pt = e.touches ? e.touches[0] : e;
+      dragStartX = pt.clientX;
+      dragStartY = pt.clientY;
+      const rect = fab.getBoundingClientRect();
+      initialLeft = rect.left;
+      initialTop = rect.top;
+      hasMoved = false;
+      isDragging = true;
+      fab.style.transition = 'none';
+    }
 
- function onFabMove(e) {
-   if (!isDragging || !chatModal.classList.contains('hidden')) return;
-   const pt = e.touches ? e.touches[0] : e;
-   const dx = pt.clientX - dragStartX;
-   const dy = pt.clientY - dragStartY;
+    function onFabMove(e) {
+      if (!isDragging || !chatModal.classList.contains('hidden')) return;
+      const pt = e.touches ? e.touches[0] : e;
+      const dx = pt.clientX - dragStartX;
+      const dy = pt.clientY - dragStartY;
 
-   if (Math.hypot(dx, dy) > 15) hasMoved = true;
+      if (Math.hypot(dx, dy) > 15) hasMoved = true;
 
-   if (hasMoved) {
-     let nx = initialLeft + dx;
-     let ny = initialTop + dy;
-     nx = Math.max(8, Math.min(nx, window.innerWidth - fab.offsetWidth - 8));
-     ny = Math.max(60, Math.min(ny, window.innerHeight - fab.offsetHeight - 90));
-     updateFabPos(nx, ny);
-   }
- }
+      if (hasMoved) {
+        let nx = initialLeft + dx;
+        let ny = initialTop + dy;
+        nx = Math.max(8, Math.min(nx, window.innerWidth - fab.offsetWidth - 8));
+        ny = Math.max(60, Math.min(ny, window.innerHeight - fab.offsetHeight - 90));
+        updateFabPos(nx, ny);
+      }
+    }
 
- function onFabEnd() {
-   if (!isDragging) return;
-   isDragging = false;
-   fab.style.transition = 'all 0.3s cubic-bezier(0.25, 1, 0.5, 1)';
+    function onFabEnd() {
+      if (!isDragging) return;
+      isDragging = false;
+      fab.style.transition = 'all 0.3s cubic-bezier(0.25, 1, 0.5, 1)';
 
-   if (hasMoved) {
-     const rect = fab.getBoundingClientRect();
-     const snapRight = (rect.left + rect.width / 2 > window.innerWidth / 2);
-     fabLeft = snapRight ? (window.innerWidth - fab.offsetWidth - 16) : 16;
-     fabTop = rect.top;
-     updateFabPos(fabLeft, fabTop);
-   }
- }
+      if (hasMoved) {
+        const rect = fab.getBoundingClientRect();
+        const snapRight = (rect.left + rect.width / 2 > window.innerWidth / 2);
+        fabLeft = snapRight ? (window.innerWidth - fab.offsetWidth - 16) : 16;
+        fabTop = rect.top;
+        updateFabPos(fabLeft, fabTop);
+      }
+    }
 
- fab.addEventListener('touchstart', onFabStart, { passive: true });
- window.addEventListener('touchmove', onFabMove, { passive: true });
- window.addEventListener('touchend', onFabEnd);
+    fab.addEventListener('touchstart', onFabStart, { passive: true });
+    window.addEventListener('touchmove', onFabMove, { passive: true });
+    window.addEventListener('touchend', onFabEnd);
 
- fab.addEventListener('mousedown', onFabStart);
- window.addEventListener('mousemove', onFabMove);
- window.addEventListener('mouseup', onFabEnd);
+    fab.addEventListener('mousedown', onFabStart);
+    window.addEventListener('mousemove', onFabMove);
+    window.addEventListener('mouseup', onFabEnd);
 
- fab.onclick = (e) => {
-   e.preventDefault();
-   e.stopPropagation();
-   if (!hasMoved) {
-     toggleAiChat();
-   }
-   hasMoved = false;
- };
+    fab.onclick = (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      if (!hasMoved) {
+        toggleAiChat();
+      }
+      hasMoved = false;
+    };
 
     btnCloseChat.addEventListener('click', (e) => {
       e.stopPropagation();
@@ -3934,7 +3347,6 @@ btnSubmitComment.addEventListener('click', handlePostComment);
     typeCityBtn.addEventListener('click', () => { 
       currentDimension = 'cities'; 
       sessionStorage.setItem('ph_dim', 'cities');
-      // 如果本來就在都會圈的某城市（如達沃），切換時維持該城市；若之前在海島才預設回到 manila
       if (!REGION_CONFIG.cities.some(r => r.id === currentCity)) {
         currentCity = 'manila';
       }
@@ -4016,9 +3428,6 @@ btnSubmitComment.addEventListener('click', handlePostComment);
       }
     });
 
-    // =======================================================
-    // 雙 Tab（私房清單 / 站內信箱）切換與紅點連動邏輯
-    // =======================================================
     window.switchProfileTab = function(tabName) {
       const tabFav = document.getElementById('tab-btn-favorites');
       const tabInbox = document.getElementById('tab-btn-inbox');
@@ -4036,12 +3445,10 @@ btnSubmitComment.addEventListener('click', handlePostComment);
         if (contentFav) contentFav.style.display = 'none';
         if (contentInbox) contentInbox.style.display = 'flex';
 
-        // 點進信箱分頁時，自動消除未讀紅點
         window.clearNotificationBadges();
       }
     };
 
-    // 消除頭像與 Tab 上的未讀紅點
     window.clearNotificationBadges = function() {
       const avatarBadge = document.getElementById('user-avatar-badge');
       const tabBadge = document.getElementById('tab-inbox-badge');
@@ -4050,15 +3457,11 @@ btnSubmitComment.addEventListener('click', handlePostComment);
       localStorage.setItem('bigv_last_read_inbox_time', Date.now().toString());
     };
 
-    // 全部標為已讀按鈕
     window.markAllNotificationsRead = function() {
       window.clearNotificationBadges();
       showToast('📬 所有訊息已標記為已讀', 'fa-envelope-open');
     };
 
-    // =======================================================
-    // 站內信箱 Firestore 讀取、渲染與紅點比對核心邏輯
-    // =======================================================
     let currentInboxList = [];
 
     async function loadUserInboxMessages() {
@@ -4069,7 +3472,6 @@ btnSubmitComment.addEventListener('click', handlePostComment);
         const lastReadTime = parseInt(localStorage.getItem('bigv_last_read_inbox_time') || '0', 10);
         let combinedMessages = [];
 
-        // 1. 讀取全站廣播公告 (每週探索週報、專屬優惠)
         try {
           const annQuery = query(collection(db, "announcements"), orderBy("createdAt", "desc"));
           const annSnap = await getDocs(annQuery);
@@ -4086,7 +3488,6 @@ btnSubmitComment.addEventListener('click', handlePostComment);
           console.warn("[Inbox] 公告表讀取略過或暫無資料:", e);
         }
 
-        // 2. 讀取個人專屬通知 (違規處分、點數異動)
         if (currentUser) {
           try {
             const userNotifQuery = query(collection(db, "users", currentUser.uid, "notifications"), orderBy("createdAt", "desc"));
@@ -4105,11 +3506,9 @@ btnSubmitComment.addEventListener('click', handlePostComment);
           }
         }
 
-        // 3. 依照時間排序 (最新在最上面)
         combinedMessages.sort((a, b) => b.timestamp - a.timestamp);
         currentInboxList = combinedMessages;
 
-        // 4. 比對是否有新信件並亮起未讀紅點
         const hasUnread = combinedMessages.some(m => m.timestamp > lastReadTime);
         const avatarBadge = document.getElementById('user-avatar-badge');
         const tabBadge = document.getElementById('tab-inbox-badge');
@@ -4122,7 +3521,6 @@ btnSubmitComment.addEventListener('click', handlePostComment);
           if (tabBadge) tabBadge.classList.add('hidden');
         }
 
-        // 5. 渲染信箱列表
         renderInboxUI(combinedMessages, lastReadTime);
 
       } catch (err) {
@@ -4150,7 +3548,6 @@ btnSubmitComment.addEventListener('click', handlePostComment);
         const timeStr = new Date(m.timestamp).toLocaleDateString();
         const hasTarget = !!m.targetId;
 
-        // 根據信件類型顯示不同徽章色彩
         let badgeTag = '<span class="text-amber-300 font-bold">🌟 每週探索</span>';
         if (m.type === 'offer') {
           badgeTag = '<span class="text-rose-400 font-bold">🔥 限時特惠</span>';
@@ -4176,7 +3573,6 @@ btnSubmitComment.addEventListener('click', handlePostComment);
       }).join('');
     }
 
-    // 點擊帶有 targetId 的信件時直接跳轉店家卡片
     window.handleInboxCardClick = function(targetId) {
       if (!targetId) return;
       document.getElementById('auth-modal')?.classList.add('hidden');
@@ -4192,7 +3588,6 @@ btnSubmitComment.addEventListener('click', handlePostComment);
     if ('serviceWorker' in navigator) {
       let isUpdating = false;
 
-      // 只有在使用者親自點了「立即套用新版本」後，接管時才准重載畫面
       navigator.serviceWorker.addEventListener('controllerchange', () => {
         if (isUpdating) {
           window.location.reload();
@@ -4205,7 +3600,6 @@ btnSubmitComment.addEventListener('click', handlePostComment);
         const btnClose = document.getElementById('btn-close-pwa-modal');
         if (!modal || !btnApply) return;
 
-        // 強制解鎖並浮現卡片
         modal.classList.remove('hidden');
         requestAnimationFrame(() => {
           modal.classList.remove('scale-90', 'opacity-0');
@@ -4214,23 +3608,28 @@ btnSubmitComment.addEventListener('click', handlePostComment);
 
         btnApply.onclick = (e) => {
           e.stopPropagation();
+          if (isUpdating) return;
           isUpdating = true;
           btnApply.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> 正在更新套用中...';
           btnApply.style.pointerEvents = 'none';
 
-          // 1. 向 waiting 的 worker 發送跳過等待指令
+          modal.classList.add('hidden');
+
+          navigator.serviceWorker.addEventListener('controllerchange', () => {
+            window.location.reload();
+          }, { once: true });
+
           try {
             if (worker && worker.postMessage) {
               worker.postMessage({ type: 'SKIP_WAITING' });
             }
           } catch (err) {
-            console.warn('[SW] 發送 message 異常:', err);
+            window.location.reload();
           }
 
-          // 2. 超速保底：最多等 600 毫秒，不管有沒有收到 controllerchange 都強制刷新
           setTimeout(() => {
             window.location.reload();
-          }, 600);
+          }, 1500);
         };
 
         if (btnClose) {
@@ -4244,13 +3643,11 @@ btnSubmitComment.addEventListener('click', handlePostComment);
       }
 
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js?v=20260913-v42.4').then((reg) => {
-          // 1. 如果背景早就下載好、正卡在 waiting 狀態，直接強制跳出卡片
+        navigator.serviceWorker.register('./sw.js?v=20260913-v42.5').then((reg) => {
           if (reg.waiting) {
             showPwaUpdateModal(reg.waiting);
           }
 
-          // 2. 當前剛好抓到新檔案並下載完成
           reg.onupdatefound = () => {
             const installingWorker = reg.installing;
             if (!installingWorker) return;
@@ -4263,7 +3660,6 @@ btnSubmitComment.addEventListener('click', handlePostComment);
         }).catch((err) => console.warn('[SW] 註冊異常:', err));
       });
 
-      // 當使用者切回 App (或解鎖螢幕) 時，順手檢查一次
       document.addEventListener('visibilitychange', () => {
         if (document.visibilityState === 'visible') {
           navigator.serviceWorker.getRegistration().then(reg => {
