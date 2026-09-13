@@ -7,7 +7,7 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
-  <meta name="app-version" content="20260913-v43.3" />
+  <meta name="app-version" content="20260913-v43.4" />
   <meta name="theme-color" content="#020617" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -604,65 +604,107 @@ html.dark #btn-logout {
     html.light #toastActionBtn, html.amethyst #toastActionBtn { background: var(--theme-gradient) !important; color: var(--theme-badge-text) !important; }
     html.light .beam-card-container, html.amethyst .beam-card-container { box-shadow: var(--theme-glow) !important; }
 
-    /* Ocean 湛藍模式專屬全域綁定 */
-    html.ocean body { background-color: #F1F5F9 !important; color: #0F172A !important; }
-    html.ocean header.glass-header { background: var(--theme-header-bg) !important; border-bottom: 2px solid var(--theme-header-border) !important; }
-    html.ocean header * { color: #FFFFFF; }
-    html.ocean .lang-toggle-container { background: rgba(255, 255, 255, 0.25) !important; border: 1px solid rgba(255, 255, 255, 0.45) !important; }
-    html.ocean .lang-toggle-btn.active { background: #FFFFFF !important; color: var(--theme-primary) !important; }
-    html.ocean #share-btn { background-color: #FFFFFF !important; border: 1px solid var(--theme-border) !important; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08) !important; }
-    html.ocean #share-btn i { color: var(--theme-primary) !important; }
-    html.ocean #visit-count-container { background-color: #FFFFFF !important; border-color: var(--theme-border) !important; }
-    html.ocean #visit-count-container * { color: var(--theme-primary) !important; }
-    html.ocean #search-input { background-color: #FFFFFF !important; color: #0F172A !important; }
-    html.ocean .region-pill { background-color: #FFFFFF !important; border: 1px solid var(--theme-border) !important; color: var(--theme-primary) !important; font-weight: 700 !important; }
-    html.ocean .region-pill.bg-amber-400, html.ocean #typeCityBtn.bg-gradient-to-r, html.ocean #typeIslandBtn.bg-gradient-to-r, html.ocean .main-tab-pill.bg-gradient-to-r { background: var(--theme-gradient) !important; color: #FFFFFF !important; }
-    html.ocean .sub-pill { background-color: #FFFFFF !important; border: 1px solid var(--theme-border) !important; color: var(--theme-primary) !important; font-weight: 700 !important; }
-    html.ocean .sub-pill.bg-amber-400\/20 { background: var(--theme-gradient) !important; border: 1px solid var(--theme-header-border) !important; color: #FFFFFF !important; }
-    html.ocean #itemCountBadge { background-color: #FFFFFF !important; border: 1px solid var(--theme-border) !important; color: var(--theme-primary) !important; }
-    html.ocean article { background-color: var(--theme-card-bg) !important; border-color: var(--theme-card-border) !important; }
-    html.ocean article div.bg-slate-950 { background-color: var(--theme-card-bg) !important; }
-    html.ocean article div.bg-slate-900 { background-color: var(--theme-card-sub-bg) !important; border-top: 1px solid var(--theme-card-border) !important; }
-    html.ocean article h2, html.ocean article h4, html.ocean article h6 { color: var(--theme-text-title) !important; }
-    html.ocean article p { color: var(--theme-text-body) !important; }
-    html.ocean .btn-card-website { background-color: #FFFFFF !important; color: var(--theme-primary) !important; border: 2px solid var(--theme-border) !important; }
-    html.ocean .btn-card-website * { color: var(--theme-primary) !important; }
-    html.ocean .carousel-hint-pill { background-color: rgba(255, 255, 255, 0.9) !important; color: #1D4ED8 !important; border: 1px solid #BFDBFE !important; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08) !important; }
-    html.ocean button[onclick*="toggleFavorite"] { background-color: rgba(255, 255, 255, 0.85) !important; border: 1px solid var(--theme-border) !important; }
-    html.ocean button[onclick*="toggleFavorite"] i.fa-regular { color: var(--theme-primary) !important; }
-    html.ocean #auth-modal .bg-slate-950 { background-color: var(--theme-card-bg) !important; border-color: var(--theme-border) !important; }
-    html.ocean #auth-modal .bg-slate-900\/90 { background-color: var(--theme-card-sub-bg) !important; border-color: var(--theme-border) !important; }
-    html.ocean #auth-modal h3, html.ocean #auth-modal h4, html.ocean #auth-modal h5, html.ocean #auth-modal h6 { color: var(--theme-text-title) !important; }
-    html.ocean #auth-modal p { color: var(--theme-text-body) !important; }
-    html.ocean #user-modal-level { color: var(--theme-primary) !important; }
-    html.ocean #user-modal-level i { color: var(--theme-primary) !important; }
-    html.ocean #user-modal-points-text { color: var(--theme-text-title) !important; }
-    html.ocean #auth-modal .bg-slate-950.h-2 { background-color: #E5E7EB !important; border-color: var(--theme-border) !important; }
-    html.ocean #level-progress-fill { background: var(--theme-gradient) !important; }
-    html.ocean #push-slot-container { background-color: var(--theme-card-sub-bg) !important; border-color: var(--theme-border) !important; }
-    html.ocean #push-slot-container * { color: var(--theme-primary) !important; font-weight: 800 !important; }
-    html.ocean #push-toggle-btn.bg-amber-400 { background-color: var(--theme-primary) !important; }
-    html.ocean #btn-open-tasks-subview { background-color: var(--theme-card-sub-bg) !important; border-color: var(--theme-border) !important; color: var(--theme-primary) !important; }
-    html.ocean #btn-open-tasks-subview * { color: var(--theme-primary) !important; }
-    html.ocean .btn-modal-close, html.ocean #close-comment-btn, html.ocean #close-recommend-btn { background-color: var(--theme-primary-light) !important; border: 1px solid var(--theme-border) !important; color: var(--theme-primary) !important; }
-    html.ocean #btn-logout { background-color: #EFF6FF !important; border: 1.5px solid #BFDBFE !important; color: #1D4ED8 !important; font-weight: 900 !important; }
-    html.ocean #commentModalCard, html.ocean #commentModalHeader { background-color: var(--theme-card-bg) !important; border-color: var(--theme-border) !important; }
-    html.ocean #comment-modal-title { color: var(--theme-text-title) !important; }
-    html.ocean #comment-list-container > div { background-color: var(--theme-card-sub-bg) !important; border: 1px solid var(--theme-border) !important; }
-    html.ocean #comment-list-container p { color: var(--theme-text-body) !important; }
-    html.ocean #commentModalCard .border-t { background-color: var(--theme-card-bg) !important; border-color: var(--theme-border) !important; }
-    html.ocean #comment-input { background-color: var(--theme-card-sub-bg) !important; border: 1.5px solid var(--theme-border) !important; color: var(--theme-text-title) !important; }
-    html.ocean #btn-submit-comment { background: var(--theme-gradient) !important; color: #FFFFFF !important; }
-    html.ocean #user-favorites-box { background-color: var(--theme-card-sub-bg) !important; border-color: var(--theme-card-border) !important; }
-    html.ocean .inbox-list > div { background-color: var(--theme-card-sub-bg) !important; border-color: var(--theme-card-border) !important; }
-    html.ocean .inbox-list h6 { color: var(--theme-text-title) !important; }
-    html.ocean .inbox-list p { color: var(--theme-text-body) !important; }
-    html.ocean .btn-fav-action { background-color: var(--theme-primary-light) !important; border: 1px solid var(--theme-border) !important; }
-    html.ocean #auth-modal-tasks-view .bg-slate-900 { background-color: var(--theme-card-sub-bg) !important; border: 1px solid var(--theme-card-border) !important; }
-    html.ocean #recommend-modal > div { background-color: var(--theme-card-bg) !important; border: 1px solid var(--theme-border) !important; }
-    html.ocean #recommend-modal .fa-paper-plane { color: var(--theme-primary) !important; }
-    html.ocean #rec-city, html.ocean #rec-store-name, html.ocean #rec-reason { border: 2px solid var(--theme-border) !important; }
-    html.ocean #btn-submit-recommend { background: var(--theme-gradient) !important; color: #FFFFFF !important; }
+    /* ===================================================
+       Ocean 海島湛藍：徹底反白、純淨藍白（消滅所有黑底）
+       =================================================== */
+    html.ocean body { background-color: #F0F9FF !important; color: #0C4A6E !important; }
+    
+    /* 頂部 Header：深邃海島藍漸層，白字清晰 */
+    html.ocean header.glass-header { 
+      background: linear-gradient(180deg, #0284C7 0%, #0369A1 100%) !important; 
+      border-bottom: 2px solid #075985 !important; 
+    }
+    html.ocean header * { color: #FFFFFF !important; }
+    html.ocean .lang-toggle-container { background: rgba(255, 255, 255, 0.25) !important; border: 1px solid rgba(255, 255, 255, 0.5) !important; }
+    html.ocean .lang-toggle-btn.active { background: #FFFFFF !important; color: #0284C7 !important; }
+    html.ocean #share-btn { background-color: #FFFFFF !important; border: 1px solid rgba(255, 255, 255, 0.8) !important; box-shadow: 0 1px 3px rgba(0,0,0,0.1) !important; }
+    html.ocean #share-btn i { color: #0284C7 !important; }
+    html.ocean #visit-count-container { background-color: #FFFFFF !important; border-color: #BAE6FD !important; }
+    html.ocean #visit-count-container * { color: #0284C7 !important; }
+    html.ocean #search-input { background-color: #FFFFFF !important; color: #0C4A6E !important; border: 1px solid rgba(255, 255, 255, 0.7) !important; }
+    html.ocean #search-input::placeholder { color: #94A3B8 !important; }
+    html.ocean header .bg-slate-950, html.ocean header .bg-slate-900 { background-color: rgba(255, 255, 255, 0.25) !important; border-color: rgba(255, 255, 255, 0.4) !important; }
+    html.ocean header > div.bg-slate-950\/90 { background: #FFFFFF !important; border-top: 1px solid #BAE6FD !important; }
+    
+    /* 地區與分類膠囊：純白底＋藍字，啟用態亮海藍 */
+    html.ocean .region-pill { background-color: #FFFFFF !important; border: 1px solid #BAE6FD !important; color: #0284C7 !important; font-weight: 700 !important; }
+    html.ocean .region-pill.bg-amber-400, 
+    html.ocean #typeCityBtn.bg-gradient-to-r, 
+    html.ocean #typeIslandBtn.bg-gradient-to-r, 
+    html.ocean .main-tab-pill.bg-gradient-to-r { 
+      background: linear-gradient(135deg, #0284C7 0%, #0369A1 100%) !important; 
+      color: #FFFFFF !important; 
+    }
+    html.ocean .sub-pill { background-color: #FFFFFF !important; border: 1px solid #BAE6FD !important; color: #0284C7 !important; font-weight: 700 !important; }
+    html.ocean .sub-pill.bg-amber-400\/20 { 
+      background: linear-gradient(135deg, #0284C7 0%, #0369A1 100%) !important; 
+      border: 1px solid #0284C7 !important; 
+      color: #FFFFFF !important; 
+    }
+    html.ocean #itemCountBadge { background-color: #FFFFFF !important; border: 1px solid #BAE6FD !important; color: #0284C7 !important; }
+
+    /* 主清單卡片：徹底純白底、深色標題、移除所有黑背景 */
+    html.ocean article { background-color: #FFFFFF !important; border: 1px solid #E0F2FE !important; box-shadow: 0 4px 12px rgba(2, 132, 199, 0.08) !important; }
+    html.ocean article div.bg-slate-950 { background-color: #FFFFFF !important; }
+    html.ocean article div.bg-slate-900 { background-color: #F0F9FF !important; border-top: 1px solid #E0F2FE !important; }
+    html.ocean article h2, html.ocean article h4, html.ocean article h6, html.ocean article span.text-white { color: #0C4A6E !important; }
+    html.ocean article p { color: #334155 !important; }
+    html.ocean .card-meta-tag, html.ocean .card-review-prefix { color: #0284C7 !important; }
+    html.ocean .card-rating-star, html.ocean .card-rating-star i { color: #0284C7 !important; }
+    html.ocean .btn-card-website { background-color: #FFFFFF !important; color: #0284C7 !important; border: 2px solid #BAE6FD !important; }
+    html.ocean .btn-card-website * { color: #0284C7 !important; }
+    html.ocean .btn-card-comment { background: linear-gradient(135deg, #0284C7 0%, #0369A1 100%) !important; color: #FFFFFF !important; }
+    html.ocean .btn-card-comment * { color: #FFFFFF !important; font-weight: 900 !important; }
+    html.ocean .carousel-hint-pill { background-color: rgba(255, 255, 255, 0.95) !important; color: #0284C7 !important; border: 1px solid #BAE6FD !important; }
+    html.ocean button[onclick*="toggleFavorite"] { background-color: rgba(255, 255, 255, 0.9) !important; border: 1px solid #BAE6FD !important; }
+    html.ocean button[onclick*="toggleFavorite"] i.fa-regular { color: #0284C7 !important; }
+
+    /* 會員中心彈窗：徹底純白，消除大黑方塊（照片 1 痛點） */
+    html.ocean #auth-modal .bg-slate-950 { background-color: #FFFFFF !important; border-color: #BAE6FD !important; }
+    html.ocean #auth-modal .bg-slate-900, html.ocean #auth-modal .bg-slate-900\/90, html.ocean #auth-modal .bg-slate-900\/80 { 
+      background-color: #F0F9FF !important; 
+      border-color: #BAE6FD !important; 
+    }
+    html.ocean #auth-modal h3, html.ocean #auth-modal h4, html.ocean #auth-modal h5, html.ocean #auth-modal h6 { color: #0C4A6E !important; }
+    html.ocean #auth-modal p { color: #475569 !important; }
+    html.ocean #user-modal-level, html.ocean #user-modal-level i { color: #0284C7 !important; }
+    html.ocean #user-modal-points-text { color: #0C4A6E !important; }
+    html.ocean #auth-modal .bg-slate-950.h-2 { background-color: #E0F2FE !important; border-color: #BAE6FD !important; }
+    html.ocean #level-progress-fill { background: linear-gradient(135deg, #0284C7 0%, #0369A1 100%) !important; }
+    html.ocean #push-slot-container { background-color: #F0F9FF !important; border-color: #BAE6FD !important; }
+    html.ocean #push-slot-container * { color: #0284C7 !important; font-weight: 800 !important; }
+    html.ocean #push-toggle-btn.bg-amber-400 { background-color: #0284C7 !important; }
+    html.ocean #btn-open-tasks-subview { background-color: #F0F9FF !important; border-color: #BAE6FD !important; color: #0284C7 !important; }
+    html.ocean #btn-open-tasks-subview * { color: #0284C7 !important; }
+    html.ocean #user-favorites-box { background-color: #FFFFFF !important; border-color: #E0F2FE !important; }
+    html.ocean #user-favorites-box .bg-slate-900\/90 { background-color: #F0F9FF !important; border-color: #BAE6FD !important; }
+    html.ocean #user-favorites-box h6 { color: #0C4A6E !important; }
+    html.ocean .btn-fav-action { background-color: #E0F2FE !important; border: 1px solid #BAE6FD !important; }
+    html.ocean .btn-modal-close, html.ocean #close-comment-btn, html.ocean #close-recommend-btn { 
+      background-color: #E0F2FE !important; 
+      border: 1px solid #BAE6FD !important; 
+      color: #0284C7 !important; 
+    }
+    html.ocean #btn-logout { background-color: #FEF2F2 !important; border: 1.5px solid #FCA5A5 !important; color: #DC2626 !important; font-weight: 900 !important; }
+
+    /* 評論區彈窗：白底＋深色字，消滅照片 4 的黑底與黑格子 */
+    html.ocean #commentModalCard, html.ocean #commentModalHeader { background-color: #FFFFFF !important; border-color: #BAE6FD !important; }
+    html.ocean #comment-modal-title { color: #0C4A6E !important; }
+    html.ocean #comment-list-container > div { background-color: #F0F9FF !important; border: 1px solid #BAE6FD !important; }
+    html.ocean #comment-list-container p { color: #334155 !important; }
+    html.ocean #commentModalCard .border-t { background-color: #FFFFFF !important; border-color: #E0F2FE !important; }
+    html.ocean #comment-input { background-color: #F0F9FF !important; border: 1.5px solid #BAE6FD !important; color: #0C4A6E !important; }
+    html.ocean #btn-submit-comment { background: linear-gradient(135deg, #0284C7 0%, #0369A1 100%) !important; color: #FFFFFF !important; }
+
+    /* AI 管家彈窗：徹底白底＋藍色對齊（消滅照片 3 的黑底） */
+    html.ocean #chat-modal { background-color: #FFFFFF !important; border: 1.5px solid #BAE6FD !important; }
+    html.ocean #chat-modal-header { background: linear-gradient(135deg, #0284C7 0%, #0369A1 100%) !important; }
+    html.ocean #chat-messages { background-color: #FFFFFF !important; }
+    html.ocean .chat-bubble-agent { background-color: #F0F9FF !important; border-color: #BAE6FD !important; color: #0C4A6E !important; }
+    html.ocean .ai-quick-btn { background-color: #FFFFFF !important; border-color: #BAE6FD !important; color: #0284C7 !important; }
+    html.ocean #chat-input-bar { background-color: #FFFFFF !important; border-top: 1px solid #E0F2FE !important; }
+    html.ocean #chat-input { background-color: #F0F9FF !important; border: 1.5px solid #BAE6FD !important; color: #0C4A6E !important; }
+    html.ocean #btn-send-chat { background: linear-gradient(135deg, #0284C7 0%, #0369A1 100%) !important; color: #FFFFFF !important; }
   </style>
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col font-sans">
@@ -3966,7 +4008,7 @@ html.dark #btn-logout {
       }
 
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js?v=20260913-v43.3').then((reg) => {
+        navigator.serviceWorker.register('./sw.js?v=20260913-v43.4').then((reg) => {
           if (reg.waiting) {
             showPwaUpdateModal(reg.waiting);
           }
