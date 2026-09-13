@@ -1756,7 +1756,15 @@
     if (pushToggleBtn) {
       pushToggleBtn.addEventListener('click', () => {
         if (!currentUser) {
-          showToast('請先登入會員以管理推播設定', 'fa-lock');
+          showToast(
+            '🔒 請先登入會員，解鎖特約門市與專屬即時推播！',
+            'fa-lock',
+            '立即登入',
+            () => {
+              closeAiChat();
+              openAuthModal();
+            }
+          );
           return;
         }
         const isCurrentActive = pushToggleBtn.getAttribute('aria-checked') === 'true';
@@ -3363,7 +3371,28 @@ btnSubmitComment.addEventListener('click', handlePostComment);
     });
 
     document.getElementById('task-card-comment').addEventListener('click', () => {
-      showToast('💡 探店評論為常態活動：在任何卡片下方點擊「寫評論 +20」即可累積積分！', 'fa-pen-to-square');
+      if (!currentUser) {
+        showToast(
+          '🔒 請先登入會員，即可發表真實點評賺取 20 積分！',
+          'fa-lock',
+          '立即登入',
+          () => {
+            closeAiChat();
+            openAuthModal();
+          }
+        );
+        return;
+      }
+      // 已登入用戶：提示並提供直接探索的快捷按鈕
+      showToast(
+        '💡 探店評論為常態活動：在首頁任何店家卡片下方點擊「寫評論 +20」即可累積積分！',
+        'fa-pen-to-square',
+        '前往探索店家',
+        () => {
+          closeAuthModal();
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+      );
     });
 
     const recModal = document.getElementById('recommend-modal');
@@ -3629,6 +3658,18 @@ btnSubmitComment.addEventListener('click', handlePostComment);
       if (event) {
         event.preventDefault();
         event.stopPropagation();
+      }
+      if (!currentUser) {
+        showToast(
+          '🔒 請先登入會員，解鎖專屬 AI 管家諮詢服務！',
+          'fa-lock',
+          '立即登入',
+          () => {
+            closeAiChat();
+            openAuthModal();
+          }
+        );
+        return;
       }
       if (chatInput) {
         chatInput.value = question;
