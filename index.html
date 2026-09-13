@@ -1526,26 +1526,77 @@
     }
 
     function updateHeaderAuthBtn() {
-      const authBtnText = document.getElementById('auth-btn-text');
-      const avatarContainer = document.getElementById('user-avatar-container');
-      const dict = I18N_DICT[currentLang] || I18N_DICT['zh-TW'];
-      const ptsUnit = currentLang === 'zh-TW' ? '分' : 'PTS';
+  const authBtnText = document.getElementById('auth-btn-text');
+  const avatarContainer = document.getElementById('user-avatar-container');
+  const dict = I18N_DICT[currentLang] || I18N_DICT['zh-TW'];
+  const ptsUnit = currentLang === 'zh-TW' ? '分' : 'PTS';
 
-      if (currentUser) {
-        const dName = currentUserProfile.displayName || currentUser.displayName || dict.btnMember;
-        const pts = currentUserProfile.points || 50;
-        authBtnText.innerText = `${dName.split(' ')[0]} · ${pts}${ptsUnit}`;
-        if (currentUser.photoURL) {
-          avatarContainer.innerHTML = `<img id="user-avatar-icon" src="${currentUser.photoURL}" class="w-4 h-4 rounded-full ring-1 ring-amber-400 object-cover inline-block" />`;
-        } else {
-          avatarContainer.innerHTML = `<i id="user-avatar-icon" class="fa-solid fa-crown text-[11px] text-amber-400"></i>`;
-        }
-      } else {
-        authBtnText.innerText = dict.btnLogin;
-        avatarContainer.innerHTML = `<i id="user-avatar-icon" class="fa-regular fa-user text-[10px]"></i>`;
-      }
+  // 確保頭像外層具備 relative 定位，讓未讀紅點能精準釘在右上角
+  if (avatarContainer) {
+    avatarContainer.classList.add('relative');
+  }
+
+  // 檢查目前是否仍有未讀通知
+  const hasUnread = window._hasUnreadNotifications || false;
+  const redDotHtml = `<span id="header-unread-dot" class="absolute -top-1 -right-1 w-2.5 h-2.5 bg-rose-500 rounded-full border-2 border-slate-900 ${hasUnread ? '' : 'hidden'} animate-pulse"></span>`;
+
+  if (currentUser) {
+    const dName = currentUserProfile.displayName || currentUser.displayName || dict.btnMember;
+    const pts = currentUserProfile.points || 50;
+    authBtnText.innerText = `${dName.split(' ')[0]} · ${pts}${ptsUnit}`;
+    if (currentUser.photoURL) {
+      avatarContainer.innerHTML = `<img id="user-avatar-icon" src="${currentUser.photoURL}" class="w-4 h-4 rounded-full ring-1 ring-amber-400 object-cover inline-block" />${redDotHtml}`;
+    } else {
+      avatarContainer.innerHTML = `<i id="user-avatar-icon" class="fa-solid fa-crown text-[11px] text-amber-400"></i>${redDotHtml}`;
     }
+  } else {
+    authBtnText.innerText = dict.btnLogin;
+    avatarContainer.innerHTML = `<i id="user-avatar-icon" class="fa-regular fa-user text-[10px]"></i>`;
+  }
+}
 
+    // 全域檢查未讀信件並同步首頁外層頭像紅點
+    window.checkUserUnreadNotifications = async function() {
+      if (!currentUser) return;
+      try {
+        const lastReadTime = parseInt(localStorage.getItem('bigv_last_read_inbox_time') || '0', 10);
+        let hasUnread = false;
+
+        // 1. 檢查全站公告
+        try {
+          const annSnap = await getDocs(query(collection(db, "announcements"), orderBy("createdAt", "desc")));
+          annSnap.forEach(d => {
+            const data = d.data();
+            const ts = typeof data.createdAt === 'number' ? data.createdAt : (data.createdAt?.toMillis ? data.createdAt.toMillis() : new Date(data.createdAt || Date.now()).getTime());
+            if (ts > lastReadTime) hasUnread = true;
+          });
+        } catch (e) {}
+
+        // 2. 檢查個人專屬通知
+        try {
+          const userNotifSnap = await getDocs(query(collection(db, "users", currentUser.uid, "notifications"), orderBy("createdAt", "desc")));
+          userNotifSnap.forEach(d => {
+            const data = d.data();
+            const ts = typeof data.createdAt === 'number' ? data.createdAt : (data.createdAt?.toMillis ? data.createdAt.toMillis() : new Date(data.createdAt || Date.now()).getTime());
+            if (ts > lastReadTime) hasUnread = true;
+          });
+        } catch (e) {}
+
+        // 3. 點亮外層頭像左上角紅點與會員視窗內的 Tab 紅點
+        const avatarBadge = document.getElementById('user-avatar-badge');
+        const tabBadge = document.getElementById('tab-inbox-badge');
+        if (hasUnread) {
+          if (avatarBadge) avatarBadge.classList.remove('hidden');
+          if (tabBadge) tabBadge.classList.remove('hidden');
+        } else {
+          if (avatarBadge) avatarBadge.classList.add('hidden');
+          if (tabBadge) tabBadge.classList.add('hidden');
+        }
+      } catch (err) {
+        console.warn("[Notifications] 檢查紅點略過:", err);
+      }
+    };
+    
     function applyLanguage(lang) {
       currentLang = (lang === 'en') ? 'en' : 'zh-TW';
       localStorage.setItem('ph_app_lang', currentLang);
@@ -1840,6 +1891,7 @@ function showToast(msg, icon = 'fa-check', actionText = '', actionCallback = nul
         requestPushNotificationPermission(user);
         syncUserFavoritesFromCloud(user.uid);
         loadUserInboxMessages();
+        window.checkUserUnreadNotifications();
       }
 
       updateHeaderAuthBtn();
@@ -3067,16 +3119,19 @@ window.executeAdminAction = async function(actionType) {
         showToast(`🚫 處分完成：扣20分並${banNotice}`, 'fa-ban');
       }
 
-      // 若被處分對象是當前登入者本人（站長測試自己），即時更新本地個人資料與站內信箱
+      // 若被處分對象是當前登入者本人（站長測試自己），即時更新本地個人資料與外層頭像紅點
       if (currentUser && targetUid === currentUser.uid) {
         if (currentUserProfile) {
           currentUserProfile.points = Math.max(0, (currentUserProfile.points || 50) - 20);
-          updateHeaderAuthBtn();
-          updateUserModalView();
         }
-        await loadUserInboxMessages();
+        // 標記有未讀通知並點亮首頁外層紅點
+        window._hasUnreadNotifications = true;
+        updateHeaderAuthBtn();
+        if (typeof updateUserModalView === 'function') updateUserModalView();
+        if (typeof window.checkUserUnreadNotifications === 'function') {
+          await window.checkUserUnreadNotifications();
+        }
       }
-    }
 
     // 關閉面板並重新整理留言清單
     window.closeAdminActionSheet();
