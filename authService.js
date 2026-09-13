@@ -233,6 +233,7 @@ export async function addStoreComment(storeId, commentPayload) {
     storeId: String(storeId),
     targetId: String(storeId),
     userId: currentUser.uid,
+    userEmail: currentUser.email || "",
     userName: currentUserProfile?.displayName || currentUser.displayName || "匿名老饕",
     userPhoto: currentUserProfile?.photoURL || currentUser.photoURL || "",
     rating: rating,
