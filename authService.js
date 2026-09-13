@@ -329,3 +329,8 @@ export function initAuthService() {
     }
   });
 }
+
+export async function deleteStoreComment(commentId) {
+  const { doc, deleteDoc } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js");
+  await deleteDoc(doc(db, "comments", commentId));
+}
