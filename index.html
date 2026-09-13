@@ -7,7 +7,7 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
-  <meta name="app-version" content="20260913-v42.5" />
+  <meta name="app-version" content="20260913-v42.6" />
   <meta name="theme-color" content="#020617" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -276,7 +276,6 @@
        43 個變色器官通用綁定 (自動讀取對應主題變數)
        ======================================================= */
     
-    /* 基礎頁面底色與文字色 */
     html.light body { background-color: #F7F3EB !important; color: #1F2937 !important; }
     html.amethyst body { background-color: #FAF6F9 !important; color: #2E1A33 !important; }
 
@@ -319,17 +318,60 @@
     html.light article h2, html.light article h4, html.light article h6,
     html.amethyst article h2, html.amethyst article h4, html.amethyst article h6 { color: var(--theme-text-title) !important; }
     html.light article p, html.amethyst article p { color: var(--theme-text-body) !important; }
-    html.light .btn-card-comment, html.amethyst .btn-card-comment { background: var(--theme-gradient) !important; color: var(--theme-badge-text) !important; }
-    html.light .btn-card-website, html.amethyst .btn-card-website { background-color: #FFFFFF !important; color: var(--theme-primary) !important; border-color: var(--theme-border) !important; }
-    html.light .btn-card-phone, html.amethyst .btn-card-phone { background-color: #FFFFFF !important; }
-    html.light .btn-card-nav, html.amethyst .btn-card-nav { background-color: #FFFFFF !important; }
+    
+    /* 1. 寫評論：唯獨此按鈕隨主題漸層連動 */
+    .btn-card-comment { background: var(--theme-gradient) !important; color: var(--theme-badge-text) !important; }
+    .btn-card-comment * { color: var(--theme-badge-text) !important; font-weight: 900 !important; }
+
+    /* 2. 官網/粉專：隨主題邊框與字色 */
+    html.light .btn-card-website, html.amethyst .btn-card-website { background-color: #FFFFFF !important; color: var(--theme-primary) !important; border: 1px solid var(--theme-border) !important; }
+
+    /* 3. Grab 點餐：全域規格鎖死 綠底白字 (絕不變色) */
+    .btn-card-grab {
+      background: #00B14F !important;
+      background-color: #00B14F !important;
+      border: 1px solid #009A44 !important;
+      color: #FFFFFF !important;
+      box-shadow: 0 2px 6px rgba(0, 177, 79, 0.25) !important;
+    }
+    .btn-card-grab * { color: #FFFFFF !important; font-weight: 800 !important; }
+
+    /* 4. 撥打電話：全域規格鎖死 綠色 (通話翠綠，絕不變色) */
+    .btn-card-phone {
+      background-color: #FFFFFF !important;
+      border: 1.5px solid #A7F3D0 !important;
+      color: #059669 !important;
+    }
+    .btn-card-phone * { color: #059669 !important; font-weight: 700 !important; }
+    html.dark .btn-card-phone {
+      background-color: rgba(15, 23, 42, 0.95) !important;
+      border: 1px solid rgba(16, 185, 129, 0.45) !important;
+      color: #34D399 !important;
+    }
+    html.dark .btn-card-phone * { color: #34D399 !important; }
+
+    /* 5. 路線導航：全域規格鎖死 藍色 (導航天藍，絕不變色) */
+    .btn-card-nav {
+      background-color: #FFFFFF !important;
+      border: 1.5px solid #BAE6FD !important;
+      color: #0284C7 !important;
+    }
+    .btn-card-nav * { color: #0284C7 !important; font-weight: 700 !important; }
+    html.dark .btn-card-nav {
+      background-color: rgba(15, 23, 42, 0.95) !important;
+      border: 1px solid rgba(14, 165, 233, 0.45) !important;
+      color: #38BDF8 !important;
+    }
+    html.dark .btn-card-nav * { color: #38BDF8 !important; }
+
+    /* 卡片標籤與星號 */
     html.light .card-pill-tag, html.amethyst .card-pill-tag { background-color: var(--theme-primary-light) !important; border-color: var(--theme-border) !important; color: var(--theme-primary) !important; }
     html.light .card-meta-tag, html.amethyst .card-meta-tag { color: var(--theme-primary) !important; }
     html.light .card-rating-star, html.amethyst .card-rating-star,
     html.light .card-rating-star i, html.amethyst .card-rating-star i { color: var(--theme-primary) !important; }
     html.light .card-review-prefix, html.amethyst .card-review-prefix { color: var(--theme-primary) !important; }
 
-    /* [三、會員中心面板] */
+    /* [三、會員中心面板 & 全域彈窗通用關閉按鈕] */
     html.light #auth-modal .bg-slate-950, html.amethyst #auth-modal .bg-slate-950 { background-color: var(--theme-card-bg) !important; border-color: var(--theme-border) !important; }
     html.light #auth-modal .bg-slate-900\/90, html.amethyst #auth-modal .bg-slate-900\/90 { background-color: var(--theme-card-sub-bg) !important; border-color: var(--theme-border) !important; }
     html.light #auth-modal h3, html.light #auth-modal h4, html.light #auth-modal h5, html.light #auth-modal h6,
@@ -340,11 +382,30 @@
     html.light #user-modal-points-text, html.amethyst #user-modal-points-text { color: var(--theme-text-title) !important; }
     html.light #auth-modal .bg-slate-950.h-2, html.amethyst #auth-modal .bg-slate-950.h-2 { background-color: #E5E7EB !important; border-color: var(--theme-border) !important; }
     html.light #level-progress-fill, html.amethyst #level-progress-fill { background: var(--theme-gradient) !important; }
+
+    /* 推播區塊文字與鈴鐺圖示全面對齊主題色 */
     html.light #push-slot-container, html.amethyst #push-slot-container { background-color: var(--theme-card-sub-bg) !important; border-color: var(--theme-border) !important; }
-    html.light #push-slot-container .fa-bell, html.amethyst #push-slot-container .fa-bell { color: var(--theme-primary) !important; }
+    html.light #push-slot-container *, html.amethyst #push-slot-container * { color: var(--theme-primary) !important; font-weight: 800 !important; }
     html.light #push-toggle-btn.bg-amber-400, html.amethyst #push-toggle-btn.bg-amber-400 { background-color: var(--theme-primary) !important; }
     html.light #btn-open-tasks-subview, html.amethyst #btn-open-tasks-subview { background-color: var(--theme-card-sub-bg) !important; border-color: var(--theme-border) !important; color: var(--theme-primary) !important; }
     html.light #btn-open-tasks-subview *, html.amethyst #btn-open-tasks-subview * { color: var(--theme-primary) !important; }
+
+    /* 所有彈窗右上角關閉按鈕 (✕) 隨主題變換柔和底色 */
+    html.light .btn-modal-close, html.light #close-comment-btn, html.light #close-recommend-btn {
+      background-color: var(--theme-primary-light) !important;
+      border: 1px solid var(--theme-border) !important;
+      color: var(--theme-primary) !important;
+    }
+    html.amethyst .btn-modal-close, html.amethyst #close-comment-btn, html.amethyst #close-recommend-btn {
+      background-color: var(--theme-primary-light) !important;
+      border: 1px solid var(--theme-border) !important;
+      color: var(--theme-primary) !important;
+    }
+    html.dark .btn-modal-close, html.dark #close-comment-btn, html.dark #close-recommend-btn {
+      background-color: #0F172A !important;
+      border: 1px solid #334155 !important;
+      color: #94A3B8 !important;
+    }
 
     /* [四、會員雙 Tab & 信箱] */
     html.light #user-favorites-box, html.amethyst #user-favorites-box { background-color: var(--theme-card-sub-bg) !important; border-color: var(--theme-card-border) !important; }
@@ -361,8 +422,7 @@
     .task-theme-title { color: var(--theme-primary) !important; }
     .task-theme-pts { color: var(--theme-primary) !important; }
     .task-theme-badge { background: var(--theme-gradient) !important; color: var(--theme-badge-text) !important; }
-    html.light .task-view-title { color: #111827 !important; }
-    html.amethyst .task-view-title { color: #28142C !important; }
+    .task-view-title { color: var(--theme-primary) !important; font-weight: 900 !important; }
     html.light #auth-modal-tasks-view .bg-slate-900, html.amethyst #auth-modal-tasks-view .bg-slate-900 { background-color: var(--theme-card-sub-bg) !important; border: 1px solid var(--theme-card-border) !important; }
 
     /* [六、AI 旅遊管家] */
@@ -389,7 +449,13 @@
     html.light #magic-email-input, html.amethyst #magic-email-input { border: 2px solid var(--theme-border) !important; }
     html.light #btn-magic-email, html.amethyst #btn-magic-email { background: var(--theme-gradient) !important; color: var(--theme-badge-text) !important; }
 
-    /* [九、全域反饋與特效] */
+    /* [九、店家評論彈窗] */
+    html.light #commentModalCard, html.amethyst #commentModalCard { background-color: var(--theme-card-bg) !important; border-color: var(--theme-border) !important; }
+    html.light #commentModalHeader, html.amethyst #commentModalHeader { background-color: var(--theme-card-bg) !important; border-color: var(--theme-card-border) !important; }
+    html.light #comment-modal-title, html.amethyst #comment-modal-title { color: var(--theme-text-title) !important; }
+    html.light #btn-submit-comment, html.amethyst #btn-submit-comment { background: var(--theme-gradient) !important; color: var(--theme-badge-text) !important; }
+
+    /* [十、全域反饋與特效] */
     html.light #toastInnerBox, html.amethyst #toastInnerBox { border: 1px solid var(--theme-border) !important; }
     html.light #toastIcon, html.amethyst #toastIcon { color: var(--theme-primary) !important; }
     html.light #toastActionBtn, html.amethyst #toastActionBtn { background: var(--theme-gradient) !important; color: var(--theme-badge-text) !important; }
@@ -425,7 +491,7 @@
       <button id="toastCloseBtn" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full bg-slate-800/90 hover:bg-slate-700 active:bg-slate-600 text-slate-300 hover:text-white flex items-center justify-center text-xs cursor-pointer transition active:scale-90 select-none z-10">✕</button>
       
       <div class="flex items-center justify-center gap-2 px-6">
-        <i id="toastIcon" class="fa-solid fa-check text-amber-400 text-base flex-shrink-0"></i>
+        <i id="toastIcon" class="fa-solid fa-check text-base flex-shrink-0"></i>
         <span id="toastMessage" class="leading-relaxed text-xs sm:text-sm font-bold">已完成操作</span>
       </div>
       <div id="toastActionContainer" class="w-full flex justify-center px-2"></div>
@@ -468,7 +534,7 @@
         </div>
       </div>
 
-      <!-- 第二列：搜尋欄 + 雙態語系按鈕 -->
+      <!-- 第二列：搜尋欄 + 雙態語系切換鈕 -->
       <div class="flex items-center gap-1.5">
         <div class="relative flex-1 flex items-center">
           <i class="fa-solid fa-magnifying-glass absolute left-3 text-slate-500 text-xs pointer-events-none"></i>
@@ -565,7 +631,7 @@
       
       <!-- 登入前檢視 -->
       <div id="auth-modal-login-view">
-        <button id="close-auth-btn-guest" class="btn-modal-close absolute top-3 right-3 w-7 h-7 bg-slate-900 rounded-full text-slate-400 hover:text-white flex items-center justify-center text-xs">✕</button>
+        <button id="close-auth-btn-guest" class="btn-modal-close absolute top-3 right-3 w-7 h-7 rounded-full flex items-center justify-center text-xs">✕</button>
         <div class="w-12 h-12 bg-amber-400/10 border border-amber-400/30 text-amber-400 rounded-2xl flex items-center justify-center mx-auto mb-2 text-xl shadow-md">
           <i class="fa-solid fa-crown"></i>
         </div>
@@ -624,7 +690,7 @@
               </div>
             </div>
 
-            <button id="close-auth-btn-user" class="btn-modal-close w-7 h-7 bg-slate-900 rounded-full text-slate-400 hover:text-white flex items-center justify-center text-xs">✕</button>
+            <button id="close-auth-btn-user" class="btn-modal-close w-7 h-7 rounded-full flex items-center justify-center text-xs">✕</button>
           </div>
         </div>
 
@@ -632,7 +698,7 @@
         <div class="bg-slate-900/90 border border-amber-400/30 rounded-xl p-3 flex flex-col justify-center space-y-2">
           <div class="flex items-center justify-between text-[11px] leading-tight">
             <span id="user-modal-level" class="font-bold flex items-center gap-1 text-amber-300">
-              <i class="fa-solid fa-medal text-amber-400"></i> LV.1 探店初心者
+              <i class="fa-solid fa-medal"></i> LV.1 探店初心者
             </span>
             <span id="user-modal-points-text" class="font-mono font-bold text-slate-100">50 / 100 PTS</span>
           </div>
@@ -645,8 +711,8 @@
         <!-- 中間捷徑列：推播開關 + 任務入口 -->
         <div class="grid grid-cols-2 gap-2 text-xs">
           <div id="push-slot-container" class="bg-slate-900/80 border border-slate-800 rounded-xl px-2.5 py-2 flex items-center justify-between">
-            <span class="text-[10px] font-bold text-slate-300 flex items-center gap-1.5 leading-none">
-              <i class="fa-regular fa-bell text-amber-400 text-[10px]"></i>
+            <span class="text-[10px] font-bold flex items-center gap-1.5 leading-none">
+              <i class="fa-regular fa-bell text-[10px]"></i>
               <span id="label-push-toggle" data-i18n="labelAlerts">推播</span>
             </span>
             <button id="push-toggle-btn" type="button" class="relative inline-flex h-4 w-8 flex-shrink-0 cursor-pointer rounded-full border border-transparent bg-slate-800 transition-colors duration-200 ease-in-out focus:outline-none" role="switch" aria-checked="false">
@@ -655,7 +721,7 @@
           </div>
 
           <button id="btn-open-tasks-subview" type="button" class="bg-slate-900/80 hover:bg-slate-800 border border-amber-400/30 text-amber-300 rounded-xl px-2 py-2 flex items-center justify-center gap-1 text-[10px] font-bold transition active:scale-95 shadow-sm leading-none">
-            <i class="fa-solid fa-trophy text-amber-400 text-[10px]"></i>
+            <i class="fa-solid fa-trophy text-[10px]"></i>
             <span id="label-tasks-btn" data-i18n="btnTasksAndMeetup" class="truncate">特殊任務 & 揪團 ➔</span>
           </button>
         </div>
@@ -714,7 +780,7 @@
             <i class="fa-solid fa-arrow-left text-[10px]"></i> <span data-i18n="btnBackCenter">返回中心</span>
           </button>
           <span data-i18n="taskSubTitle" class="task-view-title text-xs font-bold">探店任務與吃貨同行</span>
-          <button id="close-auth-btn-tasks" class="btn-modal-close w-7 h-7 bg-slate-900 rounded-full text-slate-400 hover:text-white flex items-center justify-center text-xs">✕</button>
+          <button id="close-auth-btn-tasks" class="btn-modal-close w-7 h-7 rounded-full flex items-center justify-center text-xs">✕</button>
         </div>
 
         <div class="flex-1 overflow-y-auto hide-scrollbar space-y-2.5 text-xs text-slate-300 pr-0.5">
@@ -754,7 +820,7 @@
         <h4 class="font-bold text-sm text-white flex items-center gap-1.5">
           <i class="fa-solid fa-paper-plane text-amber-400"></i> <span data-i18n="recModalTitle">推薦在地私房好店</span>
         </h4>
-        <button id="close-recommend-btn" class="btn-modal-close w-7 h-7 bg-slate-900 rounded-full text-slate-400 hover:text-white flex items-center justify-center text-xs">✕</button>
+        <button id="close-recommend-btn" class="btn-modal-close w-7 h-7 rounded-full flex items-center justify-center text-xs">✕</button>
       </div>
 
       <div class="space-y-2.5 text-xs">
@@ -797,7 +863,7 @@
           <h3 id="comment-modal-title" class="font-bold text-sm text-white truncate">店家真實點評討論</h3>
           <p data-i18n="commentSub" class="text-[10px] text-amber-400/80 mt-0.5">分享您的真實探店評語與心得</p>
         </div>
-        <button id="close-comment-btn" type="button" class="flex-shrink-0 w-8 h-8 bg-slate-800 hover:bg-slate-700 active:bg-slate-600 rounded-full text-slate-300 active:text-white flex items-center justify-center text-sm cursor-pointer transition">✕</button>
+        <button id="close-comment-btn" type="button" class="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-sm cursor-pointer transition">✕</button>
       </div>
 
       <div id="comment-list-container" class="flex-1 overflow-y-auto hide-scrollbar p-3 space-y-2.5 text-xs overscroll-contain">
@@ -882,7 +948,7 @@
           <span class="text-[9px] text-amber-300">Powered by Gemini</span>
         </div>
       </div>
-      <button id="btn-close-chat" class="btn-modal-close w-7 h-7 bg-white/10 rounded-full text-slate-300 hover:text-white text-xs flex items-center justify-center">✕</button>
+      <button id="btn-close-chat" class="btn-modal-close w-7 h-7 rounded-full flex items-center justify-center text-xs">✕</button>
     </div>
     <div id="chat-messages" class="flex-1 p-3.5 overflow-y-auto space-y-2.5 text-xs bg-slate-950 hide-scrollbar"></div>
     <div id="chat-input-bar" class="p-2.5 bg-slate-900 border-t border-slate-800 flex gap-1.5 items-center flex-shrink-0">
@@ -3643,7 +3709,7 @@
       }
 
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js?v=20260913-v42.5').then((reg) => {
+        navigator.serviceWorker.register('./sw.js?v=20260913-v42.6').then((reg) => {
           if (reg.waiting) {
             showPwaUpdateModal(reg.waiting);
           }
