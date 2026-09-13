@@ -2835,63 +2835,65 @@ function showToast(msg, icon = 'fa-check', actionText = '', actionCallback = nul
     }
 
     function onFabStart(e) {
-      if (!chatModal.classList.contains('hidden')) return;
-      const pt = e.touches ? e.touches[0] : e;
-      dragStartX = pt.clientX;
-      dragStartY = pt.clientY;
-      const rect = fab.getBoundingClientRect();
-      initialLeft = rect.left;
-      initialTop = rect.top;
-      hasMoved = false;
-      isDragging = true;
-      fab.style.transition = 'none';
-    }
+   if (!chatModal.classList.contains('hidden')) return;
+   const pt = e.touches ? e.touches[0] : e;
+   dragStartX = pt.clientX;
+   dragStartY = pt.clientY;
+   const rect = fab.getBoundingClientRect();
+   initialLeft = rect.left;
+   initialTop = rect.top;
+   hasMoved = false;
+   isDragging = true;
+   fab.style.transition = 'none';
+ }
 
-    function onFabMove(e) {
-      if (!isDragging || !chatModal.classList.contains('hidden')) return;
-      const pt = e.touches ? e.touches[0] : e;
-      const dx = pt.clientX - dragStartX;
-      const dy = pt.clientY - dragStartY;
+ function onFabMove(e) {
+   if (!isDragging || !chatModal.classList.contains('hidden')) return;
+   const pt = e.touches ? e.touches[0] : e;
+   const dx = pt.clientX - dragStartX;
+   const dy = pt.clientY - dragStartY;
 
-      if (Math.hypot(dx, dy) > 6) hasMoved = true;
+   if (Math.hypot(dx, dy) > 15) hasMoved = true;
 
-      let nx = initialLeft + dx;
-      let ny = initialTop + dy;
+   if (hasMoved) {
+     let nx = initialLeft + dx;
+     let ny = initialTop + dy;
+     nx = Math.max(8, Math.min(nx, window.innerWidth - fab.offsetWidth - 8));
+     ny = Math.max(60, Math.min(ny, window.innerHeight - fab.offsetHeight - 90));
+     updateFabPos(nx, ny);
+   }
+ }
 
-      nx = Math.max(8, Math.min(nx, window.innerWidth - fab.offsetWidth - 8));
-      ny = Math.max(60, Math.min(ny, window.innerHeight - fab.offsetHeight - 90));
+ function onFabEnd() {
+   if (!isDragging) return;
+   isDragging = false;
+   fab.style.transition = 'all 0.3s cubic-bezier(0.25, 1, 0.5, 1)';
 
-      updateFabPos(nx, ny);
-    }
+   if (hasMoved) {
+     const rect = fab.getBoundingClientRect();
+     const snapRight = (rect.left + rect.width / 2 > window.innerWidth / 2);
+     fabLeft = snapRight ? (window.innerWidth - fab.offsetWidth - 16) : 16;
+     fabTop = rect.top;
+     updateFabPos(fabLeft, fabTop);
+   }
+ }
 
-    function onFabEnd() {
-      if (!isDragging) return;
-      isDragging = false;
-      fab.style.transition = 'all 0.3s cubic-bezier(0.25, 1, 0.5, 1)';
+ fab.addEventListener('touchstart', onFabStart, { passive: true });
+ window.addEventListener('touchmove', onFabMove, { passive: true });
+ window.addEventListener('touchend', onFabEnd);
 
-      if (hasMoved) {
-        const rect = fab.getBoundingClientRect();
-        const snapRight = (rect.left + rect.width / 2 > window.innerWidth / 2);
-        fabLeft = snapRight ? (window.innerWidth - fab.offsetWidth - 16) : 16;
-        fabTop = rect.top;
-        updateFabPos(fabLeft, fabTop);
-      } else {
-        toggleAiChat();
-      }
-    }
+ fab.addEventListener('mousedown', onFabStart);
+ window.addEventListener('mousemove', onFabMove);
+ window.addEventListener('mouseup', onFabEnd);
 
-    fab.addEventListener('touchstart', onFabStart, { passive: true });
-    window.addEventListener('touchmove', onFabMove, { passive: true });
-    window.addEventListener('touchend', onFabEnd);
-
-    fab.addEventListener('mousedown', onFabStart);
-    window.addEventListener('mousemove', onFabMove);
-    window.addEventListener('mouseup', onFabEnd);
-
-    fab.addEventListener('click', (e) => {
-      e.stopPropagation();
-      if (!hasMoved) toggleAiChat();
-    });
+ fab.onclick = (e) => {
+   e.preventDefault();
+   e.stopPropagation();
+   if (!hasMoved) {
+     toggleAiChat();
+   }
+   hasMoved = false;
+ };
 
     btnCloseChat.addEventListener('click', (e) => {
       e.stopPropagation();
