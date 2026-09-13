@@ -7,7 +7,7 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
-  <meta name="app-version" content="20260912-v40.0-master-production" />
+  <meta name="app-version" content="20260912-v41.0" />
   <meta name="theme-color" content="#020617" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -3356,22 +3356,48 @@ btnSubmitComment.addEventListener('click', handlePostComment);
     initAuthService();
 
     if ('serviceWorker' in navigator) {
+      let refreshing = false;
+      // 當新的 Service Worker 奪取控制權時，自動刷新頁面
+      navigator.serviceWorker.addEventListener('controllerchange', () => {
+        if (!refreshing) {
+          refreshing = true;
+          window.location.reload();
+        }
+      });
+
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js?v=20260912-v40.0').then((reg) => {
+        navigator.serviceWorker.register('./sw.js?v=20260913-v41.0').then((reg) => {
+          // 定期或背景主動檢查是否有新版
           reg.update().catch(() => {});
+
+          // 若已經有正在等待生效的 Worker
+          if (reg.waiting) {
+            promptUserToUpdate(reg.waiting);
+          }
+
           reg.onupdatefound = () => {
             const installingWorker = reg.installing;
             if (!installingWorker) return;
             installingWorker.onstatechange = () => {
               if (installingWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                if (installingWorker.waiting) {
-                  installingWorker.waiting.postMessage({ type: 'SKIP_WAITING' });
-                }
+                // 背景已下載完畢，彈出 Toast 提示使用者升級
+                promptUserToUpdate(installingWorker);
               }
             };
           };
         }).catch((err) => console.warn('[SW] 註冊異常:', err));
       });
+
+      function promptUserToUpdate(worker) {
+        showToast(
+          '✨ 發現新版本更新！點擊立即套用最新功能',
+          'fa-rotate',
+          '立即更新',
+          () => {
+            worker.postMessage({ type: 'SKIP_WAITING' });
+          }
+        );
+      }
     }
   </script>
 </body>
