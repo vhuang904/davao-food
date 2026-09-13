@@ -692,6 +692,49 @@
       border: 1px solid #E9D5FF !important;
       color: #7B337F !important;
     }
+
+    /* =======================================================
+       特殊任務視窗：文字、按鈕、積分與徽章多主題連動樣式
+       ======================================================= */
+    /* 1. 暗夜尊爵 (Dark) */
+    html.dark .task-view-title, html:not(.light):not(.amethyst) .task-view-title { color: #FFFFFF !important; }
+    html.dark .task-theme-btn, html:not(.light):not(.amethyst) .task-theme-btn { color: #FCD34D !important; }
+    html.dark .task-theme-title, html:not(.light):not(.amethyst) .task-theme-title { color: #FCD34D !important; }
+    html.dark .task-theme-pts, html:not(.light):not(.amethyst) .task-theme-pts { color: #F59E0B !important; }
+    html.dark .task-theme-badge, html:not(.light):not(.amethyst) .task-theme-badge {
+      background: #F59E0B !important;
+      color: #020617 !important;
+    }
+
+    /* 2. 暖陽金橘 (Light) */
+    html.light .task-view-title { color: #111827 !important; font-weight: 900 !important; }
+    html.light .task-theme-btn { color: #EA580C !important; }
+    html.light .task-theme-title { color: #EA580C !important; font-weight: 800 !important; }
+    html.light .task-theme-pts { color: #EA580C !important; }
+    html.light .task-theme-badge {
+      background: linear-gradient(135deg, #F97316, #EA580C) !important;
+      color: #FFFFFF !important;
+    }
+    html.light #auth-modal-tasks-view .bg-slate-900 {
+      background-color: #FFFFFF !important;
+      border: 1px solid #EFE8DC !important;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+    }
+
+    /* 3. 暮光紫霞 (Amethyst) */
+    html.amethyst .task-view-title { color: #28142C !important; font-weight: 900 !important; }
+    html.amethyst .task-theme-btn { color: #7B337F !important; }
+    html.amethyst .task-theme-title { color: #7B337F !important; font-weight: 800 !important; }
+    html.amethyst .task-theme-pts { color: #8E4D88 !important; }
+    html.amethyst .task-theme-badge {
+      background: linear-gradient(135deg, #8E4D88, #6B3E75) !important;
+      color: #FFFFFF !important;
+    }
+    html.amethyst #auth-modal-tasks-view .bg-slate-900 {
+      background-color: #FAF5FB !important;
+      border: 1px solid #EFE4F1 !important;
+      box-shadow: 0 1px 3px rgba(107, 62, 117, 0.05) !important;
+    }
     
     /* =======================================================
    雙 Tab（私房清單 / 站內信箱）多主題通用樣式
@@ -3400,7 +3443,13 @@ btnSubmitComment.addEventListener('click', handlePostComment);
       authModal.classList.add('hidden');
       recModal.classList.remove('hidden');
     });
-    document.getElementById('close-recommend-btn').addEventListener('click', () => recModal.classList.add('hidden'));
+    document.getElementById('close-recommend-btn').addEventListener('click', () => {
+      recModal.classList.add('hidden');
+      // 無縫返回特殊任務清單視窗
+      authModal.classList.remove('hidden');
+      document.getElementById('auth-modal-user-view').classList.add('hidden');
+      document.getElementById('auth-modal-tasks-view').classList.remove('hidden');
+    });
 
     const recStoreName = document.getElementById('rec-store-name');
     const recReason = document.getElementById('rec-reason');
@@ -3409,10 +3458,13 @@ btnSubmitComment.addEventListener('click', handlePostComment);
     async function submitRecommendStore() {
       if (!currentUser) {
         recModal.classList.add('hidden');
-        openAuthModal();
-        showToast('請先登入會員再推薦好店！', 'fa-lock');
-        return;
-      }
+        recStoreName.value = '';
+        recReason.value = '';
+        // 成功送出後，無縫返回特殊任務視窗
+        authModal.classList.remove('hidden');
+        document.getElementById('auth-modal-user-view').classList.add('hidden');
+        document.getElementById('auth-modal-tasks-view').classList.remove('hidden');
+        showToast('🎉 推薦成功！審核通過入庫後將為您派發 100 積分！', 'fa-gift');
       const city = document.getElementById('rec-city').value;
       const store = recStoreName.value.trim();
       const reason = recReason.value.trim();
