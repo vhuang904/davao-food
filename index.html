@@ -3403,9 +3403,23 @@ btnSubmitComment.addEventListener('click', handlePostComment);
 
         btnApply.onclick = (e) => {
           e.stopPropagation();
-          isUpdating = true; // 標記為使用者主動升級
+          isUpdating = true;
           btnApply.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> 正在更新套用中...';
-          worker.postMessage({ type: 'SKIP_WAITING' });
+          btnApply.style.pointerEvents = 'none';
+
+          // 1. 向 waiting 的 worker 發送跳過等待指令
+          try {
+            if (worker && worker.postMessage) {
+              worker.postMessage({ type: 'SKIP_WAITING' });
+            }
+          } catch (err) {
+            console.warn('[SW] 發送 message 異常:', err);
+          }
+
+          // 2. 超速保底：最多等 600 毫秒，不管有沒有收到 controllerchange 都強制刷新
+          setTimeout(() => {
+            window.location.reload();
+          }, 600);
         };
 
         if (btnClose) {
