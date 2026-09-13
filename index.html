@@ -2487,112 +2487,113 @@ function showToast(msg, icon = 'fa-check', actionText = '', actionCallback = nul
     }
 
     const commentModal = document.getElementById('comment-modal');
-    const commentListContainer = document.getElementById('comment-list-container');
-    const commentInputText = document.getElementById('comment-input-text');
-    const btnSubmitComment = document.getElementById('btn-submit-comment');
+const commentListContainer = document.getElementById('comment-list-container');
+const commentInputText = document.getElementById('comment-input');
+const btnSubmitComment = document.getElementById('btn-submit-comment');
 
-    window.openUniversalCommentModal = function(storeId, encodedName) {
-      if (!currentUser) {
-        showToast(
-          '🔒 請先登入會員，即可發表真實點評賺取 20 積分！', 
-          'fa-lock', 
-          '立即登入', 
-          () => {
-            closeAiChat();
-            openAuthModal();
-          }
-        );
-        return;
-      }
+async function loadStoreComments(storeId) {
+  if (!commentListContainer) return;
+  commentListContainer.innerHTML = '<div class="text-center py-6 text-slate-500 text-xs"><i class="fa-solid fa-spinner fa-spin mr-1.5 text-amber-400"></i>載入老饕點評中...</div>';
 
-      closeAiChat();
-      activeCommentStoreId = String(storeId).trim();
-      const sName = decodeURIComponent(encodedName || '');
-      document.getElementById('comment-modal-title').innerText = `${sName} 點評`;
-      
-      commentModal.classList.remove('hidden');
-      loadStoreComments(activeCommentStoreId);
-    };
+  try {
+    const { getStoreComments } = await import('./authService.js');
+    const comments = await getStoreComments(storeId);
 
-    window.openCommentModal = function(storeId, storeName) {
-      window.openUniversalCommentModal(storeId, encodeURIComponent(storeName));
-    };
-
-    document.getElementById('close-comment-btn').addEventListener('click', () => {
-      commentModal.classList.add('hidden');
-    });
-
-    async function loadStoreComments(storeId) {
-      if (!commentListContainer) return;
-      commentListContainer.innerHTML = '<p class="text-center text-slate-500 py-6">載入會員點評中...</p>';
-
-      try {
-        const q = query(
-          collection(db, "store_comments"),
-          where("storeId", "==", storeId),
-          orderBy("createdAt", "desc")
-        );
-        const snap = await getDocs(q);
-        
-        if (snap.empty) {
-          commentListContainer.innerHTML = `
-            <div class="text-center py-8 text-slate-500">
-              <i class="fa-regular fa-comment-dots text-2xl mb-1.5 block text-slate-600"></i>
-              <span>尚無會員留下點評</span>
-              <p class="text-[10px] text-slate-500 mt-0.5">搶先留下真實探店心得，即可獲得 20 積分！</p>
-            </div>
-          `;
-          return;
-        }
-
-        commentListContainer.innerHTML = snap.docs.map(docSnap => {
-          const d = docSnap.data();
-          const uName = d.userName || '吃貨好友';
-          const timeStr = d.createdAt ? new Date(d.createdAt).toLocaleDateString() : '剛剛';
-          return `
-            <div class="bg-slate-900 border border-slate-800 rounded-xl p-2.5 space-y-1">
-              <div class="flex items-center justify-between text-[11px]">
-                <span class="font-bold text-amber-300 flex items-center gap-1">
-                  <i class="fa-regular fa-user text-[9px]"></i> ${uName}
-                </span>
-                <span class="text-[9px] text-slate-500">${timeStr}</span>
-              </div>
-              <p class="text-slate-200 leading-relaxed text-xs">${d.comment}</p>
-            </div>
-          `;
-        }).join('');
-      } catch (err) {
-        commentListContainer.innerHTML = '<p class="text-center text-slate-500 py-6">目前無公開評論，成為第一位評論者吧！</p>';
-      }
+    if (!comments || comments.length === 0) {
+      commentListContainer.innerHTML = `
+        <div class="text-center py-8">
+          <i class="fa-regular fa-comment-dots text-slate-600 text-3xl mb-2 block"></i>
+          <p class="text-slate-400 text-xs font-bold">目前暫無公開評論，成為第一位老饕評論者吧！</p>
+          <p class="text-amber-400/80 text-[10px] mt-1">發表真實體驗現賺 +20 積分</p>
+        </div>
+      `;
+      return;
     }
 
-    async function handlePostComment() {
-      if (!currentUser) {
-        showToast('請先登入會員！', 'fa-lock');
-        return;
-      }
-      const text = commentInputText.value.trim();
-      if (!text) {
-        showToast('請輸入評論內容！', 'fa-circle-exclamation');
-        return;
-      }
+    commentListContainer.innerHTML = comments.map(c => {
+      const uName = c.userName || '吃貨好友';
+      const timeStr = c.createdAt ? new Date(c.createdAt.toMillis ? c.createdAt.toMillis() : c.createdAt).toLocaleDateString() : '剛剛';
+      const userPhoto = c.userPhoto ? `<img src="${c.userPhoto}" class="w-full h-full object-cover">` : `<i class="fa-regular fa-user text-[9px]"></i>`;
+      const ratingStars = '★'.repeat(c.rating || 5);
 
-      btnSubmitComment.disabled = true;
-      btnSubmitComment.innerText = '發表中...';
+      return `
+        <div class="bg-slate-900 border border-slate-800 rounded-xl p-3 space-y-1.5">
+          <div class="flex items-center justify-between text-[11px]">
+            <span class="font-bold text-amber-300 flex items-center gap-1.5">
+              <span class="w-5 h-5 rounded-full bg-amber-400/20 flex items-center justify-center overflow-hidden inline-block text-center leading-5">${userPhoto}</span>
+              ${uName}
+            </span>
+            <div class="flex items-center gap-1.5">
+              <span class="text-amber-400 text-[10px]">${ratingStars}</span>
+              <span class="text-[9px] text-slate-500">${timeStr}</span>
+            </div>
+          </div>
+          <p class="text-slate-200 leading-relaxed text-xs break-words pl-6.5">${c.comment || c.content || ''}</p>
+        </div>
+      `;
+    }).join('');
+  } catch (err) {
+    console.warn("[Comment] 載入失敗:", err);
+    commentListContainer.innerHTML = '<p class="text-center text-slate-500 py-6 text-xs">載入評論異常，請稍後再試</p>';
+  }
+}
 
-      try {
-        await addStoreComment(activeCommentStoreId, text);
-        commentInputText.value = '';
-        showToast('🎉 點評發表成功！已為您累計 +20 積分！', 'fa-award');
-        loadStoreComments(activeCommentStoreId);
-      } catch (err) {
-        showToast('發表失敗，請稍後再試');
-      } finally {
-        btnSubmitComment.disabled = false;
-        btnSubmitComment.innerText = '發表 (+20分)';
+window.openUniversalCommentModal = function(storeId, encodedName) {
+  if (!currentUser) {
+    showToast(
+      '🔒 請先登入會員，即可發表真實點評賺取 20 積分！',
+      'fa-lock',
+      '立即登入',
+      () => {
+        closeAiChat();
+        openAuthModal();
       }
-    }
-    btnSubmitComment.addEventListener('click', handlePostComment);
+    );
+    return;
+  }
+
+  closeAiChat();
+  activeCommentStoreId = String(storeId).trim();
+  const sName = decodeURIComponent(encodedName || '');
+  const titleEl = document.getElementById('comment-modal-title');
+  if (titleEl) titleEl.innerText = `${sName} 點評`;
+
+  if (commentInputText) commentInputText.value = '';
+  commentModal.classList.remove('hidden');
+
+  loadStoreComments(activeCommentStoreId);
+};
+
+async function handlePostComment() {
+  if (!currentUser) {
+    showToast('請先登入會員！', 'fa-lock');
+    return;
+  }
+  const text = (commentInputText?.value || '').trim();
+  if (!text) {
+    showToast('請輸入評論內容！', 'fa-circle-exclamation');
+    return;
+  }
+
+  btnSubmitComment.disabled = true;
+  btnSubmitComment.innerText = '發表中...';
+
+  try {
+    const { addStoreComment } = await import('./authService.js');
+    await addStoreComment(activeCommentStoreId, text);
+    if (commentInputText) commentInputText.value = '';
+    showToast('🎉 點評發表成功！已為您累計 +20 積分！', 'fa-award');
+    await loadStoreComments(activeCommentStoreId);
+  } catch (err) {
+    console.error("發表點評失敗:", err);
+    showToast(err.message || '發表失敗，請稍後再試', 'fa-triangle-exclamation');
+  } finally {
+    btnSubmitComment.disabled = false;
+    btnSubmitComment.innerText = '發表 (+20分)';
+  }
+}
+
+btnSubmitComment.addEventListener('click', handlePostComment);
 
     const authModal = document.getElementById('auth-modal');
     const authStateBtn = document.getElementById('auth-state-btn');
