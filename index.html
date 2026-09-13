@@ -7,7 +7,7 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
-  <meta name="app-version" content="20260913-v43.6.1" />
+  <meta name="app-version" content="20260913-v43.6.2" />
   <meta name="theme-color" content="#020617" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -460,27 +460,39 @@
       font-weight: 800 !important; 
     }
     
-    /* Ocean 專屬：未選中膠囊全面改為純白高亮底 + 深邃藍粗體字（保證字體清清楚楚） */
+    /* Ocean 專屬：全區域與全海島標籤全面統一（未選中純白字，選中純白立體凸顯） */
     html.ocean .region-pill { 
-      background-color: #FFFFFF !important; 
-      border: 1.5px solid #BAE6FD !important; 
-      color: #0369A1 !important; 
-      font-weight: 900 !important;
-      opacity: 0.95 !important;
+      background-color: rgba(255, 255, 255, 0.15) !important; 
+      border: 1.5px solid rgba(255, 255, 255, 0.4) !important; 
+      color: #FFFFFF !important; 
+      font-weight: 800 !important;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+      opacity: 1 !important;
     }
+    
+    /* 選中項目（當前選中的城市或海島）：純白高亮底 + 深邃海軍藍字 + 立體微光凸顯 */
+    html.ocean .region-pill.bg-amber-400 { 
+      background: #FFFFFF !important; 
+      border: 1.5px solid #FFFFFF !important; 
+      color: #0284C7 !important; 
+      font-weight: 900 !important; 
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.25) !important;
+      transform: scale(1.05) !important;
+    }
+
     html.ocean .main-tab-pill {
       color: rgba(255, 255, 255, 0.85) !important;
       font-weight: 800 !important;
     }
 
-    html.light .region-pill.bg-amber-400, html.amethyst .region-pill.bg-amber-400, html.ocean .region-pill.bg-amber-400,
+    html.light .region-pill.bg-amber-400, html.amethyst .region-pill.bg-amber-400,
     html.light #typeCityBtn.bg-gradient-to-r, html.amethyst #typeCityBtn.bg-gradient-to-r, html.ocean #typeCityBtn.bg-gradient-to-r,
     html.light #typeIslandBtn.bg-gradient-to-r, html.amethyst #typeIslandBtn.bg-gradient-to-r, html.ocean #typeIslandBtn.bg-gradient-to-r,
     html.light .main-tab-pill.bg-gradient-to-r, html.amethyst .main-tab-pill.bg-gradient-to-r, html.ocean .main-tab-pill.bg-gradient-to-r {
       background: var(--theme-gradient) !important;
       color: #FFFFFF !important;
       font-weight: 900 !important;
-      border: 1.5px solid #38BDF8 !important;
+      border: 1.5px solid rgba(255, 255, 255, 0.6) !important;
       box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2) !important;
     }
 
@@ -4045,7 +4057,7 @@
       }
 
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js?v=20260913-v43.6.1').then((reg) => {
+        navigator.serviceWorker.register('./sw.js?v=20260913-v43.6.2').then((reg) => {
           if (reg.waiting) {
             showPwaUpdateModal(reg.waiting);
           }
