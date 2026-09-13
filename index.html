@@ -1177,6 +1177,68 @@
     </div>
   </div>
 
+  <!-- 站長專屬社群管理行動面板 (Action Sheet) -->
+  <div id="admin-action-sheet" class="fixed inset-0 z-[10000] hidden flex items-end justify-center bg-black/75 backdrop-blur-xs transition-opacity duration-200">
+    <div class="bg-slate-950 border-t-2 border-amber-400 rounded-t-3xl w-full max-w-md p-4 shadow-2xl flex flex-col gap-3 text-slate-100 max-h-[85vh] overflow-y-auto">
+      
+      <!-- 面板 Header -->
+      <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+        <h4 class="text-xs font-black text-amber-300 flex items-center gap-1.5">
+          <i class="fa-solid fa-shield-halved text-amber-400"></i> 站長社群管理面板
+        </h4>
+        <button type="button" onclick="window.closeAdminActionSheet()" class="w-7 h-7 bg-slate-800 rounded-full text-slate-400 hover:text-white flex items-center justify-center text-xs">✕</button>
+      </div>
+
+      <!-- 違規者身分卡 (完整顯示頭像、暱稱、Email、UID、累犯次數) -->
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-3 flex items-center gap-3">
+        <div id="sheet-user-avatar" class="w-12 h-12 rounded-full overflow-hidden bg-slate-950 border border-amber-400/40 flex-shrink-0 flex items-center justify-center text-slate-500">
+          <i class="fa-regular fa-user text-base"></i>
+        </div>
+        <div class="min-w-0 flex-1 space-y-0.5">
+          <div class="flex items-center justify-between">
+            <h5 id="sheet-user-name" class="font-bold text-xs text-white truncate">吃貨會員</h5>
+            <span id="sheet-violation-count" class="text-[9px] bg-rose-950/80 border border-rose-800/60 text-rose-300 font-bold px-1.5 py-0.5 rounded-full flex-shrink-0">歷史違規：0 次</span>
+          </div>
+          <p id="sheet-user-email" class="text-[10px] text-slate-400 truncate font-mono">載入中...</p>
+          <p id="sheet-user-uid" class="text-[9px] text-slate-500 truncate font-mono">UID: ...</p>
+        </div>
+      </div>
+
+      <!-- 留言內容摘錄 -->
+      <div class="bg-slate-900/60 border-l-2 border-amber-400/60 p-2.5 rounded-r-xl text-[11px] text-slate-300 leading-relaxed break-words">
+        <span class="text-slate-500 font-bold block text-[9px] mb-0.5">違規留言內容：</span>
+        <span id="sheet-comment-text">...</span>
+      </div>
+
+      <!-- 處分操作按鈕群組 -->
+      <div class="flex flex-col gap-2 pt-1 text-xs">
+        <!-- 處分 1: 僅刪除 -->
+        <button type="button" onclick="window.executeAdminAction('delete_only')" class="w-full py-2.5 px-3 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-200 font-bold flex items-center justify-between transition active:scale-98">
+          <span class="flex items-center gap-1.5"><i class="fa-regular fa-trash-can text-slate-400"></i> 僅刪除此留言</span>
+          <span class="text-[9px] text-slate-500">不扣分、不處置</span>
+        </button>
+
+        <!-- 處分 2: 刪除 + 扣回 20 積分 -->
+        <button type="button" onclick="window.executeAdminAction('delete_deduct')" class="w-full py-2.5 px-3 rounded-xl bg-slate-900 hover:bg-slate-800 border border-amber-400/40 text-amber-300 font-bold flex items-center justify-between transition active:scale-98">
+          <span class="flex items-center gap-1.5"><i class="fa-solid fa-coins text-amber-400"></i> 刪除留言 + 扣回 20 積分</span>
+          <span class="text-[9px] text-amber-400/70">發送站內警告信</span>
+        </button>
+
+        <!-- 處分 3: 刪除 + 扣分 + 階梯式禁言 (動態計算天數) -->
+        <button type="button" id="sheet-btn-tier-punish" onclick="window.executeAdminAction('delete_tier_punish')" class="w-full py-2.5 px-3 rounded-xl bg-gradient-to-r from-rose-900/60 to-rose-950/80 hover:from-rose-900 border border-rose-500/60 text-white font-black flex items-center justify-between transition active:scale-98 shadow-sm">
+          <span class="flex items-center gap-1.5"><i class="fa-solid fa-ban text-rose-400"></i> <span id="sheet-tier-punish-label">刪除 + 扣分 + 階梯禁言</span></span>
+          <span id="sheet-tier-punish-sub" class="text-[9px] text-rose-300">智慧計算天數</span>
+        </button>
+
+        <!-- 取消關閉按鈕 -->
+        <button type="button" onclick="window.closeAdminActionSheet()" class="w-full py-2 rounded-xl bg-transparent text-slate-400 hover:text-white font-bold text-center mt-1">
+          取消
+        </button>
+      </div>
+
+    </div>
+  </div>
+  
   <!-- AI 懸浮球 (解凍全向拖曳、定錨右下角) -->
   <button id="chat-fab" class="fixed rounded-full bg-slate-950 border-2 border-amber-400 shadow-[0_0_25px_-2px_rgba(245,158,11,0.7)] overflow-hidden flex items-center justify-center cursor-pointer z-40 active:scale-95 transition-all select-none touch-none" style="width:60px; height:60px; right:16px; bottom:115px;" title="大V旅遊管家">
     <img src="ai-avatar.jpg" alt="AI 管家" class="w-full h-full object-cover pointer-events-none" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop';" />
@@ -2813,7 +2875,13 @@ async function loadStoreComments(storeId) {
       const timeStr = c.createdAt ? new Date(c.createdAt.toMillis ? c.createdAt.toMillis() : c.createdAt).toLocaleDateString() : '剛剛';
       const userPhoto = c.userPhoto ? `<img src="${c.userPhoto}" class="w-full h-full object-cover">` : `<i class="fa-regular fa-user text-[9px]"></i>`;
       const deleteBtnHtml = isAdmin ? `
-        <button type="button" title="站長刪除此留言" onclick="window.handleDeleteComment('${c.id}', event)" class="text-rose-400 hover:text-rose-300 p-1 transition active:scale-90 cursor-pointer ml-1.5">
+        <button type="button" title="站長審核與處分" onclick="window.openAdminActionSheet('${c.id}', '${encodeURIComponent(JSON.stringify({
+          userId: c.userId || '',
+          userName: c.userName || '吃貨好友',
+          userPhoto: c.userPhoto || '',
+          userEmail: c.userEmail || '',
+          content: c.comment || c.content || ''
+        }))}', event)" class="text-rose-400 hover:text-rose-300 p-1 transition active:scale-90 cursor-pointer ml-1.5">
           <i class="fa-regular fa-trash-can text-xs"></i>
         </button>
       ` : '';
