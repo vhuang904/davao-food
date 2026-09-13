@@ -7,7 +7,7 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
-  <meta name="app-version" content="20260913-v42.6" />
+  <meta name="app-version" content="20260913-v42.9" />
   <meta name="theme-color" content="#020617" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -62,7 +62,7 @@
     .carousel-slide { flex: 0 0 100%; width: 100%; height: 100%; scroll-snap-align: center; position: relative; }
     .carousel-slide img { pointer-events: none; -webkit-user-drag: none; user-select: none; }
     .drag-scroll-active { cursor: grabbing !important; cursor: -webkit-grabbing !important; }
-    .dot-indicator.active { width: 14px; border-radius: 4px; background: #fbbf24; }
+    .dot-indicator.active { width: 14px; border-radius: 4px; background: var(--theme-primary, #fbbf24) !important; }
 
     @keyframes focusPulse {
       0% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.8); transform: scale(1); }
@@ -273,15 +273,18 @@
     }
 
     /* =======================================================
-       43 個變色器官通用綁定 (自動讀取對應主題變數)
+       43 個變色器官通用綁定 (含功能按鈕強化與彈窗反白)
        ======================================================= */
     
     html.light body { background-color: #F7F3EB !important; color: #1F2937 !important; }
     html.amethyst body { background-color: #FAF6F9 !important; color: #2E1A33 !important; }
 
     /* [一、頂部 Header] */
-    html.light header.glass-header, html.amethyst header.glass-header { background: var(--theme-header-bg) !important; border-bottom: 2px solid var(--theme-header-border) !important; }
+    header.glass-header { transition: background 0.3s ease; }
+    html.light header.glass-header { background: var(--theme-header-bg) !important; border-bottom: 2px solid var(--theme-header-border) !important; }
+    html.amethyst header.glass-header { background: var(--theme-header-bg) !important; border-bottom: 2px solid var(--theme-header-border) !important; }
     html.light header *, html.amethyst header * { color: #FFFFFF; }
+    
     html.light .lang-toggle-container, html.amethyst .lang-toggle-container { background: rgba(255, 255, 255, 0.25) !important; border: 1px solid rgba(255, 255, 255, 0.45) !important; }
     html.light .lang-toggle-btn.active, html.amethyst .lang-toggle-btn.active { background: #FFFFFF !important; color: var(--theme-primary) !important; }
     html.light #visit-count-container, html.amethyst #visit-count-container { background-color: #FFFFFF !important; border-color: var(--theme-border) !important; }
@@ -291,7 +294,8 @@
     html.light header .bg-slate-950, html.light header .bg-slate-900,
     html.amethyst header .bg-slate-950, html.amethyst header .bg-slate-900 { background-color: rgba(255, 255, 255, 0.22) !important; border-color: rgba(255, 255, 255, 0.3) !important; }
     html.light header > div.bg-slate-950\/90, html.amethyst header > div.bg-slate-950\/90 { background: var(--theme-card-bg) !important; border-top: 1px solid var(--theme-border) !important; }
-    html.light .region-pill, html.amethyst .region-pill { background-color: #FFFFFF !important; border: 1px solid var(--theme-border) !important; color: var(--theme-primary) !important; }
+    
+    html.light .region-pill, html.amethyst .region-pill { background-color: #FFFFFF !important; border: 1px solid var(--theme-border) !important; color: var(--theme-primary) !important; font-weight: 700 !important; }
     html.light .region-pill.bg-amber-400, html.amethyst .region-pill.bg-amber-400,
     html.light #typeCityBtn.bg-gradient-to-r, html.amethyst #typeCityBtn.bg-gradient-to-r,
     html.light #typeIslandBtn.bg-gradient-to-r, html.amethyst #typeIslandBtn.bg-gradient-to-r,
@@ -299,11 +303,29 @@
       background: var(--theme-gradient) !important;
       color: var(--theme-badge-text) !important;
     }
-    html.light .sub-pill.bg-amber-400\/20, html.amethyst .sub-pill.bg-amber-400\/20 {
-      background-color: var(--theme-primary-light) !important;
-      border: 1px solid var(--theme-primary) !important;
+
+    /* 右上角分享按鈕：白底圓圈＋系統色圖示 */
+    html.light #share-btn, html.amethyst #share-btn {
+      background-color: #FFFFFF !important;
+      border: 1px solid var(--theme-border) !important;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08) !important;
+    }
+    html.light #share-btn i, html.amethyst #share-btn i {
       color: var(--theme-primary) !important;
-      font-weight: 800 !important;
+    }
+
+    /* 子分類膠囊反白 */
+    html.light .sub-pill, html.amethyst .sub-pill {
+      background-color: #FFFFFF !important;
+      border: 1px solid var(--theme-border) !important;
+      color: var(--theme-primary) !important;
+      font-weight: 700 !important;
+    }
+    html.light .sub-pill.bg-amber-400\/20, html.amethyst .sub-pill.bg-amber-400\/20 {
+      background: var(--theme-gradient) !important;
+      border: 1px solid var(--theme-header-border) !important;
+      color: #FFFFFF !important;
+      font-weight: 900 !important;
     }
     html.light #itemCountBadge, html.amethyst #itemCountBadge {
       background-color: #FFFFFF !important;
@@ -311,7 +333,7 @@
       color: var(--theme-primary) !important;
     }
 
-    /* [二、主清單卡片] */
+    /* [二、主清單卡片 & 三大功能按鈕邊框加粗] */
     html.light article, html.amethyst article { background-color: var(--theme-card-bg) !important; border-color: var(--theme-card-border) !important; }
     html.light article div.bg-slate-950, html.amethyst article div.bg-slate-950 { background-color: var(--theme-card-bg) !important; }
     html.light article div.bg-slate-900, html.amethyst article div.bg-slate-900 { background-color: var(--theme-card-sub-bg) !important; border-top: 1px solid var(--theme-card-border) !important; }
@@ -319,52 +341,71 @@
     html.amethyst article h2, html.amethyst article h4, html.amethyst article h6 { color: var(--theme-text-title) !important; }
     html.light article p, html.amethyst article p { color: var(--theme-text-body) !important; }
     
-    /* 1. 寫評論：唯獨此按鈕隨主題漸層連動 */
+    /* 1. 寫評論：隨主題漸層 */
     .btn-card-comment { background: var(--theme-gradient) !important; color: var(--theme-badge-text) !important; }
     .btn-card-comment * { color: var(--theme-badge-text) !important; font-weight: 900 !important; }
 
-    /* 2. 官網/粉專：隨主題邊框與字色 */
-    html.light .btn-card-website, html.amethyst .btn-card-website { background-color: #FFFFFF !important; color: var(--theme-primary) !important; border: 1px solid var(--theme-border) !important; }
+    /* 2. 官網/粉專：加粗邊框，暗夜模式下金框清晰可見 */
+    html.light .btn-card-website, html.amethyst .btn-card-website { background-color: #FFFFFF !important; color: var(--theme-primary) !important; border: 2px solid var(--theme-border) !important; }
+    html.light .btn-card-website *, html.amethyst .btn-card-website * { color: var(--theme-primary) !important; font-weight: 800 !important; }
+    html.dark .btn-card-website { background-color: rgba(15, 23, 42, 0.95) !important; border: 2px solid rgba(245, 158, 11, 0.7) !important; color: #FCD34D !important; }
+    html.dark .btn-card-website * { color: #FCD34D !important; font-weight: 800 !important; }
 
-    /* 3. Grab 點餐：全域規格鎖死 綠底白字 (絕不變色) */
+    /* 3. Grab 點餐：全域永久固定【綠底白字】 */
     .btn-card-grab {
       background: #00B14F !important;
       background-color: #00B14F !important;
-      border: 1px solid #009A44 !important;
+      border: 1.5px solid #009A44 !important;
       color: #FFFFFF !important;
-      box-shadow: 0 2px 6px rgba(0, 177, 79, 0.25) !important;
+      box-shadow: 0 2px 6px rgba(0, 177, 79, 0.3) !important;
     }
-    .btn-card-grab * { color: #FFFFFF !important; font-weight: 800 !important; }
+    .btn-card-grab * { color: #FFFFFF !important; font-weight: 900 !important; }
 
-    /* 4. 撥打電話：全域規格鎖死 綠色 (通話翠綠，絕不變色) */
+    /* 4. 撥打電話：全域永久固定【通話翠綠色，加粗 2px 邊框】 */
     .btn-card-phone {
       background-color: #FFFFFF !important;
-      border: 1.5px solid #A7F3D0 !important;
+      border: 2px solid #10B981 !important;
       color: #059669 !important;
     }
-    .btn-card-phone * { color: #059669 !important; font-weight: 700 !important; }
+    .btn-card-phone * { color: #059669 !important; font-weight: 800 !important; }
     html.dark .btn-card-phone {
       background-color: rgba(15, 23, 42, 0.95) !important;
-      border: 1px solid rgba(16, 185, 129, 0.45) !important;
+      border: 2px solid #10B981 !important;
       color: #34D399 !important;
     }
     html.dark .btn-card-phone * { color: #34D399 !important; }
 
-    /* 5. 路線導航：全域規格鎖死 藍色 (導航天藍，絕不變色) */
+    /* 5. 路線導航：全域永久固定【導航天藍色，加粗 2px 邊框】 */
     .btn-card-nav {
       background-color: #FFFFFF !important;
-      border: 1.5px solid #BAE6FD !important;
+      border: 2px solid #0EA5E9 !important;
       color: #0284C7 !important;
     }
-    .btn-card-nav * { color: #0284C7 !important; font-weight: 700 !important; }
+    .btn-card-nav * { color: #0284C7 !important; font-weight: 800 !important; }
     html.dark .btn-card-nav {
       background-color: rgba(15, 23, 42, 0.95) !important;
-      border: 1px solid rgba(14, 165, 233, 0.45) !important;
+      border: 2px solid #0EA5E9 !important;
       color: #38BDF8 !important;
     }
     html.dark .btn-card-nav * { color: #38BDF8 !important; }
 
-    /* 卡片標籤與星號 */
+    /* 卡片輪播浮層元件（愛心反白、左右滑動提示） */
+    html.light .carousel-slide + div + span, html.amethyst .carousel-slide + div + span,
+    html.light .carousel-track ~ span, html.amethyst .carousel-track ~ span {
+      background: var(--theme-gradient) !important;
+      color: var(--theme-badge-text) !important;
+      border: 1px solid var(--theme-header-border) !important;
+    }
+    html.light button[onclick*="toggleFavorite"], html.amethyst button[onclick*="toggleFavorite"] {
+      background-color: rgba(255, 255, 255, 0.85) !important;
+      border: 1px solid var(--theme-border) !important;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1) !important;
+    }
+    html.light button[onclick*="toggleFavorite"] i.fa-regular, html.amethyst button[onclick*="toggleFavorite"] i.fa-regular {
+      color: var(--theme-primary) !important;
+    }
+
+    /* 標籤與星號 */
     html.light .card-pill-tag, html.amethyst .card-pill-tag { background-color: var(--theme-primary-light) !important; border-color: var(--theme-border) !important; color: var(--theme-primary) !important; }
     html.light .card-meta-tag, html.amethyst .card-meta-tag { color: var(--theme-primary) !important; }
     html.light .card-rating-star, html.amethyst .card-rating-star,
@@ -383,14 +424,14 @@
     html.light #auth-modal .bg-slate-950.h-2, html.amethyst #auth-modal .bg-slate-950.h-2 { background-color: #E5E7EB !important; border-color: var(--theme-border) !important; }
     html.light #level-progress-fill, html.amethyst #level-progress-fill { background: var(--theme-gradient) !important; }
 
-    /* 推播區塊文字與鈴鐺圖示全面對齊主題色 */
+    /* 推播區塊：鈴鐺與「推播」文字強制對齊主題色 */
     html.light #push-slot-container, html.amethyst #push-slot-container { background-color: var(--theme-card-sub-bg) !important; border-color: var(--theme-border) !important; }
     html.light #push-slot-container *, html.amethyst #push-slot-container * { color: var(--theme-primary) !important; font-weight: 800 !important; }
     html.light #push-toggle-btn.bg-amber-400, html.amethyst #push-toggle-btn.bg-amber-400 { background-color: var(--theme-primary) !important; }
     html.light #btn-open-tasks-subview, html.amethyst #btn-open-tasks-subview { background-color: var(--theme-card-sub-bg) !important; border-color: var(--theme-border) !important; color: var(--theme-primary) !important; }
     html.light #btn-open-tasks-subview *, html.amethyst #btn-open-tasks-subview * { color: var(--theme-primary) !important; }
 
-    /* 所有彈窗右上角關閉按鈕 (✕) 隨主題變換柔和底色 */
+    /* 全域所有彈窗右上角關閉叉叉 (✕)：徹底消除黑底 */
     html.light .btn-modal-close, html.light #close-comment-btn, html.light #close-recommend-btn {
       background-color: var(--theme-primary-light) !important;
       border: 1px solid var(--theme-border) !important;
@@ -449,10 +490,25 @@
     html.light #magic-email-input, html.amethyst #magic-email-input { border: 2px solid var(--theme-border) !important; }
     html.light #btn-magic-email, html.amethyst #btn-magic-email { background: var(--theme-gradient) !important; color: var(--theme-badge-text) !important; }
 
-    /* [九、店家評論彈窗] */
+    /* [九、店家評論彈窗：消滅黑底框、黑卡片與黑輸入框] */
     html.light #commentModalCard, html.amethyst #commentModalCard { background-color: var(--theme-card-bg) !important; border-color: var(--theme-border) !important; }
-    html.light #commentModalHeader, html.amethyst #commentModalHeader { background-color: var(--theme-card-bg) !important; border-color: var(--theme-card-border) !important; }
+    html.light #commentModalHeader, html.amethyst #commentModalHeader { background-color: var(--theme-card-bg) !important; border-color: var(--theme-border) !important; }
     html.light #comment-modal-title, html.amethyst #comment-modal-title { color: var(--theme-text-title) !important; }
+    html.light #comment-list-container > div, html.amethyst #comment-list-container > div {
+      background-color: var(--theme-card-sub-bg) !important;
+      border: 1px solid var(--theme-border) !important;
+    }
+    html.light #comment-list-container p, html.amethyst #comment-list-container p { color: var(--theme-text-body) !important; }
+    html.light #commentModalCard .border-t, html.amethyst #commentModalCard .border-t {
+      background-color: var(--theme-card-bg) !important;
+      border-color: var(--theme-border) !important;
+    }
+    html.light #comment-input, html.amethyst #comment-input {
+      background-color: var(--theme-card-sub-bg) !important;
+      border: 1.5px solid var(--theme-border) !important;
+      color: var(--theme-text-title) !important;
+    }
+    html.light #comment-input::placeholder, html.amethyst #comment-input::placeholder { color: #9CA3AF !important; }
     html.light #btn-submit-comment, html.amethyst #btn-submit-comment { background: var(--theme-gradient) !important; color: var(--theme-badge-text) !important; }
 
     /* [十、全域反饋與特效] */
@@ -2626,10 +2682,10 @@
           ` : '';
 
           return `
-            <div class="bg-slate-900 border border-slate-800 rounded-xl p-3 space-y-1.5">
+            <div class="border rounded-xl p-3 space-y-1.5">
               <div class="flex items-center justify-between text-[11px]">
-                <span class="font-bold text-amber-300 flex items-center gap-1.5">
-                  <span class="w-5 h-5 rounded-full bg-amber-400/20 flex items-center justify-center overflow-hidden inline-block text-center leading-5">${userPhoto}</span>
+                <span class="font-bold flex items-center gap-1.5" style="color: var(--theme-primary);">
+                  <span class="w-5 h-5 rounded-full flex items-center justify-center overflow-hidden inline-block text-center leading-5" style="background: var(--theme-primary-light);">${userPhoto}</span>
                   ${uName}
                 </span>
                 <div class="flex items-center gap-1">
@@ -2637,7 +2693,7 @@
                   ${deleteBtnHtml}
                 </div>
               </div>
-              <p class="text-slate-200 leading-relaxed text-xs break-words pl-6.5">${c.comment || c.content || ''}</p>
+              <p class="leading-relaxed text-xs break-words pl-6.5">${c.comment || c.content || ''}</p>
             </div>
           `;
         }).join('');
@@ -3068,22 +3124,27 @@
 
     function applyAppTheme(theme) {
       document.documentElement.classList.remove('dark', 'light', 'amethyst');
+      const metaThemeColor = document.querySelector('meta[name="theme-color"]');
+      
       if (theme === 'light') {
         document.documentElement.classList.add('light');
         currentThemeLabel.innerText = '暖陽';
         themeDropdownBtn.className = 'bg-white border border-orange-300 text-orange-600 text-[10px] font-black px-2.5 py-1 rounded-lg flex items-center justify-center gap-1 transition shadow-sm';
         currentThemeIcon.style.color = '#EA580C';
+        if (metaThemeColor) metaThemeColor.setAttribute('content', '#F97316');
       } else if (theme === 'amethyst') {
         document.documentElement.classList.add('amethyst');
         currentThemeLabel.innerText = '紫霞';
         themeDropdownBtn.className = 'bg-white border border-purple-300 text-[#8E4D88] text-[10px] font-black px-2.5 py-1 rounded-lg flex items-center justify-center gap-1 transition shadow-sm';
         currentThemeIcon.style.color = '#8E4D88';
+        if (metaThemeColor) metaThemeColor.setAttribute('content', '#6B3E75');
       } else {
         document.documentElement.classList.add('dark');
         currentThemeLabel.innerText = '暗夜';
         themeDropdownBtn.className = 'bg-slate-900 border border-amber-400/40 text-amber-300 text-[10px] font-bold px-2 py-1 rounded-lg flex items-center justify-center gap-1 transition shadow-sm';
         currentThemeIcon.style.color = '#F59E0B';
         theme = 'dark';
+        if (metaThemeColor) metaThemeColor.setAttribute('content', '#020617');
       }
       localStorage.setItem('bigv_app_theme', theme);
       preserveScrollPosition(() => {
@@ -3352,7 +3413,7 @@
           </div>
           <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent pointer-events-none"></div>
           ${hasMultiple ? `
-            <span class="absolute top-12 right-3 bg-slate-950/75 text-amber-300 text-[9px] px-2 py-0.5 rounded-full backdrop-blur-xs pointer-events-none z-10 border border-slate-700/80 shadow-sm">👈 左右滑動</span>
+            <span class="absolute top-12 right-3 px-2 py-0.5 rounded-full backdrop-blur-xs pointer-events-none z-10 border shadow-sm text-[9px] font-bold">👈 左右滑動</span>
             <div id="dots-${uniqueId}" class="absolute bottom-2.5 right-2.5 flex items-center gap-1 z-10 bg-black/50 backdrop-blur-xs px-2 py-1 rounded-full border border-slate-700">
               ${images.map((_, i) => `<span class="dot-indicator inline-block w-1.5 h-1.5 rounded-full bg-white/40 transition-all ${i === 0 ? 'active' : ''}"></span>`).join('')}
             </div>
@@ -3614,15 +3675,16 @@
         const timeStr = new Date(m.timestamp).toLocaleDateString();
         const hasTarget = !!m.targetId;
 
-        let badgeTag = '<span class="text-amber-300 font-bold">🌟 每週探索</span>';
+        let badgeTag = '<span class="font-bold" style="color: var(--theme-primary);">🌟 每週探索</span>';
         if (m.type === 'offer') {
           badgeTag = '<span class="text-rose-400 font-bold">🔥 限時特惠</span>';
         } else if (m.type === 'penalty' || !m.isGlobal) {
-          badgeTag = '<span class="text-amber-400 font-bold">⚠️ 系統通知</span>';
+          badgeTag = '<span class="font-bold" style="color: var(--theme-primary);">⚠️ 系統通知</span>';
         }
 
         return `
-          <div class="bg-slate-900 border ${isUnread ? 'border-amber-400/60' : 'border-slate-800'} rounded-xl p-2.5 space-y-1 transition relative ${hasTarget ? 'cursor-pointer active:scale-98' : ''}" 
+          <div class="border rounded-xl p-2.5 space-y-1 transition relative ${hasTarget ? 'cursor-pointer active:scale-98' : ''}" 
+               style="border-color: ${isUnread ? 'var(--theme-border-focus)' : 'var(--theme-border)'}; background: var(--theme-card-sub-bg);"
                ${hasTarget ? `onclick="window.handleInboxCardClick('${m.targetId}')"` : ''}>
             <div class="flex items-center justify-between text-[11px]">
               <div class="flex items-center gap-1.5">
@@ -3631,9 +3693,9 @@
               </div>
               <span class="text-[9px] text-slate-500">${timeStr}</span>
             </div>
-            <h6 class="font-bold text-xs text-white leading-tight">${m.title || '最新動態'}</h6>
-            <p class="text-[10px] text-slate-300 leading-relaxed">${m.content || ''}</p>
-            ${hasTarget ? '<span class="text-[9px] text-amber-400 font-bold flex items-center gap-0.5 pt-0.5">點擊前往查看店家 ➔</span>' : ''}
+            <h6 class="font-bold text-xs leading-tight" style="color: var(--theme-text-title);">${m.title || '最新動態'}</h6>
+            <p class="text-[10px] leading-relaxed" style="color: var(--theme-text-body);">${m.content || ''}</p>
+            ${hasTarget ? '<span class="text-[9px] font-bold flex items-center gap-0.5 pt-0.5" style="color: var(--theme-primary);">點擊前往查看店家 ➔</span>' : ''}
           </div>
         `;
       }).join('');
@@ -3709,7 +3771,7 @@
       }
 
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js?v=20260913-v42.6').then((reg) => {
+        navigator.serviceWorker.register('./sw.js?v=20260913-v42.9').then((reg) => {
           if (reg.waiting) {
             showPwaUpdateModal(reg.waiting);
           }
