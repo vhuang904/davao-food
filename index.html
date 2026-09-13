@@ -7,7 +7,7 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
-  <meta name="app-version" content="20260913-v43.4" />
+  <meta name="app-version" content="20260913-v43.5" />
   <meta name="theme-color" content="#020617" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -605,45 +605,73 @@ html.dark #btn-logout {
     html.light .beam-card-container, html.amethyst .beam-card-container { box-shadow: var(--theme-glow) !important; }
 
     /* ===================================================
-       Ocean 海島湛藍：徹底反白、純淨藍白（消滅所有黑底）
+       Ocean 海島湛藍：徹底反白、高對比清晰版
        =================================================== */
     html.ocean body { background-color: #F0F9FF !important; color: #0C4A6E !important; }
     
-    /* 頂部 Header：深邃海島藍漸層，白字清晰 */
+    /* 頂部 Header 與中英文切換鈕徹底消滅黑底 */
     html.ocean header.glass-header { 
       background: linear-gradient(180deg, #0284C7 0%, #0369A1 100%) !important; 
       border-bottom: 2px solid #075985 !important; 
     }
     html.ocean header * { color: #FFFFFF !important; }
-    html.ocean .lang-toggle-container { background: rgba(255, 255, 255, 0.25) !important; border: 1px solid rgba(255, 255, 255, 0.5) !important; }
-    html.ocean .lang-toggle-btn.active { background: #FFFFFF !important; color: #0284C7 !important; }
+    
+    /* 1. 修復中英文膠囊：白半透明外框，未選中文字清晰純白，選中白底深藍字 */
+    html.ocean .lang-toggle-container { 
+      background: rgba(255, 255, 255, 0.22) !important; 
+      border: 1.5px solid rgba(255, 255, 255, 0.55) !important; 
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+    }
+    html.ocean .lang-toggle-btn { 
+      color: rgba(255, 255, 255, 0.85) !important; 
+      font-weight: 700 !important;
+    }
+    html.ocean .lang-toggle-btn.active { 
+      background: #FFFFFF !important; 
+      color: #0284C7 !important; 
+      font-weight: 900 !important;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15) !important;
+    }
+
     html.ocean #share-btn { background-color: #FFFFFF !important; border: 1px solid rgba(255, 255, 255, 0.8) !important; box-shadow: 0 1px 3px rgba(0,0,0,0.1) !important; }
     html.ocean #share-btn i { color: #0284C7 !important; }
     html.ocean #visit-count-container { background-color: #FFFFFF !important; border-color: #BAE6FD !important; }
     html.ocean #visit-count-container * { color: #0284C7 !important; }
     html.ocean #search-input { background-color: #FFFFFF !important; color: #0C4A6E !important; border: 1px solid rgba(255, 255, 255, 0.7) !important; }
     html.ocean #search-input::placeholder { color: #94A3B8 !important; }
-    html.ocean header .bg-slate-950, html.ocean header .bg-slate-900 { background-color: rgba(255, 255, 255, 0.25) !important; border-color: rgba(255, 255, 255, 0.4) !important; }
+    html.ocean header .bg-slate-950, html.ocean header .bg-slate-900 { background-color: rgba(255, 255, 255, 0.2) !important; border-color: rgba(255, 255, 255, 0.35) !important; }
     html.ocean header > div.bg-slate-950\/90 { background: #FFFFFF !important; border-top: 1px solid #BAE6FD !important; }
     
-    /* 地區與分類膠囊：純白底＋藍字，啟用態亮海藍 */
-    html.ocean .region-pill { background-color: #FFFFFF !important; border: 1px solid #BAE6FD !important; color: #0284C7 !important; font-weight: 700 !important; }
+    /* 2. 標籤高對比修復：未選中標籤改為「淺冰藍底＋深海軍藍高對比字」 */
+    html.ocean .region-pill { 
+      background-color: #E0F2FE !important; 
+      border: 1.5px solid #BAE6FD !important; 
+      color: #0369A1 !important; 
+      font-weight: 800 !important; 
+    }
     html.ocean .region-pill.bg-amber-400, 
     html.ocean #typeCityBtn.bg-gradient-to-r, 
     html.ocean #typeIslandBtn.bg-gradient-to-r, 
     html.ocean .main-tab-pill.bg-gradient-to-r { 
       background: linear-gradient(135deg, #0284C7 0%, #0369A1 100%) !important; 
       color: #FFFFFF !important; 
+      font-weight: 900 !important;
     }
-    html.ocean .sub-pill { background-color: #FFFFFF !important; border: 1px solid #BAE6FD !important; color: #0284C7 !important; font-weight: 700 !important; }
+    html.ocean .sub-pill { 
+      background-color: #E0F2FE !important; 
+      border: 1.5px solid #BAE6FD !important; 
+      color: #0369A1 !important; 
+      font-weight: 800 !important; 
+    }
     html.ocean .sub-pill.bg-amber-400\/20 { 
       background: linear-gradient(135deg, #0284C7 0%, #0369A1 100%) !important; 
       border: 1px solid #0284C7 !important; 
       color: #FFFFFF !important; 
+      font-weight: 900 !important;
     }
     html.ocean #itemCountBadge { background-color: #FFFFFF !important; border: 1px solid #BAE6FD !important; color: #0284C7 !important; }
 
-    /* 主清單卡片：徹底純白底、深色標題、移除所有黑背景 */
+    /* 主清單卡片：純白底、深色字 */
     html.ocean article { background-color: #FFFFFF !important; border: 1px solid #E0F2FE !important; box-shadow: 0 4px 12px rgba(2, 132, 199, 0.08) !important; }
     html.ocean article div.bg-slate-950 { background-color: #FFFFFF !important; }
     html.ocean article div.bg-slate-900 { background-color: #F0F9FF !important; border-top: 1px solid #E0F2FE !important; }
@@ -659,7 +687,7 @@ html.dark #btn-logout {
     html.ocean button[onclick*="toggleFavorite"] { background-color: rgba(255, 255, 255, 0.9) !important; border: 1px solid #BAE6FD !important; }
     html.ocean button[onclick*="toggleFavorite"] i.fa-regular { color: #0284C7 !important; }
 
-    /* 會員中心彈窗：徹底純白，消除大黑方塊（照片 1 痛點） */
+    /* 3. 會員中心彈窗：修復站內信箱黑底卡片 */
     html.ocean #auth-modal .bg-slate-950 { background-color: #FFFFFF !important; border-color: #BAE6FD !important; }
     html.ocean #auth-modal .bg-slate-900, html.ocean #auth-modal .bg-slate-900\/90, html.ocean #auth-modal .bg-slate-900\/80 { 
       background-color: #F0F9FF !important; 
@@ -679,6 +707,20 @@ html.dark #btn-logout {
     html.ocean #user-favorites-box { background-color: #FFFFFF !important; border-color: #E0F2FE !important; }
     html.ocean #user-favorites-box .bg-slate-900\/90 { background-color: #F0F9FF !important; border-color: #BAE6FD !important; }
     html.ocean #user-favorites-box h6 { color: #0C4A6E !important; }
+    
+    /* 站內信箱小卡（徹底消滅黑底） */
+    html.ocean .inbox-list > div, html.ocean #inbox-list-container > div { 
+      background-color: #F0F9FF !important; 
+      border: 1px solid #BAE6FD !important; 
+    }
+    html.ocean .inbox-list h6, html.ocean #inbox-list-container h6 { color: #0C4A6E !important; }
+    html.ocean .inbox-list p, html.ocean #inbox-list-container p { color: #334155 !important; }
+    html.ocean .btn-mark-read { 
+      border-color: #BAE6FD !important; 
+      color: #0284C7 !important; 
+      background-color: #FFFFFF !important; 
+    }
+
     html.ocean .btn-fav-action { background-color: #E0F2FE !important; border: 1px solid #BAE6FD !important; }
     html.ocean .btn-modal-close, html.ocean #close-comment-btn, html.ocean #close-recommend-btn { 
       background-color: #E0F2FE !important; 
@@ -687,7 +729,7 @@ html.dark #btn-logout {
     }
     html.ocean #btn-logout { background-color: #FEF2F2 !important; border: 1.5px solid #FCA5A5 !important; color: #DC2626 !important; font-weight: 900 !important; }
 
-    /* 評論區彈窗：白底＋深色字，消滅照片 4 的黑底與黑格子 */
+    /* 評論區彈窗 */
     html.ocean #commentModalCard, html.ocean #commentModalHeader { background-color: #FFFFFF !important; border-color: #BAE6FD !important; }
     html.ocean #comment-modal-title { color: #0C4A6E !important; }
     html.ocean #comment-list-container > div { background-color: #F0F9FF !important; border: 1px solid #BAE6FD !important; }
@@ -696,7 +738,7 @@ html.dark #btn-logout {
     html.ocean #comment-input { background-color: #F0F9FF !important; border: 1.5px solid #BAE6FD !important; color: #0C4A6E !important; }
     html.ocean #btn-submit-comment { background: linear-gradient(135deg, #0284C7 0%, #0369A1 100%) !important; color: #FFFFFF !important; }
 
-    /* AI 管家彈窗：徹底白底＋藍色對齊（消滅照片 3 的黑底） */
+    /* AI 管家彈窗 */
     html.ocean #chat-modal { background-color: #FFFFFF !important; border: 1.5px solid #BAE6FD !important; }
     html.ocean #chat-modal-header { background: linear-gradient(135deg, #0284C7 0%, #0369A1 100%) !important; }
     html.ocean #chat-messages { background-color: #FFFFFF !important; }
@@ -4008,7 +4050,7 @@ html.dark #btn-logout {
       }
 
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js?v=20260913-v43.4').then((reg) => {
+        navigator.serviceWorker.register('./sw.js?v=20260913-v43.5').then((reg) => {
           if (reg.waiting) {
             showPwaUpdateModal(reg.waiting);
           }
