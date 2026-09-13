@@ -2627,6 +2627,8 @@ if (commentInputText) {
   });
 }
 
+const ADMIN_EMAILS = ['vhuang904@gmail.com'];
+
 async function loadStoreComments(storeId) {
   if (!commentListContainer) return;
   commentListContainer.innerHTML = '<div class="text-center py-6 text-slate-500 text-xs"><i class="fa-solid fa-spinner fa-spin mr-1.5 text-amber-400"></i>載入老饕點評中...</div>';
@@ -2646,11 +2648,17 @@ async function loadStoreComments(storeId) {
       return;
     }
 
-    // 移除星星，右上角只乾淨呈現發布日期
+    const isAdmin = currentUser && ADMIN_EMAILS.includes((currentUser.email || '').toLowerCase().trim());
+
     commentListContainer.innerHTML = comments.map(c => {
       const uName = c.userName || '吃貨好友';
       const timeStr = c.createdAt ? new Date(c.createdAt.toMillis ? c.createdAt.toMillis() : c.createdAt).toLocaleDateString() : '剛剛';
       const userPhoto = c.userPhoto ? `<img src="${c.userPhoto}" class="w-full h-full object-cover">` : `<i class="fa-regular fa-user text-[9px]"></i>`;
+      const deleteBtnHtml = isAdmin ? `
+        <button type="button" title="站長刪除此留言" onclick="window.handleDeleteComment('${c.id}', event)" class="text-rose-400 hover:text-rose-300 p-1 transition active:scale-90 cursor-pointer ml-1.5">
+          <i class="fa-regular fa-trash-can text-xs"></i>
+        </button>
+      ` : '';
 
       return `
         <div class="bg-slate-900 border border-slate-800 rounded-xl p-3 space-y-1.5">
@@ -2659,7 +2667,10 @@ async function loadStoreComments(storeId) {
               <span class="w-5 h-5 rounded-full bg-amber-400/20 flex items-center justify-center overflow-hidden inline-block text-center leading-5">${userPhoto}</span>
               ${uName}
             </span>
-            <span class="text-[9px] text-slate-500">${timeStr}</span>
+            <div class="flex items-center gap-1">
+              <span class="text-[9px] text-slate-500">${timeStr}</span>
+              ${deleteBtnHtml}
+            </div>
           </div>
           <p class="text-slate-200 leading-relaxed text-xs break-words pl-6.5">${c.comment || c.content || ''}</p>
         </div>
@@ -2670,6 +2681,25 @@ async function loadStoreComments(storeId) {
     commentListContainer.innerHTML = '<p class="text-center text-slate-500 py-6 text-xs">載入評論異常，請稍後再試</p>';
   }
 }
+
+window.handleDeleteComment = async function(commentId, event) {
+  if (event) {
+    event.preventDefault();
+    event.stopPropagation();
+  }
+
+  if (!confirm('⚠️ 站長管理操作：確定要永久刪除這則留言嗎？')) return;
+
+  try {
+    const { deleteStoreComment } = await import('./authService.js');
+    await deleteStoreComment(commentId);
+    showToast('🗑️ 留言已成功刪除', 'fa-trash-can');
+    await loadStoreComments(activeCommentStoreId);
+  } catch (err) {
+    console.error("刪除留言失敗:", err);
+    showToast('刪除失敗，請檢查權限或稍後再試', 'fa-triangle-exclamation');
+  }
+};
 
 window.openUniversalCommentModal = function(storeId, encodedName) {
   if (!currentUser) {
