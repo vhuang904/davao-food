@@ -7,7 +7,7 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
-  <meta name="app-version" content="20260913-v43.6.2" />
+  <meta name="app-version" content="20260913-v43.7.0" />
   <meta name="theme-color" content="#020617" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -292,6 +292,26 @@
       --theme-glow: 0 0 25px -2px rgba(2, 132, 199, 0.35);
     }
 
+    /* 5. 櫻花粉嫩 (Sakura Pink Mode) */
+    html.sakura {
+      --theme-primary: #DB2777;
+      --theme-primary-hover: #BE185D;
+      --theme-primary-text: #DB2777;
+      --theme-primary-light: #FCE7F3;
+      --theme-border: #FBCFE8;
+      --theme-border-focus: #EC4899;
+      --theme-header-bg: linear-gradient(180deg, #EC4899 0%, #DB2777 100%);
+      --theme-header-border: #BE185D;
+      --theme-card-bg: #FFFFFF;
+      --theme-card-sub-bg: #FDF2F8;
+      --theme-card-border: #FCE7F3;
+      --theme-text-title: #831843;
+      --theme-text-body: #4C0519;
+      --theme-gradient: linear-gradient(135deg, #F472B6 0%, #DB2777 100%);
+      --theme-badge-text: #FFFFFF;
+      --theme-glow: 0 0 25px -2px rgba(219, 39, 119, 0.35);
+    }
+
     /* =======================================================
        二、三大固定功能按鈕（全域永久鎖定，任何主題不動搖）
        ======================================================= */
@@ -397,98 +417,94 @@
     html.amethyst body { background-color: #FAF6F9 !important; color: #2E1A33 !important; }
     html.ocean body { background-color: #F0F9FF !important; color: #0C4A6E !important; }
 
+    html.sakura body { background-color: #FFF5F7 !important; color: #831843 !important; }
+
+    /* Sakura 專屬：未選中標籤與子分類高對比白底粉字 */
+    html.sakura .region-pill { 
+      background-color: rgba(255, 255, 255, 0.2) !important; 
+      border: 1.5px solid rgba(255, 255, 255, 0.45) !important; 
+      color: #FFFFFF !important; 
+      font-weight: 800 !important;
+      opacity: 1 !important;
+    }
+    html.sakura .region-pill.bg-amber-400 { 
+      background: #FFFFFF !important; 
+      border: 1.5px solid #FFFFFF !important; 
+      color: #DB2777 !important; 
+      font-weight: 900 !important; 
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.25) !important;
+      transform: scale(1.05) !important;
+    }
+    html.sakura .sub-pill { 
+      background-color: #FFFFFF !important; 
+      border: 1.5px solid #FBCFE8 !important; 
+      color: #DB2777 !important; 
+      font-weight: 900 !important; 
+    }
+    html.sakura .sub-pill.bg-amber-400\/20 { 
+      background: linear-gradient(135deg, #F472B6 0%, #DB2777 100%) !important; 
+      border: 1.5px solid #DB2777 !important; 
+      color: #FFFFFF !important; 
+      font-weight: 900 !important; 
+    }
+
     /* 頂部 Header 與導航列 */
-    html.light header.glass-header, html.amethyst header.glass-header, html.ocean header.glass-header { 
+    html.light header.glass-header, html.amethyst header.glass-header, html.ocean header.glass-header, html.sakura header.glass-header { 
       background: var(--theme-header-bg) !important; 
       border-bottom: 2px solid var(--theme-header-border) !important; 
     }
-    html.light header *, html.amethyst header *, html.ocean header * { color: #FFFFFF; }
+    html.light header *, html.amethyst header *, html.ocean header *, html.sakura header * { color: #FFFFFF; }
 
     /* 中英文切換鈕：徹底消除黑底 */
-    html.light .lang-toggle-container, html.amethyst .lang-toggle-container, html.ocean .lang-toggle-container { 
+    html.light .lang-toggle-container, html.amethyst .lang-toggle-container, html.ocean .lang-toggle-container, html.sakura .lang-toggle-container { 
       background: rgba(255, 255, 255, 0.25) !important; 
       border: 1.5px solid rgba(255, 255, 255, 0.5) !important; 
       box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
     }
-    html.light .lang-toggle-btn, html.amethyst .lang-toggle-btn, html.ocean .lang-toggle-btn {
+    html.light .lang-toggle-btn, html.amethyst .lang-toggle-btn, html.ocean .lang-toggle-btn, html.sakura .lang-toggle-btn {
       color: rgba(255, 255, 255, 0.85) !important;
       font-weight: 700 !important;
     }
-    html.light .lang-toggle-btn.active, html.amethyst .lang-toggle-btn.active, html.ocean .lang-toggle-btn.active { 
+    html.light .lang-toggle-btn.active, html.amethyst .lang-toggle-btn.active, html.ocean .lang-toggle-btn.active, html.sakura .lang-toggle-btn.active { 
       background: #FFFFFF !important; 
       color: var(--theme-primary) !important; 
       font-weight: 900 !important;
       box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15) !important;
     }
 
-    html.light #share-btn, html.amethyst #share-btn, html.ocean #share-btn {
+    html.light #share-btn, html.amethyst #share-btn, html.ocean #share-btn, html.sakura #share-btn {
       background-color: #FFFFFF !important;
       border: 1px solid var(--theme-border) !important;
       box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08) !important;
     }
-    html.light #share-btn i, html.amethyst #share-btn i, html.ocean #share-btn i { color: var(--theme-primary) !important; }
+    html.light #share-btn i, html.amethyst #share-btn i, html.ocean #share-btn i, html.sakura #share-btn i { color: var(--theme-primary) !important; }
 
-    html.light #visit-count-container, html.amethyst #visit-count-container, html.ocean #visit-count-container { 
+    html.light #visit-count-container, html.amethyst #visit-count-container, html.ocean #visit-count-container, html.sakura #visit-count-container { 
       background-color: #FFFFFF !important; 
       border-color: var(--theme-border) !important; 
     }
-    html.light #visit-count-container *, html.amethyst #visit-count-container *, html.ocean #visit-count-container * { color: var(--theme-primary) !important; }
+    html.light #visit-count-container *, html.amethyst #visit-count-container *, html.ocean #visit-count-container *, html.sakura #visit-count-container * { color: var(--theme-primary) !important; }
 
-    html.light #search-input, html.amethyst #search-input, html.ocean #search-input { 
+    html.light #search-input, html.amethyst #search-input, html.ocean #search-input, html.sakura #search-input { 
       background-color: #FFFFFF !important; 
       color: var(--theme-text-title) !important; 
       border: 1px solid rgba(255, 255, 255, 0.7) !important; 
     }
-    html.light #search-input::placeholder, html.amethyst #search-input::placeholder, html.ocean #search-input::placeholder { color: #9CA3AF !important; }
+    html.light #search-input::placeholder, html.amethyst #search-input::placeholder, html.ocean #search-input::placeholder, html.sakura #search-input::placeholder { color: #9CA3AF !important; }
 
     html.light header .bg-slate-950, html.light header .bg-slate-900,
     html.amethyst header .bg-slate-950, html.amethyst header .bg-slate-900,
-    html.ocean header .bg-slate-950, html.ocean header .bg-slate-900 { 
+    html.ocean header .bg-slate-950, html.ocean header .bg-slate-900,
+    html.sakura header .bg-slate-950, html.sakura header .bg-slate-900 { 
       background-color: rgba(255, 255, 255, 0.22) !important; 
       border-color: rgba(255, 255, 255, 0.35) !important; 
     }
-    html.light header > div.bg-slate-950\/90, html.amethyst header > div.bg-slate-950\/90, html.ocean header > div.bg-slate-950\/90 { 
+    html.light header > div.bg-slate-950\/90, html.amethyst header > div.bg-slate-950\/90, html.ocean header > div.bg-slate-950\/90, html.sakura header > div.bg-slate-950\/90 { 
       background: var(--theme-card-bg) !important; 
       border-top: 1px solid var(--theme-border) !important; 
     }
 
-    /* 地區與分類膠囊（高對比字體修復，告別灰暗不清） */
-    html.light .region-pill, html.amethyst .region-pill { 
-      background-color: var(--theme-card-sub-bg) !important; 
-      border: 1.5px solid var(--theme-border) !important; 
-      color: var(--theme-primary) !important; 
-      font-weight: 800 !important; 
-    }
-    
-    /* Ocean 專屬：全區域與全海島標籤全面統一（未選中純白字，選中純白立體凸顯） */
-    html.ocean .region-pill { 
-      background-color: rgba(255, 255, 255, 0.15) !important; 
-      border: 1.5px solid rgba(255, 255, 255, 0.4) !important; 
-      color: #FFFFFF !important; 
-      font-weight: 800 !important;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
-      opacity: 1 !important;
-    }
-    
-    /* 選中項目（當前選中的城市或海島）：純白高亮底 + 深邃海軍藍字 + 立體微光凸顯 */
-    html.ocean .region-pill.bg-amber-400 { 
-      background: #FFFFFF !important; 
-      border: 1.5px solid #FFFFFF !important; 
-      color: #0284C7 !important; 
-      font-weight: 900 !important; 
-      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.25) !important;
-      transform: scale(1.05) !important;
-    }
-
-    html.ocean .main-tab-pill {
-      color: rgba(255, 255, 255, 0.85) !important;
-      font-weight: 800 !important;
-    }
-
-    html.light .region-pill.bg-amber-400, html.amethyst .region-pill.bg-amber-400,
-    html.light #typeCityBtn.bg-gradient-to-r, html.amethyst #typeCityBtn.bg-gradient-to-r, html.ocean #typeCityBtn.bg-gradient-to-r,
-    html.light #typeIslandBtn.bg-gradient-to-r, html.amethyst #typeIslandBtn.bg-gradient-to-r, html.ocean #typeIslandBtn.bg-gradient-to-r,
-    html.light .main-tab-pill.bg-gradient-to-r, html.amethyst .main-tab-pill.bg-gradient-to-r, html.ocean .main-tab-pill.bg-gradient-to-r {
+    html.light .main-tab-pill.bg-gradient-to-r, html.amethyst .main-tab-pill.bg-gradient-to-r, html.ocean .main-tab-pill.bg-gradient-to-r, html.sakura .main-tab-pill.bg-gradient-to-r {
       background: var(--theme-gradient) !important;
       color: #FFFFFF !important;
       font-weight: 900 !important;
@@ -496,20 +512,7 @@
       box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2) !important;
     }
 
-    /* 下方子分類列（海鮮盛宴、精緻中餐、JP 頂級日料） */
-    html.ocean .sub-pill { 
-      background-color: #FFFFFF !important; 
-      border: 1.5px solid #BAE6FD !important; 
-      color: #0369A1 !important; 
-      font-weight: 900 !important; 
-    }
-    html.ocean .sub-pill.bg-amber-400\/20 { 
-      background: linear-gradient(135deg, #0284C7 0%, #0369A1 100%) !important; 
-      border: 1.5px solid #0284C7 !important; 
-      color: #FFFFFF !important; 
-      font-weight: 900 !important; 
-    }
-    html.light #itemCountBadge, html.amethyst #itemCountBadge, html.ocean #itemCountBadge {
+    html.light #itemCountBadge, html.amethyst #itemCountBadge, html.ocean #itemCountBadge, html.sakura #itemCountBadge {
       background-color: #FFFFFF !important;
       border: 1px solid var(--theme-border) !important;
       color: var(--theme-primary) !important;
@@ -517,128 +520,130 @@
     }
 
     /* 主清單卡片反白 */
-    html.light article, html.amethyst article, html.ocean article { 
+    html.light article, html.amethyst article, html.ocean article, html.sakura article { 
       background-color: var(--theme-card-bg) !important; 
       border: 1px solid var(--theme-card-border) !important; 
     }
-    html.light article div.bg-slate-950, html.amethyst article div.bg-slate-950, html.ocean article div.bg-slate-950 { background-color: var(--theme-card-bg) !important; }
-    html.light article div.bg-slate-900, html.amethyst article div.bg-slate-900, html.ocean article div.bg-slate-900 { 
+    html.light article div.bg-slate-950, html.amethyst article div.bg-slate-950, html.ocean article div.bg-slate-950, html.sakura article div.bg-slate-950 { background-color: var(--theme-card-bg) !important; }
+    html.light article div.bg-slate-900, html.amethyst article div.bg-slate-900, html.ocean article div.bg-slate-900, html.sakura article div.bg-slate-900 { 
       background-color: var(--theme-card-sub-bg) !important; 
       border-top: 1px solid var(--theme-card-border) !important; 
     }
     html.light article h2, html.light article h4, html.light article h6, html.light article span.text-white,
     html.amethyst article h2, html.amethyst article h4, html.amethyst article h6, html.amethyst article span.text-white,
-    html.ocean article h2, html.ocean article h4, html.ocean article h6, html.ocean article span.text-white { 
+    html.ocean article h2, html.ocean article h4, html.ocean article h6, html.ocean article span.text-white,
+    html.sakura article h2, html.sakura article h4, html.sakura article h6, html.sakura article span.text-white { 
       color: var(--theme-text-title) !important; 
     }
-    html.light article p, html.amethyst article p, html.ocean article p { color: var(--theme-text-body) !important; }
-    html.light .card-meta-tag, html.amethyst .card-meta-tag, html.ocean .card-meta-tag { color: var(--theme-primary) !important; }
-    html.light .card-rating-star, html.amethyst .card-rating-star, html.ocean .card-rating-star,
-    html.light .card-rating-star i, html.amethyst .card-rating-star i, html.ocean .card-rating-star i { color: var(--theme-primary) !important; }
-    html.light .card-review-prefix, html.amethyst .card-review-prefix, html.ocean .card-review-prefix { color: var(--theme-primary) !important; }
+    html.light article p, html.amethyst article p, html.ocean article p, html.sakura article p { color: var(--theme-text-body) !important; }
+    html.light .card-meta-tag, html.amethyst .card-meta-tag, html.ocean .card-meta-tag, html.sakura .card-meta-tag { color: var(--theme-primary) !important; }
+    html.light .card-rating-star, html.amethyst .card-rating-star, html.ocean .card-rating-star, html.sakura .card-rating-star,
+    html.light .card-rating-star i, html.amethyst .card-rating-star i, html.ocean .card-rating-star i, html.sakura .card-rating-star i { color: var(--theme-primary) !important; }
+    html.light .card-review-prefix, html.amethyst .card-review-prefix, html.ocean .card-review-prefix, html.sakura .card-review-prefix { color: var(--theme-primary) !important; }
 
     /* 淺色輪播提示膠囊 */
-    html.light .carousel-hint-pill, html.amethyst .carousel-hint-pill, html.ocean .carousel-hint-pill {
+    html.light .carousel-hint-pill, html.amethyst .carousel-hint-pill, html.ocean .carousel-hint-pill, html.sakura .carousel-hint-pill {
       background-color: rgba(255, 255, 255, 0.95) !important;
       color: var(--theme-primary) !important;
       border: 1px solid var(--theme-border) !important;
       box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08) !important;
     }
     /* 淺色愛心按鈕 */
-    html.light button[onclick*="toggleFavorite"], html.amethyst button[onclick*="toggleFavorite"], html.ocean button[onclick*="toggleFavorite"] {
+    html.light button[onclick*="toggleFavorite"], html.amethyst button[onclick*="toggleFavorite"], html.ocean button[onclick*="toggleFavorite"], html.sakura button[onclick*="toggleFavorite"] {
       background-color: rgba(255, 255, 255, 0.9) !important;
       border: 1px solid var(--theme-border) !important;
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
     }
-    html.light button[onclick*="toggleFavorite"] i.fa-regular, html.amethyst button[onclick*="toggleFavorite"] i.fa-regular, html.ocean button[onclick*="toggleFavorite"] i.fa-regular {
+    html.light button[onclick*="toggleFavorite"] i.fa-regular, html.amethyst button[onclick*="toggleFavorite"] i.fa-regular, html.ocean button[onclick*="toggleFavorite"] i.fa-regular, html.sakura button[onclick*="toggleFavorite"] i.fa-regular {
       color: var(--theme-primary) !important;
     }
 
-    /* 寫評論按鈕：隨主題色彩漸層 */
-    .btn-card-comment { background: var(--theme-gradient) !important; color: var(--theme-badge-text) !important; }
-    .btn-card-comment * { color: var(--theme-badge-text) !important; font-weight: 900 !important; }
-
     /* 官網/粉專按鈕：白底高質感框 */
-    html.light .btn-card-website, html.amethyst .btn-card-website, html.ocean .btn-card-website { 
+    html.light .btn-card-website, html.amethyst .btn-card-website, html.ocean .btn-card-website, html.sakura .btn-card-website { 
       background-color: #FFFFFF !important; 
       color: var(--theme-primary) !important; 
       border: 2px solid var(--theme-border) !important; 
     }
-    html.light .btn-card-website *, html.amethyst .btn-card-website *, html.ocean .btn-card-website * { 
+    html.light .btn-card-website *, html.amethyst .btn-card-website *, html.ocean .btn-card-website *, html.sakura .btn-card-website * { 
       color: var(--theme-primary) !important; 
       font-weight: 800 !important; 
     }
 
     /* 會員中心面板反白 */
-    html.light #auth-modal .bg-slate-950, html.amethyst #auth-modal .bg-slate-950, html.ocean #auth-modal .bg-slate-950 { 
+    html.light #auth-modal .bg-slate-950, html.amethyst #auth-modal .bg-slate-950, html.ocean #auth-modal .bg-slate-950, html.sakura #auth-modal .bg-slate-950 { 
       background-color: var(--theme-card-bg) !important; 
       border-color: var(--theme-border) !important; 
     }
     html.light #auth-modal .bg-slate-900, html.light #auth-modal .bg-slate-900\/90, html.light #auth-modal .bg-slate-900\/80,
     html.amethyst #auth-modal .bg-slate-900, html.amethyst #auth-modal .bg-slate-900\/90, html.amethyst #auth-modal .bg-slate-900\/80,
-    html.ocean #auth-modal .bg-slate-900, html.ocean #auth-modal .bg-slate-900\/90, html.ocean #auth-modal .bg-slate-900\/80 { 
+    html.ocean #auth-modal .bg-slate-900, html.ocean #auth-modal .bg-slate-900\/90, html.ocean #auth-modal .bg-slate-900\/80,
+    html.sakura #auth-modal .bg-slate-900, html.sakura #auth-modal .bg-slate-900\/90, html.sakura #auth-modal .bg-slate-900\/80 { 
       background-color: var(--theme-card-sub-bg) !important; 
       border-color: var(--theme-border) !important; 
     }
     html.light #auth-modal h3, html.light #auth-modal h4, html.light #auth-modal h5, html.light #auth-modal h6,
     html.amethyst #auth-modal h3, html.amethyst #auth-modal h4, html.amethyst #auth-modal h5, html.amethyst #auth-modal h6,
-    html.ocean #auth-modal h3, html.ocean #auth-modal h4, html.ocean #auth-modal h5, html.ocean #auth-modal h6 { 
+    html.ocean #auth-modal h3, html.ocean #auth-modal h4, html.ocean #auth-modal h5, html.ocean #auth-modal h6,
+    html.sakura #auth-modal h3, html.sakura #auth-modal h4, html.sakura #auth-modal h5, html.sakura #auth-modal h6 { 
       color: var(--theme-text-title) !important; 
     }
-    html.light #auth-modal p, html.amethyst #auth-modal p, html.ocean #auth-modal p { color: var(--theme-text-body) !important; }
-    html.light #user-modal-level, html.amethyst #user-modal-level, html.ocean #user-modal-level,
-    html.light #user-modal-level i, html.amethyst #user-modal-level i, html.ocean #user-modal-level i { color: var(--theme-primary) !important; }
-    html.light #user-modal-points-text, html.amethyst #user-modal-points-text, html.ocean #user-modal-points-text { color: var(--theme-text-title) !important; }
-    html.light #auth-modal .bg-slate-950.h-2, html.amethyst #auth-modal .bg-slate-950.h-2, html.ocean #auth-modal .bg-slate-950.h-2 { 
+    html.light #auth-modal p, html.amethyst #auth-modal p, html.ocean #auth-modal p, html.sakura #auth-modal p { color: var(--theme-text-body) !important; }
+    html.light #user-modal-level, html.amethyst #user-modal-level, html.ocean #user-modal-level, html.sakura #user-modal-level,
+    html.light #user-modal-level i, html.amethyst #user-modal-level i, html.ocean #user-modal-level i, html.sakura #user-modal-level i { color: var(--theme-primary) !important; }
+    html.light #user-modal-points-text, html.amethyst #user-modal-points-text, html.ocean #user-modal-points-text, html.sakura #user-modal-points-text { color: var(--theme-text-title) !important; }
+    html.light #auth-modal .bg-slate-950.h-2, html.amethyst #auth-modal .bg-slate-950.h-2, html.ocean #auth-modal .bg-slate-950.h-2, html.sakura #auth-modal .bg-slate-950.h-2 { 
       background-color: #E5E7EB !important; 
       border-color: var(--theme-border) !important; 
     }
-    html.light #level-progress-fill, html.amethyst #level-progress-fill, html.ocean #level-progress-fill { background: var(--theme-gradient) !important; }
+    html.light #level-progress-fill, html.amethyst #level-progress-fill, html.ocean #level-progress-fill, html.sakura #level-progress-fill { background: var(--theme-gradient) !important; }
 
     /* 推播與任務按鈕 */
-    html.light #push-slot-container, html.amethyst #push-slot-container, html.ocean #push-slot-container { 
+    html.light #push-slot-container, html.amethyst #push-slot-container, html.ocean #push-slot-container, html.sakura #push-slot-container { 
       background-color: var(--theme-card-sub-bg) !important; 
       border-color: var(--theme-border) !important; 
     }
-    html.light #push-slot-container *, html.amethyst #push-slot-container *, html.ocean #push-slot-container * { 
+    html.light #push-slot-container *, html.amethyst #push-slot-container *, html.ocean #push-slot-container *, html.sakura #push-slot-container * { 
       color: var(--theme-primary) !important; 
       font-weight: 800 !important; 
     }
-    html.light #push-toggle-btn.bg-amber-400, html.amethyst #push-toggle-btn.bg-amber-400, html.ocean #push-toggle-btn.bg-amber-400 { background-color: var(--theme-primary) !important; }
-    html.light #btn-open-tasks-subview, html.amethyst #btn-open-tasks-subview, html.ocean #btn-open-tasks-subview { 
+    html.light #push-toggle-btn.bg-amber-400, html.amethyst #push-toggle-btn.bg-amber-400, html.ocean #push-toggle-btn.bg-amber-400, html.sakura #push-toggle-btn.bg-amber-400 { background-color: var(--theme-primary) !important; }
+    html.light #btn-open-tasks-subview, html.amethyst #btn-open-tasks-subview, html.ocean #btn-open-tasks-subview, html.sakura #btn-open-tasks-subview { 
       background-color: var(--theme-card-sub-bg) !important; 
       border-color: var(--theme-border) !important; 
       color: var(--theme-primary) !important; 
     }
-    html.light #btn-open-tasks-subview *, html.amethyst #btn-open-tasks-subview *, html.ocean #btn-open-tasks-subview * { color: var(--theme-primary) !important; }
+    html.light #btn-open-tasks-subview *, html.amethyst #btn-open-tasks-subview *, html.ocean #btn-open-tasks-subview *, html.sakura #btn-open-tasks-subview * { color: var(--theme-primary) !important; }
 
-    /* 私房清單與站內信箱小卡（徹底消滅黑底！） */
-    html.light #user-favorites-box, html.amethyst #user-favorites-box, html.ocean #user-favorites-box { 
+    /* 私房清單與站內信箱小卡 */
+    html.light #user-favorites-box, html.amethyst #user-favorites-box, html.ocean #user-favorites-box, html.sakura #user-favorites-box { 
       background-color: var(--theme-card-bg) !important; 
       border-color: var(--theme-card-border) !important; 
     }
-    html.light #user-favorites-box .bg-slate-900\/90, html.amethyst #user-favorites-box .bg-slate-900\/90, html.ocean #user-favorites-box .bg-slate-900\/90 { 
+    html.light #user-favorites-box .bg-slate-900\/90, html.amethyst #user-favorites-box .bg-slate-900\/90, html.ocean #user-favorites-box .bg-slate-900\/90, html.sakura #user-favorites-box .bg-slate-900\/90 { 
       background-color: var(--theme-card-sub-bg) !important; 
       border-color: var(--theme-border) !important; 
     }
-    html.light #user-favorites-box h6, html.amethyst #user-favorites-box h6, html.ocean #user-favorites-box h6 { color: var(--theme-text-title) !important; }
-    html.light .btn-fav-action, html.amethyst .btn-fav-action, html.ocean .btn-fav-action { 
+    html.light #user-favorites-box h6, html.amethyst #user-favorites-box h6, html.ocean #user-favorites-box h6, html.sakura #user-favorites-box h6 { color: var(--theme-text-title) !important; }
+    html.light .btn-fav-action, html.amethyst .btn-fav-action, html.ocean .btn-fav-action, html.sakura .btn-fav-action { 
       background-color: var(--theme-primary-light) !important; 
       border: 1px solid var(--theme-border) !important; 
     }
     html.light .inbox-list > div, html.light #inbox-list-container > div,
     html.amethyst .inbox-list > div, html.amethyst #inbox-list-container > div,
-    html.ocean .inbox-list > div, html.ocean #inbox-list-container > div { 
+    html.ocean .inbox-list > div, html.ocean #inbox-list-container > div,
+    html.sakura .inbox-list > div, html.sakura #inbox-list-container > div { 
       background-color: var(--theme-card-sub-bg) !important; 
       border: 1px solid var(--theme-border) !important; 
     }
     html.light .inbox-list h6, html.light #inbox-list-container h6,
     html.amethyst .inbox-list h6, html.amethyst #inbox-list-container h6,
-    html.ocean .inbox-list h6, html.ocean #inbox-list-container h6 { color: var(--theme-text-title) !important; }
+    html.ocean .inbox-list h6, html.ocean #inbox-list-container h6,
+    html.sakura .inbox-list h6, html.sakura #inbox-list-container h6 { color: var(--theme-text-title) !important; }
     html.light .inbox-list p, html.light #inbox-list-container p,
     html.amethyst .inbox-list p, html.amethyst #inbox-list-container p,
-    html.ocean .inbox-list p, html.ocean #inbox-list-container p { color: var(--theme-text-body) !important; }
-    html.light .btn-mark-read, html.amethyst .btn-mark-read, html.ocean .btn-mark-read { 
+    html.ocean .inbox-list p, html.ocean #inbox-list-container p,
+    html.sakura .inbox-list p, html.sakura #inbox-list-container p { color: var(--theme-text-body) !important; }
+    html.light .btn-mark-read, html.amethyst .btn-mark-read, html.ocean .btn-mark-read, html.sakura .btn-mark-read { 
       border-color: var(--theme-border) !important; 
       color: var(--theme-primary) !important; 
       background-color: #FFFFFF !important; 
@@ -647,7 +652,8 @@
     /* 全域彈窗通用關閉叉叉 (✕) */
     html.light .btn-modal-close, html.light #close-comment-btn, html.light #close-recommend-btn,
     html.amethyst .btn-modal-close, html.amethyst #close-comment-btn, html.amethyst #close-recommend-btn,
-    html.ocean .btn-modal-close, html.ocean #close-comment-btn, html.ocean #close-recommend-btn { 
+    html.ocean .btn-modal-close, html.ocean #close-comment-btn, html.ocean #close-recommend-btn,
+    html.sakura .btn-modal-close, html.sakura #close-comment-btn, html.sakura #close-recommend-btn { 
       background-color: var(--theme-primary-light) !important; 
       border: 1px solid var(--theme-border) !important; 
       color: var(--theme-primary) !important; 
@@ -657,100 +663,99 @@
     html.light #btn-logout { background-color: #FEF2F2 !important; border: 1.5px solid #FCA5A5 !important; color: #DC2626 !important; font-weight: 900 !important; }
     html.amethyst #btn-logout { background-color: #FFF1F2 !important; border: 1.5px solid #FECDD3 !important; color: #E11D48 !important; font-weight: 900 !important; }
     html.ocean #btn-logout { background-color: #FEF2F2 !important; border: 1.5px solid #FCA5A5 !important; color: #DC2626 !important; font-weight: 900 !important; }
+    html.sakura #btn-logout { background-color: #FFF1F2 !important; border: 1.5px solid #FECDD3 !important; color: #E11D48 !important; font-weight: 900 !important; }
 
     /* 店家評論彈窗反白 */
     html.light #commentModalCard, html.light #commentModalHeader,
     html.amethyst #commentModalCard, html.amethyst #commentModalHeader,
-    html.ocean #commentModalCard, html.ocean #commentModalHeader { 
+    html.ocean #commentModalCard, html.ocean #commentModalHeader,
+    html.sakura #commentModalCard, html.sakura #commentModalHeader { 
       background-color: var(--theme-card-bg) !important; 
       border-color: var(--theme-border) !important; 
     }
-    html.light #comment-modal-title, html.amethyst #comment-modal-title, html.ocean #comment-modal-title { color: var(--theme-text-title) !important; }
-    html.light #comment-list-container > div, html.amethyst #comment-list-container > div, html.ocean #comment-list-container > div {
+    html.light #comment-modal-title, html.amethyst #comment-modal-title, html.ocean #comment-modal-title, html.sakura #comment-modal-title { color: var(--theme-text-title) !important; }
+    html.light #comment-list-container > div, html.amethyst #comment-list-container > div, html.ocean #comment-list-container > div, html.sakura #comment-list-container > div {
       background-color: var(--theme-card-sub-bg) !important;
       border: 1px solid var(--theme-border) !important;
     }
-    html.light #comment-list-container p, html.amethyst #comment-list-container p, html.ocean #comment-list-container p { color: var(--theme-text-body) !important; }
-    html.light #commentModalCard .border-t, html.amethyst #commentModalCard .border-t, html.ocean #commentModalCard .border-t {
+    html.light #comment-list-container p, html.amethyst #comment-list-container p, html.ocean #comment-list-container p, html.sakura #comment-list-container p { color: var(--theme-text-body) !important; }
+    html.light #commentModalCard .border-t, html.amethyst #commentModalCard .border-t, html.ocean #commentModalCard .border-t, html.sakura #commentModalCard .border-t {
       background-color: var(--theme-card-bg) !important;
       border-color: var(--theme-border) !important;
     }
-    html.light #comment-input, html.amethyst #comment-input, html.ocean #comment-input {
+    html.light #comment-input, html.amethyst #comment-input, html.ocean #comment-input, html.sakura #comment-input {
       background-color: var(--theme-card-sub-bg) !important;
       border: 1.5px solid var(--theme-border) !important;
       color: var(--theme-text-title) !important;
     }
-    html.light #btn-submit-comment, html.amethyst #btn-submit-comment, html.ocean #btn-submit-comment { background: var(--theme-gradient) !important; color: var(--theme-badge-text) !important; }
+    html.light #btn-submit-comment, html.amethyst #btn-submit-comment, html.ocean #btn-submit-comment, html.sakura #btn-submit-comment { background: var(--theme-gradient) !important; color: var(--theme-badge-text) !important; }
 
     /* AI 旅遊管家彈窗反白 */
-    html.light #chat-modal, html.amethyst #chat-modal, html.ocean #chat-modal { background-color: #FFFFFF !important; border: 1.5px solid var(--theme-border) !important; }
-    html.light #chat-modal-header, html.amethyst #chat-modal-header, html.ocean #chat-modal-header { background: var(--theme-gradient) !important; }
-    html.light #chat-messages, html.amethyst #chat-messages, html.ocean #chat-messages { background-color: #FFFFFF !important; }
-    html.light .chat-bubble-agent, html.amethyst .chat-bubble-agent, html.ocean .chat-bubble-agent { background-color: var(--theme-primary-light) !important; border-color: var(--theme-border) !important; color: var(--theme-text-title) !important; }
-    html.light .ai-quick-btn, html.amethyst .ai-quick-btn, html.ocean .ai-quick-btn { background-color: #FFFFFF !important; border-color: var(--theme-border) !important; color: var(--theme-primary) !important; }
-    html.light #chat-input-bar, html.amethyst #chat-input-bar, html.ocean #chat-input-bar { background-color: #FFFFFF !important; border-top: 1px solid var(--theme-border) !important; }
-    html.light #chat-input, html.amethyst #chat-input, html.ocean #chat-input { background-color: var(--theme-primary-light) !important; border: 1.5px solid var(--theme-border) !important; color: var(--theme-text-title) !important; }
-    html.light #btn-send-chat, html.amethyst #btn-send-chat, html.ocean #btn-send-chat { background: var(--theme-gradient) !important; color: var(--theme-badge-text) !important; }
+    html.light #chat-modal, html.amethyst #chat-modal, html.ocean #chat-modal, html.sakura #chat-modal { background-color: #FFFFFF !important; border: 1.5px solid var(--theme-border) !important; }
+    html.light #chat-modal-header, html.amethyst #chat-modal-header, html.ocean #chat-modal-header, html.sakura #chat-modal-header { background: var(--theme-gradient) !important; }
+    html.light #chat-messages, html.amethyst #chat-messages, html.ocean #chat-messages, html.sakura #chat-messages { background-color: #FFFFFF !important; }
+    html.light .chat-bubble-agent, html.amethyst .chat-bubble-agent, html.ocean .chat-bubble-agent, html.sakura .chat-bubble-agent { background-color: var(--theme-primary-light) !important; border-color: var(--theme-border) !important; color: var(--theme-text-title) !important; }
+    html.light .ai-quick-btn, html.amethyst .ai-quick-btn, html.ocean .ai-quick-btn, html.sakura .ai-quick-btn { background-color: #FFFFFF !important; border-color: var(--theme-border) !important; color: var(--theme-primary) !important; }
+    html.light #chat-input-bar, html.amethyst #chat-input-bar, html.ocean #chat-input-bar, html.sakura #chat-input-bar { background-color: #FFFFFF !important; border-top: 1px solid var(--theme-border) !important; }
+    html.light #chat-input, html.amethyst #chat-input, html.ocean #chat-input, html.sakura #chat-input { background-color: var(--theme-primary-light) !important; border: 1.5px solid var(--theme-border) !important; color: var(--theme-text-title) !important; }
+    html.light #btn-send-chat, html.amethyst #btn-send-chat, html.ocean #btn-send-chat, html.sakura #btn-send-chat { background: var(--theme-gradient) !important; color: var(--theme-badge-text) !important; }
 
-    /* =======================================================
-       五、全域反饋、PWA更新與登入彈窗徹底反白 (Light / Amethyst / Ocean)
-       ======================================================= */
-    /* 1. Toast 提示彈窗（已安全登出、複製連結、切換語言等通知） */
-    html.light #toastInnerBox, html.amethyst #toastInnerBox, html.ocean #toastInnerBox {
+    /* 1. Toast 提示彈窗 */
+    html.light #toastInnerBox, html.amethyst #toastInnerBox, html.ocean #toastInnerBox, html.sakura #toastInnerBox {
       background-color: #FFFFFF !important;
       border: 1.5px solid var(--theme-border) !important;
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15) !important;
     }
-    html.light #toastMessage, html.amethyst #toastMessage, html.ocean #toastMessage {
+    html.light #toastMessage, html.amethyst #toastMessage, html.ocean #toastMessage, html.sakura #toastMessage {
       color: var(--theme-text-title) !important;
       font-weight: 800 !important;
     }
-    html.light #toastIcon, html.amethyst #toastIcon, html.ocean #toastIcon { color: var(--theme-primary) !important; }
-    html.light #toastCloseBtn, html.amethyst #toastCloseBtn, html.ocean #toastCloseBtn {
+    html.light #toastIcon, html.amethyst #toastIcon, html.ocean #toastIcon, html.sakura #toastIcon { color: var(--theme-primary) !important; }
+    html.light #toastCloseBtn, html.amethyst #toastCloseBtn, html.ocean #toastCloseBtn, html.sakura #toastCloseBtn {
       background-color: var(--theme-primary-light) !important;
       color: var(--theme-primary) !important;
     }
-    html.light #toastActionBtn, html.amethyst #toastActionBtn, html.ocean #toastActionBtn {
+    html.light #toastActionBtn, html.amethyst #toastActionBtn, html.ocean #toastActionBtn, html.sakura #toastActionBtn {
       background: var(--theme-gradient) !important;
       color: var(--theme-badge-text) !important;
     }
-    html.light .beam-card-container, html.amethyst .beam-card-container, html.ocean .beam-card-container {
+    html.light .beam-card-container, html.amethyst .beam-card-container, html.ocean .beam-card-container, html.sakura .beam-card-container {
       box-shadow: var(--theme-glow) !important;
     }
 
-    /* 2. PWA 版本更新通知彈窗（消除黑底與黑按鈕） */
-    html.light #pwa-update-modal > div, html.amethyst #pwa-update-modal > div, html.ocean #pwa-update-modal > div {
+    /* 2. PWA 版本更新通知彈窗 */
+    html.light #pwa-update-modal > div, html.amethyst #pwa-update-modal > div, html.ocean #pwa-update-modal > div, html.sakura #pwa-update-modal > div {
       background-color: #FFFFFF !important;
       border: 2px solid var(--theme-border) !important;
       box-shadow: 0 12px 35px rgba(0, 0, 0, 0.18) !important;
       color: var(--theme-text-title) !important;
     }
-    html.light #pwa-update-modal h4, html.amethyst #pwa-update-modal h4, html.ocean #pwa-update-modal h4 { color: var(--theme-primary) !important; }
-    html.light #pwa-update-modal p, html.amethyst #pwa-update-modal p, html.ocean #pwa-update-modal p { color: var(--theme-text-body) !important; }
-    html.light #btn-close-pwa-modal, html.amethyst #btn-close-pwa-modal, html.ocean #btn-close-pwa-modal {
+    html.light #pwa-update-modal h4, html.amethyst #pwa-update-modal h4, html.ocean #pwa-update-modal h4, html.sakura #pwa-update-modal h4 { color: var(--theme-primary) !important; }
+    html.light #pwa-update-modal p, html.amethyst #pwa-update-modal p, html.ocean #pwa-update-modal p, html.sakura #pwa-update-modal p { color: var(--theme-text-body) !important; }
+    html.light #btn-close-pwa-modal, html.amethyst #btn-close-pwa-modal, html.ocean #btn-close-pwa-modal, html.sakura #btn-close-pwa-modal {
       background-color: var(--theme-primary-light) !important;
       color: var(--theme-primary) !important;
     }
-    html.light #btn-apply-pwa-update, html.amethyst #btn-apply-pwa-update, html.ocean #btn-apply-pwa-update {
+    html.light #btn-apply-pwa-update, html.amethyst #btn-apply-pwa-update, html.ocean #btn-apply-pwa-update, html.sakura #btn-apply-pwa-update {
       background: var(--theme-gradient) !important;
       color: var(--theme-badge-text) !important;
     }
 
-    /* 3. 訪客登入主彈窗（未登入或登出後的視窗） */
-    html.light #auth-modal-login-view h3, html.amethyst #auth-modal-login-view h3, html.ocean #auth-modal-login-view h3 { color: var(--theme-text-title) !important; }
-    html.light #auth-modal-login-view p, html.amethyst #auth-modal-login-view p, html.ocean #auth-modal-login-view p { color: var(--theme-text-body) !important; }
-    html.light #btn-google-login, html.amethyst #btn-google-login, html.ocean #btn-google-login {
+    /* 3. 訪客登入主彈窗 */
+    html.light #auth-modal-login-view h3, html.amethyst #auth-modal-login-view h3, html.ocean #auth-modal-login-view h3, html.sakura #auth-modal-login-view h3 { color: var(--theme-text-title) !important; }
+    html.light #auth-modal-login-view p, html.amethyst #auth-modal-login-view p, html.ocean #auth-modal-login-view p, html.sakura #auth-modal-login-view p { color: var(--theme-text-body) !important; }
+    html.light #btn-google-login, html.amethyst #btn-google-login, html.ocean #btn-google-login, html.sakura #btn-google-login {
       background-color: #FFFFFF !important;
       border: 1.5px solid var(--theme-border) !important;
       color: var(--theme-text-title) !important;
       box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06) !important;
     }
-    html.light #magic-email-input, html.amethyst #magic-email-input, html.ocean #magic-email-input {
+    html.light #magic-email-input, html.amethyst #magic-email-input, html.ocean #magic-email-input, html.sakura #magic-email-input {
       background-color: #FFFFFF !important;
       border: 2px solid var(--theme-border) !important;
       color: var(--theme-text-title) !important;
     }
-    html.light #btn-magic-email, html.amethyst #btn-magic-email, html.ocean #btn-magic-email {
+    html.light #btn-magic-email, html.amethyst #btn-magic-email, html.ocean #btn-magic-email, html.sakura #btn-magic-email {
       background: var(--theme-gradient) !important;
       color: var(--theme-badge-text) !important;
     }
@@ -983,6 +988,9 @@
                 </button>
                 <button data-set-theme="ocean" class="w-full text-left px-3 py-1.5 text-[#1D4ED8] hover:bg-blue-50 flex items-center gap-2 text-[11px] font-bold">
                   <span class="w-2.5 h-2.5 rounded-full bg-[#1D4ED8] border border-blue-200"></span> 海島湛藍
+                </button>
+                <button data-set-theme="sakura" class="w-full text-left px-3 py-1.5 text-[#DB2777] hover:bg-pink-50 flex items-center gap-2 text-[11px] font-bold">
+                  <span class="w-2.5 h-2.5 rounded-full bg-[#EC4899] border border-pink-200"></span> 櫻花粉嫩
                 </button>
               </div>
             </div>
@@ -3403,7 +3411,7 @@
     });
 
     function applyAppTheme(theme) {
-      document.documentElement.classList.remove('dark', 'light', 'amethyst', 'ocean');
+      document.documentElement.classList.remove('dark', 'light', 'amethyst', 'ocean', 'sakura');
       const metaThemeColor = document.querySelector('meta[name="theme-color"]');
       
       if (theme === 'light') {
@@ -3424,6 +3432,12 @@
         themeDropdownBtn.className = 'bg-white border border-blue-300 text-[#1D4ED8] text-[10px] font-black px-2.5 py-1 rounded-lg flex items-center justify-center gap-1 transition shadow-sm';
         currentThemeIcon.style.color = '#1D4ED8';
         if (metaThemeColor) metaThemeColor.setAttribute('content', '#1E3A8A');
+      } else if (theme === 'sakura') {
+        document.documentElement.classList.add('sakura');
+        currentThemeLabel.innerText = '櫻花';
+        themeDropdownBtn.className = 'bg-white border border-pink-300 text-[#DB2777] text-[10px] font-black px-2.5 py-1 rounded-lg flex items-center justify-center gap-1 transition shadow-sm';
+        currentThemeIcon.style.color = '#DB2777';
+        if (metaThemeColor) metaThemeColor.setAttribute('content', '#EC4899');
       } else {
         document.documentElement.classList.add('dark');
         currentThemeLabel.innerText = '暗夜';
@@ -4057,7 +4071,7 @@
       }
 
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js?v=20260913-v43.6.2').then((reg) => {
+        navigator.serviceWorker.register('./sw.js?v=20260913-v43.7.0').then((reg) => {
           if (reg.waiting) {
             showPwaUpdateModal(reg.waiting);
           }
