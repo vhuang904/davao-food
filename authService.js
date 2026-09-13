@@ -222,7 +222,7 @@ export async function addStoreComment(storeId, commentPayload) {
     throw new Error("店家代碼無效。");
   }
 
-  const cleanComment = (commentPayload.comment || "").trim();
+  const cleanComment = (typeof commentPayload === 'string' ? commentPayload : (commentPayload?.comment || "")).trim();
   if (!cleanComment) {
     throw new Error("請填寫評價內容。");
   }
