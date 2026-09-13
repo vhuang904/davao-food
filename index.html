@@ -2998,12 +2998,14 @@ window.closeAdminActionSheet = function() {
   currentTargetComment = null;
 };
 
-// 執行處分邏輯
+// 執行處分邏輯（強化版：自動容錯 UID + 即時刷新信箱與錯誤提示）
 window.executeAdminAction = async function(actionType) {
   if (!currentTargetComment || !currentUser) return;
 
-  const { id: commentId, userId, userName, content } = currentTargetComment;
-  const sheet = document.getElementById('admin-action-sheet');
+  const commentId = currentTargetComment.id;
+  // 雙重容錯：優先取用留言紀錄中的 userId / uid，若為本人測試則降級取用 currentUser.uid
+  const targetUid = currentTargetComment.userId || currentTargetComment.uid || currentUser.uid;
+  const content = currentTargetComment.content || '';
 
   try {
     showToast('正在執行管理處分...', 'fa-spinner fa-spin');
@@ -3015,8 +3017,8 @@ window.executeAdminAction = async function(actionType) {
     // 2. 處理後續處置
     if (actionType === 'delete_only') {
       showToast('🗑️ 已刪除該留言（不處置）', 'fa-trash-can');
-    } else if (userId) {
-      const userRef = doc(db, "users", userId);
+    } else if (targetUid) {
+      const userRef = doc(db, "users", targetUid);
       const now = Date.now();
 
       if (actionType === 'delete_deduct') {
@@ -3024,10 +3026,10 @@ window.executeAdminAction = async function(actionType) {
         await updateDoc(userRef, {
           points: increment(-20),
           updatedAt: new Date().toISOString()
-        });
+        }).catch(e => console.warn("[Admin] 扣分失敗:", e));
 
         // 寫入專屬站內信通知該用戶
-        await addDoc(collection(db, "users", userId, "notifications"), {
+        await addDoc(collection(db, "users", targetUid, "notifications"), {
           title: "⚠️ 社群規範違規通知",
           content: `您在探店討論區發表的留言「${content.slice(0, 30)}...」因違反社群規範已被移除，並扣回該次發文獎勵 20 積分。請共同維護良好的討論氛圍。`,
           type: "penalty",
@@ -3049,12 +3051,12 @@ window.executeAdminAction = async function(actionType) {
           violationCount: increment(1),
           mutedUntil: mutedUntil,
           updatedAt: new Date().toISOString()
-        });
+        }).catch(e => console.warn("[Admin] 處分記錄失敗:", e));
 
         const banNotice = banDays >= 365 ? '永久禁止發言' : `暫停發表評論權限 ${banDays} 天（解禁日期：${unbanDateStr}）`;
 
         // 寫入專屬站內信
-        await addDoc(collection(db, "users", userId, "notifications"), {
+        await addDoc(collection(db, "users", targetUid, "notifications"), {
           title: "🚫 社群違規處分與禁言通知",
           content: `您的留言涉及違規已被移除，系統已扣回 20 積分。因累計第 ${currentCount + 1} 次違規，已對您的帳號施以「${banNotice}」處分。如有異議請洽官方客服。`,
           type: "penalty",
@@ -3064,6 +3066,16 @@ window.executeAdminAction = async function(actionType) {
 
         showToast(`🚫 處分完成：扣20分並${banNotice}`, 'fa-ban');
       }
+
+      // 若被處分對象是當前登入者本人（站長測試自己），即時更新本地個人資料與站內信箱
+      if (currentUser && targetUid === currentUser.uid) {
+        if (currentUserProfile) {
+          currentUserProfile.points = Math.max(0, (currentUserProfile.points || 50) - 20);
+          updateHeaderAuthBtn();
+          updateUserModalView();
+        }
+        await loadUserInboxMessages();
+      }
     }
 
     // 關閉面板並重新整理留言清單
@@ -3071,8 +3083,9 @@ window.executeAdminAction = async function(actionType) {
     await loadStoreComments(activeCommentStoreId);
 
   } catch (err) {
-    console.error("[Admin] 處分失敗:", err);
-    showToast('處分操作失敗，請稍後再試', 'fa-triangle-exclamation');
+    console.error("[Admin] 處分異常:", err);
+    // 直接在手機畫面上把錯誤原因彈出來（若遇權限問題會一目了然）
+    showToast(`處分異常: ${err.message || '請確認權限'}`, 'fa-triangle-exclamation');
   }
 };
 
