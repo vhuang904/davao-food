@@ -7,7 +7,7 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
-  <meta name="app-version" content="20260912-v41.0" />
+  <meta name="app-version" content="20260912-v41.1" />
   <meta name="theme-color" content="#020617" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -3419,7 +3419,7 @@ btnSubmitComment.addEventListener('click', handlePostComment);
       }
 
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js?v=20260913-v41.0').then((reg) => {
+        navigator.serviceWorker.register('./sw.js?v=20260913-v41.1').then((reg) => {
           reg.update().catch(() => {});
 
           if (reg.waiting) {
