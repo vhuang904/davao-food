@@ -7,7 +7,7 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
-  <meta name="app-version" content="20260913-v43.2" />
+  <meta name="app-version" content="20260913-v43.3" />
   <meta name="theme-color" content="#020617" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -272,6 +272,26 @@
       --theme-glow: 0 0 25px -2px rgba(110, 48, 115, 0.35);
     }
 
+    /* 4. 海島湛藍 (Ocean Navy Mode) - 避開 Tier 2 天藍色 */
+    html.ocean {
+      --theme-primary: #1D4ED8;
+      --theme-primary-hover: #1E40AF;
+      --theme-primary-text: #1D4ED8;
+      --theme-primary-light: #EFF6FF;
+      --theme-border: #BFDBFE;
+      --theme-border-focus: #2563EB;
+      --theme-header-bg: linear-gradient(180deg, #1E3A8A 0%, #172554 100%);
+      --theme-header-border: #172554;
+      --theme-card-bg: #FFFFFF;
+      --theme-card-sub-bg: #F8FAFC;
+      --theme-card-border: #E2E8F0;
+      --theme-text-title: #0F172A;
+      --theme-text-body: #334155;
+      --theme-gradient: linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%);
+      --theme-badge-text: #FFFFFF;
+      --theme-glow: 0 0 25px -2px rgba(29, 78, 216, 0.35);
+    }
+    
     /* =======================================================
        43 個變色器官通用綁定 (含功能按鈕強化與彈窗反白)
        ======================================================= */
@@ -583,6 +603,66 @@ html.dark #btn-logout {
     html.light #toastIcon, html.amethyst #toastIcon { color: var(--theme-primary) !important; }
     html.light #toastActionBtn, html.amethyst #toastActionBtn { background: var(--theme-gradient) !important; color: var(--theme-badge-text) !important; }
     html.light .beam-card-container, html.amethyst .beam-card-container { box-shadow: var(--theme-glow) !important; }
+
+    /* Ocean 湛藍模式專屬全域綁定 */
+    html.ocean body { background-color: #F1F5F9 !important; color: #0F172A !important; }
+    html.ocean header.glass-header { background: var(--theme-header-bg) !important; border-bottom: 2px solid var(--theme-header-border) !important; }
+    html.ocean header * { color: #FFFFFF; }
+    html.ocean .lang-toggle-container { background: rgba(255, 255, 255, 0.25) !important; border: 1px solid rgba(255, 255, 255, 0.45) !important; }
+    html.ocean .lang-toggle-btn.active { background: #FFFFFF !important; color: var(--theme-primary) !important; }
+    html.ocean #share-btn { background-color: #FFFFFF !important; border: 1px solid var(--theme-border) !important; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08) !important; }
+    html.ocean #share-btn i { color: var(--theme-primary) !important; }
+    html.ocean #visit-count-container { background-color: #FFFFFF !important; border-color: var(--theme-border) !important; }
+    html.ocean #visit-count-container * { color: var(--theme-primary) !important; }
+    html.ocean #search-input { background-color: #FFFFFF !important; color: #0F172A !important; }
+    html.ocean .region-pill { background-color: #FFFFFF !important; border: 1px solid var(--theme-border) !important; color: var(--theme-primary) !important; font-weight: 700 !important; }
+    html.ocean .region-pill.bg-amber-400, html.ocean #typeCityBtn.bg-gradient-to-r, html.ocean #typeIslandBtn.bg-gradient-to-r, html.ocean .main-tab-pill.bg-gradient-to-r { background: var(--theme-gradient) !important; color: #FFFFFF !important; }
+    html.ocean .sub-pill { background-color: #FFFFFF !important; border: 1px solid var(--theme-border) !important; color: var(--theme-primary) !important; font-weight: 700 !important; }
+    html.ocean .sub-pill.bg-amber-400\/20 { background: var(--theme-gradient) !important; border: 1px solid var(--theme-header-border) !important; color: #FFFFFF !important; }
+    html.ocean #itemCountBadge { background-color: #FFFFFF !important; border: 1px solid var(--theme-border) !important; color: var(--theme-primary) !important; }
+    html.ocean article { background-color: var(--theme-card-bg) !important; border-color: var(--theme-card-border) !important; }
+    html.ocean article div.bg-slate-950 { background-color: var(--theme-card-bg) !important; }
+    html.ocean article div.bg-slate-900 { background-color: var(--theme-card-sub-bg) !important; border-top: 1px solid var(--theme-card-border) !important; }
+    html.ocean article h2, html.ocean article h4, html.ocean article h6 { color: var(--theme-text-title) !important; }
+    html.ocean article p { color: var(--theme-text-body) !important; }
+    html.ocean .btn-card-website { background-color: #FFFFFF !important; color: var(--theme-primary) !important; border: 2px solid var(--theme-border) !important; }
+    html.ocean .btn-card-website * { color: var(--theme-primary) !important; }
+    html.ocean .carousel-hint-pill { background-color: rgba(255, 255, 255, 0.9) !important; color: #1D4ED8 !important; border: 1px solid #BFDBFE !important; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08) !important; }
+    html.ocean button[onclick*="toggleFavorite"] { background-color: rgba(255, 255, 255, 0.85) !important; border: 1px solid var(--theme-border) !important; }
+    html.ocean button[onclick*="toggleFavorite"] i.fa-regular { color: var(--theme-primary) !important; }
+    html.ocean #auth-modal .bg-slate-950 { background-color: var(--theme-card-bg) !important; border-color: var(--theme-border) !important; }
+    html.ocean #auth-modal .bg-slate-900\/90 { background-color: var(--theme-card-sub-bg) !important; border-color: var(--theme-border) !important; }
+    html.ocean #auth-modal h3, html.ocean #auth-modal h4, html.ocean #auth-modal h5, html.ocean #auth-modal h6 { color: var(--theme-text-title) !important; }
+    html.ocean #auth-modal p { color: var(--theme-text-body) !important; }
+    html.ocean #user-modal-level { color: var(--theme-primary) !important; }
+    html.ocean #user-modal-level i { color: var(--theme-primary) !important; }
+    html.ocean #user-modal-points-text { color: var(--theme-text-title) !important; }
+    html.ocean #auth-modal .bg-slate-950.h-2 { background-color: #E5E7EB !important; border-color: var(--theme-border) !important; }
+    html.ocean #level-progress-fill { background: var(--theme-gradient) !important; }
+    html.ocean #push-slot-container { background-color: var(--theme-card-sub-bg) !important; border-color: var(--theme-border) !important; }
+    html.ocean #push-slot-container * { color: var(--theme-primary) !important; font-weight: 800 !important; }
+    html.ocean #push-toggle-btn.bg-amber-400 { background-color: var(--theme-primary) !important; }
+    html.ocean #btn-open-tasks-subview { background-color: var(--theme-card-sub-bg) !important; border-color: var(--theme-border) !important; color: var(--theme-primary) !important; }
+    html.ocean #btn-open-tasks-subview * { color: var(--theme-primary) !important; }
+    html.ocean .btn-modal-close, html.ocean #close-comment-btn, html.ocean #close-recommend-btn { background-color: var(--theme-primary-light) !important; border: 1px solid var(--theme-border) !important; color: var(--theme-primary) !important; }
+    html.ocean #btn-logout { background-color: #EFF6FF !important; border: 1.5px solid #BFDBFE !important; color: #1D4ED8 !important; font-weight: 900 !important; }
+    html.ocean #commentModalCard, html.ocean #commentModalHeader { background-color: var(--theme-card-bg) !important; border-color: var(--theme-border) !important; }
+    html.ocean #comment-modal-title { color: var(--theme-text-title) !important; }
+    html.ocean #comment-list-container > div { background-color: var(--theme-card-sub-bg) !important; border: 1px solid var(--theme-border) !important; }
+    html.ocean #comment-list-container p { color: var(--theme-text-body) !important; }
+    html.ocean #commentModalCard .border-t { background-color: var(--theme-card-bg) !important; border-color: var(--theme-border) !important; }
+    html.ocean #comment-input { background-color: var(--theme-card-sub-bg) !important; border: 1.5px solid var(--theme-border) !important; color: var(--theme-text-title) !important; }
+    html.ocean #btn-submit-comment { background: var(--theme-gradient) !important; color: #FFFFFF !important; }
+    html.ocean #user-favorites-box { background-color: var(--theme-card-sub-bg) !important; border-color: var(--theme-card-border) !important; }
+    html.ocean .inbox-list > div { background-color: var(--theme-card-sub-bg) !important; border-color: var(--theme-card-border) !important; }
+    html.ocean .inbox-list h6 { color: var(--theme-text-title) !important; }
+    html.ocean .inbox-list p { color: var(--theme-text-body) !important; }
+    html.ocean .btn-fav-action { background-color: var(--theme-primary-light) !important; border: 1px solid var(--theme-border) !important; }
+    html.ocean #auth-modal-tasks-view .bg-slate-900 { background-color: var(--theme-card-sub-bg) !important; border: 1px solid var(--theme-card-border) !important; }
+    html.ocean #recommend-modal > div { background-color: var(--theme-card-bg) !important; border: 1px solid var(--theme-border) !important; }
+    html.ocean #recommend-modal .fa-paper-plane { color: var(--theme-primary) !important; }
+    html.ocean #rec-city, html.ocean #rec-store-name, html.ocean #rec-reason { border: 2px solid var(--theme-border) !important; }
+    html.ocean #btn-submit-recommend { background: var(--theme-gradient) !important; color: #FFFFFF !important; }
   </style>
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col font-sans">
@@ -809,6 +889,9 @@ html.dark #btn-logout {
                 </button>
                 <button data-set-theme="amethyst" class="w-full text-left px-3 py-1.5 text-[#8E4D88] hover:bg-purple-50 flex items-center gap-2 text-[11px] font-bold">
                   <span class="w-2.5 h-2.5 rounded-full bg-[#8E4D88] border border-purple-200"></span> 暮光紫霞
+                </button>
+                <button data-set-theme="ocean" class="w-full text-left px-3 py-1.5 text-[#1D4ED8] hover:bg-blue-50 flex items-center gap-2 text-[11px] font-bold">
+                  <span class="w-2.5 h-2.5 rounded-full bg-[#1D4ED8] border border-blue-200"></span> 海島湛藍
                 </button>
               </div>
             </div>
@@ -3229,7 +3312,7 @@ html.dark #btn-logout {
     });
 
     function applyAppTheme(theme) {
-      document.documentElement.classList.remove('dark', 'light', 'amethyst');
+      document.documentElement.classList.remove('dark', 'light', 'amethyst', 'ocean');
       const metaThemeColor = document.querySelector('meta[name="theme-color"]');
       
       if (theme === 'light') {
@@ -3244,6 +3327,12 @@ html.dark #btn-logout {
         themeDropdownBtn.className = 'bg-white border border-purple-300 text-[#8E4D88] text-[10px] font-black px-2.5 py-1 rounded-lg flex items-center justify-center gap-1 transition shadow-sm';
         currentThemeIcon.style.color = '#8E4D88';
         if (metaThemeColor) metaThemeColor.setAttribute('content', '#6B3E75');
+      } else if (theme === 'ocean') {
+        document.documentElement.classList.add('ocean');
+        currentThemeLabel.innerText = '湛藍';
+        themeDropdownBtn.className = 'bg-white border border-blue-300 text-[#1D4ED8] text-[10px] font-black px-2.5 py-1 rounded-lg flex items-center justify-center gap-1 transition shadow-sm';
+        currentThemeIcon.style.color = '#1D4ED8';
+        if (metaThemeColor) metaThemeColor.setAttribute('content', '#1E3A8A');
       } else {
         document.documentElement.classList.add('dark');
         currentThemeLabel.innerText = '暗夜';
@@ -3877,7 +3966,7 @@ html.dark #btn-logout {
       }
 
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js?v=20260913-v43.2').then((reg) => {
+        navigator.serviceWorker.register('./sw.js?v=20260913-v43.3').then((reg) => {
           if (reg.waiting) {
             showPwaUpdateModal(reg.waiting);
           }
