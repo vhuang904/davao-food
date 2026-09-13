@@ -2870,8 +2870,17 @@ function resetModalVisualViewport() {
   commentModal.style.width = '';
   commentModal.style.height = '';
   if (commentModalCard) commentModalCard.style.height = '';
-}
 
+  // ⭐ 關鍵：解除 body 的 fixed 鎖定並恢復原先捲動位置
+  const scrollY = document.body.style.top;
+  document.body.style.position = '';
+  document.body.style.width = '';
+  document.body.style.top = '';
+  if (scrollY) {
+    window.scrollTo(0, parseInt(scrollY || '0') * -1);
+  }
+}
+    
 // 綁定右上角 ✕ 關閉按鈕與點擊背景關閉
 if (closeCommentBtn) {
   closeCommentBtn.onclick = (e) => {
