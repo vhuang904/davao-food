@@ -7,7 +7,7 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
-  <meta name="app-version" content="20260913-v43.7.0" />
+  <meta name="app-version" content="20260913-v43.7.1" />
   <meta name="theme-color" content="#020617" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -758,6 +758,33 @@
     html.light #btn-magic-email, html.amethyst #btn-magic-email, html.ocean #btn-magic-email, html.sakura #btn-magic-email {
       background: var(--theme-gradient) !important;
       color: var(--theme-badge-text) !important;
+    }
+
+    /* =======================================================
+       櫻花模式專屬修復：都會生活圈按鈕變色 + 寫評論立體按鈕感
+       ======================================================= */
+    
+    /* 1. 徹底修復都會生活圈 / 渡假海島按鈕變橘色問題 */
+    html.sakura #typeCityBtn.bg-gradient-to-r,
+    html.sakura #typeIslandBtn.bg-gradient-to-r,
+    html.sakura .region-pill.bg-amber-400 {
+      background: var(--theme-gradient) !important;
+      color: #FFFFFF !important;
+      font-weight: 900 !important;
+      border: 1.5px solid rgba(255, 255, 255, 0.6) !important;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2) !important;
+    }
+
+    /* 2. 強化寫評論按鈕立體感與陰影，增加明顯按鈕質感 */
+    html.sakura .btn-card-comment {
+      background: var(--theme-gradient) !important;
+      color: #FFFFFF !important;
+      border: 1.5px solid rgba(255, 255, 255, 0.5) !important;
+      box-shadow: 0 3px 8px rgba(219, 39, 119, 0.25) !important;
+    }
+    html.sakura .btn-card-comment * {
+      color: #FFFFFF !important;
+      font-weight: 900 !important;
     }
   </style>
 </head>
@@ -4071,7 +4098,7 @@
       }
 
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js?v=20260913-v43.7.0').then((reg) => {
+        navigator.serviceWorker.register('./sw.js?v=20260913-v43.7.1').then((reg) => {
           if (reg.waiting) {
             showPwaUpdateModal(reg.waiting);
           }
