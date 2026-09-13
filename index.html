@@ -7,7 +7,7 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
-  <meta name="app-version" content="20260913-v43.5" />
+  <meta name="app-version" content="20260913-v43.6" />
   <meta name="theme-color" content="#020617" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -209,11 +209,11 @@
     }
 
     /* =======================================================
-       全域 43 器官語意主題變數引擎 (Theme Token Matrix)
+       一、四大主題語意變數引擎 (Theme Token Matrix)
        ======================================================= */
     
     /* 1. 暗夜尊爵 (Dark Default) */
-    html.dark, html:not(.light):not(.amethyst) {
+    html.dark {
       --theme-primary: #F59E0B;
       --theme-primary-hover: #D97706;
       --theme-primary-text: #FCD34D;
@@ -272,122 +272,30 @@
       --theme-glow: 0 0 25px -2px rgba(110, 48, 115, 0.35);
     }
 
-    /* 4. 海島湛藍 (Ocean Navy Mode) - 避開 Tier 2 天藍色 */
+    /* 4. 海島湛藍 (Ocean Navy Mode) */
     html.ocean {
-      --theme-primary: #1D4ED8;
-      --theme-primary-hover: #1E40AF;
-      --theme-primary-text: #1D4ED8;
-      --theme-primary-light: #EFF6FF;
-      --theme-border: #BFDBFE;
-      --theme-border-focus: #2563EB;
-      --theme-header-bg: linear-gradient(180deg, #1E3A8A 0%, #172554 100%);
-      --theme-header-border: #172554;
+      --theme-primary: #0284C7;
+      --theme-primary-hover: #0369A1;
+      --theme-primary-text: #0284C7;
+      --theme-primary-light: #E0F2FE;
+      --theme-border: #BAE6FD;
+      --theme-border-focus: #0284C7;
+      --theme-header-bg: linear-gradient(180deg, #0284C7 0%, #0369A1 100%);
+      --theme-header-border: #075985;
       --theme-card-bg: #FFFFFF;
-      --theme-card-sub-bg: #F8FAFC;
-      --theme-card-border: #E2E8F0;
-      --theme-text-title: #0F172A;
+      --theme-card-sub-bg: #F0F9FF;
+      --theme-card-border: #E0F2FE;
+      --theme-text-title: #0C4A6E;
       --theme-text-body: #334155;
-      --theme-gradient: linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%);
+      --theme-gradient: linear-gradient(135deg, #0284C7 0%, #0369A1 100%);
       --theme-badge-text: #FFFFFF;
-      --theme-glow: 0 0 25px -2px rgba(29, 78, 216, 0.35);
+      --theme-glow: 0 0 25px -2px rgba(2, 132, 199, 0.35);
     }
-    
+
     /* =======================================================
-       43 個變色器官通用綁定 (含功能按鈕強化與彈窗反白)
+       二、三大固定功能按鈕（全域永久鎖定，任何主題不動搖）
        ======================================================= */
-    
-    html.light body { background-color: #F7F3EB !important; color: #1F2937 !important; }
-    html.amethyst body { background-color: #FAF6F9 !important; color: #2E1A33 !important; }
-
-    /* [一、頂部 Header] */
-    header.glass-header { transition: background 0.3s ease; }
-    html.light header.glass-header { background: var(--theme-header-bg) !important; border-bottom: 2px solid var(--theme-header-border) !important; }
-    html.amethyst header.glass-header { background: var(--theme-header-bg) !important; border-bottom: 2px solid var(--theme-header-border) !important; }
-    html.light header *, html.amethyst header * { color: #FFFFFF; }
-
-    /* 暗夜尊爵版語系膠囊外框與高亮 */
-html.dark .lang-toggle-container,
-html:not(.light):not(.amethyst) .lang-toggle-container {
-  background-color: #0B0F19 !important;
-  border: 1px solid rgba(245, 158, 11, 0.4) !important;
-  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.6) !important;
-}
-html.dark .lang-toggle-btn {
-  color: #94A3B8 !important;
-}
-html.dark .lang-toggle-btn.active {
-  background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%) !important;
-  color: #020617 !important;
-  font-weight: 900 !important;
-  box-shadow: 0 2px 8px rgba(245, 158, 11, 0.4) !important;
-}
-    html.light .lang-toggle-container, html.amethyst .lang-toggle-container { background: rgba(255, 255, 255, 0.25) !important; border: 1px solid rgba(255, 255, 255, 0.45) !important; }
-    html.light .lang-toggle-btn.active, html.amethyst .lang-toggle-btn.active { background: #FFFFFF !important; color: var(--theme-primary) !important; }
-    html.light #visit-count-container, html.amethyst #visit-count-container { background-color: #FFFFFF !important; border-color: var(--theme-border) !important; }
-    html.light #visit-count-container *, html.amethyst #visit-count-container * { color: var(--theme-primary) !important; }
-    html.light #search-input, html.amethyst #search-input { background-color: #FFFFFF !important; color: #1F2937 !important; border: 1px solid rgba(255, 255, 255, 0.6) !important; }
-    html.light #search-input::placeholder, html.amethyst #search-input::placeholder { color: #9CA3AF !important; }
-    html.light header .bg-slate-950, html.light header .bg-slate-900,
-    html.amethyst header .bg-slate-950, html.amethyst header .bg-slate-900 { background-color: rgba(255, 255, 255, 0.22) !important; border-color: rgba(255, 255, 255, 0.3) !important; }
-    html.light header > div.bg-slate-950\/90, html.amethyst header > div.bg-slate-950\/90 { background: var(--theme-card-bg) !important; border-top: 1px solid var(--theme-border) !important; }
-    
-    html.light .region-pill, html.amethyst .region-pill { background-color: #FFFFFF !important; border: 1px solid var(--theme-border) !important; color: var(--theme-primary) !important; font-weight: 700 !important; }
-    html.light .region-pill.bg-amber-400, html.amethyst .region-pill.bg-amber-400,
-    html.light #typeCityBtn.bg-gradient-to-r, html.amethyst #typeCityBtn.bg-gradient-to-r,
-    html.light #typeIslandBtn.bg-gradient-to-r, html.amethyst #typeIslandBtn.bg-gradient-to-r,
-    html.light .main-tab-pill.bg-gradient-to-r, html.amethyst .main-tab-pill.bg-gradient-to-r {
-      background: var(--theme-gradient) !important;
-      color: var(--theme-badge-text) !important;
-    }
-
-    /* 右上角分享按鈕：白底圓圈＋系統色圖示 */
-    html.light #share-btn, html.amethyst #share-btn {
-      background-color: #FFFFFF !important;
-      border: 1px solid var(--theme-border) !important;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08) !important;
-    }
-    html.light #share-btn i, html.amethyst #share-btn i {
-      color: var(--theme-primary) !important;
-    }
-
-    /* 子分類膠囊反白 */
-    html.light .sub-pill, html.amethyst .sub-pill {
-      background-color: #FFFFFF !important;
-      border: 1px solid var(--theme-border) !important;
-      color: var(--theme-primary) !important;
-      font-weight: 700 !important;
-    }
-    html.light .sub-pill.bg-amber-400\/20, html.amethyst .sub-pill.bg-amber-400\/20 {
-      background: var(--theme-gradient) !important;
-      border: 1px solid var(--theme-header-border) !important;
-      color: #FFFFFF !important;
-      font-weight: 900 !important;
-    }
-    html.light #itemCountBadge, html.amethyst #itemCountBadge {
-      background-color: #FFFFFF !important;
-      border: 1px solid var(--theme-border) !important;
-      color: var(--theme-primary) !important;
-    }
-
-    /* [二、主清單卡片 & 三大功能按鈕邊框加粗] */
-    html.light article, html.amethyst article { background-color: var(--theme-card-bg) !important; border-color: var(--theme-card-border) !important; }
-    html.light article div.bg-slate-950, html.amethyst article div.bg-slate-950 { background-color: var(--theme-card-bg) !important; }
-    html.light article div.bg-slate-900, html.amethyst article div.bg-slate-900 { background-color: var(--theme-card-sub-bg) !important; border-top: 1px solid var(--theme-card-border) !important; }
-    html.light article h2, html.light article h4, html.light article h6,
-    html.amethyst article h2, html.amethyst article h4, html.amethyst article h6 { color: var(--theme-text-title) !important; }
-    html.light article p, html.amethyst article p { color: var(--theme-text-body) !important; }
-    
-    /* 1. 寫評論：隨主題漸層 */
-    .btn-card-comment { background: var(--theme-gradient) !important; color: var(--theme-badge-text) !important; }
-    .btn-card-comment * { color: var(--theme-badge-text) !important; font-weight: 900 !important; }
-
-    /* 2. 官網/粉專：加粗邊框，暗夜模式下金框清晰可見 */
-    html.light .btn-card-website, html.amethyst .btn-card-website { background-color: #FFFFFF !important; color: var(--theme-primary) !important; border: 2px solid var(--theme-border) !important; }
-    html.light .btn-card-website *, html.amethyst .btn-card-website * { color: var(--theme-primary) !important; font-weight: 800 !important; }
-    html.dark .btn-card-website { background-color: rgba(15, 23, 42, 0.95) !important; border: 2px solid rgba(245, 158, 11, 0.7) !important; color: #FCD34D !important; }
-    html.dark .btn-card-website * { color: #FCD34D !important; font-weight: 800 !important; }
-
-    /* 3. Grab 點餐：全域永久固定【綠底白字】 */
+    /* 1. Grab 點餐：綠底白字 */
     .btn-card-grab {
       background: #00B14F !important;
       background-color: #00B14F !important;
@@ -397,7 +305,7 @@ html.dark .lang-toggle-btn.active {
     }
     .btn-card-grab * { color: #FFFFFF !important; font-weight: 900 !important; }
 
-    /* 4. 撥打電話：全域永久固定【通話翠綠色，加粗 2px 邊框】 */
+    /* 2. 撥打電話：通話翠綠色 */
     .btn-card-phone {
       background-color: #FFFFFF !important;
       border: 2px solid #10B981 !important;
@@ -411,7 +319,7 @@ html.dark .lang-toggle-btn.active {
     }
     html.dark .btn-card-phone * { color: #34D399 !important; }
 
-    /* 5. 路線導航：全域永久固定【導航天藍色，加粗 2px 邊框】 */
+    /* 3. 路線導航：導航天藍色 */
     .btn-card-nav {
       background-color: #FFFFFF !important;
       border: 2px solid #0EA5E9 !important;
@@ -425,7 +333,9 @@ html.dark .lang-toggle-btn.active {
     }
     html.dark .btn-card-nav * { color: #38BDF8 !important; }
 
-    /* 卡片輪播浮層元件：左右滑動提示三主題分流 */
+    /* =======================================================
+       三、暗夜尊爵專屬防護罩（確保黑底金字絕不走樣）
+       ======================================================= */
     .carousel-hint-pill {
       position: absolute;
       top: 3rem;
@@ -439,314 +349,381 @@ html.dark .lang-toggle-btn.active {
       backdrop-filter: blur(4px);
       -webkit-backdrop-filter: blur(4px);
     }
-    /* 1. 暗夜尊爵：半透明黑底 + 金黃字 + 琥珀金細框 */
-    html.dark .carousel-hint-pill,
-    html:not(.light):not(.amethyst) .carousel-hint-pill {
+    /* 暗夜輪播膠囊：經典半透明黑底 + 金字金框 */
+    html.dark .carousel-hint-pill {
       background-color: rgba(2, 6, 23, 0.85) !important;
       color: #FCD34D !important;
       border: 1px solid rgba(245, 158, 11, 0.45) !important;
       box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5) !important;
     }
-    /* 2. 暖陽金橘：白底 + 橘字 + 橘框 */
-    html.light .carousel-hint-pill {
-      background-color: rgba(255, 255, 255, 0.9) !important;
-      color: #EA580C !important;
-      border: 1px solid #FED7AA !important;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1) !important;
+    /* 暗夜語系切換膠囊：深黑底 + 金邊框 */
+    html.dark .lang-toggle-container {
+      background-color: #0B0F19 !important;
+      border: 1px solid rgba(245, 158, 11, 0.4) !important;
+      box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.6) !important;
     }
-    /* 3. 暮光紫霞：白底 + 紫字 + 紫框 */
-    html.amethyst .carousel-hint-pill {
-      background-color: rgba(255, 255, 255, 0.9) !important;
-      color: #7B337F !important;
-      border: 1px solid #E0BEE5 !important;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1) !important;
+    html.dark .lang-toggle-btn { color: #94A3B8 !important; }
+    html.dark .lang-toggle-btn.active {
+      background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%) !important;
+      color: #020617 !important;
+      font-weight: 900 !important;
+      box-shadow: 0 2px 8px rgba(245, 158, 11, 0.4) !important;
     }
-
-    /* 卡片愛心按鈕在淺色模式下的反白 */
-    html.light button[onclick*="toggleFavorite"], html.amethyst button[onclick*="toggleFavorite"] {
-      background-color: rgba(255, 255, 255, 0.85) !important;
-      border: 1px solid var(--theme-border) !important;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1) !important;
+    /* 暗夜官網按鈕：深黑底 + 金框 */
+    html.dark .btn-card-website {
+      background-color: rgba(15, 23, 42, 0.95) !important;
+      border: 2px solid rgba(245, 158, 11, 0.7) !important;
+      color: #FCD34D !important;
     }
-    html.light button[onclick*="toggleFavorite"] i.fa-regular, html.amethyst button[onclick*="toggleFavorite"] i.fa-regular {
-      color: var(--theme-primary) !important;
-    }
-
-    /* 標籤與星號 */
-    html.light .card-pill-tag, html.amethyst .card-pill-tag { background-color: var(--theme-primary-light) !important; border-color: var(--theme-border) !important; color: var(--theme-primary) !important; }
-    html.light .card-meta-tag, html.amethyst .card-meta-tag { color: var(--theme-primary) !important; }
-    html.light .card-rating-star, html.amethyst .card-rating-star,
-    html.light .card-rating-star i, html.amethyst .card-rating-star i { color: var(--theme-primary) !important; }
-    html.light .card-review-prefix, html.amethyst .card-review-prefix { color: var(--theme-primary) !important; }
-
-    /* [三、會員中心面板 & 全域彈窗通用關閉按鈕] */
-    html.light #auth-modal .bg-slate-950, html.amethyst #auth-modal .bg-slate-950 { background-color: var(--theme-card-bg) !important; border-color: var(--theme-border) !important; }
-    html.light #auth-modal .bg-slate-900\/90, html.amethyst #auth-modal .bg-slate-900\/90 { background-color: var(--theme-card-sub-bg) !important; border-color: var(--theme-border) !important; }
-    html.light #auth-modal h3, html.light #auth-modal h4, html.light #auth-modal h5, html.light #auth-modal h6,
-    html.amethyst #auth-modal h3, html.amethyst #auth-modal h4, html.amethyst #auth-modal h5, html.amethyst #auth-modal h6 { color: var(--theme-text-title) !important; }
-    html.light #auth-modal p, html.amethyst #auth-modal p { color: var(--theme-text-body) !important; }
-    html.light #user-modal-level, html.amethyst #user-modal-level { color: var(--theme-primary) !important; }
-    html.light #user-modal-level i, html.amethyst #user-modal-level i { color: var(--theme-primary) !important; }
-    html.light #user-modal-points-text, html.amethyst #user-modal-points-text { color: var(--theme-text-title) !important; }
-    html.light #auth-modal .bg-slate-950.h-2, html.amethyst #auth-modal .bg-slate-950.h-2 { background-color: #E5E7EB !important; border-color: var(--theme-border) !important; }
-    html.light #level-progress-fill, html.amethyst #level-progress-fill { background: var(--theme-gradient) !important; }
-
-    /* 推播區塊：鈴鐺與「推播」文字強制對齊主題色 */
-    html.light #push-slot-container, html.amethyst #push-slot-container { background-color: var(--theme-card-sub-bg) !important; border-color: var(--theme-border) !important; }
-    html.light #push-slot-container *, html.amethyst #push-slot-container * { color: var(--theme-primary) !important; font-weight: 800 !important; }
-    html.light #push-toggle-btn.bg-amber-400, html.amethyst #push-toggle-btn.bg-amber-400 { background-color: var(--theme-primary) !important; }
-    html.light #btn-open-tasks-subview, html.amethyst #btn-open-tasks-subview { background-color: var(--theme-card-sub-bg) !important; border-color: var(--theme-border) !important; color: var(--theme-primary) !important; }
-    html.light #btn-open-tasks-subview *, html.amethyst #btn-open-tasks-subview * { color: var(--theme-primary) !important; }
-
-    /* 全域所有彈窗右上角關閉叉叉 (✕)：徹底消除黑底 */
-    html.light .btn-modal-close, html.light #close-comment-btn, html.light #close-recommend-btn {
-      background-color: var(--theme-primary-light) !important;
-      border: 1px solid var(--theme-border) !important;
-      color: var(--theme-primary) !important;
-    }
-    html.amethyst .btn-modal-close, html.amethyst #close-comment-btn, html.amethyst #close-recommend-btn {
-      background-color: var(--theme-primary-light) !important;
-      border: 1px solid var(--theme-border) !important;
-      color: var(--theme-primary) !important;
-    }
+    html.dark .btn-card-website * { color: #FCD34D !important; font-weight: 800 !important; }
+    /* 暗夜彈窗關閉叉叉 */
     html.dark .btn-modal-close, html.dark #close-comment-btn, html.dark #close-recommend-btn {
       background-color: #0F172A !important;
       border: 1px solid #334155 !important;
       color: #94A3B8 !important;
     }
-
-    /* 登出按鈕：淺色模式警示紅，暗夜模式尊爵黑紅 */
-html.light #btn-logout {
-  background-color: #FEF2F2 !important;
-  border: 1.5px solid #FCA5A5 !important;
-  color: #DC2626 !important;
-  font-weight: 900 !important;
-}
-html.amethyst #btn-logout {
-  background-color: #FFF1F2 !important;
-  border: 1.5px solid #FECDD3 !important;
-  color: #E11D48 !important;
-  font-weight: 900 !important;
-}
-html.dark #btn-logout {
-  background-color: rgba(76, 5, 25, 0.4) !important;
-  border: 1px solid rgba(244, 63, 94, 0.4) !important;
-  color: #FDA4AF !important;
-  font-weight: 800 !important;
-}
-    
-    /* [四、會員雙 Tab & 信箱] */
-    html.light #user-favorites-box, html.amethyst #user-favorites-box { background-color: var(--theme-card-sub-bg) !important; border-color: var(--theme-card-border) !important; }
-    html.light .inbox-list > div, html.amethyst .inbox-list > div { background-color: var(--theme-card-sub-bg) !important; border-color: var(--theme-card-border) !important; }
-    html.light .inbox-list h6, html.amethyst .inbox-list h6 { color: var(--theme-text-title) !important; }
-    html.light .inbox-list p, html.amethyst .inbox-list p { color: var(--theme-text-body) !important; }
-    html.light .inbox-list .text-amber-300, html.light .inbox-list .text-amber-400,
-    html.amethyst .inbox-list .text-amber-300, html.amethyst .inbox-list .text-amber-400 { color: var(--theme-primary) !important; }
-    html.light #favorites-list-container .fa-star, html.amethyst #favorites-list-container .fa-star { color: var(--theme-primary) !important; }
-    html.light .btn-fav-action, html.amethyst .btn-fav-action { background-color: var(--theme-primary-light) !important; border: 1px solid var(--theme-border) !important; }
-
-    /* [五、特殊任務子視窗] */
-    .task-theme-btn { color: var(--theme-primary) !important; }
-    .task-theme-title { color: var(--theme-primary) !important; }
-    .task-theme-pts { color: var(--theme-primary) !important; }
-    .task-theme-badge { background: var(--theme-gradient) !important; color: var(--theme-badge-text) !important; }
-    .task-view-title { color: var(--theme-primary) !important; font-weight: 900 !important; }
-    html.light #auth-modal-tasks-view .bg-slate-900, html.amethyst #auth-modal-tasks-view .bg-slate-900 { background-color: var(--theme-card-sub-bg) !important; border: 1px solid var(--theme-card-border) !important; }
-
-    /* [六、AI 旅遊管家] */
-    #chat-fab { box-shadow: var(--theme-glow) !important; }
-    html.light #chat-modal, html.amethyst #chat-modal { background-color: #FFFFFF !important; border: 1.5px solid var(--theme-border) !important; }
-    html.light #chat-modal-header, html.amethyst #chat-modal-header { background: var(--theme-gradient) !important; }
-    html.light #chat-messages, html.amethyst #chat-messages { background-color: #FFFFFF !important; }
-    html.light .chat-bubble-agent, html.amethyst .chat-bubble-agent { background-color: var(--theme-primary-light) !important; border-color: var(--theme-border) !important; color: var(--theme-text-title) !important; }
-    html.light .ai-quick-btn, html.amethyst .ai-quick-btn { background-color: #FFFFFF !important; border-color: var(--theme-border) !important; color: var(--theme-primary) !important; }
-    html.light #chat-input-bar, html.amethyst #chat-input-bar { background-color: #FFFFFF !important; border-top: 1px solid var(--theme-border) !important; }
-    html.light #chat-input, html.amethyst #chat-input { background-color: var(--theme-primary-light) !important; border: 1.5px solid var(--theme-border) !important; color: var(--theme-text-title) !important; }
-    html.light #btn-send-chat, html.amethyst #btn-send-chat { background: var(--theme-gradient) !important; color: var(--theme-badge-text) !important; }
-
-    /* [七、推薦好店彈窗] */
-    html.light #recommend-modal > div, html.amethyst #recommend-modal > div { background-color: var(--theme-card-bg) !important; border: 1px solid var(--theme-border) !important; }
-    html.light #recommend-modal .fa-paper-plane, html.amethyst #recommend-modal .fa-paper-plane { color: var(--theme-primary) !important; }
-    html.light #rec-city, html.amethyst #rec-city,
-    html.light #rec-store-name, html.amethyst #rec-store-name,
-    html.light #rec-reason, html.amethyst #rec-reason { border: 2px solid var(--theme-border) !important; }
-    html.light #btn-submit-recommend, html.amethyst #btn-submit-recommend { background: var(--theme-gradient) !important; color: var(--theme-badge-text) !important; }
-
-    /* [八、登入前遊客視窗] */
-    html.light #auth-modal-login-view .text-amber-400, html.amethyst #auth-modal-login-view .text-amber-400 { color: var(--theme-primary) !important; }
-    html.light #magic-email-input, html.amethyst #magic-email-input { border: 2px solid var(--theme-border) !important; }
-    html.light #btn-magic-email, html.amethyst #btn-magic-email { background: var(--theme-gradient) !important; color: var(--theme-badge-text) !important; }
-
-    /* [九、店家評論彈窗：消滅黑底框、黑卡片與黑輸入框] */
-    html.light #commentModalCard, html.amethyst #commentModalCard { background-color: var(--theme-card-bg) !important; border-color: var(--theme-border) !important; }
-    html.light #commentModalHeader, html.amethyst #commentModalHeader { background-color: var(--theme-card-bg) !important; border-color: var(--theme-border) !important; }
-    html.light #comment-modal-title, html.amethyst #comment-modal-title { color: var(--theme-text-title) !important; }
-    html.light #comment-list-container > div, html.amethyst #comment-list-container > div {
-      background-color: var(--theme-card-sub-bg) !important;
-      border: 1px solid var(--theme-border) !important;
+    /* 暗夜登出按鈕 */
+    html.dark #btn-logout {
+      background-color: rgba(76, 5, 25, 0.4) !important;
+      border: 1px solid rgba(244, 63, 94, 0.4) !important;
+      color: #FDA4AF !important;
+      font-weight: 800 !important;
     }
-    html.light #comment-list-container p, html.amethyst #comment-list-container p { color: var(--theme-text-body) !important; }
-    html.light #commentModalCard .border-t, html.amethyst #commentModalCard .border-t {
-      background-color: var(--theme-card-bg) !important;
-      border-color: var(--theme-border) !important;
-    }
-    html.light #comment-input, html.amethyst #comment-input {
-      background-color: var(--theme-card-sub-bg) !important;
-      border: 1.5px solid var(--theme-border) !important;
-      color: var(--theme-text-title) !important;
-    }
-    html.light #comment-input::placeholder, html.amethyst #comment-input::placeholder { color: #9CA3AF !important; }
-    html.light #btn-submit-comment, html.amethyst #btn-submit-comment { background: var(--theme-gradient) !important; color: var(--theme-badge-text) !important; }
 
-    /* [十、全域反饋與特效] */
-    html.light #toastInnerBox, html.amethyst #toastInnerBox { border: 1px solid var(--theme-border) !important; }
-    html.light #toastIcon, html.amethyst #toastIcon { color: var(--theme-primary) !important; }
-    html.light #toastActionBtn, html.amethyst #toastActionBtn { background: var(--theme-gradient) !important; color: var(--theme-badge-text) !important; }
-    html.light .beam-card-container, html.amethyst .beam-card-container { box-shadow: var(--theme-glow) !important; }
-
-    /* ===================================================
-       Ocean 海島湛藍：徹底反白、高對比清晰版
-       =================================================== */
+    /* =======================================================
+       四、淺色系三大主題通用反白引擎 (Light / Amethyst / Ocean)
+       ======================================================= */
+    html.light body { background-color: #F7F3EB !important; color: #1F2937 !important; }
+    html.amethyst body { background-color: #FAF6F9 !important; color: #2E1A33 !important; }
     html.ocean body { background-color: #F0F9FF !important; color: #0C4A6E !important; }
-    
-    /* 頂部 Header 與中英文切換鈕徹底消滅黑底 */
-    html.ocean header.glass-header { 
-      background: linear-gradient(180deg, #0284C7 0%, #0369A1 100%) !important; 
-      border-bottom: 2px solid #075985 !important; 
+
+    /* 頂部 Header 與導航列 */
+    html.light header.glass-header, html.amethyst header.glass-header, html.ocean header.glass-header { 
+      background: var(--theme-header-bg) !important; 
+      border-bottom: 2px solid var(--theme-header-border) !important; 
     }
-    html.ocean header * { color: #FFFFFF !important; }
-    
-    /* 1. 修復中英文膠囊：白半透明外框，未選中文字清晰純白，選中白底深藍字 */
-    html.ocean .lang-toggle-container { 
-      background: rgba(255, 255, 255, 0.22) !important; 
-      border: 1.5px solid rgba(255, 255, 255, 0.55) !important; 
+    html.light header *, html.amethyst header *, html.ocean header * { color: #FFFFFF; }
+
+    /* 中英文切換鈕：徹底消除黑底 */
+    html.light .lang-toggle-container, html.amethyst .lang-toggle-container, html.ocean .lang-toggle-container { 
+      background: rgba(255, 255, 255, 0.25) !important; 
+      border: 1.5px solid rgba(255, 255, 255, 0.5) !important; 
       box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
     }
-    html.ocean .lang-toggle-btn { 
-      color: rgba(255, 255, 255, 0.85) !important; 
+    html.light .lang-toggle-btn, html.amethyst .lang-toggle-btn, html.ocean .lang-toggle-btn {
+      color: rgba(255, 255, 255, 0.85) !important;
       font-weight: 700 !important;
     }
-    html.ocean .lang-toggle-btn.active { 
+    html.light .lang-toggle-btn.active, html.amethyst .lang-toggle-btn.active, html.ocean .lang-toggle-btn.active { 
       background: #FFFFFF !important; 
-      color: #0284C7 !important; 
+      color: var(--theme-primary) !important; 
       font-weight: 900 !important;
       box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15) !important;
     }
 
-    html.ocean #share-btn { background-color: #FFFFFF !important; border: 1px solid rgba(255, 255, 255, 0.8) !important; box-shadow: 0 1px 3px rgba(0,0,0,0.1) !important; }
-    html.ocean #share-btn i { color: #0284C7 !important; }
-    html.ocean #visit-count-container { background-color: #FFFFFF !important; border-color: #BAE6FD !important; }
-    html.ocean #visit-count-container * { color: #0284C7 !important; }
-    html.ocean #search-input { background-color: #FFFFFF !important; color: #0C4A6E !important; border: 1px solid rgba(255, 255, 255, 0.7) !important; }
-    html.ocean #search-input::placeholder { color: #94A3B8 !important; }
-    html.ocean header .bg-slate-950, html.ocean header .bg-slate-900 { background-color: rgba(255, 255, 255, 0.2) !important; border-color: rgba(255, 255, 255, 0.35) !important; }
-    html.ocean header > div.bg-slate-950\/90 { background: #FFFFFF !important; border-top: 1px solid #BAE6FD !important; }
-    
-    /* 2. 標籤高對比修復：未選中標籤改為「淺冰藍底＋深海軍藍高對比字」 */
-    html.ocean .region-pill { 
-      background-color: #E0F2FE !important; 
-      border: 1.5px solid #BAE6FD !important; 
-      color: #0369A1 !important; 
+    html.light #share-btn, html.amethyst #share-btn, html.ocean #share-btn {
+      background-color: #FFFFFF !important;
+      border: 1px solid var(--theme-border) !important;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08) !important;
+    }
+    html.light #share-btn i, html.amethyst #share-btn i, html.ocean #share-btn i { color: var(--theme-primary) !important; }
+
+    html.light #visit-count-container, html.amethyst #visit-count-container, html.ocean #visit-count-container { 
+      background-color: #FFFFFF !important; 
+      border-color: var(--theme-border) !important; 
+    }
+    html.light #visit-count-container *, html.amethyst #visit-count-container *, html.ocean #visit-count-container * { color: var(--theme-primary) !important; }
+
+    html.light #search-input, html.amethyst #search-input, html.ocean #search-input { 
+      background-color: #FFFFFF !important; 
+      color: var(--theme-text-title) !important; 
+      border: 1px solid rgba(255, 255, 255, 0.7) !important; 
+    }
+    html.light #search-input::placeholder, html.amethyst #search-input::placeholder, html.ocean #search-input::placeholder { color: #9CA3AF !important; }
+
+    html.light header .bg-slate-950, html.light header .bg-slate-900,
+    html.amethyst header .bg-slate-950, html.amethyst header .bg-slate-900,
+    html.ocean header .bg-slate-950, html.ocean header .bg-slate-900 { 
+      background-color: rgba(255, 255, 255, 0.22) !important; 
+      border-color: rgba(255, 255, 255, 0.35) !important; 
+    }
+    html.light header > div.bg-slate-950\/90, html.amethyst header > div.bg-slate-950\/90, html.ocean header > div.bg-slate-950\/90 { 
+      background: var(--theme-card-bg) !important; 
+      border-top: 1px solid var(--theme-border) !important; 
+    }
+
+    /* 地區與分類膠囊（高對比字體修復，告別灰暗不清） */
+    html.light .region-pill, html.amethyst .region-pill, html.ocean .region-pill { 
+      background-color: var(--theme-card-sub-bg) !important; 
+      border: 1.5px solid var(--theme-border) !important; 
+      color: var(--theme-primary) !important; 
       font-weight: 800 !important; 
     }
-    html.ocean .region-pill.bg-amber-400, 
-    html.ocean #typeCityBtn.bg-gradient-to-r, 
-    html.ocean #typeIslandBtn.bg-gradient-to-r, 
-    html.ocean .main-tab-pill.bg-gradient-to-r { 
-      background: linear-gradient(135deg, #0284C7 0%, #0369A1 100%) !important; 
-      color: #FFFFFF !important; 
+    html.light .region-pill.bg-amber-400, html.amethyst .region-pill.bg-amber-400, html.ocean .region-pill.bg-amber-400,
+    html.light #typeCityBtn.bg-gradient-to-r, html.amethyst #typeCityBtn.bg-gradient-to-r, html.ocean #typeCityBtn.bg-gradient-to-r,
+    html.light #typeIslandBtn.bg-gradient-to-r, html.amethyst #typeIslandBtn.bg-gradient-to-r, html.ocean #typeIslandBtn.bg-gradient-to-r,
+    html.light .main-tab-pill.bg-gradient-to-r, html.amethyst .main-tab-pill.bg-gradient-to-r, html.ocean .main-tab-pill.bg-gradient-to-r {
+      background: var(--theme-gradient) !important;
+      color: var(--theme-badge-text) !important;
       font-weight: 900 !important;
     }
-    html.ocean .sub-pill { 
-      background-color: #E0F2FE !important; 
-      border: 1.5px solid #BAE6FD !important; 
-      color: #0369A1 !important; 
+    html.light .sub-pill, html.amethyst .sub-pill, html.ocean .sub-pill { 
+      background-color: var(--theme-card-sub-bg) !important; 
+      border: 1.5px solid var(--theme-border) !important; 
+      color: var(--theme-primary) !important; 
       font-weight: 800 !important; 
     }
-    html.ocean .sub-pill.bg-amber-400\/20 { 
-      background: linear-gradient(135deg, #0284C7 0%, #0369A1 100%) !important; 
-      border: 1px solid #0284C7 !important; 
+    html.light .sub-pill.bg-amber-400\/20, html.amethyst .sub-pill.bg-amber-400\/20, html.ocean .sub-pill.bg-amber-400\/20 { 
+      background: var(--theme-gradient) !important; 
+      border: 1.5px solid var(--theme-header-border) !important; 
       color: #FFFFFF !important; 
-      font-weight: 900 !important;
+      font-weight: 900 !important; 
     }
-    html.ocean #itemCountBadge { background-color: #FFFFFF !important; border: 1px solid #BAE6FD !important; color: #0284C7 !important; }
+    html.light #itemCountBadge, html.amethyst #itemCountBadge, html.ocean #itemCountBadge {
+      background-color: #FFFFFF !important;
+      border: 1px solid var(--theme-border) !important;
+      color: var(--theme-primary) !important;
+      font-weight: 800 !important;
+    }
 
-    /* 主清單卡片：純白底、深色字 */
-    html.ocean article { background-color: #FFFFFF !important; border: 1px solid #E0F2FE !important; box-shadow: 0 4px 12px rgba(2, 132, 199, 0.08) !important; }
-    html.ocean article div.bg-slate-950 { background-color: #FFFFFF !important; }
-    html.ocean article div.bg-slate-900 { background-color: #F0F9FF !important; border-top: 1px solid #E0F2FE !important; }
-    html.ocean article h2, html.ocean article h4, html.ocean article h6, html.ocean article span.text-white { color: #0C4A6E !important; }
-    html.ocean article p { color: #334155 !important; }
-    html.ocean .card-meta-tag, html.ocean .card-review-prefix { color: #0284C7 !important; }
-    html.ocean .card-rating-star, html.ocean .card-rating-star i { color: #0284C7 !important; }
-    html.ocean .btn-card-website { background-color: #FFFFFF !important; color: #0284C7 !important; border: 2px solid #BAE6FD !important; }
-    html.ocean .btn-card-website * { color: #0284C7 !important; }
-    html.ocean .btn-card-comment { background: linear-gradient(135deg, #0284C7 0%, #0369A1 100%) !important; color: #FFFFFF !important; }
-    html.ocean .btn-card-comment * { color: #FFFFFF !important; font-weight: 900 !important; }
-    html.ocean .carousel-hint-pill { background-color: rgba(255, 255, 255, 0.95) !important; color: #0284C7 !important; border: 1px solid #BAE6FD !important; }
-    html.ocean button[onclick*="toggleFavorite"] { background-color: rgba(255, 255, 255, 0.9) !important; border: 1px solid #BAE6FD !important; }
-    html.ocean button[onclick*="toggleFavorite"] i.fa-regular { color: #0284C7 !important; }
+    /* 主清單卡片反白 */
+    html.light article, html.amethyst article, html.ocean article { 
+      background-color: var(--theme-card-bg) !important; 
+      border: 1px solid var(--theme-card-border) !important; 
+    }
+    html.light article div.bg-slate-950, html.amethyst article div.bg-slate-950, html.ocean article div.bg-slate-950 { background-color: var(--theme-card-bg) !important; }
+    html.light article div.bg-slate-900, html.amethyst article div.bg-slate-900, html.ocean article div.bg-slate-900 { 
+      background-color: var(--theme-card-sub-bg) !important; 
+      border-top: 1px solid var(--theme-card-border) !important; 
+    }
+    html.light article h2, html.light article h4, html.light article h6, html.light article span.text-white,
+    html.amethyst article h2, html.amethyst article h4, html.amethyst article h6, html.amethyst article span.text-white,
+    html.ocean article h2, html.ocean article h4, html.ocean article h6, html.ocean article span.text-white { 
+      color: var(--theme-text-title) !important; 
+    }
+    html.light article p, html.amethyst article p, html.ocean article p { color: var(--theme-text-body) !important; }
+    html.light .card-meta-tag, html.amethyst .card-meta-tag, html.ocean .card-meta-tag { color: var(--theme-primary) !important; }
+    html.light .card-rating-star, html.amethyst .card-rating-star, html.ocean .card-rating-star,
+    html.light .card-rating-star i, html.amethyst .card-rating-star i, html.ocean .card-rating-star i { color: var(--theme-primary) !important; }
+    html.light .card-review-prefix, html.amethyst .card-review-prefix, html.ocean .card-review-prefix { color: var(--theme-primary) !important; }
 
-    /* 3. 會員中心彈窗：修復站內信箱黑底卡片 */
-    html.ocean #auth-modal .bg-slate-950 { background-color: #FFFFFF !important; border-color: #BAE6FD !important; }
+    /* 淺色輪播提示膠囊 */
+    html.light .carousel-hint-pill, html.amethyst .carousel-hint-pill, html.ocean .carousel-hint-pill {
+      background-color: rgba(255, 255, 255, 0.95) !important;
+      color: var(--theme-primary) !important;
+      border: 1px solid var(--theme-border) !important;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08) !important;
+    }
+    /* 淺色愛心按鈕 */
+    html.light button[onclick*="toggleFavorite"], html.amethyst button[onclick*="toggleFavorite"], html.ocean button[onclick*="toggleFavorite"] {
+      background-color: rgba(255, 255, 255, 0.9) !important;
+      border: 1px solid var(--theme-border) !important;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+    }
+    html.light button[onclick*="toggleFavorite"] i.fa-regular, html.amethyst button[onclick*="toggleFavorite"] i.fa-regular, html.ocean button[onclick*="toggleFavorite"] i.fa-regular {
+      color: var(--theme-primary) !important;
+    }
+
+    /* 寫評論按鈕：隨主題色彩漸層 */
+    .btn-card-comment { background: var(--theme-gradient) !important; color: var(--theme-badge-text) !important; }
+    .btn-card-comment * { color: var(--theme-badge-text) !important; font-weight: 900 !important; }
+
+    /* 官網/粉專按鈕：白底高質感框 */
+    html.light .btn-card-website, html.amethyst .btn-card-website, html.ocean .btn-card-website { 
+      background-color: #FFFFFF !important; 
+      color: var(--theme-primary) !important; 
+      border: 2px solid var(--theme-border) !important; 
+    }
+    html.light .btn-card-website *, html.amethyst .btn-card-website *, html.ocean .btn-card-website * { 
+      color: var(--theme-primary) !important; 
+      font-weight: 800 !important; 
+    }
+
+    /* 會員中心面板反白 */
+    html.light #auth-modal .bg-slate-950, html.amethyst #auth-modal .bg-slate-950, html.ocean #auth-modal .bg-slate-950 { 
+      background-color: var(--theme-card-bg) !important; 
+      border-color: var(--theme-border) !important; 
+    }
+    html.light #auth-modal .bg-slate-900, html.light #auth-modal .bg-slate-900\/90, html.light #auth-modal .bg-slate-900\/80,
+    html.amethyst #auth-modal .bg-slate-900, html.amethyst #auth-modal .bg-slate-900\/90, html.amethyst #auth-modal .bg-slate-900\/80,
     html.ocean #auth-modal .bg-slate-900, html.ocean #auth-modal .bg-slate-900\/90, html.ocean #auth-modal .bg-slate-900\/80 { 
-      background-color: #F0F9FF !important; 
-      border-color: #BAE6FD !important; 
+      background-color: var(--theme-card-sub-bg) !important; 
+      border-color: var(--theme-border) !important; 
     }
-    html.ocean #auth-modal h3, html.ocean #auth-modal h4, html.ocean #auth-modal h5, html.ocean #auth-modal h6 { color: #0C4A6E !important; }
-    html.ocean #auth-modal p { color: #475569 !important; }
-    html.ocean #user-modal-level, html.ocean #user-modal-level i { color: #0284C7 !important; }
-    html.ocean #user-modal-points-text { color: #0C4A6E !important; }
-    html.ocean #auth-modal .bg-slate-950.h-2 { background-color: #E0F2FE !important; border-color: #BAE6FD !important; }
-    html.ocean #level-progress-fill { background: linear-gradient(135deg, #0284C7 0%, #0369A1 100%) !important; }
-    html.ocean #push-slot-container { background-color: #F0F9FF !important; border-color: #BAE6FD !important; }
-    html.ocean #push-slot-container * { color: #0284C7 !important; font-weight: 800 !important; }
-    html.ocean #push-toggle-btn.bg-amber-400 { background-color: #0284C7 !important; }
-    html.ocean #btn-open-tasks-subview { background-color: #F0F9FF !important; border-color: #BAE6FD !important; color: #0284C7 !important; }
-    html.ocean #btn-open-tasks-subview * { color: #0284C7 !important; }
-    html.ocean #user-favorites-box { background-color: #FFFFFF !important; border-color: #E0F2FE !important; }
-    html.ocean #user-favorites-box .bg-slate-900\/90 { background-color: #F0F9FF !important; border-color: #BAE6FD !important; }
-    html.ocean #user-favorites-box h6 { color: #0C4A6E !important; }
-    
-    /* 站內信箱小卡（徹底消滅黑底） */
+    html.light #auth-modal h3, html.light #auth-modal h4, html.light #auth-modal h5, html.light #auth-modal h6,
+    html.amethyst #auth-modal h3, html.amethyst #auth-modal h4, html.amethyst #auth-modal h5, html.amethyst #auth-modal h6,
+    html.ocean #auth-modal h3, html.ocean #auth-modal h4, html.ocean #auth-modal h5, html.ocean #auth-modal h6 { 
+      color: var(--theme-text-title) !important; 
+    }
+    html.light #auth-modal p, html.amethyst #auth-modal p, html.ocean #auth-modal p { color: var(--theme-text-body) !important; }
+    html.light #user-modal-level, html.amethyst #user-modal-level, html.ocean #user-modal-level,
+    html.light #user-modal-level i, html.amethyst #user-modal-level i, html.ocean #user-modal-level i { color: var(--theme-primary) !important; }
+    html.light #user-modal-points-text, html.amethyst #user-modal-points-text, html.ocean #user-modal-points-text { color: var(--theme-text-title) !important; }
+    html.light #auth-modal .bg-slate-950.h-2, html.amethyst #auth-modal .bg-slate-950.h-2, html.ocean #auth-modal .bg-slate-950.h-2 { 
+      background-color: #E5E7EB !important; 
+      border-color: var(--theme-border) !important; 
+    }
+    html.light #level-progress-fill, html.amethyst #level-progress-fill, html.ocean #level-progress-fill { background: var(--theme-gradient) !important; }
+
+    /* 推播與任務按鈕 */
+    html.light #push-slot-container, html.amethyst #push-slot-container, html.ocean #push-slot-container { 
+      background-color: var(--theme-card-sub-bg) !important; 
+      border-color: var(--theme-border) !important; 
+    }
+    html.light #push-slot-container *, html.amethyst #push-slot-container *, html.ocean #push-slot-container * { 
+      color: var(--theme-primary) !important; 
+      font-weight: 800 !important; 
+    }
+    html.light #push-toggle-btn.bg-amber-400, html.amethyst #push-toggle-btn.bg-amber-400, html.ocean #push-toggle-btn.bg-amber-400 { background-color: var(--theme-primary) !important; }
+    html.light #btn-open-tasks-subview, html.amethyst #btn-open-tasks-subview, html.ocean #btn-open-tasks-subview { 
+      background-color: var(--theme-card-sub-bg) !important; 
+      border-color: var(--theme-border) !important; 
+      color: var(--theme-primary) !important; 
+    }
+    html.light #btn-open-tasks-subview *, html.amethyst #btn-open-tasks-subview *, html.ocean #btn-open-tasks-subview * { color: var(--theme-primary) !important; }
+
+    /* 私房清單與站內信箱小卡（徹底消滅黑底！） */
+    html.light #user-favorites-box, html.amethyst #user-favorites-box, html.ocean #user-favorites-box { 
+      background-color: var(--theme-card-bg) !important; 
+      border-color: var(--theme-card-border) !important; 
+    }
+    html.light #user-favorites-box .bg-slate-900\/90, html.amethyst #user-favorites-box .bg-slate-900\/90, html.ocean #user-favorites-box .bg-slate-900\/90 { 
+      background-color: var(--theme-card-sub-bg) !important; 
+      border-color: var(--theme-border) !important; 
+    }
+    html.light #user-favorites-box h6, html.amethyst #user-favorites-box h6, html.ocean #user-favorites-box h6 { color: var(--theme-text-title) !important; }
+    html.light .btn-fav-action, html.amethyst .btn-fav-action, html.ocean .btn-fav-action { 
+      background-color: var(--theme-primary-light) !important; 
+      border: 1px solid var(--theme-border) !important; 
+    }
+    html.light .inbox-list > div, html.light #inbox-list-container > div,
+    html.amethyst .inbox-list > div, html.amethyst #inbox-list-container > div,
     html.ocean .inbox-list > div, html.ocean #inbox-list-container > div { 
-      background-color: #F0F9FF !important; 
-      border: 1px solid #BAE6FD !important; 
+      background-color: var(--theme-card-sub-bg) !important; 
+      border: 1px solid var(--theme-border) !important; 
     }
-    html.ocean .inbox-list h6, html.ocean #inbox-list-container h6 { color: #0C4A6E !important; }
-    html.ocean .inbox-list p, html.ocean #inbox-list-container p { color: #334155 !important; }
-    html.ocean .btn-mark-read { 
-      border-color: #BAE6FD !important; 
-      color: #0284C7 !important; 
+    html.light .inbox-list h6, html.light #inbox-list-container h6,
+    html.amethyst .inbox-list h6, html.amethyst #inbox-list-container h6,
+    html.ocean .inbox-list h6, html.ocean #inbox-list-container h6 { color: var(--theme-text-title) !important; }
+    html.light .inbox-list p, html.light #inbox-list-container p,
+    html.amethyst .inbox-list p, html.amethyst #inbox-list-container p,
+    html.ocean .inbox-list p, html.ocean #inbox-list-container p { color: var(--theme-text-body) !important; }
+    html.light .btn-mark-read, html.amethyst .btn-mark-read, html.ocean .btn-mark-read { 
+      border-color: var(--theme-border) !important; 
+      color: var(--theme-primary) !important; 
       background-color: #FFFFFF !important; 
     }
 
-    html.ocean .btn-fav-action { background-color: #E0F2FE !important; border: 1px solid #BAE6FD !important; }
+    /* 全域彈窗通用關閉叉叉 (✕) */
+    html.light .btn-modal-close, html.light #close-comment-btn, html.light #close-recommend-btn,
+    html.amethyst .btn-modal-close, html.amethyst #close-comment-btn, html.amethyst #close-recommend-btn,
     html.ocean .btn-modal-close, html.ocean #close-comment-btn, html.ocean #close-recommend-btn { 
-      background-color: #E0F2FE !important; 
-      border: 1px solid #BAE6FD !important; 
-      color: #0284C7 !important; 
+      background-color: var(--theme-primary-light) !important; 
+      border: 1px solid var(--theme-border) !important; 
+      color: var(--theme-primary) !important; 
     }
+
+    /* 登出按鈕 */
+    html.light #btn-logout { background-color: #FEF2F2 !important; border: 1.5px solid #FCA5A5 !important; color: #DC2626 !important; font-weight: 900 !important; }
+    html.amethyst #btn-logout { background-color: #FFF1F2 !important; border: 1.5px solid #FECDD3 !important; color: #E11D48 !important; font-weight: 900 !important; }
     html.ocean #btn-logout { background-color: #FEF2F2 !important; border: 1.5px solid #FCA5A5 !important; color: #DC2626 !important; font-weight: 900 !important; }
 
-    /* 評論區彈窗 */
-    html.ocean #commentModalCard, html.ocean #commentModalHeader { background-color: #FFFFFF !important; border-color: #BAE6FD !important; }
-    html.ocean #comment-modal-title { color: #0C4A6E !important; }
-    html.ocean #comment-list-container > div { background-color: #F0F9FF !important; border: 1px solid #BAE6FD !important; }
-    html.ocean #comment-list-container p { color: #334155 !important; }
-    html.ocean #commentModalCard .border-t { background-color: #FFFFFF !important; border-color: #E0F2FE !important; }
-    html.ocean #comment-input { background-color: #F0F9FF !important; border: 1.5px solid #BAE6FD !important; color: #0C4A6E !important; }
-    html.ocean #btn-submit-comment { background: linear-gradient(135deg, #0284C7 0%, #0369A1 100%) !important; color: #FFFFFF !important; }
+    /* 店家評論彈窗反白 */
+    html.light #commentModalCard, html.light #commentModalHeader,
+    html.amethyst #commentModalCard, html.amethyst #commentModalHeader,
+    html.ocean #commentModalCard, html.ocean #commentModalHeader { 
+      background-color: var(--theme-card-bg) !important; 
+      border-color: var(--theme-border) !important; 
+    }
+    html.light #comment-modal-title, html.amethyst #comment-modal-title, html.ocean #comment-modal-title { color: var(--theme-text-title) !important; }
+    html.light #comment-list-container > div, html.amethyst #comment-list-container > div, html.ocean #comment-list-container > div {
+      background-color: var(--theme-card-sub-bg) !important;
+      border: 1px solid var(--theme-border) !important;
+    }
+    html.light #comment-list-container p, html.amethyst #comment-list-container p, html.ocean #comment-list-container p { color: var(--theme-text-body) !important; }
+    html.light #commentModalCard .border-t, html.amethyst #commentModalCard .border-t, html.ocean #commentModalCard .border-t {
+      background-color: var(--theme-card-bg) !important;
+      border-color: var(--theme-border) !important;
+    }
+    html.light #comment-input, html.amethyst #comment-input, html.ocean #comment-input {
+      background-color: var(--theme-card-sub-bg) !important;
+      border: 1.5px solid var(--theme-border) !important;
+      color: var(--theme-text-title) !important;
+    }
+    html.light #btn-submit-comment, html.amethyst #btn-submit-comment, html.ocean #btn-submit-comment { background: var(--theme-gradient) !important; color: var(--theme-badge-text) !important; }
 
-    /* AI 管家彈窗 */
-    html.ocean #chat-modal { background-color: #FFFFFF !important; border: 1.5px solid #BAE6FD !important; }
-    html.ocean #chat-modal-header { background: linear-gradient(135deg, #0284C7 0%, #0369A1 100%) !important; }
-    html.ocean #chat-messages { background-color: #FFFFFF !important; }
-    html.ocean .chat-bubble-agent { background-color: #F0F9FF !important; border-color: #BAE6FD !important; color: #0C4A6E !important; }
-    html.ocean .ai-quick-btn { background-color: #FFFFFF !important; border-color: #BAE6FD !important; color: #0284C7 !important; }
-    html.ocean #chat-input-bar { background-color: #FFFFFF !important; border-top: 1px solid #E0F2FE !important; }
-    html.ocean #chat-input { background-color: #F0F9FF !important; border: 1.5px solid #BAE6FD !important; color: #0C4A6E !important; }
-    html.ocean #btn-send-chat { background: linear-gradient(135deg, #0284C7 0%, #0369A1 100%) !important; color: #FFFFFF !important; }
+    /* AI 旅遊管家彈窗反白 */
+    html.light #chat-modal, html.amethyst #chat-modal, html.ocean #chat-modal { background-color: #FFFFFF !important; border: 1.5px solid var(--theme-border) !important; }
+    html.light #chat-modal-header, html.amethyst #chat-modal-header, html.ocean #chat-modal-header { background: var(--theme-gradient) !important; }
+    html.light #chat-messages, html.amethyst #chat-messages, html.ocean #chat-messages { background-color: #FFFFFF !important; }
+    html.light .chat-bubble-agent, html.amethyst .chat-bubble-agent, html.ocean .chat-bubble-agent { background-color: var(--theme-primary-light) !important; border-color: var(--theme-border) !important; color: var(--theme-text-title) !important; }
+    html.light .ai-quick-btn, html.amethyst .ai-quick-btn, html.ocean .ai-quick-btn { background-color: #FFFFFF !important; border-color: var(--theme-border) !important; color: var(--theme-primary) !important; }
+    html.light #chat-input-bar, html.amethyst #chat-input-bar, html.ocean #chat-input-bar { background-color: #FFFFFF !important; border-top: 1px solid var(--theme-border) !important; }
+    html.light #chat-input, html.amethyst #chat-input, html.ocean #chat-input { background-color: var(--theme-primary-light) !important; border: 1.5px solid var(--theme-border) !important; color: var(--theme-text-title) !important; }
+    html.light #btn-send-chat, html.amethyst #btn-send-chat, html.ocean #btn-send-chat { background: var(--theme-gradient) !important; color: var(--theme-badge-text) !important; }
+
+    /* =======================================================
+       五、全域反饋、PWA更新與登入彈窗徹底反白 (Light / Amethyst / Ocean)
+       ======================================================= */
+    /* 1. Toast 提示彈窗（已安全登出、複製連結、切換語言等通知） */
+    html.light #toastInnerBox, html.amethyst #toastInnerBox, html.ocean #toastInnerBox {
+      background-color: #FFFFFF !important;
+      border: 1.5px solid var(--theme-border) !important;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15) !important;
+    }
+    html.light #toastMessage, html.amethyst #toastMessage, html.ocean #toastMessage {
+      color: var(--theme-text-title) !important;
+      font-weight: 800 !important;
+    }
+    html.light #toastIcon, html.amethyst #toastIcon, html.ocean #toastIcon { color: var(--theme-primary) !important; }
+    html.light #toastCloseBtn, html.amethyst #toastCloseBtn, html.ocean #toastCloseBtn {
+      background-color: var(--theme-primary-light) !important;
+      color: var(--theme-primary) !important;
+    }
+    html.light #toastActionBtn, html.amethyst #toastActionBtn, html.ocean #toastActionBtn {
+      background: var(--theme-gradient) !important;
+      color: var(--theme-badge-text) !important;
+    }
+    html.light .beam-card-container, html.amethyst .beam-card-container, html.ocean .beam-card-container {
+      box-shadow: var(--theme-glow) !important;
+    }
+
+    /* 2. PWA 版本更新通知彈窗（消除黑底與黑按鈕） */
+    html.light #pwa-update-modal > div, html.amethyst #pwa-update-modal > div, html.ocean #pwa-update-modal > div {
+      background-color: #FFFFFF !important;
+      border: 2px solid var(--theme-border) !important;
+      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.18) !important;
+      color: var(--theme-text-title) !important;
+    }
+    html.light #pwa-update-modal h4, html.amethyst #pwa-update-modal h4, html.ocean #pwa-update-modal h4 { color: var(--theme-primary) !important; }
+    html.light #pwa-update-modal p, html.amethyst #pwa-update-modal p, html.ocean #pwa-update-modal p { color: var(--theme-text-body) !important; }
+    html.light #btn-close-pwa-modal, html.amethyst #btn-close-pwa-modal, html.ocean #btn-close-pwa-modal {
+      background-color: var(--theme-primary-light) !important;
+      color: var(--theme-primary) !important;
+    }
+    html.light #btn-apply-pwa-update, html.amethyst #btn-apply-pwa-update, html.ocean #btn-apply-pwa-update {
+      background: var(--theme-gradient) !important;
+      color: var(--theme-badge-text) !important;
+    }
+
+    /* 3. 訪客登入主彈窗（未登入或登出後的視窗） */
+    html.light #auth-modal-login-view h3, html.amethyst #auth-modal-login-view h3, html.ocean #auth-modal-login-view h3 { color: var(--theme-text-title) !important; }
+    html.light #auth-modal-login-view p, html.amethyst #auth-modal-login-view p, html.ocean #auth-modal-login-view p { color: var(--theme-text-body) !important; }
+    html.light #btn-google-login, html.amethyst #btn-google-login, html.ocean #btn-google-login {
+      background-color: #FFFFFF !important;
+      border: 1.5px solid var(--theme-border) !important;
+      color: var(--theme-text-title) !important;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06) !important;
+    }
+    html.light #magic-email-input, html.amethyst #magic-email-input, html.ocean #magic-email-input {
+      background-color: #FFFFFF !important;
+      border: 2px solid var(--theme-border) !important;
+      color: var(--theme-text-title) !important;
+    }
+    html.light #btn-magic-email, html.amethyst #btn-magic-email, html.ocean #btn-magic-email {
+      background: var(--theme-gradient) !important;
+      color: var(--theme-badge-text) !important;
+    }
   </style>
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col font-sans">
@@ -4050,7 +4027,7 @@ html.dark #btn-logout {
       }
 
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js?v=20260913-v43.5').then((reg) => {
+        navigator.serviceWorker.register('./sw.js?v=20260913-v43.6').then((reg) => {
           if (reg.waiting) {
             showPwaUpdateModal(reg.waiting);
           }
