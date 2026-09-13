@@ -1165,34 +1165,34 @@
       <!-- 第二層子視窗：特殊任務與雙人揪團 -->
       <div id="auth-modal-tasks-view" class="hidden text-left flex flex-col flex-1 overflow-hidden space-y-3 relative">
         <div class="flex items-center justify-between border-b border-slate-800/80 pb-2">
-          <button id="btn-back-to-user-view" class="text-amber-300 hover:text-amber-200 text-xs font-bold flex items-center gap-1">
+          <button id="btn-back-to-user-view" class="task-theme-btn text-xs font-bold flex items-center gap-1">
             <i class="fa-solid fa-arrow-left text-[10px]"></i> <span data-i18n="btnBackCenter">返回中心</span>
           </button>
-          <span data-i18n="taskSubTitle" class="text-xs font-bold text-white">探店任務與吃貨同行</span>
+          <span data-i18n="taskSubTitle" class="task-view-title text-xs font-bold">探店任務與吃貨同行</span>
           <button id="close-auth-btn-tasks" class="btn-modal-close w-7 h-7 bg-slate-900 rounded-full text-slate-400 hover:text-white flex items-center justify-center text-xs">✕</button>
         </div>
 
         <div class="flex-1 overflow-y-auto hide-scrollbar space-y-2.5 text-xs text-slate-300 pr-0.5">
           <div id="task-card-comment" class="bg-slate-900 border border-slate-800 rounded-xl p-3 space-y-1 transition cursor-pointer active:scale-98">
-            <div class="flex items-center justify-between font-bold text-white">
-              <span class="text-amber-300" data-i18n="taskCommentTitle">✍️ 發表探店評論</span>
-              <span class="text-amber-400">+20 PTS</span>
+            <div class="flex items-center justify-between font-bold">
+              <span class="task-theme-title" data-i18n="taskCommentTitle">✍️ 發表探店評論</span>
+              <span class="task-theme-pts font-mono font-black">+20 PTS</span>
             </div>
             <p data-i18n="taskCommentDesc" class="text-[10px] text-slate-400">常態活動：在任何卡片下方點擊「寫評論」，發表真實心得即刻累積吃貨積分。</p>
           </div>
 
-          <div id="task-card-recommend" class="bg-slate-900 border border-slate-800 hover:border-amber-400/50 rounded-xl p-3 space-y-1 cursor-pointer transition active:scale-98">
-            <div class="flex items-center justify-between font-bold text-white">
-              <span class="text-amber-300" data-i18n="taskRecTitle">📮 推薦在地私房好店</span>
-              <span class="text-amber-400">+100 PTS</span>
+          <div id="task-card-recommend" class="bg-slate-900 border border-slate-800 rounded-xl p-3 space-y-1 cursor-pointer transition active:scale-98">
+            <div class="flex items-center justify-between font-bold">
+              <span class="task-theme-title" data-i18n="taskRecTitle">📮 推薦在地私房好店</span>
+              <span class="task-theme-pts font-mono font-black">+100 PTS</span>
             </div>
             <p data-i18n="taskRecDesc" class="text-[10px] text-slate-400">填寫私房名店與推薦原因，站長審核入庫即贈送百點與專屬銘牌！（點擊填寫推薦 ➔）</p>
           </div>
 
-          <div class="bg-slate-900 border border-amber-400/40 rounded-xl p-3 space-y-1.5">
-            <div class="flex items-center justify-between font-bold text-amber-300">
-              <span data-i18n="taskGroupTitle">👥 雙人同行約吃特惠</span>
-              <span data-i18n="badgeComingSoon" class="bg-amber-400 text-slate-950 text-[9px] font-black px-1.5 py-0.5 rounded">即將解鎖</span>
+          <div class="bg-slate-900 border border-slate-800 rounded-xl p-3 space-y-1.5">
+            <div class="flex items-center justify-between font-bold">
+              <span class="task-theme-title" data-i18n="taskGroupTitle">👥 雙人同行約吃特惠</span>
+              <span data-i18n="badgeComingSoon" class="task-theme-badge text-[9px] font-black px-1.5 py-0.5 rounded">即將解鎖</span>
             </div>
             <p data-i18n="taskGroupDesc" class="text-[10px] text-slate-300">發起同行邀請碼與好友一同造訪合作店家，出示 App 畫面即可獲贈特約招待！</p>
           </div>
@@ -3445,7 +3445,6 @@ btnSubmitComment.addEventListener('click', handlePostComment);
     });
     document.getElementById('close-recommend-btn').addEventListener('click', () => {
       recModal.classList.add('hidden');
-      // 無縫返回特殊任務清單視窗
       authModal.classList.remove('hidden');
       document.getElementById('auth-modal-user-view').classList.add('hidden');
       document.getElementById('auth-modal-tasks-view').classList.remove('hidden');
@@ -3458,13 +3457,10 @@ btnSubmitComment.addEventListener('click', handlePostComment);
     async function submitRecommendStore() {
       if (!currentUser) {
         recModal.classList.add('hidden');
-        recStoreName.value = '';
-        recReason.value = '';
-        // 成功送出後，無縫返回特殊任務視窗
-        authModal.classList.remove('hidden');
-        document.getElementById('auth-modal-user-view').classList.add('hidden');
-        document.getElementById('auth-modal-tasks-view').classList.remove('hidden');
-        showToast('🎉 推薦成功！審核通過入庫後將為您派發 100 積分！', 'fa-gift');
+        openAuthModal();
+        showToast('請先登入會員再推薦好店！', 'fa-lock');
+        return;
+      }
       const city = document.getElementById('rec-city').value;
       const store = recStoreName.value.trim();
       const reason = recReason.value.trim();
@@ -3491,6 +3487,9 @@ btnSubmitComment.addEventListener('click', handlePostComment);
         recModal.classList.add('hidden');
         recStoreName.value = '';
         recReason.value = '';
+        authModal.classList.remove('hidden');
+        document.getElementById('auth-modal-user-view').classList.add('hidden');
+        document.getElementById('auth-modal-tasks-view').classList.remove('hidden');
         showToast('🎉 推薦成功！審核通過入庫後將為您派發 100 積分！', 'fa-gift');
       } catch (err) {
         showToast('提交失敗，請稍後再試');
