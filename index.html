@@ -1836,7 +1836,11 @@ function showToast(msg, icon = 'fa-check', actionText = '', actionCallback = nul
       }`;
 
       const list = isCity ? REGION_CONFIG.cities : REGION_CONFIG.islands;
-      if (!list.some(r => r.id === currentCity)) currentCity = list[0].id;
+      // 確保如果 currentCity 不在當前維度清單中，才取第一個，否則維持用戶選定的城市
+      if (!list.some(r => r.id === currentCity)) {
+        currentCity = list[0].id;
+        localStorage.setItem('ph_app_city', currentCity);
+      }
 
       regionPillsNav.innerHTML = list.map(r => {
         const localizedName = dict['city_' + r.id] || (currentLang === 'en' ? r.name_en : r.name);
@@ -1851,7 +1855,12 @@ function showToast(msg, icon = 'fa-check', actionText = '', actionCallback = nul
 
       document.querySelectorAll('.region-pill').forEach(btn => {
         btn.addEventListener('click', () => {
-          currentCity = btn.getAttribute('data-city');
+          const selectedCity = btn.getAttribute('data-city');
+          
+          // 切換城市時，嚴格遵循規則：重置為「美食推薦 ➔ 全部美食」
+          currentCity = selectedCity;
+          localStorage.setItem('ph_app_city', currentCity); // ⭐ 牢牢鎖定在 localStorage，滑動絕不丟失！
+
           currentMainTab = 'map';
           sessionStorage.setItem('ph_nav_tab', 'map');
           currentSubFilter = 'all';
@@ -3114,7 +3123,12 @@ btnSubmitComment.addEventListener('click', handlePostComment);
 
     typeCityBtn.addEventListener('click', () => { 
       currentDimension = 'cities'; 
-      currentCity = 'manila'; 
+      sessionStorage.setItem('ph_dim', 'cities');
+      // 如果本來就在都會圈的某城市（如達沃），切換時維持該城市；若之前在海島才預設回到 manila
+      if (!REGION_CONFIG.cities.some(r => r.id === currentCity)) {
+        currentCity = 'manila';
+      }
+      localStorage.setItem('ph_app_city', currentCity);
       currentSubFilter = 'all'; 
       sessionStorage.setItem('ph_nav_sub', 'all');
       renderRegionPills(); 
@@ -3122,9 +3136,14 @@ btnSubmitComment.addEventListener('click', handlePostComment);
       window.scrollTo({ top: 0, behavior: 'instant' });
       renderContent(); 
     });
+
     typeIslandBtn.addEventListener('click', () => { 
       currentDimension = 'islands'; 
-      currentCity = 'boracay'; 
+      sessionStorage.setItem('ph_dim', 'islands');
+      if (!REGION_CONFIG.islands.some(r => r.id === currentCity)) {
+        currentCity = 'boracay';
+      }
+      localStorage.setItem('ph_app_city', currentCity);
       currentSubFilter = 'all'; 
       sessionStorage.setItem('ph_nav_sub', 'all');
       renderRegionPills(); 
