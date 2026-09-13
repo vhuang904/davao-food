@@ -2874,14 +2874,12 @@ async function loadStoreComments(storeId) {
       const uName = c.userName || '吃貨好友';
       const timeStr = c.createdAt ? new Date(c.createdAt.toMillis ? c.createdAt.toMillis() : c.createdAt).toLocaleDateString() : '剛剛';
       const userPhoto = c.userPhoto ? `<img src="${c.userPhoto}" class="w-full h-full object-cover">` : `<i class="fa-regular fa-user text-[9px]"></i>`;
+      // 將留言資料緩存進全域變數，徹底杜絕引號衝突
+      if (!window._commentCache) window._commentCache = {};
+      window._commentCache[c.id] = c;
+
       const deleteBtnHtml = isAdmin ? `
-        <button type="button" title="站長審核與處分" onclick="window.openAdminActionSheet('${c.id}', '${encodeURIComponent(JSON.stringify({
-          userId: c.userId || '',
-          userName: c.userName || '吃貨好友',
-          userPhoto: c.userPhoto || '',
-          userEmail: c.userEmail || '',
-          content: c.comment || c.content || ''
-        }))}', event)" class="text-rose-400 hover:text-rose-300 p-1 transition active:scale-90 cursor-pointer ml-1.5">
+        <button type="button" title="站長審核與處分" onclick="window.openAdminActionSheet('${c.id}', event)" class="text-rose-400 hover:text-rose-300 p-1 transition active:scale-90 cursor-pointer ml-1.5">
           <i class="fa-regular fa-trash-can text-xs"></i>
         </button>
       ` : '';
@@ -2908,22 +2906,173 @@ async function loadStoreComments(storeId) {
   }
 }
 
-window.handleDeleteComment = async function(commentId, event) {
+// =======================================================
+// 站長社群管理 Action Sheet 核心邏輯
+// =======================================================
+let currentTargetComment = null;
+let currentTargetUserHistory = { count: 0, points: 50 };
+
+// 階梯禁言天數表：第1次 3天、第2次 7天、第3次 30天、第4次永久停權
+const TIER_BAN_DAYS = [3, 7, 30, 3650]; 
+
+window.openAdminActionSheet = async function(commentId, event) {
   if (event) {
     event.preventDefault();
     event.stopPropagation();
   }
 
-  if (!confirm('⚠️ 站長管理操作：確定要永久刪除這則留言嗎？')) return;
+  const sheet = document.getElementById('admin-action-sheet');
+  if (!sheet) {
+    console.error("[Admin] 找不到 admin-action-sheet 元素！");
+    return;
+  }
+
+  // 從全域快取直接取出乾淨完整的留言物件
+  const rawData = (window._commentCache && window._commentCache[commentId]) || {};
+  const targetUid = rawData.userId || rawData.uid || '';
+  currentTargetComment = { 
+    id: commentId, 
+    userId: targetUid,
+    userName: rawData.userName || rawData.displayName || '吃貨好友',
+    userPhoto: rawData.userPhoto || rawData.photoURL || '',
+    userEmail: rawData.userEmail || rawData.email || '',
+    content: rawData.comment || rawData.content || ''
+  };
 
   try {
+    // 1. 填充身分卡基礎 UI
+    document.getElementById('sheet-user-name').innerText = currentTargetComment.userName;
+    document.getElementById('sheet-user-email').innerText = currentTargetComment.userEmail || (currentUser && targetUid === currentUser.uid ? currentUser.email : '未公開信箱');
+    document.getElementById('sheet-user-uid').innerText = `UID: ${targetUid ? (targetUid.slice(0, 8) + '...' + targetUid.slice(-6)) : '未知'}`;
+    document.getElementById('sheet-comment-text').innerText = currentTargetComment.content || '(無文字內容)';
+    
+    const avatarBox = document.getElementById('sheet-user-avatar');
+    if (currentTargetComment.userPhoto) {
+      avatarBox.innerHTML = `<img src="${currentTargetComment.userPhoto}" class="w-full h-full object-cover">`;
+    } else {
+      avatarBox.innerHTML = `<i class="fa-regular fa-user text-base text-slate-500"></i>`;
+    }
+
+    // 重設按鈕預設載入文字
+    document.getElementById('sheet-violation-count').innerText = '讀取紀錄中...';
+    document.getElementById('sheet-tier-punish-label').innerText = '刪除 + 扣分 + 階梯禁言';
+    document.getElementById('sheet-tier-punish-sub').innerText = '讀取天數中...';
+
+    // 彈出 Action Sheet 面板
+    sheet.classList.remove('hidden');
+
+    // 2. 從 Firestore 讀取該用戶的最新累犯次數與資料
+    let violationCount = 0;
+    if (targetUid) {
+      try {
+        const uRef = doc(db, "users", targetUid);
+        const uSnap = await getDoc(uRef);
+        if (uSnap.exists()) {
+          const uData = uSnap.data();
+          violationCount = uData.violationCount || 0;
+          currentTargetUserHistory = { count: violationCount, points: uData.points || 50 };
+          if (uData.email) document.getElementById('sheet-user-email').innerText = uData.email;
+        }
+      } catch (err) {
+        console.warn("[Admin] 讀取用戶違規記錄略過:", err);
+      }
+    }
+
+    // 3. 動態計算階梯懲罰天數
+    const nextCount = violationCount + 1;
+    const banDays = TIER_BAN_DAYS[Math.min(violationCount, TIER_BAN_DAYS.length - 1)];
+    const banText = banDays >= 365 ? '永久停權' : `禁言 ${banDays} 天`;
+
+    document.getElementById('sheet-violation-count').innerText = `歷史違規：${violationCount} 次 (本次第 ${nextCount} 次)`;
+    document.getElementById('sheet-tier-punish-label').innerText = `刪除 + 扣分 + ${banText}`;
+    document.getElementById('sheet-tier-punish-sub').innerText = `累犯階梯處分`;
+
+  } catch (e) {
+    console.error("[Admin] 開啟面板失敗:", e);
+  }
+};
+
+window.closeAdminActionSheet = function() {
+  const sheet = document.getElementById('admin-action-sheet');
+  if (sheet) sheet.classList.add('hidden');
+  currentTargetComment = null;
+};
+
+// 執行處分邏輯
+window.executeAdminAction = async function(actionType) {
+  if (!currentTargetComment || !currentUser) return;
+
+  const { id: commentId, userId, userName, content } = currentTargetComment;
+  const sheet = document.getElementById('admin-action-sheet');
+
+  try {
+    showToast('正在執行管理處分...', 'fa-spinner fa-spin');
     const { deleteStoreComment } = await import('./authService.js');
+
+    // 1. 永久刪除該則留言
     await deleteStoreComment(commentId);
-    showToast('🗑️ 留言已成功刪除', 'fa-trash-can');
+
+    // 2. 處理後續處置
+    if (actionType === 'delete_only') {
+      showToast('🗑️ 已刪除該留言（不處置）', 'fa-trash-can');
+    } else if (userId) {
+      const userRef = doc(db, "users", userId);
+      const now = Date.now();
+
+      if (actionType === 'delete_deduct') {
+        // 處分選項 A：扣回 20 積分 + 發送警告站內信
+        await updateDoc(userRef, {
+          points: increment(-20),
+          updatedAt: new Date().toISOString()
+        });
+
+        // 寫入專屬站內信通知該用戶
+        await addDoc(collection(db, "users", userId, "notifications"), {
+          title: "⚠️ 社群規範違規通知",
+          content: `您在探店討論區發表的留言「${content.slice(0, 30)}...」因違反社群規範已被移除，並扣回該次發文獎勵 20 積分。請共同維護良好的討論氛圍。`,
+          type: "penalty",
+          createdAt: now,
+          isRead: false
+        });
+
+        showToast('⚠️ 已刪除留言並扣回 20 積分', 'fa-coins');
+
+      } else if (actionType === 'delete_tier_punish') {
+        // 處分選項 B：階梯懲罰（扣 20 分 + 累加違規次數 + 設定禁言期限 + 發送處分信）
+        const currentCount = currentTargetUserHistory.count || 0;
+        const banDays = TIER_BAN_DAYS[Math.min(currentCount, TIER_BAN_DAYS.length - 1)];
+        const mutedUntil = now + (banDays * 86400000);
+        const unbanDateStr = new Date(mutedUntil).toLocaleDateString();
+
+        await updateDoc(userRef, {
+          points: increment(-20),
+          violationCount: increment(1),
+          mutedUntil: mutedUntil,
+          updatedAt: new Date().toISOString()
+        });
+
+        const banNotice = banDays >= 365 ? '永久禁止發言' : `暫停發表評論權限 ${banDays} 天（解禁日期：${unbanDateStr}）`;
+
+        // 寫入專屬站內信
+        await addDoc(collection(db, "users", userId, "notifications"), {
+          title: "🚫 社群違規處分與禁言通知",
+          content: `您的留言涉及違規已被移除，系統已扣回 20 積分。因累計第 ${currentCount + 1} 次違規，已對您的帳號施以「${banNotice}」處分。如有異議請洽官方客服。`,
+          type: "penalty",
+          createdAt: now,
+          isRead: false
+        });
+
+        showToast(`🚫 處分完成：扣20分並${banNotice}`, 'fa-ban');
+      }
+    }
+
+    // 關閉面板並重新整理留言清單
+    window.closeAdminActionSheet();
     await loadStoreComments(activeCommentStoreId);
+
   } catch (err) {
-    console.error("刪除留言失敗:", err);
-    showToast('刪除失敗，請檢查權限或稍後再試', 'fa-triangle-exclamation');
+    console.error("[Admin] 處分失敗:", err);
+    showToast('處分操作失敗，請稍後再試', 'fa-triangle-exclamation');
   }
 };
 
