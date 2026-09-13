@@ -7,7 +7,7 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
-  <meta name="app-version" content="20260913-v43.0" />
+  <meta name="app-version" content="20260913-v43.1" />
   <meta name="theme-color" content="#020617" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -2684,60 +2684,99 @@ html.dark #btn-logout {
     const ADMIN_EMAILS = ['vhuang904@gmail.com'];
 
     async function loadStoreComments(storeId) {
-      if (!commentListContainer) return;
-      commentListContainer.innerHTML = '<div class="text-center py-6 text-slate-500 text-xs"><i class="fa-solid fa-spinner fa-spin mr-1.5 text-amber-400"></i>載入老饕點評中...</div>';
+  if (!commentListContainer) return;
+  commentListContainer.innerHTML = '<div class="text-center py-6 text-slate-500 text-xs"><i class="fa-solid fa-spinner fa-spin mr-1.5 text-amber-400"></i>載入老饕點評中...</div>';
 
-      try {
-        const { getStoreComments } = await import('./authService.js');
-        const comments = await getStoreComments(storeId);
+  try {
+    const { getStoreComments } = await import('./authService.js');
+    let comments = await getStoreComments(storeId);
 
-        if (!comments || comments.length === 0) {
-          commentListContainer.innerHTML = `
-            <div class="text-center py-8">
-              <i class="fa-regular fa-comment-dots text-slate-600 text-3xl mb-2 block"></i>
-              <p class="text-slate-400 text-xs font-bold">目前暫無公開評論，成為第一位老饕評論者吧！</p>
-              <p class="text-amber-400/80 text-[10px] mt-1">分享真實體驗現賺 +20 積分</p>
-            </div>
-          `;
-          return;
-        }
-
-        const isAdmin = currentUser && ADMIN_EMAILS.includes((currentUser.email || '').toLowerCase().trim());
-
-        commentListContainer.innerHTML = comments.map(c => {
-          const uName = c.userName || '吃貨好友';
-          const timeStr = c.createdAt ? new Date(c.createdAt.toMillis ? c.createdAt.toMillis() : c.createdAt).toLocaleDateString() : '剛剛';
-          const userPhoto = c.userPhoto ? `<img src="${c.userPhoto}" class="w-full h-full object-cover">` : `<i class="fa-regular fa-user text-[9px]"></i>`;
-          if (!window._commentCache) window._commentCache = {};
-          window._commentCache[c.id] = c;
-
-          const deleteBtnHtml = isAdmin ? `
-            <button type="button" title="站長審核與處分" onclick="window.openAdminActionSheet('${c.id}', event)" class="text-rose-400 hover:text-rose-300 p-1 transition active:scale-90 cursor-pointer ml-1.5">
-              <i class="fa-regular fa-trash-can text-xs"></i>
-            </button>
-          ` : '';
-
-          return `
-            <div class="border rounded-xl p-3 space-y-1.5">
-              <div class="flex items-center justify-between text-[11px]">
-                <span class="font-bold flex items-center gap-1.5" style="color: var(--theme-primary);">
-                  <span class="w-5 h-5 rounded-full flex items-center justify-center overflow-hidden inline-block text-center leading-5" style="background: var(--theme-primary-light);">${userPhoto}</span>
-                  ${uName}
-                </span>
-                <div class="flex items-center gap-1">
-                  <span class="text-[9px] text-slate-500">${timeStr}</span>
-                  ${deleteBtnHtml}
-                </div>
-              </div>
-              <p class="leading-relaxed text-xs break-words pl-6.5">${c.comment || c.content || ''}</p>
-            </div>
-          `;
-        }).join('');
-      } catch (err) {
-        console.warn("[Comment] 載入失敗:", err);
-        commentListContainer.innerHTML = '<p class="text-center text-slate-500 py-6 text-xs">載入評論異常，請稍後再試</p>';
-      }
+    if (!comments || comments.length === 0) {
+      commentListContainer.innerHTML = `
+        <div class="text-center py-8">
+          <i class="fa-regular fa-comment-dots text-slate-600 text-3xl mb-2 block"></i>
+          <p class="text-slate-400 text-xs font-bold">目前暫無公開評論，成為第一位老饕評論者吧！</p>
+          <p class="text-amber-400/80 text-[10px] mt-1">分享真實體驗現賺 +20 積分</p>
+        </div>
+      `;
+      return;
     }
+
+    // 1. 舊的在上面、新的在下面（由舊到新排序）
+    comments.sort((a, b) => {
+      const getMs = (item) => {
+        if (!item.createdAt) return 0;
+        if (typeof item.createdAt === 'number') return item.createdAt;
+        if (item.createdAt.toMillis) return item.createdAt.toMillis();
+        return new Date(item.createdAt).getTime() || 0;
+      };
+      return getMs(a) - getMs(b);
+    });
+
+    const isAdmin = currentUser && ADMIN_EMAILS.includes((currentUser.email || '').toLowerCase().trim());
+
+    // 2. 精確時間格式化（月/日 時:分）
+    const formatCommentTime = (rawTime) => {
+      if (!rawTime) return '剛剛';
+      const ms = typeof rawTime === 'number' ? rawTime : (rawTime.toMillis ? rawTime.toMillis() : new Date(rawTime).getTime());
+      if (!ms) return '剛剛';
+
+      const d = new Date(ms);
+      const now = Date.now();
+      const diffMin = Math.floor((now - ms) / 60000);
+
+      if (diffMin < 1) return '剛剛';
+      if (diffMin < 60) return `${diffMin}分鐘前`;
+      
+      const month = String(d.getMonth() + 1).padStart(2, '0');
+      const date = String(d.getDate()).padStart(2, '0');
+      const hours = String(d.getHours()).padStart(2, '0');
+      const minutes = String(d.getMinutes()).padStart(2, '0');
+      return `${month}/${date} ${hours}:${minutes}`;
+    };
+
+    // 3. 渲染評論列表
+    commentListContainer.innerHTML = comments.map(c => {
+      const uName = c.userName || '吃貨好友';
+      const timeStr = formatCommentTime(c.createdAt);
+      const userPhoto = c.userPhoto ? `<img src="${c.userPhoto}" class="w-full h-full object-cover">` : `<i class="fa-regular fa-user text-[9px]"></i>`;
+      
+      if (!window._commentCache) window._commentCache = {};
+      window._commentCache[c.id] = c;
+
+      const deleteBtnHtml = isAdmin ? `
+        <button type="button" title="站長審核與處分" onclick="window.openAdminActionSheet('${c.id}', event)" class="text-rose-400 hover:text-rose-300 p-1 transition active:scale-90 cursor-pointer ml-1.5">
+          <i class="fa-regular fa-trash-can text-xs"></i>
+        </button>
+      ` : '';
+
+      return `
+        <div class="border rounded-xl p-3 space-y-1.5">
+          <div class="flex items-center justify-between text-[11px]">
+            <span class="font-bold flex items-center gap-1.5" style="color: var(--theme-primary);">
+              <span class="w-5 h-5 rounded-full flex items-center justify-center overflow-hidden inline-block text-center leading-5" style="background: var(--theme-primary-light);">${userPhoto}</span>
+              ${uName}
+            </span>
+            <div class="flex items-center gap-1">
+              <span class="text-[9px] text-slate-400 font-mono flex items-center gap-1">
+                <i class="fa-regular fa-clock text-[8px] opacity-70"></i> ${timeStr}
+              </span>
+              ${deleteBtnHtml}
+            </div>
+          </div>
+          <p class="leading-relaxed text-xs break-words pl-6.5">${c.comment || c.content || ''}</p>
+        </div>
+      `;
+    }).join('');
+
+    // 4. 重設回頂端（從第一則開始看）
+    commentListContainer.scrollTop = 0;
+
+  } catch (err) {
+    console.warn("[Comment] 載入失敗:", err);
+    commentListContainer.innerHTML = '<p class="text-center text-slate-500 py-6 text-xs">載入評論異常，請稍後再試</p>';
+  }
+}
 
     let currentTargetComment = null;
     let currentTargetUserHistory = { count: 0, points: 50 };
@@ -3807,7 +3846,7 @@ html.dark #btn-logout {
       }
 
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js?v=20260913-v43.0').then((reg) => {
+        navigator.serviceWorker.register('./sw.js?v=20260913-v43.1').then((reg) => {
           if (reg.waiting) {
             showPwaUpdateModal(reg.waiting);
           }
