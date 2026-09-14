@@ -7,7 +7,7 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
-  <meta name="app-version" content="20260913-v43.8.1" />
+  <meta name="app-version" content="20260913-v45.0" />
   <meta name="theme-color" content="#020617" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -1394,12 +1394,19 @@
       <button id="btn-close-chat" class="btn-modal-close w-7 h-7 rounded-full flex items-center justify-center text-xs">✕</button>
     </div>
     <div id="chat-messages" class="flex-1 p-3.5 overflow-y-auto space-y-2.5 text-xs bg-slate-950 hide-scrollbar"></div>
-    <div id="chat-input-bar" class="p-2.5 bg-slate-900 border-t border-slate-800 flex gap-1.5 items-center flex-shrink-0">
-      <input type="text" id="chat-input" data-i18n-placeholder="chatPlaceholder" placeholder="問點什麼吧（例：馬尼拉海鮮酒家、頂級和牛...）" class="flex-1 bg-white border-2 border-amber-400/70 text-slate-950 font-medium placeholder-slate-400 text-xs rounded-xl px-3.5 py-2.5 focus:outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-400/30 shadow-inner disabled:opacity-50 disabled:cursor-not-allowed" />
-      <button id="btn-send-chat" class="w-9 h-9 rounded-full bg-amber-400 hover:bg-amber-300 text-slate-950 flex items-center justify-center text-xs font-black transition active:scale-95 shadow-sm disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0">
-        <i class="fa-solid fa-paper-plane"></i>
-      </button>
-    </div>
+    <div id="chat-input-bar" class="p-2.5 bg-slate-900 border-t border-slate-800 flex items-center gap-2 flex-shrink-0">
+        <input type="text" id="chat-input" data-i18n-placeholder="chatPlaceholder" placeholder="問點什麼吧（長按麥克風說話）..." class="flex-1 bg-white border-2 border-amber-400 rounded-xl px-3 py-2 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-amber-500" />
+        
+        <!-- 長按語音按鈕 (Push-to-Talk) -->
+        <button id="btn-voice-input" type="button" class="w-9 h-9 rounded-full bg-slate-800 border border-slate-600 text-slate-200 flex items-center justify-center text-xs transition active:scale-95 select-none touch-none flex-shrink-0 shadow-sm" title="按住說話，放開送出">
+          <i class="fa-solid fa-microphone"></i>
+        </button>
+
+        <!-- 送出按鈕 -->
+        <button id="btn-send-chat" type="button" class="w-9 h-9 rounded-full bg-amber-400 hover:bg-amber-300 text-slate-950 flex items-center justify-center text-xs font-black transition active:scale-95 flex-shrink-0 shadow-sm">
+          <i class="fa-solid fa-paper-plane"></i>
+        </button>
+      </div>
   </div>
 
   <!-- Firebase SDK 與核心邏輯模組 -->
@@ -3754,44 +3761,21 @@
       }
     }
 
-    // 智能子分類標籤對齊輔助器（完整支援菲式烤乳豬與各國美饌）
-    function detectCategoryHook(text) {
-      const t = text.toLowerCase();
-      
-      // 1. 菲式御膳（包含在地烤乳豬 Lechon）
-      if (t.includes('lechon') || t.includes('乳豬') || t.includes('烤豬') || t.includes('菲式') || t.includes('菲律賓') || t.includes('filipino') || t.includes('pinoy')) {
-        return { key: 'filipino', name: currentLang === 'en' ? 'PH Filipino' : 'PH 菲式御膳' };
-      }
-      // 2. 海鮮盛宴
-      if (t.includes('海鮮') || t.includes('seafood') || t.includes('crab') || t.includes('fish') || t.includes('dampa') || t.includes('螃蟹') || t.includes('龍蝦') || t.includes('蝦')) {
-        return { key: 'seafood', name: currentLang === 'en' ? 'Seafood Feasts' : '🦀 海鮮盛宴' };
-      }
-      // 3. 精緻中餐 / 火鍋
-      if (t.includes('中餐') || t.includes('粵菜') || t.includes('川菜') || t.includes('火鍋') || t.includes('chinese') || t.includes('hotpot') || t.includes('點心') || t.includes('燒臘')) {
-        return { key: 'chinese', name: currentLang === 'en' ? 'Chinese Cuisine' : '🥢 精緻中餐' };
-      }
-      // 4. 頂級日料 / 壽司 / 拉麵
-      if (t.includes('日料') || t.includes('壽司') || t.includes('生魚片') || t.includes('拉麵') || t.includes('japanese') || t.includes('sushi') || t.includes('居酒屋')) {
-        return { key: 'japanese', name: currentLang === 'en' ? 'Japanese Cuisine' : 'JP 頂級日料' };
-      }
-      // 5. 西洋美饌 / 燒烤 / 牛排
-      if (t.includes('燒肉') || t.includes('yakiniku') || t.includes('bbq') || t.includes('牛排') || t.includes('steak') || t.includes('western') || t.includes('餐酒')) {
-        return { key: 'western', name: currentLang === 'en' ? 'Western & Grills' : '🍷 西洋美饌' };
-      }
-      // 6. 微醺夜生活 / 酒吧
-      if (t.includes('酒吧') || t.includes('夜生活') || t.includes('調酒') || t.includes('bar') || t.includes('nightlife') || t.includes('club') || t.includes('夜景')) {
-        return { key: 'nightlife', name: currentLang === 'en' ? 'Nightlife & Bars' : '🍸 夜生活' };
-      }
-      // 7. 奢華早午餐 / 咖啡甜點
-      if (t.includes('咖啡') || t.includes('甜點') || t.includes('早午餐') || t.includes('cafe') || t.includes('brunch') || t.includes('鬆餅')) {
-        return { key: 'brunch', name: currentLang === 'en' ? 'Luxury Brunch' : '☕ 奢華早午餐' };
-      }
-      return null;
-    }
+    // ==========================================
+    // v45.0 核心引擎：三層仲裁 + 語音長按 + 雙向解耦
+    // ==========================================
 
-    // 輔助函式：動態偵測提問中的目標城市（找不到則沿用當前城市）
+    // 1. 三層城市仲裁偵測
     function detectQueryTargetCity(text) {
       const t = text.toLowerCase();
+      // 宏觀全菲泛指關鍵詞判定
+      const macroWords = ['菲律賓', '全菲', 'philipine', 'philippines', '自由行怎麼玩', '哪裡好玩', '哪裡好吃'];
+      const isMacro = macroWords.some(w => t.includes(w)) && !['達沃', '馬尼拉', '宿霧', '長灘島', '巴拉望', '薄荷島', '錫亞高', '薩馬爾', 'davao', 'manila', 'cebu', 'boracay', 'palawan', 'bohol', 'siargao', 'samal'].some(c => t.includes(c));
+
+      if (isMacro) {
+        return { mode: 'macro' }; // 觸發管家都會/海島反問引導
+      }
+
       const cityMap = [
         { key: 'davao', matches: ['達沃', '达沃', 'davao'] },
         { key: 'manila', matches: ['馬尼拉', '马尼拉', 'manila', 'bgc', 'makati', 'pasay'] },
@@ -3802,52 +3786,130 @@
         { key: 'siargao', matches: ['錫亞高', '锡亚高', 'siargao'] },
         { key: 'samal', matches: ['薩馬爾', '萨马尔', 'samal'] }
       ];
+
       for (const c of cityMap) {
-        if (c.matches.some(m => t.includes(m))) return c.key;
+        if (c.matches.some(m => t.includes(m))) return { mode: 'specific', city: c.key };
       }
-      return currentCity;
+
+      // 未指名宏觀亦無指名特定城市 ➔ 預設當前城市
+      return { mode: 'default', city: currentCity };
     }
 
-    async function handleChatSend() {
+    // 2. 主場景意圖識別（景點 vs 美食）
+    function detectMainIntent(text) {
+      const t = text.toLowerCase();
+      const attractionKeywords = ['景點', '好玩', '走走', '逛逛', '打卡', '拍照', '觀光', '歷史', '古蹟', '教堂', '賭場', '商場', '夜生活', '酒吧', 'club', '跳島', '沙灘', '浮潛'];
+      const isAttraction = attractionKeywords.some(k => t.includes(k));
+      return isAttraction ? 'attraction' : 'restaurant';
+    }
+
+    // 3. 子分類情境勾取（含 Western 歐陸料理全品項強化）
+    function detectCategoryHookDetailed(text, mainIntent) {
+      const t = text.toLowerCase();
+
+      if (mainIntent === 'restaurant') {
+        if (['西餐', '牛排', '義大利', '義式', '披薩', '燉飯', 'pasta', 'pizza', 'steak', 'french', 'spanish', 'bistro', '餐酒館', '漢堡', 'burger'].some(k => t.includes(k))) {
+          return { key: 'western', name: '🍷 西洋美饌' };
+        }
+        if (['日料', '日本料理', '壽司', '生魚片', '燒肉', '居酒屋', '拉麵', 'sushi', 'yakiniku', 'ramen'].some(k => t.includes(k))) {
+          return { key: 'japanese', name: 'JP 頂級日料' };
+        }
+        if (['中餐', '中式', '粵菜', '川菜', '港式', '點心', '火鍋', 'dim sum', 'hotpot'].some(k => t.includes(k))) {
+          return { key: 'chinese', name: '🥢 精緻中餐' };
+        }
+        if (['海鮮', '螃蟹', '龍蝦', '大沙公', 'seafood', 'crab', 'lobster'].some(k => t.includes(k))) {
+          return { key: 'seafood', name: '🦀 海鮮盛宴' };
+        }
+        if (['菲式', '菲律賓菜', '烤乳豬', '脆皮豬腳', 'lechon', 'sisig'].some(k => t.includes(k))) {
+          return { key: 'filipino', name: 'PH 菲式御膳' };
+        }
+        if (['早午餐', '咖啡', '下午茶', '甜點', 'brunch', 'cafe', 'coffee'].some(k => t.includes(k))) {
+          return { key: 'brunch', name: '☕ 奢華早午餐' };
+        }
+      } else {
+        if (['夜店', 'club', '酒吧', '夜生活', 'bar'].some(k => t.includes(k))) {
+          return { key: 'nightlife', name: '微醺夜生活' };
+        }
+        if (['賭場', 'casino', '博弈'].some(k => t.includes(k))) {
+          return { key: 'casino', name: '奢華賭場' };
+        }
+        if (['商場', 'mall', '購物', '買東西'].some(k => t.includes(k))) {
+          return { key: 'shopping', name: '精品商場' };
+        }
+        if (['歷史', '古蹟', '教堂', '王城'].some(k => t.includes(k))) {
+          return { key: 'history', name: '歷史風華' };
+        }
+      }
+      return null;
+    }
+
+    // 4. 對話送出核心
+    async function handleChatSend(overrideMessage = null) {
       if (!currentUser) return;
-      const msg = chatInput.value.trim();
+      const msg = (overrideMessage !== null ? overrideMessage : chatInput.value).trim();
       if (!msg) return;
 
-      // 使用者提問氣泡
       chatMessagesContainer.innerHTML += `
         <div class="chat-bubble-user text-white font-bold p-2.5 rounded-xl rounded-tr-sm self-end max-w-[85%] ml-auto text-xs leading-relaxed shadow-sm" style="background: var(--theme-gradient);">
           ${msg}
         </div>
       `;
-      chatInput.value = '';
+      if (overrideMessage === null) chatInput.value = '';
       chatMessagesContainer.scrollTop = chatMessagesContainer.scrollHeight;
+
+      const arbitration = detectQueryTargetCity(msg);
+
+      // 情境二：宏觀泛指 ➔ 觸發管家兩層點選導引
+      if (arbitration.mode === 'macro') {
+        const guideId = 'guide-' + Date.now();
+        chatMessagesContainer.innerHTML += `
+          <div id="${guideId}" class="w-full bg-slate-900 p-3 rounded-xl rounded-tl-sm border border-slate-800 text-slate-300 text-xs self-start flex flex-col gap-2.5 shadow-xs chat-bubble-agent">
+            <div class="leading-relaxed font-medium" style="color: var(--theme-text-title);">
+              收到！菲律賓從繁華現代都會到夢幻渡假海島都有絕佳體驗。請問您這次想先探索哪一種風情？
+            </div>
+            <div id="${guideId}-dimension-btns" class="flex items-center gap-2 pt-1">
+              <button type="button" onclick="window.handleAiSelectDimension('${guideId}', 'cities', '${encodeURIComponent(msg)}')" class="flex-1 py-2 px-2.5 rounded-lg text-xs font-bold bg-slate-800 border border-slate-700 hover:border-amber-400 text-slate-200 text-center transition active:scale-95">
+                🏙️ 都會生活圈
+              </button>
+              <button type="button" onclick="window.handleAiSelectDimension('${guideId}', 'islands', '${encodeURIComponent(msg)}')" class="flex-1 py-2 px-2.5 rounded-lg text-xs font-bold bg-slate-800 border border-slate-700 hover:border-teal-400 text-slate-200 text-center transition active:scale-95">
+                🏖️ 渡假海島專區
+              </button>
+            </div>
+            <div id="${guideId}-cities-container" class="hidden flex-wrap gap-1.5 pt-1"></div>
+          </div>
+        `;
+        chatMessagesContainer.scrollTop = chatMessagesContainer.scrollHeight;
+        return;
+      }
+
+      // 情境一 & 三：鎖定具體城市
+      const targetCity = arbitration.city;
+      const mainIntent = detectMainIntent(msg);
 
       const loadId = 'load-' + Date.now();
       chatMessagesContainer.innerHTML += `
         <div id="${loadId}" class="w-full bg-slate-900 p-3 rounded-xl rounded-tl-sm border border-slate-800 text-slate-400 text-xs self-start flex flex-col gap-2 shadow-xs chat-bubble-agent">
           <div class="flex items-center gap-1.5">
-            <i class="fa-solid fa-spinner fa-spin" style="color: var(--theme-primary);"></i> 管家正在為您查詢... ⚡
+            <i class="fa-solid fa-spinner fa-spin" style="color: var(--theme-primary);"></i> 管家正在為您精選名單... ⚡
           </div>
         </div>
       `;
       chatMessagesContainer.scrollTop = chatMessagesContainer.scrollHeight;
 
-      // 1. 動態鎖定目標城市
-      const targetCity = detectQueryTargetCity(msg);
-
-      // 2. 從本地資料庫撈出該城市清單，優先打包大V私房名冊
-      const cityItems = [...allRestaurants, ...allAttractions].filter(x => safeStr(x.city) === targetCity);
-      const curatedList = cityItems.filter(x => getItemTier(x) === 1);
-      const highRatedList = cityItems.filter(x => getItemTier(x) !== 1 && Number(x.google_rating || x.googleRating || 0) >= 4.5);
+      // 打包該城市專屬候選名單（依意圖過濾景點或餐廳，大V優先）
+      const cityPool = (mainIntent === 'attraction') ? allAttractions : allRestaurants;
+      const cityFiltered = cityPool.filter(x => safeStr(x.city) === targetCity);
+      const curatedList = cityFiltered.filter(x => getItemTier(x) === 1);
+      const highRatedList = cityFiltered.filter(x => getItemTier(x) !== 1 && Number(x.google_rating || x.googleRating || 0) >= 4.5);
 
       const candidateList = [...curatedList, ...highRatedList].slice(0, 15);
       const restaurantsContext = candidateList.map(item => {
         const isBigV = getItemTier(item) === 1;
         const nameEn = item.name_en || item.name || '';
         const nameZh = item.name_zh || '';
-        const cat = item.category || '精選美饌';
+        const cat = item.category || (mainIntent === 'attraction' ? '精選景點' : '精選美饌');
         const bigvComment = item.bigv_comment_zh || item.big_v_comment || '';
-        return `• [${isBigV ? '大V嚴選' : '口碑名店'}] 店名: ${nameEn} (${nameZh}) | 類別: ${cat} ${bigvComment ? `| 特色: ${bigvComment}` : ''}`;
+        return `• [${isBigV ? '大V嚴選' : '口碑名單'}] 名稱: ${nameEn} (${nameZh}) | 類別: ${cat} ${bigvComment ? `| 特色: ${bigvComment}` : ''}`;
       }).join('\n');
 
       try {
@@ -3862,20 +3924,24 @@
           })
         });
         const data = await res.json();
-        let rawReply = data.reply || "已為您快速查詢！推薦造訪在地人氣嚴選私房餐廳與海島景點。";
+        let rawReply = data.reply || "已為您快速查詢！推薦造訪在地人氣嚴選私房餐廳與熱門地標。";
         
         const cleanReplyText = rawReply.replace(/[*#_`~]/g, ' ');
         let formattedReply = rawReply
           .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
           .replace(/\n/g, '<br>');
 
-        // 3. 雙向智慧比對：加入品牌模糊去重，確保推薦兩家不同品牌
-        const allPool = [...allRestaurants, ...allAttractions, ...allMedical];
+        // 明確標記 resolvedType，杜絕 category 誤判
+        const typedPool = [
+          ...allRestaurants.map(r => ({ ...r, _resolvedType: 'restaurant' })),
+          ...allAttractions.map(a => ({ ...a, _resolvedType: 'attraction' }))
+        ];
+
         const matched = [];
         const seenIds = new Set();
         const seenBrandTokens = [];
 
-        for (const item of allPool) {
+        for (const item of typedPool) {
           if (matched.length >= 2) break;
 
           const sId = String(item.id || item.place_id || '').trim();
@@ -3884,9 +3950,8 @@
           const nEn = (item.name_en || '').trim();
           const nZh = (item.name_zh || item.name || '').trim();
           const cleanEnCore = nEn.replace(/\(.*?\)|（.*?）/g, '').trim().toLowerCase();
-          const brandToken = cleanEnCore.split(' ')[0]; // 擷取核心品牌字根
+          const brandToken = cleanEnCore.split(' ')[0];
 
-          // 若與已命中的品牌高度重疊（例如 Manam vs Manam Comfort Filipino），跳過
           if (brandToken && brandToken.length >= 3 && seenBrandTokens.includes(brandToken)) {
             continue;
           }
@@ -3905,12 +3970,13 @@
               id: sId,
               name: (currentLang === 'en' && nEn) ? nEn : (nZh || nEn),
               city: item.city || targetCity,
-              type: item.type || (item.category ? 'attraction' : 'restaurant')
+              type: item._resolvedType,
+              category: item.category || ''
             });
           }
         }
 
-        const categoryHook = typeof detectCategoryHook === 'function' ? detectCategoryHook(msg + ' ' + cleanReplyText) : null;
+        const categoryHook = detectCategoryHookDetailed(msg + ' ' + cleanReplyText, mainIntent);
 
         let jumpButtonsHtml = '';
         if (matched.length > 0 || categoryHook) {
@@ -3918,10 +3984,10 @@
             <div class="w-full mt-2 pt-2 border-t border-slate-700/30 flex flex-col gap-1.5">
               ${matched.length > 0 ? `
                 <span class="text-[10px] font-bold flex items-center gap-1" style="color: var(--theme-primary);">
-                  <i class="fa-solid fa-diamond-turn-right text-[9px]"></i> 推薦店家專屬卡片：
+                  <i class="fa-solid fa-diamond-turn-right text-[9px]"></i> 推薦卡片定位：
                 </span>
                 ${matched.map(m => `
-                  <button type="button" onclick="window.handleAiJumpCard('${m.id}', '${m.type}', '${m.city}')" class="ai-jump-btn w-full py-2 px-3 rounded-lg text-[11px] font-black flex items-center justify-between transition active:scale-95 text-left cursor-pointer shadow-sm" style="background: var(--theme-card-sub-bg); border: 1.5px solid var(--theme-border); color: var(--theme-primary);">
+                  <button type="button" onclick="window.handleAiJumpCard('${m.id}', '${m.type}', '${m.city}', '${categoryHook ? categoryHook.key : 'all'}')" class="ai-jump-btn w-full py-2 px-3 rounded-lg text-[11px] font-black flex items-center justify-between transition active:scale-95 text-left cursor-pointer shadow-sm" style="background: var(--theme-card-sub-bg); border: 1.5px solid var(--theme-border); color: var(--theme-primary);">
                     <span class="truncate">📍 ${m.name}</span>
                     <span class="text-[9px] opacity-80 flex-shrink-0 ml-1">查看卡片 ➔</span>
                   </button>
@@ -3929,8 +3995,8 @@
               ` : ''}
 
               ${categoryHook ? `
-                <button type="button" onclick="window.handleAiCategoryJump('${categoryHook.key}', '${targetCity}')" class="w-full mt-0.5 py-2 px-3 rounded-lg text-white text-[11px] font-black flex items-center justify-between transition active:scale-95 text-left cursor-pointer shadow-sm" style="background: var(--theme-gradient);">
-                  <span class="truncate">📂 瀏覽全部【${categoryHook.name}】完整名單</span>
+                <button type="button" onclick="window.handleAiCategoryJump('${categoryHook.key}', '${targetCity}', '${mainIntent}')" class="w-full mt-0.5 py-2 px-3 rounded-lg text-white text-[11px] font-black flex items-center justify-between transition active:scale-95 text-left cursor-pointer shadow-sm" style="background: var(--theme-gradient);">
+                  <span class="truncate">📂 瀏覽【${categoryHook.name}】精選專區</span>
                   <span class="text-[9px] opacity-90 flex-shrink-0 ml-1">前往專區 ➔</span>
                 </button>
               ` : ''}
@@ -3942,6 +4008,7 @@
         if (loadEl) {
           loadEl.innerHTML = `
             <div class="w-full leading-relaxed font-medium" style="color: var(--theme-text-title);">
+              ${arbitration.mode === 'default' ? `<span class="text-[10px] text-amber-400 font-bold block mb-1">📍 為您優先推薦【${getCityDisplayName(targetCity)}】精選：</span>` : ''}
               ${formattedReply}
             </div>
             ${jumpButtonsHtml}
@@ -3949,30 +4016,62 @@
         }
       } catch (err) {
         const loadEl = document.getElementById(loadId);
-        if (loadEl) loadEl.innerText = "已為您快速查詢！推薦造訪在地人氣嚴選私房餐廳與海島景點。";
+        if (loadEl) loadEl.innerText = "已為您快速查詢！推薦造訪在地人氣私房好店與海島名勝。";
       }
       chatMessagesContainer.scrollTop = chatMessagesContainer.scrollHeight;
     }
 
-    btnSendChat.addEventListener('click', handleChatSend);
+    // 城市繁體中文顯示名稱輔助
+    function getCityDisplayName(key) {
+      const map = { davao: '達沃', manila: '馬尼拉', cebu: '宿霧', boracay: '長灘島', palawan: '巴拉望', bohol: '薄荷島', siargao: '錫亞高', samal: '薩馬爾' };
+      return map[key] || key;
+    }
 
-    // 安全關閉 AI 視窗輔助器（強制隱藏彈窗、懸浮球復位）
+    // 宏觀導引維度點選處理
+    window.handleAiSelectDimension = function(guideId, dimension, encodedOriginalMsg) {
+      const origMsg = decodeURIComponent(encodedOriginalMsg);
+      const container = document.getElementById(`${guideId}-cities-container`);
+      if (!container) return;
+
+      const cities = (dimension === 'cities') 
+        ? [{ key: 'manila', name: '🏙️ 馬尼拉' }, { key: 'cebu', name: '🌊 宿霧' }, { key: 'davao', name: '🌺 達沃' }]
+        : [{ key: 'boracay', name: '🏖️ 長灘島' }, { key: 'palawan', name: '🏝️ 巴拉望' }, { key: 'bohol', name: '🍫 薄荷島' }, { key: 'siargao', name: '🏄‍♂️ 錫亞高' }, { key: 'samal', name: '🌴 薩馬爾' }];
+
+      container.innerHTML = cities.map(c => `
+        <button type="button" onclick="window.handleAiExecuteCityChoice('${c.key}', '${encodeURIComponent(origMsg)}')" class="py-1.5 px-2.5 rounded-lg text-xs font-bold bg-slate-800/90 border border-slate-700 hover:border-amber-400 text-slate-200 transition active:scale-95">
+          ${c.name}
+        </button>
+      `).join('');
+      container.classList.remove('hidden');
+      container.classList.add('flex');
+      chatMessagesContainer.scrollTop = chatMessagesContainer.scrollHeight;
+    };
+
+    window.handleAiExecuteCityChoice = function(cityKey, encodedOriginalMsg) {
+      const origMsg = decodeURIComponent(encodedOriginalMsg);
+      const cityName = getCityDisplayName(cityKey);
+      const compositeMsg = `${cityName}：${origMsg}`;
+      handleChatSend(compositeMsg);
+    };
+
+    btnSendChat.addEventListener('click', () => handleChatSend());
+
+    // 安全關閉 AI 視窗（純靠 class 控制，不留 inline style 造成鎖死）
     function safeCloseAiWindow() {
       const modal = document.getElementById('chat-modal');
       if (modal) {
         modal.classList.add('hidden');
-        modal.style.display = 'none';
+        modal.style.display = '';
       }
       if (typeof updateFabPos === 'function') {
         updateFabPos(fabLeft, fabTop);
       }
     }
 
-    // 1. AI 推薦卡片點擊：支援跨城市自動切換 ➔ 關閉 AI ➔ 切回列表 ➔ 平滑滾動聚焦
-    window.handleAiJumpCard = function(storeId, itemType, itemCity) {
+    // AI 卡片點擊跳轉
+    window.handleAiJumpCard = function(storeId, itemType, itemCity, preferredSubKey) {
       safeCloseAiWindow();
 
-      // 若店家不在當前城市，自動切換城市維度與城市標籤
       if (itemCity && itemCity !== currentCity) {
         currentCity = itemCity;
         currentDimension = isIslandMode(currentCity) ? 'islands' : 'cities';
@@ -3983,8 +4082,9 @@
 
       currentMainTab = (itemType === 'attraction') ? 'attraction' : 'map';
       sessionStorage.setItem('ph_nav_tab', currentMainTab);
-      currentSubFilter = 'all';
-      sessionStorage.setItem('ph_nav_sub', 'all');
+
+      currentSubFilter = (preferredSubKey && preferredSubKey !== 'all') ? preferredSubKey : 'all';
+      sessionStorage.setItem('ph_nav_sub', currentSubFilter);
 
       renderSubFilterBar();
       renderContent();
@@ -4008,8 +4108,8 @@
       }, 250);
     };
 
-    // 2. AI 話題子分類專區點擊：支援跨城市切換 ➔ 關閉 AI ➔ 切換分類 ➔ 滾動至頂部
-    window.handleAiCategoryJump = function(subKey, targetCity) {
+    // AI 專區跳轉
+    window.handleAiCategoryJump = function(subKey, targetCity, mainIntent) {
       safeCloseAiWindow();
 
       if (targetCity && targetCity !== currentCity) {
@@ -4020,8 +4120,8 @@
         renderRegionPills();
       }
 
-      currentMainTab = 'map';
-      sessionStorage.setItem('ph_nav_tab', 'map');
+      currentMainTab = (mainIntent === 'attraction') ? 'attraction' : 'map';
+      sessionStorage.setItem('ph_nav_tab', currentMainTab);
       currentSubFilter = subKey;
       sessionStorage.setItem('ph_nav_sub', currentSubFilter);
 
@@ -4031,6 +4131,89 @@
     };
 
     chatInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') handleChatSend(); });
+
+    // ==========================================
+    // 長按語音輸入 (Push-to-Talk) 實作
+    // ==========================================
+    const btnVoice = document.getElementById('btn-voice-input');
+    let speechRecognizer = null;
+    let voiceTranscript = '';
+    let isVoiceActive = false;
+
+    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      speechRecognizer = new SpeechRecognition();
+      speechRecognizer.continuous = true;
+      speechRecognizer.interimResults = true;
+      speechRecognizer.lang = (currentLang === 'en') ? 'en-US' : 'zh-TW';
+
+      speechRecognizer.onresult = (event) => {
+        let interim = '';
+        for (let i = event.resultIndex; i < event.results.length; ++i) {
+          if (event.results[i].isFinal) {
+            voiceTranscript += event.results[i][0].transcript;
+          } else {
+            interim += event.results[i][0].transcript;
+          }
+        }
+        chatInput.value = voiceTranscript + interim;
+      };
+
+      speechRecognizer.onerror = (event) => {
+        console.warn('語音辨識提示/異常:', event.error);
+        stopVoiceRecording(false);
+      };
+    }
+
+    function startVoiceRecording(e) {
+      if (e) e.preventDefault();
+      if (!speechRecognizer) {
+        alert('您的瀏覽器不支援即時語音辨識，請使用打字發問。');
+        return;
+      }
+      voiceTranscript = '';
+      chatInput.value = '';
+      isVoiceActive = true;
+      btnVoice.classList.add('bg-red-600', 'text-white', 'border-red-400', 'scale-105');
+      chatInput.placeholder = '🎙️ 聆聽中... (說完放開按鈕即發送)';
+
+      try {
+        speechRecognizer.start();
+      } catch (err) {}
+    }
+
+    function stopVoiceRecording(shouldSend = true) {
+      if (!isVoiceActive) return;
+      isVoiceActive = false;
+      btnVoice.classList.remove('bg-red-600', 'text-white', 'border-red-400', 'scale-105');
+      chatInput.placeholder = '問點什麼吧（長按麥克風說話）...';
+
+      try {
+        if (speechRecognizer) speechRecognizer.stop();
+      } catch (err) {}
+
+      if (shouldSend) {
+        setTimeout(() => {
+          const finalMsg = chatInput.value.trim();
+          if (finalMsg && finalMsg.length >= 2) {
+            handleChatSend();
+          }
+        }, 300);
+      }
+    }
+
+    if (btnVoice) {
+      btnVoice.addEventListener('mousedown', startVoiceRecording);
+      btnVoice.addEventListener('mouseup', () => stopVoiceRecording(true));
+      btnVoice.addEventListener('mouseleave', () => stopVoiceRecording(false));
+
+      btnVoice.addEventListener('touchstart', startVoiceRecording, { passive: false });
+      btnVoice.addEventListener('touchend', (e) => {
+        e.preventDefault();
+        stopVoiceRecording(true);
+      });
+      btnVoice.addEventListener('touchcancel', () => stopVoiceRecording(false));
+    }
 
     function parseImages(item, fallback) {
       if (!item) return [fallback || 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=800'];
@@ -4427,7 +4610,7 @@
       }
 
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js?v=20260913-v43.8.1').then((reg) => {
+        navigator.serviceWorker.register('./sw.js?v=20260913-v45.0').then((reg) => {
           if (reg.waiting) {
             showPwaUpdateModal(reg.waiting);
           }
