@@ -2982,13 +2982,12 @@
       try {
         let comments = [];
         try {
-          const { getStoreComments } = await import('./authService.js');
-          comments = await getStoreComments(storeId);
+          const authMod = await import('./authService.js');
+          if (authMod && typeof authMod.getStoreComments === 'function') {
+            comments = await authMod.getStoreComments(storeId);
+          }
         } catch (importErr) {
-          console.warn("[Comment] 動態引入失敗，切換直連 Firestore 查詢:", importErr);
-          const q = query(collection(db, "store_comments"), where("storeId", "==", String(storeId).trim()));
-          const snap = await getDocs(q);
-          snap.forEach(d => comments.push({ id: d.id, ...d.data() }));
+          console.warn("[Comment] 讀取評論模組略過:", importErr);
         }
 
         if (!comments || comments.length === 0) {
@@ -3080,7 +3079,7 @@
         commentListContainer.innerHTML = '<p class="text-center text-slate-500 py-6 text-xs">目前暫無評論或載入逾時，請點下方搶先發表！</p>';
       }
     }
-
+    
     let currentTargetComment = null;
     let currentTargetUserHistory = { count: 0, points: 50 };
     const TIER_BAN_DAYS = [3, 7, 30, 3650]; 
