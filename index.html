@@ -7,7 +7,7 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
-  <meta name="app-version" content="20260914-v45.0" />
+  <meta name="app-version" content="20260914-v45.0.1" />
   <meta name="theme-color" content="#020617" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -3849,12 +3849,15 @@
       const msg = (overrideMessage !== null ? overrideMessage : chatInput.value).trim();
       if (!msg) return;
 
+      // 立即清空輸入框與語音暫存，避免文字殘留
+      chatInput.value = '';
+      voiceTranscript = '';
+
       chatMessagesContainer.innerHTML += `
         <div class="chat-bubble-user text-white font-bold p-2.5 rounded-xl rounded-tr-sm self-end max-w-[85%] ml-auto text-xs leading-relaxed shadow-sm" style="background: var(--theme-gradient);">
           ${msg}
         </div>
       `;
-      if (overrideMessage === null) chatInput.value = '';
       chatMessagesContainer.scrollTop = chatMessagesContainer.scrollHeight;
 
       const arbitration = detectQueryTargetCity(msg);
@@ -3896,7 +3899,7 @@
       `;
       chatMessagesContainer.scrollTop = chatMessagesContainer.scrollHeight;
 
-      // 打包該城市專屬候選名單（依意圖過濾景點或餐廳，大V優先）
+      // 打包候選名單（大V優先）
       const cityPool = (mainIntent === 'attraction') ? allAttractions : allRestaurants;
       const cityFiltered = cityPool.filter(x => safeStr(x.city) === targetCity);
       const curatedList = cityFiltered.filter(x => getItemTier(x) === 1);
@@ -3924,14 +3927,13 @@
           })
         });
         const data = await res.json();
-        let rawReply = data.reply || "已為您快速查詢！推薦造訪在地人氣嚴選私房餐廳與熱門地標。";
+        let rawReply = data.reply || "已為您快速查詢！推薦造訪在地人氣私房好店與特色名所。";
         
         const cleanReplyText = rawReply.replace(/[*#_`~]/g, ' ');
         let formattedReply = rawReply
           .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
           .replace(/\n/g, '<br>');
 
-        // 明確標記 resolvedType，杜絕 category 誤判
         const typedPool = [
           ...allRestaurants.map(r => ({ ...r, _resolvedType: 'restaurant' })),
           ...allAttractions.map(a => ({ ...a, _resolvedType: 'attraction' }))
@@ -3976,7 +3978,8 @@
           }
         }
 
-        const categoryHook = detectCategoryHookDetailed(msg + ' ' + cleanReplyText, mainIntent);
+        // 核心優化：只依據「使用者發問 (msg)」來決定分類鉤子，絕不依據 AI 回覆猜測！
+        const categoryHook = detectCategoryHookDetailed(msg, mainIntent);
 
         let jumpButtonsHtml = '';
         if (matched.length > 0 || categoryHook) {
@@ -4197,8 +4200,14 @@
           const finalMsg = chatInput.value.trim();
           if (finalMsg && finalMsg.length >= 2) {
             handleChatSend();
+          } else {
+            chatInput.value = '';
+            voiceTranscript = '';
           }
         }, 300);
+      } else {
+        chatInput.value = '';
+        voiceTranscript = '';
       }
     }
 
@@ -4610,7 +4619,7 @@
       }
 
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js?v=20260914-v45.0').then((reg) => {
+        navigator.serviceWorker.register('./sw.js?v=20260914-v45.0.1').then((reg) => {
           if (reg.waiting) {
             showPwaUpdateModal(reg.waiting);
           }
