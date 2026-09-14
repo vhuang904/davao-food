@@ -7,7 +7,7 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
-  <meta name="app-version" content="20260914-v46.0" />
+  <meta name="app-version" content="20260914-v46.1" />
   <meta name="theme-color" content="#020617" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -3093,11 +3093,29 @@
             </button>
           ` : '';
 
-          const displayContent = (currentLang === 'en' && c.comment_en) 
-            ? c.comment_en 
-            : (c.comment || c.content || '');
+          let displayContent = c.comment || c.content || '';
+          let isTranslated = false;
+          let translateNote = '';
 
-          const isTranslated = (currentLang === 'en' && c.comment_en && c.originalLang === 'zh-TW');
+          if (currentLang === 'en') {
+            // 英文介面：若原文為中文且已有英文翻譯
+            if (c.comment_en && (c.originalLang === 'zh-TW' || (!c.originalLang && /[\u4e00-\u9fa5]/.test(c.comment || '')))) {
+              displayContent = c.comment_en;
+              isTranslated = true;
+              translateNote = 'Translated from Chinese by Cloudflare AI';
+            } else if (c.comment_en) {
+              displayContent = c.comment_en;
+            }
+          } else {
+            // 中文介面：若原文為英文且已有中文翻譯
+            if (c.comment_zh && (c.originalLang === 'en' || (!c.originalLang && !/[\u4e00-\u9fa5]/.test(c.comment || '')))) {
+              displayContent = c.comment_zh;
+              isTranslated = true;
+              translateNote = '由 Cloudflare AI 翻譯自英文';
+            } else if (c.comment_zh) {
+              displayContent = c.comment_zh;
+            }
+          }
 
           return `
             <div class="border rounded-xl p-3 space-y-1.5" style="border-color: var(--theme-border); background: var(--theme-card-sub-bg);">
@@ -3114,7 +3132,7 @@
                 </div>
               </div>
               <p class="leading-relaxed text-xs break-words pl-6.5" style="color: var(--theme-text-body);">${displayContent}</p>
-              ${isTranslated ? `<div class="text-[9px] text-slate-500 pl-6.5 italic flex items-center gap-1"><i class="fa-solid fa-language"></i> Translated from Chinese by Gemini</div>` : ''}
+              ${isTranslated ? `<div class="text-[9px] text-slate-500 pl-6.5 italic flex items-center gap-1"><i class="fa-solid fa-language"></i> ${translateNote}</div>` : ''}
             </div>
           `;
         }).join('');
@@ -4578,7 +4596,7 @@
       }
 
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js?v=20260914-v46.0').then((reg) => {
+        navigator.serviceWorker.register('./sw.js?v=20260914-v46.1').then((reg) => {
           if (reg.waiting) {
             showPwaUpdateModal(reg.waiting);
           }
