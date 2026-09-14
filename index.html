@@ -839,45 +839,7 @@
       background: var(--theme-gradient) !important;
       color: var(--theme-badge-text) !important;
     }
-    
-    /* 1. 鎖定全站彈窗容器（包含精確 ID：#toastNotification） */
-#toastNotification,
-.toast,
-.popup,
-.popup-box,
-.modal-content,
-.alert-box {
-  position: relative !important;
-  display: flex !important;
-  flex-direction: row !important;
-  justify-content: center !important;   /* 水平絕對置中 */
-  align-items: center !important;       /* 垂直絕對置中 */
-  text-align: center !important;
-  box-sizing: border-box !important;
-  padding: 16px 40px !important;        /* 左右留出對稱空間，避開叉叉 */
-}
-
-/* 2. 內部文字與圖示強制居中 */
-#toastNotification #toastMessage,
-#toastNotification #toastIcon {
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  text-align: center !important;
-}
-
-/* 3. 右上角關閉叉叉（精確 ID：#toastCloseBtn）強制抽離排版，絕不干擾中心點 */
-#toastCloseBtn,
-.toast .close,
-.toast .close-btn,
-button[class*="close"] {
-  position: absolute !important;        /* 脫離排版，不佔中間寬度 */
-  top: 50% !important;
-  transform: translateY(-50%) !important; /* 垂直置中在最右側 */
-  right: 12px !important;
-  margin: 0 !important;
-  z-index: 20 !important;
-}
+        
   </style>
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col font-sans">
