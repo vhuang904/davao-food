@@ -7,7 +7,7 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
-  <meta name="app-version" content="20260913-v43.7.4" />
+  <meta name="app-version" content="20260913-v43.7.5" />
   <meta name="theme-color" content="#020617" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -3713,13 +3713,13 @@
       if (!currentUser) {
         chatMessagesContainer.innerHTML = `
           <div class="bg-slate-900 border border-amber-400/40 rounded-2xl p-3.5 space-y-2.5 text-slate-300 chat-bubble-agent shadow-md">
-            <div class="flex items-center gap-2 text-amber-300 font-black text-xs">
-              <i class="fa-solid fa-crown text-amber-400"></i> 會員尊榮專屬 AI 管家
+            <div class="flex items-center gap-2 font-black text-xs" style="color: var(--theme-primary);">
+              <i class="fa-solid fa-crown"></i> 會員尊榮專屬 AI 管家
             </div>
             <p class="leading-relaxed text-[11px]">
               您好！我是大V的旅遊窩專屬 AI 管家。登入會員即可免費向我諮詢全菲美饌推薦、私房海島行程規劃與在線即時訂位指南！
             </p>
-            <button onclick="window.openAuthModalDirect()" class="w-full py-2 bg-gradient-to-r from-amber-400 to-amber-500 text-slate-950 font-black text-xs rounded-xl shadow-md transition active:scale-95">
+            <button onclick="window.openAuthModalDirect()" class="w-full py-2 text-white font-black text-xs rounded-xl shadow-md transition active:scale-95 cursor-pointer" style="background: var(--theme-gradient);">
               立即登入解鎖管家服務 ➔
             </button>
           </div>
@@ -3732,18 +3732,21 @@
         const name = currentUser.displayName || '吃貨好友';
 
         if (!chatMessagesContainer.querySelector('.chat-ready-bubble')) {
+          const currentCityObj = REGION_CONFIG.cities.concat(REGION_CONFIG.islands).find(r => r.id === currentCity);
+          const localizedCity = currentCityObj ? (currentLang === 'en' ? currentCityObj.name_en : currentCityObj.name) : '菲律賓';
+
           chatMessagesContainer.innerHTML = `
             <div class="chat-ready-bubble bg-slate-900 border border-slate-800 rounded-2xl p-3.5 space-y-2 text-slate-200 chat-bubble-agent shadow-md">
-              <div class="flex items-center gap-1.5 text-amber-300 font-bold text-xs">
-                <i class="fa-solid fa-wand-magic-sparkles text-amber-400"></i> 大V管家在線
+              <div class="flex items-center gap-1.5 font-bold text-xs" style="color: var(--theme-primary);">
+                <i class="fa-solid fa-wand-magic-sparkles"></i> 大V管家在線
               </div>
               <p class="leading-relaxed text-[11px]">
-                嗨，${name}！我是大V的專屬智能助理。想在 <span class="text-amber-300 font-bold">${REGION_CONFIG.cities.concat(REGION_CONFIG.islands).find(r => r.id === currentCity)?.name || '菲律賓'}</span> 找頂級和牛、生猛海鮮、絕美海景 Villa 還是浪漫酒吧？隨時問我！
+                嗨，${name}！我是大V的專屬智能助理。想在 <span class="font-bold" style="color: var(--theme-primary);">${localizedCity}</span> 找頂級和牛、生猛海鮮、絕美海景 Villa 還是浪漫酒吧？隨時問我！
               </p>
               <div class="flex flex-wrap gap-1.5 pt-1">
-                <button onclick="window.quickAskAI('推薦在地最頂級的和牛與燒肉', event)" class="ai-quick-btn bg-slate-800 hover:bg-slate-700 text-amber-300 border border-amber-400/30 text-[10px] px-2.5 py-1 rounded-full active:scale-95">🥩 頂級和牛燒肉</button>
-                <button onclick="window.quickAskAI('有哪幾家必訪的生猛海鮮酒家？', event)" class="ai-quick-btn bg-slate-800 hover:bg-slate-700 text-amber-300 border border-amber-400/30 text-[10px] px-2.5 py-1 rounded-full active:scale-95">🦀 必訪海鮮酒家</button>
-                <button onclick="window.quickAskAI('推薦高空夜景酒吧與約會場所', event)" class="ai-quick-btn bg-slate-800 hover:bg-slate-700 text-amber-300 border border-amber-400/30 text-[10px] px-2.5 py-1 rounded-full active:scale-95">🍸 高空景觀酒吧</button>
+                <button onclick="window.quickAskAI('推薦在地最頂級的和牛與燒肉', event)" class="ai-quick-btn bg-slate-800 hover:bg-slate-750 text-[10px] px-2.5 py-1 rounded-full active:scale-95 cursor-pointer">🥩 頂級和牛燒肉</button>
+                <button onclick="window.quickAskAI('有哪幾家必訪的生猛海鮮酒家？', event)" class="ai-quick-btn bg-slate-800 hover:bg-slate-750 text-[10px] px-2.5 py-1 rounded-full active:scale-95 cursor-pointer">🦀 必訪海鮮酒家</button>
+                <button onclick="window.quickAskAI('推薦高空夜景酒吧與約會場所', event)" class="ai-quick-btn bg-slate-800 hover:bg-slate-750 text-[10px] px-2.5 py-1 rounded-full active:scale-95 cursor-pointer">🍸 高空景觀酒吧</button>
               </div>
             </div>
           `;
@@ -3751,36 +3754,38 @@
       }
     }
 
-    window.quickAskAI = function(question, event) {
-      if (event) {
-        event.preventDefault();
-        event.stopPropagation();
+    // 智能子分類標籤對齊輔助器
+    function detectCategoryHook(text) {
+      const t = text.toLowerCase();
+      if (t.includes('海鮮') || t.includes('seafood') || t.includes('crab') || t.includes('fish')) {
+        return { key: 'seafood', name: currentLang === 'en' ? 'Seafood Feasts' : '海鮮盛宴' };
       }
-      if (!currentUser) {
-        showToast(
-          '🔒 請先登入會員，解鎖專屬 AI 管家諮詢服務！',
-          'fa-lock',
-          '立即登入',
-          () => {
-            closeAiChat();
-            openAuthModal();
-          }
-        );
-        return;
+      if (t.includes('中餐') || t.includes('粵菜') || t.includes('川菜') || t.includes('火鍋') || t.includes('chinese') || t.includes('hotpot')) {
+        return { key: 'chinese', name: currentLang === 'en' ? 'Chinese Cuisine' : '精緻中餐' };
       }
-      if (chatInput) {
-        chatInput.value = question;
-        handleChatSend();
+      if (t.includes('日料') || t.includes('壽司') || t.includes('生魚片') || t.includes('拉麵') || t.includes('japanese') || t.includes('sushi')) {
+        return { key: 'japanese', name: currentLang === 'en' ? 'Japanese Cuisine' : '頂級日料' };
       }
-    };
+      if (t.includes('燒肉') || t.includes('烤肉') || t.includes('yakiniku') || t.includes('bbq') || t.includes('牛排') || t.includes('steak') || t.includes('western')) {
+        return { key: 'western', name: currentLang === 'en' ? 'Western & Grills' : '西洋美饌 / 燒烤' };
+      }
+      if (t.includes('酒吧') || t.includes('夜生活') || t.includes('調酒') || t.includes('bar') || t.includes('nightlife') || t.includes('club')) {
+        return { key: 'nightlife', name: currentLang === 'en' ? 'Nightlife & Bars' : '微醺夜生活' };
+      }
+      if (t.includes('咖啡') || t.includes('甜點') || t.includes('早午餐') || t.includes('cafe') || t.includes('brunch')) {
+        return { key: 'brunch', name: currentLang === 'en' ? 'Luxury Brunch' : '奢華早午餐' };
+      }
+      return null;
+    }
 
     async function handleChatSend() {
       if (!currentUser) return;
       const msg = chatInput.value.trim();
       if (!msg) return;
 
+      // 使用者提問氣泡：完全動態吃主題色
       chatMessagesContainer.innerHTML += `
-        <div class="bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 font-bold p-2.5 rounded-xl rounded-tr-sm self-end max-w-[85%] ml-auto text-xs leading-relaxed shadow-xs">
+        <div class="chat-bubble-user text-white font-bold p-2.5 rounded-xl rounded-tr-sm self-end max-w-[85%] ml-auto text-xs leading-relaxed shadow-sm" style="background: var(--theme-gradient);">
           ${msg}
         </div>
       `;
@@ -3789,8 +3794,8 @@
 
       const loadId = 'load-' + Date.now();
       chatMessagesContainer.innerHTML += `
-        <div id="${loadId}" class="bg-slate-900 p-2.5 rounded-xl rounded-tl-sm border border-slate-800 text-slate-400 text-xs self-start max-w-[85%] flex items-center gap-1.5 shadow-2xs chat-bubble-agent">
-          <i class="fa-solid fa-spinner fa-spin text-amber-400"></i> 管家正在為您查詢... ⚡
+        <div id="${loadId}" class="bg-slate-900 p-2.5 rounded-xl rounded-tl-sm border border-slate-800 text-slate-400 text-xs self-start max-w-[85%] flex items-center gap-1.5 shadow-xs chat-bubble-agent">
+          <i class="fa-solid fa-spinner fa-spin" style="color: var(--theme-primary);"></i> 管家正在為您查詢... ⚡
         </div>
       `;
       chatMessagesContainer.scrollTop = chatMessagesContainer.scrollHeight;
@@ -3802,23 +3807,40 @@
           body: JSON.stringify({ message: msg, lang: currentLang === 'en' ? 'en' : 'zh', currentCity: currentCity })
         });
         const data = await res.json();
-        const replyText = data.reply || "已為您快速查詢！推薦造訪在地人氣嚴選私房餐廳與海島景點。";
+        let rawReply = data.reply || "已為您快速查詢！推薦造訪在地人氣嚴選私房餐廳與海島景點。";
         
-        // --- 智慧掃描資料庫店家 ---
+        // 1. 純淨比對字串（清除 Markdown 標點，便於關鍵字精確比對）
+        const cleanReplyText = rawReply.replace(/[*#_`~]/g, ' ');
+
+        // 2. 轉換輸出 HTML：將 **粗體** 轉為 HTML <strong>
+        const formattedReply = rawReply.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+
+        // 3. 雙向智慧比對：以英文為主、中文為輔，嚴格限制最多 2 家
         const allItems = [...allRestaurants, ...allAttractions, ...allMedical];
         const matched = [];
         const seenIds = new Set();
 
-        allItems.forEach(item => {
-          const sId = String(item.id || item.place_id || '').trim();
-          if (!sId || seenIds.has(sId)) return;
+        for (const item of allItems) {
+          if (matched.length >= 2) break; // 嚴格限制最多 2 家
 
-          const nZh = (item.name_zh || item.name || '').trim();
+          const sId = String(item.id || item.place_id || '').trim();
+          if (!sId || seenIds.has(sId)) continue;
+
           const nEn = (item.name_en || '').trim();
+          const nZh = (item.name_zh || item.name || '').trim();
+
+          // 清理英文核心關鍵字（去除括號與分店名稱）
+          const cleanEnCore = nEn.replace(/\(.*?\)|（.*?）/g, '').trim().toLowerCase();
 
           let isMatch = false;
-          if (nZh && nZh.length >= 2 && replyText.includes(nZh)) isMatch = true;
-          if (nEn && nEn.length >= 3 && replyText.toLowerCase().includes(nEn.toLowerCase())) isMatch = true;
+          // 第一優先：英文名稱匹配（大於等於 3 字元）
+          if (cleanEnCore && cleanEnCore.length >= 3 && cleanReplyText.toLowerCase().includes(cleanEnCore)) {
+            isMatch = true;
+          } 
+          // 第二順位：中文名稱匹配（大於等於 2 字元）
+          else if (nZh && nZh.length >= 2 && cleanReplyText.includes(nZh)) {
+            isMatch = true;
+          }
 
           if (isMatch) {
             seenIds.add(sId);
@@ -3828,26 +3850,40 @@
               type: item.type || (item.category ? 'attraction' : 'restaurant')
             });
           }
-        });
+        }
+
+        // 4. 偵測話題子分類，生成專屬導流按鈕
+        const categoryHook = detectCategoryHook(msg + ' ' + cleanReplyText);
 
         let jumpButtonsHtml = '';
-        if (matched.length > 0) {
+        if (matched.length > 0 || categoryHook) {
           jumpButtonsHtml = `
-            <div class="mt-2.5 pt-2 border-t border-amber-400/20 flex flex-col gap-1.5">
-              <span class="text-[10px] text-amber-300 font-bold">✨ 點擊直接在地圖查看：</span>
-              ${matched.map(m => `
-                <button type="button" onclick="window.handleAiJumpCard('${m.id}', '${m.type}')" class="ai-jump-btn w-full py-1.5 px-2.5 rounded-lg bg-slate-800 hover:bg-slate-750 border border-amber-400/50 text-amber-300 text-[11px] font-black flex items-center justify-between transition active:scale-95 text-left cursor-pointer shadow-sm">
-                  <span class="truncate">📍 ${m.name}</span>
-                  <span class="text-[9px] opacity-80 flex-shrink-0 ml-1">前往 ➔</span>
+            <div class="mt-2.5 pt-2 border-t border-slate-700/30 flex flex-col gap-1.5">
+              ${matched.length > 0 ? `
+                <span class="text-[10px] font-bold flex items-center gap-1" style="color: var(--theme-primary);">
+                  <i class="fa-solid fa-diamond-turn-right text-[9px]"></i> 推薦店家專屬卡片：
+                </span>
+                ${matched.map(m => `
+                  <button type="button" onclick="window.handleAiJumpCard('${m.id}', '${m.type}')" class="ai-jump-btn w-full py-1.5 px-2.5 rounded-lg text-[11px] font-black flex items-center justify-between transition active:scale-95 text-left cursor-pointer shadow-sm" style="background: var(--theme-card-sub-bg); border: 1.5px solid var(--theme-border); color: var(--theme-primary);">
+                    <span class="truncate">📍 ${m.name}</span>
+                    <span class="text-[9px] opacity-80 flex-shrink-0 ml-1">查看卡片 ➔</span>
+                  </button>
+                `).join('')}
+              ` : ''}
+
+              ${categoryHook ? `
+                <button type="button" onclick="window.handleAiCategoryJump('${categoryHook.key}')" class="w-full mt-1 py-1.5 px-2.5 rounded-lg text-white text-[11px] font-black flex items-center justify-between transition active:scale-95 text-left cursor-pointer shadow-sm" style="background: var(--theme-gradient);">
+                  <span class="truncate">📂 瀏覽全部【${categoryHook.name}】完整名單</span>
+                  <span class="text-[9px] opacity-90 flex-shrink-0 ml-1">前往專區 ➔</span>
                 </button>
-              `).join('')}
+              ` : ''}
             </div>
           `;
         }
 
         const loadEl = document.getElementById(loadId);
         if (loadEl) {
-          loadEl.innerHTML = `<div>${replyText}</div>${jumpButtonsHtml}`;
+          loadEl.innerHTML = `<div class="leading-relaxed">${formattedReply}</div>${jumpButtonsHtml}`;
         }
       } catch (err) {
         const loadEl = document.getElementById(loadId);
@@ -3856,9 +3892,22 @@
       chatMessagesContainer.scrollTop = chatMessagesContainer.scrollHeight;
     }
 
+    // AI 卡片點擊跳轉處理
     window.handleAiJumpCard = function(storeId, itemType) {
       closeAiChat();
       window.jumpToCard(storeId, itemType);
+    };
+
+    // AI 子分類專區點擊跳轉處理
+    window.handleAiCategoryJump = function(subKey) {
+      closeAiChat();
+      currentMainTab = 'map';
+      sessionStorage.setItem('ph_nav_tab', 'map');
+      currentSubFilter = subKey;
+      sessionStorage.setItem('ph_nav_sub', currentSubFilter);
+      renderSubFilterBar();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      renderContent();
     };
 
     btnSendChat.addEventListener('click', handleChatSend);
@@ -4259,7 +4308,7 @@
       }
 
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js?v=20260913-v43.7.4').then((reg) => {
+        navigator.serviceWorker.register('./sw.js?v=20260913-v43.7.5').then((reg) => {
           if (reg.waiting) {
             showPwaUpdateModal(reg.waiting);
           }
