@@ -7,7 +7,7 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
-  <meta name="app-version" content="20260913-v43.7.1" />
+  <meta name="app-version" content="20260913-v43.7.2" />
   <meta name="theme-color" content="#020617" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -55,7 +55,7 @@
     }
 
     .line-clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-    .glass-header { background: rgba(2, 6, 23, 0.92); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-bottom: 1px solid rgba(245, 158, 11, 0.2); }
+    .glass-header { backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
     .glass-modal { background: rgba(0, 0, 0, 0.82); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
 
     .carousel-track { display: flex; width: 100%; height: 100%; overflow-x: auto; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; }
@@ -209,10 +209,10 @@
     }
 
     /* =======================================================
-       一、四大主題語意變數引擎 (Theme Token Matrix)
+       一、五大主題專屬獨立矩陣 (Theme Token Matrix)
        ======================================================= */
     
-    /* 1. 暗夜尊爵 (Dark Default) */
+    /* 1. 暗夜尊爵 (Dark) */
     html.dark {
       --theme-primary: #F59E0B;
       --theme-primary-hover: #D97706;
@@ -232,7 +232,7 @@
       --theme-glow: 0 0 25px -2px rgba(245, 158, 11, 0.5);
     }
 
-    /* 2. 暖陽金橘 (Light Mode) */
+    /* 2. 暖陽金橘 (Light) */
     html.light {
       --theme-primary: #EA580C;
       --theme-primary-hover: #C2410C;
@@ -252,7 +252,7 @@
       --theme-glow: 0 0 25px -2px rgba(234, 88, 12, 0.35);
     }
 
-    /* 3. 暮光紫霞 (Amethyst Mode) */
+    /* 3. 暮光紫霞 (Amethyst) */
     html.amethyst {
       --theme-primary: #7B337F;
       --theme-primary-hover: #55285F;
@@ -272,7 +272,7 @@
       --theme-glow: 0 0 25px -2px rgba(110, 48, 115, 0.35);
     }
 
-    /* 4. 海島湛藍 (Ocean Navy Mode) */
+    /* 4. 海島湛藍 (Ocean) */
     html.ocean {
       --theme-primary: #0284C7;
       --theme-primary-hover: #0369A1;
@@ -292,7 +292,7 @@
       --theme-glow: 0 0 25px -2px rgba(2, 132, 199, 0.35);
     }
 
-    /* 5. 櫻花粉嫩 (Sakura Pink Mode) */
+    /* 5. 櫻花粉嫩 (Sakura) */
     html.sakura {
       --theme-primary: #DB2777;
       --theme-primary-hover: #BE185D;
@@ -313,7 +313,7 @@
     }
 
     /* =======================================================
-       二、三大固定功能按鈕（全域永久鎖定，任何主題不動搖）
+       二、三大固定功能按鈕（全域鎖定，任何主題不動搖）
        ======================================================= */
     /* 1. Grab 點餐：綠底白字 */
     .btn-card-grab {
@@ -354,7 +354,7 @@
     html.dark .btn-card-nav * { color: #38BDF8 !important; }
 
     /* =======================================================
-       三、暗夜尊爵專屬防護罩（確保黑底金字絕不走樣）
+       三、暗夜尊爵專屬防護罩（黑金質感永久鎖定）
        ======================================================= */
     .carousel-hint-pill {
       position: absolute;
@@ -369,14 +369,16 @@
       backdrop-filter: blur(4px);
       -webkit-backdrop-filter: blur(4px);
     }
-    /* 暗夜輪播膠囊：經典半透明黑底 + 金字金框 */
+    html.dark header.glass-header {
+      background: rgba(2, 6, 23, 0.92) !important;
+      border-bottom: 1px solid rgba(245, 158, 11, 0.2) !important;
+    }
     html.dark .carousel-hint-pill {
       background-color: rgba(2, 6, 23, 0.85) !important;
       color: #FCD34D !important;
       border: 1px solid rgba(245, 158, 11, 0.45) !important;
       box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5) !important;
     }
-    /* 暗夜語系切換膠囊：深黑底 + 金邊框 */
     html.dark .lang-toggle-container {
       background-color: #0B0F19 !important;
       border: 1px solid rgba(245, 158, 11, 0.4) !important;
@@ -389,20 +391,17 @@
       font-weight: 900 !important;
       box-shadow: 0 2px 8px rgba(245, 158, 11, 0.4) !important;
     }
-    /* 暗夜官網按鈕：深黑底 + 金框 */
     html.dark .btn-card-website {
       background-color: rgba(15, 23, 42, 0.95) !important;
       border: 2px solid rgba(245, 158, 11, 0.7) !important;
       color: #FCD34D !important;
     }
     html.dark .btn-card-website * { color: #FCD34D !important; font-weight: 800 !important; }
-    /* 暗夜彈窗關閉叉叉 */
     html.dark .btn-modal-close, html.dark #close-comment-btn, html.dark #close-recommend-btn {
       background-color: #0F172A !important;
       border: 1px solid #334155 !important;
       color: #94A3B8 !important;
     }
-    /* 暗夜登出按鈕 */
     html.dark #btn-logout {
       background-color: rgba(76, 5, 25, 0.4) !important;
       border: 1px solid rgba(244, 63, 94, 0.4) !important;
@@ -411,42 +410,26 @@
     }
 
     /* =======================================================
-       四、淺色系三大主題通用反白引擎 (Light / Amethyst / Ocean)
+       四、寫評論按鈕（有厚度、立體陰影、按鈕感十足）
+       ======================================================= */
+    .btn-card-comment {
+      background: var(--theme-gradient) !important;
+      color: var(--theme-badge-text, #FFFFFF) !important;
+      border: 1px solid rgba(255, 255, 255, 0.4) !important;
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.18) !important;
+    }
+    .btn-card-comment * {
+      color: var(--theme-badge-text, #FFFFFF) !important;
+      font-weight: 900 !important;
+    }
+
+    /* =======================================================
+       五、淺色系四大主題通用反白架構 (Light / Amethyst / Ocean / Sakura)
        ======================================================= */
     html.light body { background-color: #F7F3EB !important; color: #1F2937 !important; }
     html.amethyst body { background-color: #FAF6F9 !important; color: #2E1A33 !important; }
     html.ocean body { background-color: #F0F9FF !important; color: #0C4A6E !important; }
-
     html.sakura body { background-color: #FFF5F7 !important; color: #831843 !important; }
-
-    /* Sakura 專屬：未選中標籤與子分類高對比白底粉字 */
-    html.sakura .region-pill { 
-      background-color: rgba(255, 255, 255, 0.2) !important; 
-      border: 1.5px solid rgba(255, 255, 255, 0.45) !important; 
-      color: #FFFFFF !important; 
-      font-weight: 800 !important;
-      opacity: 1 !important;
-    }
-    html.sakura .region-pill.bg-amber-400 { 
-      background: #FFFFFF !important; 
-      border: 1.5px solid #FFFFFF !important; 
-      color: #DB2777 !important; 
-      font-weight: 900 !important; 
-      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.25) !important;
-      transform: scale(1.05) !important;
-    }
-    html.sakura .sub-pill { 
-      background-color: #FFFFFF !important; 
-      border: 1.5px solid #FBCFE8 !important; 
-      color: #DB2777 !important; 
-      font-weight: 900 !important; 
-    }
-    html.sakura .sub-pill.bg-amber-400\/20 { 
-      background: linear-gradient(135deg, #F472B6 0%, #DB2777 100%) !important; 
-      border: 1.5px solid #DB2777 !important; 
-      color: #FFFFFF !important; 
-      font-weight: 900 !important; 
-    }
 
     /* 頂部 Header 與導航列 */
     html.light header.glass-header, html.amethyst header.glass-header, html.ocean header.glass-header, html.sakura header.glass-header { 
@@ -455,7 +438,7 @@
     }
     html.light header *, html.amethyst header *, html.ocean header *, html.sakura header * { color: #FFFFFF; }
 
-    /* 中英文切換鈕：徹底消除黑底 */
+    /* 中英文切換鈕反白 */
     html.light .lang-toggle-container, html.amethyst .lang-toggle-container, html.ocean .lang-toggle-container, html.sakura .lang-toggle-container { 
       background: rgba(255, 255, 255, 0.25) !important; 
       border: 1.5px solid rgba(255, 255, 255, 0.5) !important; 
@@ -504,6 +487,23 @@
       border-top: 1px solid var(--theme-border) !important; 
     }
 
+    /* 頂部切換鈕：都會生活圈 / 渡假海島專區（各主題獨立顏色） */
+    html.light #typeCityBtn.bg-gradient-to-r, html.light #typeIslandBtn.bg-gradient-to-r,
+    html.amethyst #typeCityBtn.bg-gradient-to-r, html.amethyst #typeIslandBtn.bg-gradient-to-r,
+    html.ocean #typeCityBtn.bg-gradient-to-r, html.ocean #typeIslandBtn.bg-gradient-to-r,
+    html.sakura #typeCityBtn.bg-gradient-to-r, html.sakura #typeIslandBtn.bg-gradient-to-r {
+      background: var(--theme-gradient) !important;
+      color: #FFFFFF !important;
+      font-weight: 900 !important;
+      border: 1.5px solid rgba(255, 255, 255, 0.6) !important;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2) !important;
+    }
+
+    /* 四大分頁 Tab（美食饗宴、景點導覽...） */
+    html.light .main-tab-pill, html.amethyst .main-tab-pill, html.ocean .main-tab-pill, html.sakura .main-tab-pill {
+      color: rgba(255, 255, 255, 0.85) !important;
+      font-weight: 800 !important;
+    }
     html.light .main-tab-pill.bg-gradient-to-r, html.amethyst .main-tab-pill.bg-gradient-to-r, html.ocean .main-tab-pill.bg-gradient-to-r, html.sakura .main-tab-pill.bg-gradient-to-r {
       background: var(--theme-gradient) !important;
       color: #FFFFFF !important;
@@ -519,12 +519,132 @@
       font-weight: 800 !important;
     }
 
-    /* 主清單卡片反白 */
+    /* =======================================================
+       六、地區膠囊與子分類列（各主題完全獨立沙盒）
+       ======================================================= */
+    /* 1. 暖陽金橘專屬 */
+    html.light .region-pill { 
+      background-color: var(--theme-card-sub-bg) !important; 
+      border: 1.5px solid var(--theme-border) !important; 
+      color: var(--theme-primary) !important; 
+      font-weight: 800 !important; 
+    }
+    html.light .region-pill.bg-amber-400 { 
+      background: var(--theme-gradient) !important; 
+      color: #FFFFFF !important; 
+      font-weight: 900 !important; 
+      border: 1.5px solid rgba(255, 255, 255, 0.6) !important; 
+    }
+    html.light .sub-pill { 
+      background-color: var(--theme-card-sub-bg) !important; 
+      border: 1.5px solid var(--theme-border) !important; 
+      color: var(--theme-primary) !important; 
+      font-weight: 800 !important; 
+    }
+    html.light .sub-pill.bg-amber-400\/20 { 
+      background: var(--theme-gradient) !important; 
+      border: 1.5px solid var(--theme-header-border) !important; 
+      color: #FFFFFF !important; 
+      font-weight: 900 !important; 
+    }
+
+    /* 2. 暮光紫霞專屬 */
+    html.amethyst .region-pill { 
+      background-color: var(--theme-card-sub-bg) !important; 
+      border: 1.5px solid var(--theme-border) !important; 
+      color: var(--theme-primary) !important; 
+      font-weight: 800 !important; 
+    }
+    html.amethyst .region-pill.bg-amber-400 { 
+      background: var(--theme-gradient) !important; 
+      color: #FFFFFF !important; 
+      font-weight: 900 !important; 
+      border: 1.5px solid rgba(255, 255, 255, 0.6) !important; 
+    }
+    html.amethyst .sub-pill { 
+      background-color: var(--theme-card-sub-bg) !important; 
+      border: 1.5px solid var(--theme-border) !important; 
+      color: var(--theme-primary) !important; 
+      font-weight: 800 !important; 
+    }
+    html.amethyst .sub-pill.bg-amber-400\/20 { 
+      background: var(--theme-gradient) !important; 
+      border: 1.5px solid var(--theme-header-border) !important; 
+      color: #FFFFFF !important; 
+      font-weight: 900 !important; 
+    }
+
+    /* 3. 海島湛藍專屬（未選中白字，選中純白立體凸顯） */
+    html.ocean .region-pill { 
+      background-color: rgba(255, 255, 255, 0.15) !important; 
+      border: 1.5px solid rgba(255, 255, 255, 0.4) !important; 
+      color: #FFFFFF !important; 
+      font-weight: 800 !important;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+      opacity: 1 !important;
+    }
+    html.ocean .region-pill.bg-amber-400 { 
+      background: #FFFFFF !important; 
+      border: 1.5px solid #FFFFFF !important; 
+      color: #0284C7 !important; 
+      font-weight: 900 !important; 
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.25) !important;
+      transform: scale(1.05) !important;
+    }
+    html.ocean .sub-pill { 
+      background-color: #FFFFFF !important; 
+      border: 1.5px solid #BAE6FD !important; 
+      color: #0369A1 !important; 
+      font-weight: 900 !important; 
+    }
+    html.ocean .sub-pill.bg-amber-400\/20 { 
+      background: linear-gradient(135deg, #0284C7 0%, #0369A1 100%) !important; 
+      border: 1.5px solid #0284C7 !important; 
+      color: #FFFFFF !important; 
+      font-weight: 900 !important; 
+    }
+
+    /* 4. 櫻花粉嫩專屬（未選中柔白字，選中高亮立體粉字） */
+    html.sakura .region-pill { 
+      background-color: rgba(255, 255, 255, 0.2) !important; 
+      border: 1.5px solid rgba(255, 255, 255, 0.45) !important; 
+      color: #FFFFFF !important; 
+      font-weight: 800 !important;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+      opacity: 1 !important;
+    }
+    html.sakura .region-pill.bg-amber-400 { 
+      background: #FFFFFF !important; 
+      border: 1.5px solid #FFFFFF !important; 
+      color: #DB2777 !important; 
+      font-weight: 900 !important; 
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.25) !important;
+      transform: scale(1.05) !important;
+    }
+    html.sakura .sub-pill { 
+      background-color: #FFFFFF !important; 
+      border: 1.5px solid #FBCFE8 !important; 
+      color: #DB2777 !important; 
+      font-weight: 900 !important; 
+    }
+    html.sakura .sub-pill.bg-amber-400\/20 { 
+      background: linear-gradient(135deg, #F472B6 0%, #DB2777 100%) !important; 
+      border: 1.5px solid #DB2777 !important; 
+      color: #FFFFFF !important; 
+      font-weight: 900 !important; 
+    }
+
+    /* =======================================================
+       七、卡片、彈窗、會員中心反白引擎
+       ======================================================= */
+    /* 主清單卡片 */
     html.light article, html.amethyst article, html.ocean article, html.sakura article { 
       background-color: var(--theme-card-bg) !important; 
       border: 1px solid var(--theme-card-border) !important; 
     }
-    html.light article div.bg-slate-950, html.amethyst article div.bg-slate-950, html.ocean article div.bg-slate-950, html.sakura article div.bg-slate-950 { background-color: var(--theme-card-bg) !important; }
+    html.light article div.bg-slate-950, html.amethyst article div.bg-slate-950, html.ocean article div.bg-slate-950, html.sakura article div.bg-slate-950 { 
+      background-color: var(--theme-card-bg) !important; 
+    }
     html.light article div.bg-slate-900, html.amethyst article div.bg-slate-900, html.ocean article div.bg-slate-900, html.sakura article div.bg-slate-900 { 
       background-color: var(--theme-card-sub-bg) !important; 
       border-top: 1px solid var(--theme-card-border) !important; 
@@ -558,7 +678,7 @@
       color: var(--theme-primary) !important;
     }
 
-    /* 官網/粉專按鈕：白底高質感框 */
+    /* 官網/粉專按鈕 */
     html.light .btn-card-website, html.amethyst .btn-card-website, html.ocean .btn-card-website, html.sakura .btn-card-website { 
       background-color: #FFFFFF !important; 
       color: var(--theme-primary) !important; 
@@ -569,7 +689,7 @@
       font-weight: 800 !important; 
     }
 
-    /* 會員中心面板反白 */
+    /* 會員中心面板 */
     html.light #auth-modal .bg-slate-950, html.amethyst #auth-modal .bg-slate-950, html.ocean #auth-modal .bg-slate-950, html.sakura #auth-modal .bg-slate-950 { 
       background-color: var(--theme-card-bg) !important; 
       border-color: var(--theme-border) !important; 
@@ -665,7 +785,7 @@
     html.ocean #btn-logout { background-color: #FEF2F2 !important; border: 1.5px solid #FCA5A5 !important; color: #DC2626 !important; font-weight: 900 !important; }
     html.sakura #btn-logout { background-color: #FFF1F2 !important; border: 1.5px solid #FECDD3 !important; color: #E11D48 !important; font-weight: 900 !important; }
 
-    /* 店家評論彈窗反白 */
+    /* 店家評論彈窗 */
     html.light #commentModalCard, html.light #commentModalHeader,
     html.amethyst #commentModalCard, html.amethyst #commentModalHeader,
     html.ocean #commentModalCard, html.ocean #commentModalHeader,
@@ -690,7 +810,7 @@
     }
     html.light #btn-submit-comment, html.amethyst #btn-submit-comment, html.ocean #btn-submit-comment, html.sakura #btn-submit-comment { background: var(--theme-gradient) !important; color: var(--theme-badge-text) !important; }
 
-    /* AI 旅遊管家彈窗反白 */
+    /* AI 旅遊管家彈窗 */
     html.light #chat-modal, html.amethyst #chat-modal, html.ocean #chat-modal, html.sakura #chat-modal { background-color: #FFFFFF !important; border: 1.5px solid var(--theme-border) !important; }
     html.light #chat-modal-header, html.amethyst #chat-modal-header, html.ocean #chat-modal-header, html.sakura #chat-modal-header { background: var(--theme-gradient) !important; }
     html.light #chat-messages, html.amethyst #chat-messages, html.ocean #chat-messages, html.sakura #chat-messages { background-color: #FFFFFF !important; }
@@ -758,33 +878,6 @@
     html.light #btn-magic-email, html.amethyst #btn-magic-email, html.ocean #btn-magic-email, html.sakura #btn-magic-email {
       background: var(--theme-gradient) !important;
       color: var(--theme-badge-text) !important;
-    }
-
-    /* =======================================================
-       櫻花模式專屬修復：都會生活圈按鈕變色 + 寫評論立體按鈕感
-       ======================================================= */
-    
-    /* 1. 徹底修復都會生活圈 / 渡假海島按鈕變橘色問題 */
-    html.sakura #typeCityBtn.bg-gradient-to-r,
-    html.sakura #typeIslandBtn.bg-gradient-to-r,
-    html.sakura .region-pill.bg-amber-400 {
-      background: var(--theme-gradient) !important;
-      color: #FFFFFF !important;
-      font-weight: 900 !important;
-      border: 1.5px solid rgba(255, 255, 255, 0.6) !important;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2) !important;
-    }
-
-    /* 2. 強化寫評論按鈕立體感與陰影，增加明顯按鈕質感 */
-    html.sakura .btn-card-comment {
-      background: var(--theme-gradient) !important;
-      color: #FFFFFF !important;
-      border: 1.5px solid rgba(255, 255, 255, 0.5) !important;
-      box-shadow: 0 3px 8px rgba(219, 39, 119, 0.25) !important;
-    }
-    html.sakura .btn-card-comment * {
-      color: #FFFFFF !important;
-      font-weight: 900 !important;
     }
   </style>
 </head>
@@ -4098,7 +4191,7 @@
       }
 
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js?v=20260913-v43.7.1').then((reg) => {
+        navigator.serviceWorker.register('./sw.js?v=20260913-v43.7.2').then((reg) => {
           if (reg.waiting) {
             showPwaUpdateModal(reg.waiting);
           }
