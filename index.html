@@ -7,7 +7,7 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
-  <meta name="app-version" content="20260913-v43.7.7" />
+  <meta name="app-version" content="20260913-v43.7.9" />
   <meta name="theme-color" content="#020617" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -3898,6 +3898,66 @@
     }
 
     btnSendChat.addEventListener('click', handleChatSend);
+
+    // 安全關閉 AI 視窗輔助器（確保懸浮球回位、視窗隱藏）
+    function safeCloseAiWindow() {
+      if (typeof closeAiChat === 'function') {
+        closeAiChat();
+      } else {
+        const modal = document.getElementById('chat-modal');
+        if (modal) modal.classList.add('hidden');
+        if (typeof updateFabPos === 'function') updateFabPos(fabLeft, fabTop);
+      }
+    }
+
+    // 1. AI 推薦卡片點擊：關閉 AI ➔ 切回地圖列表 ➔ 平滑滾動至該卡片並聚焦發光
+    window.handleAiJumpCard = function(storeId, itemType) {
+      safeCloseAiWindow();
+
+      // 切換回地圖/列表主頁
+      currentMainTab = 'map';
+      sessionStorage.setItem('ph_nav_tab', 'map');
+      currentSubFilter = 'all';
+      sessionStorage.setItem('ph_nav_sub', 'all');
+
+      renderSubFilterBar();
+      renderContent();
+
+      // 稍候 200ms 確保 DOM 渲染完成後執行精準平滑滾動
+      setTimeout(() => {
+        const sId = String(storeId).trim();
+        // 關鍵修復：加入 card-${sId}（這是卡片真實的 ID）
+        const targetEl = document.getElementById(`card-${sId}`) || 
+                         document.getElementById(`store-card-${sId}`) || 
+                         document.getElementById(`item-${sId}`) || 
+                         document.querySelector(`[data-id="${sId}"]`);
+
+        if (targetEl) {
+          targetEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          targetEl.classList.add('highlight-card-pulse');
+          setTimeout(() => {
+            targetEl.classList.remove('highlight-card-pulse');
+          }, 2500);
+        } else if (typeof window.jumpToCard === 'function') {
+          window.jumpToCard(sId, itemType || 'restaurant');
+        }
+      }, 200);
+    };
+
+    // 2. AI 話題子分類專區點擊：關閉 AI ➔ 切換分類 ➔ 滾動至頂部瀏覽
+    window.handleAiCategoryJump = function(subKey) {
+      safeCloseAiWindow();
+
+      currentMainTab = 'map';
+      sessionStorage.setItem('ph_nav_tab', 'map');
+      currentSubFilter = subKey;
+      sessionStorage.setItem('ph_nav_sub', currentSubFilter);
+
+      if (typeof renderSubFilterBar === 'function') renderSubFilterBar();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      if (typeof renderContent === 'function') renderContent();
+    };
+
     chatInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') handleChatSend(); });
 
     function parseImages(item, fallback) {
@@ -4295,7 +4355,7 @@
       }
 
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js?v=20260913-v43.7.7').then((reg) => {
+        navigator.serviceWorker.register('./sw.js?v=20260913-v43.7.9').then((reg) => {
           if (reg.waiting) {
             showPwaUpdateModal(reg.waiting);
           }
