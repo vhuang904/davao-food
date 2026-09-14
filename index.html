@@ -78,13 +78,14 @@
       0% { transform: rotate(0deg); }
       100% { transform: rotate(360deg); }
     }
-    .beam-card-container {
-      position: relative;
-      border-radius: 1.25rem;
-      padding: 3.5px;
-      overflow: hidden;
-      box-shadow: 0 0 25px rgba(245, 158, 11, 0.5);
-    }
+    .beam-card-container, [id^="card-"] {
+  scroll-margin-top: 235px;
+  position: relative;
+  border-radius: 1.25rem;
+  padding: 3.5px;
+  overflow: hidden;
+  box-shadow: 0 0 25px rgba(245, 158, 11, 0.5);
+}
     .beam-spinner {
       position: absolute;
       top: -50%;
@@ -2225,7 +2226,7 @@
                          document.querySelector(`[id*="${sId}"]`);
 
         if (targetEl) {
-          targetEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
           targetEl.classList.add('highlight-card-pulse');
           setTimeout(() => targetEl.classList.remove('highlight-card-pulse'), 2500);
         }
