@@ -211,6 +211,24 @@ export function getCurrentProfile() {
   return currentUserProfile;
 }
 
+export async function getStoreComments(storeId) {
+  try {
+    const q = query(
+      collection(db, "store_comments"),
+      where("storeId", "==", String(storeId).trim())
+    );
+    const snap = await getDocs(q);
+    const list = [];
+    snap.forEach(doc => {
+      list.push({ id: doc.id, ...doc.data() });
+    });
+    return list;
+  } catch (err) {
+    console.error("[authService] getStoreComments 失敗:", err);
+    return [];
+  }
+}
+
 // 4. 發表評論累計積分 (+20 PTS，含背景非同步中翻英)
 export async function addStoreComment(storeId, commentPayload) {
   const currentUser = auth.currentUser;
