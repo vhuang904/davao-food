@@ -7,7 +7,7 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
-  <meta name="app-version" content="20260913-v43.7.9" />
+  <meta name="app-version" content="20260913-v43.8.0" />
   <meta name="theme-color" content="#020617" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -3754,26 +3754,37 @@
       }
     }
 
-    // 智能子分類標籤對齊輔助器
+    // 智能子分類標籤對齊輔助器（完整支援菲式烤乳豬與各國美饌）
     function detectCategoryHook(text) {
       const t = text.toLowerCase();
-      if (t.includes('海鮮') || t.includes('seafood') || t.includes('crab') || t.includes('fish')) {
-        return { key: 'seafood', name: currentLang === 'en' ? 'Seafood Feasts' : '海鮮盛宴' };
+      
+      // 1. 菲式御膳（包含在地烤乳豬 Lechon）
+      if (t.includes('lechon') || t.includes('乳豬') || t.includes('烤豬') || t.includes('菲式') || t.includes('菲律賓') || t.includes('filipino') || t.includes('pinoy')) {
+        return { key: 'filipino', name: currentLang === 'en' ? 'PH Filipino' : 'PH 菲式御膳' };
       }
-      if (t.includes('中餐') || t.includes('粵菜') || t.includes('川菜') || t.includes('火鍋') || t.includes('chinese') || t.includes('hotpot')) {
-        return { key: 'chinese', name: currentLang === 'en' ? 'Chinese Cuisine' : '精緻中餐' };
+      // 2. 海鮮盛宴
+      if (t.includes('海鮮') || t.includes('seafood') || t.includes('crab') || t.includes('fish') || t.includes('dampa') || t.includes('螃蟹') || t.includes('龍蝦') || t.includes('蝦')) {
+        return { key: 'seafood', name: currentLang === 'en' ? 'Seafood Feasts' : '🦀 海鮮盛宴' };
       }
-      if (t.includes('日料') || t.includes('壽司') || t.includes('生魚片') || t.includes('拉麵') || t.includes('japanese') || t.includes('sushi')) {
-        return { key: 'japanese', name: currentLang === 'en' ? 'Japanese Cuisine' : '頂級日料' };
+      // 3. 精緻中餐 / 火鍋
+      if (t.includes('中餐') || t.includes('粵菜') || t.includes('川菜') || t.includes('火鍋') || t.includes('chinese') || t.includes('hotpot') || t.includes('點心') || t.includes('燒臘')) {
+        return { key: 'chinese', name: currentLang === 'en' ? 'Chinese Cuisine' : '🥢 精緻中餐' };
       }
-      if (t.includes('燒肉') || t.includes('烤肉') || t.includes('yakiniku') || t.includes('bbq') || t.includes('牛排') || t.includes('steak') || t.includes('western')) {
-        return { key: 'western', name: currentLang === 'en' ? 'Western & Grills' : '西洋美饌 / 燒烤' };
+      // 4. 頂級日料 / 壽司 / 拉麵
+      if (t.includes('日料') || t.includes('壽司') || t.includes('生魚片') || t.includes('拉麵') || t.includes('japanese') || t.includes('sushi') || t.includes('居酒屋')) {
+        return { key: 'japanese', name: currentLang === 'en' ? 'Japanese Cuisine' : 'JP 頂級日料' };
       }
-      if (t.includes('酒吧') || t.includes('夜生活') || t.includes('調酒') || t.includes('bar') || t.includes('nightlife') || t.includes('club')) {
-        return { key: 'nightlife', name: currentLang === 'en' ? 'Nightlife & Bars' : '微醺夜生活' };
+      // 5. 西洋美饌 / 燒烤 / 牛排
+      if (t.includes('燒肉') || t.includes('yakiniku') || t.includes('bbq') || t.includes('牛排') || t.includes('steak') || t.includes('western') || t.includes('餐酒')) {
+        return { key: 'western', name: currentLang === 'en' ? 'Western & Grills' : '🍷 西洋美饌' };
       }
-      if (t.includes('咖啡') || t.includes('甜點') || t.includes('早午餐') || t.includes('cafe') || t.includes('brunch')) {
-        return { key: 'brunch', name: currentLang === 'en' ? 'Luxury Brunch' : '奢華早午餐' };
+      // 6. 微醺夜生活 / 酒吧
+      if (t.includes('酒吧') || t.includes('夜生活') || t.includes('調酒') || t.includes('bar') || t.includes('nightlife') || t.includes('club') || t.includes('夜景')) {
+        return { key: 'nightlife', name: currentLang === 'en' ? 'Nightlife & Bars' : '🍸 夜生活' };
+      }
+      // 7. 奢華早午餐 / 咖啡甜點
+      if (t.includes('咖啡') || t.includes('甜點') || t.includes('早午餐') || t.includes('cafe') || t.includes('brunch') || t.includes('鬆餅')) {
+        return { key: 'brunch', name: currentLang === 'en' ? 'Luxury Brunch' : '☕ 奢華早午餐' };
       }
       return null;
     }
@@ -4355,7 +4366,7 @@
       }
 
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js?v=20260913-v43.7.9').then((reg) => {
+        navigator.serviceWorker.register('./sw.js?v=20260913-v43.8.0').then((reg) => {
           if (reg.waiting) {
             showPwaUpdateModal(reg.waiting);
           }
