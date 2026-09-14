@@ -7,7 +7,7 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
-  <meta name="app-version" content="20260914-v45.2" />
+  <meta name="app-version" content="20260914-v45.3" />
   <meta name="theme-color" content="#020617" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -3943,9 +3943,14 @@
     };
 
     window.handleAiExecuteCityChoice = function(cityKey, encodedOriginalMsg) {
-      const origMsg = decodeURIComponent(encodedOriginalMsg);
       const cityName = getCityDisplayName(cityKey);
-      const compositeMsg = `${cityName}：${origMsg}`;
+      currentCity = cityKey;
+      currentDimension = isIslandMode(cityKey) ? 'islands' : 'cities';
+      sessionStorage.setItem('ph_dim', currentDimension);
+      localStorage.setItem('ph_app_city', currentCity);
+      renderRegionPills();
+      
+      const compositeMsg = `推薦${cityName}必訪的私房景點與在地特色好店`;
       handleChatSend(compositeMsg);
     };
 
@@ -4033,12 +4038,30 @@
     let voiceTranscript = '';
     let isVoiceActive = false;
 
+    // 常用簡轉繁映射表（防止手機語音引擎吐出簡體）
+    function ensureTraditionalChinese(text) {
+      if (!text) return '';
+      const s2t = {
+        '什': '甚', '么': '麼', '后': '後', '里': '裡', '点': '點', '评': '評', 
+        '发': '發', '面': '麵', '吃': '吃', '鸡': '雞', '饭': '飯', '热': '熱',
+        '门': '門', '欢': '歡', '迎': '迎', '样': '樣', '给': '給', '推荐': '推薦',
+        '达沃': '達沃', '马尼拉': '馬尼拉', '宿务': '宿霧', '长滩': '長灘',
+        '海鲜': '海鮮', '牛肉': '牛肉', '牛排': '牛排', '烧肉': '燒肉', '日料': '日料',
+        '景点': '景點', '观光': '觀光', '历史': '歷史', '古迹': '古蹟', '沙滩': '沙灘'
+      };
+      let res = text;
+      for (const [s, t] of Object.entries(s2t)) {
+        res = res.replaceAll(s, t);
+      }
+      return res;
+    }
+
     if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
       const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
       speechRecognizer = new SpeechRecognition();
       speechRecognizer.continuous = true;
       speechRecognizer.interimResults = true;
-      speechRecognizer.lang = (currentLang === 'en') ? 'en-US' : 'zh-TW';
+      speechRecognizer.lang = (currentLang === 'en') ? 'en-US' : 'cmn-Hant-TW'; // 強制台灣繁體模型
 
       speechRecognizer.onresult = (event) => {
         let interim = '';
@@ -4049,7 +4072,8 @@
             interim += event.results[i][0].transcript;
           }
         }
-        chatInput.value = voiceTranscript + interim;
+        const combined = voiceTranscript + interim;
+        chatInput.value = (currentLang === 'en') ? combined : ensureTraditionalChinese(combined);
       };
 
       speechRecognizer.onerror = (event) => {
@@ -4509,7 +4533,7 @@
       }
 
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js?v=20260914-v45.2').then((reg) => {
+        navigator.serviceWorker.register('./sw.js?v=20260914-v45.3').then((reg) => {
           if (reg.waiting) {
             showPwaUpdateModal(reg.waiting);
           }
