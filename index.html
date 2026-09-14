@@ -2980,8 +2980,16 @@
       commentListContainer.innerHTML = '<div class="text-center py-6 text-slate-500 text-xs"><i class="fa-solid fa-spinner fa-spin mr-1.5 text-amber-400"></i>載入老饕點評中...</div>';
 
       try {
-        const { getStoreComments } = await import('./authService.js');
-        let comments = await getStoreComments(storeId);
+        let comments = [];
+        try {
+          const { getStoreComments } = await import('./authService.js');
+          comments = await getStoreComments(storeId);
+        } catch (importErr) {
+          console.warn("[Comment] 動態引入失敗，切換直連 Firestore 查詢:", importErr);
+          const q = query(collection(db, "store_comments"), where("storeId", "==", String(storeId).trim()));
+          const snap = await getDocs(q);
+          snap.forEach(d => comments.push({ id: d.id, ...d.data() }));
+        }
 
         if (!comments || comments.length === 0) {
           commentListContainer.innerHTML = `
@@ -2996,12 +3004,12 @@
 
         comments.sort((a, b) => {
           const getMs = (item) => {
-            if (!item.createdAt) return 0;
+            if (!item || !item.createdAt) return 0;
             if (typeof item.createdAt === 'number') return item.createdAt;
             if (item.createdAt.toMillis) return item.createdAt.toMillis();
             return new Date(item.createdAt).getTime() || 0;
           };
-          return getMs(a) - getMs(b);
+          return getMs(b) - getMs(a);
         });
 
         const isAdmin = currentUser && ADMIN_EMAILS.includes((currentUser.email || '').toLowerCase().trim());
@@ -3068,8 +3076,8 @@
         commentListContainer.scrollTop = 0;
 
       } catch (err) {
-        console.warn("[Comment] 載入失敗:", err);
-        commentListContainer.innerHTML = '<p class="text-center text-slate-500 py-6 text-xs">載入評論異常，請稍後再試</p>';
+        console.error("[Comment] 載入失敗:", err);
+        commentListContainer.innerHTML = '<p class="text-center text-slate-500 py-6 text-xs">目前暫無評論或載入逾時，請點下方搶先發表！</p>';
       }
     }
 
@@ -3746,7 +3754,7 @@
       return null;
     }
 
-    // 4. 對話送出核心
+    // 4. 對話送出核心（站內私房名單優先與必附卡片按鈕）
     async function handleChatSend(overrideMessage = null) {
       if (!currentUser) return;
       const msg = (overrideMessage !== null ? overrideMessage : chatInput.value).trim();
@@ -3786,35 +3794,72 @@
         return;
       }
 
-      const targetCity = arbitration.city;
+      const targetCity = arbitration.city || currentCity;
       const mainIntent = detectMainIntent(msg);
 
       const loadId = 'load-' + Date.now();
       chatMessagesContainer.innerHTML += `
         <div id="${loadId}" class="w-full bg-slate-900 p-3 rounded-xl rounded-tl-sm border border-slate-800 text-slate-400 text-xs self-start flex flex-col gap-2 shadow-xs chat-bubble-agent">
           <div class="flex items-center gap-1.5">
-            <i class="fa-solid fa-spinner fa-spin" style="color: var(--theme-primary);"></i> 大V正在為你精選口袋私房名單... ⚡
+            <i class="fa-solid fa-spinner fa-spin" style="color: var(--theme-primary);"></i> 大V正在為你精選【${getCityDisplayName(targetCity)}】私房名單... ⚡
           </div>
         </div>
       `;
       chatMessagesContainer.scrollTop = chatMessagesContainer.scrollHeight;
 
+      // 優先鎖定當前城市在站內的真實名單（雙重備援，絕不落空）
       const cityPool = (mainIntent === 'attraction') ? allAttractions : allRestaurants;
-      const cityFiltered = cityPool.filter(x => safeStr(x.city) === targetCity);
-      const curatedList = cityFiltered.filter(x => getItemTier(x) === 1);
-      const highRatedList = cityFiltered.filter(x => getItemTier(x) !== 1 && Number(x.google_rating || x.googleRating || 0) >= 4.5);
+      let cityFiltered = cityPool.filter(x => safeStr(x.city) === targetCity);
+      if (cityFiltered.length === 0) {
+        cityFiltered = (mainIntent === 'attraction' ? allRestaurants : allAttractions).filter(x => safeStr(x.city) === targetCity);
+      }
 
-      const candidateList = [...curatedList, ...highRatedList].slice(0, 15);
-      const itemsContext = candidateList.map(item => {
-        const isBigV = getItemTier(item) === 1;
-        const nameEn = item.name_en || item.name || '';
-        const nameZh = item.name_zh || '';
-        const cat = item.category || (mainIntent === 'attraction' ? '精選景點' : '精選美饌');
-        const bigvComment = item.bigv_comment_zh || item.big_v_comment || '';
-        return `• [${isBigV ? '大V嚴選' : '口碑清單'}] 名稱: ${nameEn} (${nameZh}) | 類別: ${cat} ${bigvComment ? `| 特色: ${bigvComment}` : ''}`;
-      }).join('\n');
+      cityFiltered.sort(universalSort);
+      const topPicks = cityFiltered.slice(0, 2);
+
+      const categoryHook = detectCategoryHookDetailed(msg, mainIntent);
+
+      const generateButtonsHtml = (matchedList) => {
+        if (!matchedList || matchedList.length === 0) return '';
+        return `
+          <div class="w-full mt-2.5 pt-2 border-t border-slate-700/40 flex flex-col gap-1.5">
+            <span class="text-[10px] font-bold flex items-center gap-1" style="color: var(--theme-primary);">
+              <i class="fa-solid fa-diamond-turn-right text-[9px]"></i> 點擊直達私房名單卡片：
+            </span>
+            ${matchedList.map(m => `
+              <button type="button" onclick="window.handleAiJumpCard('${m.id}', '${m.type}', '${m.city}', '${categoryHook ? categoryHook.key : 'all'}')" class="ai-jump-btn w-full py-2 px-3 rounded-lg text-[11px] font-black flex items-center justify-between transition active:scale-95 text-left cursor-pointer shadow-sm" style="background: var(--theme-card-sub-bg); border: 1.5px solid var(--theme-border); color: var(--theme-primary);">
+                <span class="truncate">📍 ${m.name}</span>
+                <span class="text-[9px] opacity-80 flex-shrink-0 ml-1">查看卡片 ➔</span>
+              </button>
+            `).join('')}
+
+            ${categoryHook ? `
+              <button type="button" onclick="window.handleAiCategoryJump('${categoryHook.key}', '${targetCity}', '${mainIntent}')" class="w-full mt-0.5 py-2 px-3 rounded-lg text-white text-[11px] font-black flex items-center justify-between transition active:scale-95 text-left cursor-pointer shadow-sm" style="background: var(--theme-gradient);">
+                <span class="truncate">📂 瀏覽【${categoryHook.name}】專區</span>
+                <span class="text-[9px] opacity-90 flex-shrink-0 ml-1">前往專區 ➔</span>
+              </button>
+            ` : ''}
+          </div>
+        `;
+      };
+
+      const fallbackMatched = topPicks.map(item => ({
+        id: String(item.id || item.place_id).trim(),
+        name: (currentLang === 'en' && item.name_en) ? item.name_en : (item.name_zh || item.name_en || item.name),
+        city: item.city || targetCity,
+        type: mainIntent
+      }));
 
       try {
+        const itemsContext = cityFiltered.slice(0, 10).map(item => {
+          const isBigV = getItemTier(item) === 1;
+          const nameEn = item.name_en || item.name || '';
+          const nameZh = item.name_zh || '';
+          const cat = item.category || '精選';
+          const bigvComment = item.bigv_comment_zh || item.big_v_comment || '';
+          return `• [${isBigV ? '大V嚴選' : '口碑清單'}] 名稱: ${nameEn} (${nameZh}) | 類別: ${cat} ${bigvComment ? `| 特色: ${bigvComment}` : ''}`;
+        }).join('\n');
+
         const res = await fetch(AI_WORKER_URL, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -3826,92 +3871,48 @@
             restaurantsContext: itemsContext 
           })
         });
+
+        if (!res.ok) throw new Error("Worker Response Not OK");
+
         const data = await res.json();
-        let rawReply = data.reply || "哈囉！歡迎來菲律賓找大V玩，點擊下方卡片直接帶你出發！";
-        
+        let rawReply = data.reply || "";
+        if (!rawReply || rawReply.length < 5) throw new Error("Empty Worker Reply");
+
         const cleanReplyText = rawReply.replace(/[*#_`~]/g, ' ');
         let formattedReply = rawReply
           .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
           .replace(/\n/g, '<br>');
 
-        const typedPool = [
-          ...allRestaurants.map(r => ({ ...r, _resolvedType: 'restaurant' })),
-          ...allAttractions.map(a => ({ ...a, _resolvedType: 'attraction' }))
-        ];
-
-        const matched = [];
-        const seenIds = new Set();
-        const seenBrandTokens = [];
-
-        for (const item of typedPool) {
-          if (matched.length >= 2) break;
-          const sId = String(item.id || item.place_id || '').trim();
-          if (!sId || seenIds.has(sId)) continue;
-          const nEn = (item.name_en || '').trim();
-          const nZh = (item.name_zh || item.name || '').trim();
-          const cleanEnCore = nEn.replace(/\(.*?\)|（.*?）/g, '').trim().toLowerCase();
-          const brandToken = cleanEnCore.split(' ')[0];
-
-          if (brandToken && brandToken.length >= 3 && seenBrandTokens.includes(brandToken)) continue;
-
-          let isMatch = false;
-          if (cleanEnCore && cleanEnCore.length >= 3 && cleanReplyText.toLowerCase().includes(cleanEnCore)) isMatch = true;
-          else if (nZh && nZh.length >= 2 && cleanReplyText.includes(nZh)) isMatch = true;
-
-          if (isMatch) {
-            seenIds.add(sId);
-            if (brandToken && brandToken.length >= 3) seenBrandTokens.push(brandToken);
-            matched.push({
-              id: sId,
-              name: (currentLang === 'en' && nEn) ? nEn : (nZh || nEn),
-              city: item.city || targetCity,
-              type: item._resolvedType,
-              category: item.category || ''
-            });
-          }
-        }
-
-        const categoryHook = detectCategoryHookDetailed(msg, mainIntent);
-
-        let jumpButtonsHtml = '';
-        if (matched.length > 0 || categoryHook) {
-          jumpButtonsHtml = `
-            <div class="w-full mt-2 pt-2 border-t border-slate-700/30 flex flex-col gap-1.5">
-              ${matched.length > 0 ? `
-                <span class="text-[10px] font-bold flex items-center gap-1" style="color: var(--theme-primary);">
-                  <i class="fa-solid fa-diamond-turn-right text-[9px]"></i> 大V推薦卡片定位：
-                </span>
-                ${matched.map(m => `
-                  <button type="button" onclick="window.handleAiJumpCard('${m.id}', '${m.type}', '${m.city}', '${categoryHook ? categoryHook.key : 'all'}')" class="ai-jump-btn w-full py-2 px-3 rounded-lg text-[11px] font-black flex items-center justify-between transition active:scale-95 text-left cursor-pointer shadow-sm" style="background: var(--theme-card-sub-bg); border: 1.5px solid var(--theme-border); color: var(--theme-primary);">
-                    <span class="truncate">📍 ${m.name}</span>
-                    <span class="text-[9px] opacity-80 flex-shrink-0 ml-1">查看卡片 ➔</span>
-                  </button>
-                `).join('')}
-              ` : ''}
-
-              ${categoryHook ? `
-                <button type="button" onclick="window.handleAiCategoryJump('${categoryHook.key}', '${targetCity}', '${mainIntent}')" class="w-full mt-0.5 py-2 px-3 rounded-lg text-white text-[11px] font-black flex items-center justify-between transition active:scale-95 text-left cursor-pointer shadow-sm" style="background: var(--theme-gradient);">
-                  <span class="truncate">📂 瀏覽【${categoryHook.name}】精選專區</span>
-                  <span class="text-[9px] opacity-90 flex-shrink-0 ml-1">前往專區 ➔</span>
-                </button>
-              ` : ''}
-            </div>
-          `;
-        }
-
         const loadEl = document.getElementById(loadId);
         if (loadEl) {
           loadEl.innerHTML = `
             <div class="w-full leading-relaxed font-medium" style="color: var(--theme-text-title);">
-              ${arbitration.mode === 'default' ? `<span class="text-[10px] font-bold block mb-1" style="color: var(--theme-primary);">📍 大V為你優先精選【${getCityDisplayName(targetCity)}】：</span>` : ''}
+              <span class="text-[10px] font-bold block mb-1" style="color: var(--theme-primary);">📍 大V為你精選【${getCityDisplayName(targetCity)}】：</span>
               ${formattedReply}
             </div>
-            ${jumpButtonsHtml}
+            ${generateButtonsHtml(fallbackMatched)}
           `;
         }
       } catch (err) {
+        console.warn("[AI] Worker 連線異常，啟用站內私房庫智慧推薦:", err);
         const loadEl = document.getElementById(loadId);
-        if (loadEl) loadEl.innerText = "哈囉朋友！菲律賓好店美景隨時在線上，點擊下方卡片大V直接帶你探索！";
+        if (loadEl) {
+          let customReason = "為您精選站內人氣最高、口碑最頂級的必訪名單，點擊下方卡片直達！";
+          if (topPicks.length > 0) {
+            const firstPick = topPicks[0];
+            const pName = firstPick.name_zh || firstPick.name_en || firstPick.name;
+            const pDesc = firstPick.bigv_comment_zh || firstPick.description || "在地饕客與旅行家一致推崇";
+            customReason = `推薦您首選造訪<strong>【${pName}】</strong>，${pDesc}！`;
+          }
+
+          loadEl.innerHTML = `
+            <div class="w-full leading-relaxed font-medium" style="color: var(--theme-text-title);">
+              <span class="text-[10px] font-bold block mb-1" style="color: var(--theme-primary);">📍 大V為你精選【${getCityDisplayName(targetCity)}】：</span>
+              哈囉！來到${getCityDisplayName(targetCity)}，${customReason}
+            </div>
+            ${generateButtonsHtml(fallbackMatched)}
+          `;
+        }
       }
       chatMessagesContainer.scrollTop = chatMessagesContainer.scrollHeight;
     }
@@ -4032,22 +4033,21 @@
 
     chatInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') handleChatSend(); });
 
-    // 長按語音輸入 (Push-to-Talk)
+    // 長按語音輸入 (Push-to-Talk) - 強制正體中文
     const btnVoice = document.getElementById('btn-voice-input');
     let speechRecognizer = null;
     let voiceTranscript = '';
     let isVoiceActive = false;
 
-    // 常用簡轉繁映射表（防止手機語音引擎吐出簡體）
-    function ensureTraditionalChinese(text) {
+    // 常用語音辨識簡繁自動轉化表（防止手機語音引擎輸出簡體）
+    function normalizeToTraditional(text) {
       if (!text) return '';
       const s2t = {
-        '什': '甚', '么': '麼', '后': '後', '里': '裡', '点': '點', '评': '評', 
-        '发': '發', '面': '麵', '吃': '吃', '鸡': '雞', '饭': '飯', '热': '熱',
-        '门': '門', '欢': '歡', '迎': '迎', '样': '樣', '给': '給', '推荐': '推薦',
-        '达沃': '達沃', '马尼拉': '馬尼拉', '宿务': '宿霧', '长滩': '長灘',
-        '海鲜': '海鮮', '牛肉': '牛肉', '牛排': '牛排', '烧肉': '燒肉', '日料': '日料',
-        '景点': '景點', '观光': '觀光', '历史': '歷史', '古迹': '古蹟', '沙滩': '沙灘'
+        '什么': '什麼', '怎么': '怎麼', '顶级': '頂級', '推荐': '推薦',
+        '哪里': '哪裡', '好吃的咧': '好吃的哩', '点点': '點點', '餐厅': '餐廳',
+        '饭店': '飯店', '景点': '景點', '萨马尔': '薩馬爾', '长滩': '長灘',
+        '宿务': '宿霧', '达沃': '達沃', '马尼拉': '馬尼拉', '海鲜': '海鮮',
+        '烧肉': '燒肉', '点餐': '點餐', '外卖': '外賣', '评论': '評論'
       };
       let res = text;
       for (const [s, t] of Object.entries(s2t)) {
@@ -4061,7 +4061,7 @@
       speechRecognizer = new SpeechRecognition();
       speechRecognizer.continuous = true;
       speechRecognizer.interimResults = true;
-      speechRecognizer.lang = (currentLang === 'en') ? 'en-US' : 'cmn-Hant-TW'; // 強制台灣繁體模型
+      speechRecognizer.lang = (currentLang === 'en') ? 'en-US' : 'zh-TW';
 
       speechRecognizer.onresult = (event) => {
         let interim = '';
@@ -4072,14 +4072,56 @@
             interim += event.results[i][0].transcript;
           }
         }
-        const combined = voiceTranscript + interim;
-        chatInput.value = (currentLang === 'en') ? combined : ensureTraditionalChinese(combined);
+        chatInput.value = normalizeToTraditional(voiceTranscript + interim);
       };
 
       speechRecognizer.onerror = (event) => {
         console.warn('語音辨識提示/異常:', event.error);
         stopVoiceRecording(false);
       };
+    }
+
+    function startVoiceRecording(e) {
+      if (e) e.preventDefault();
+      if (!speechRecognizer) {
+        alert('您的瀏覽器不支援即時語音辨識，請使用打字發問。');
+        return;
+      }
+      voiceTranscript = '';
+      chatInput.value = '';
+      isVoiceActive = true;
+      btnVoice.classList.add('bg-red-600', 'text-white', 'border-red-400', 'scale-105');
+      chatInput.placeholder = '🎙️ 聆聽中... (說完放開按鈕即發送)';
+
+      try {
+        speechRecognizer.start();
+      } catch (err) {}
+    }
+
+    function stopVoiceRecording(shouldSend = true) {
+      if (!isVoiceActive) return;
+      isVoiceActive = false;
+      btnVoice.classList.remove('bg-red-600', 'text-white', 'border-red-400', 'scale-105');
+      chatInput.placeholder = '問點什麼吧（長按麥克風說話）...';
+
+      try {
+        if (speechRecognizer) speechRecognizer.stop();
+      } catch (err) {}
+
+      if (shouldSend) {
+        setTimeout(() => {
+          const finalMsg = normalizeToTraditional(chatInput.value.trim());
+          if (finalMsg && finalMsg.length >= 2) {
+            handleChatSend(finalMsg);
+          } else {
+            chatInput.value = '';
+            voiceTranscript = '';
+          }
+        }, 300);
+      } else {
+        chatInput.value = '';
+        voiceTranscript = '';
+      }
     }
 
     function startVoiceRecording(e) {
