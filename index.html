@@ -4122,50 +4122,7 @@
         voiceTranscript = '';
       }
     }
-
-    function startVoiceRecording(e) {
-      if (e) e.preventDefault();
-      if (!speechRecognizer) {
-        alert('您的瀏覽器不支援即時語音辨識，請使用打字發問。');
-        return;
-      }
-      voiceTranscript = '';
-      chatInput.value = '';
-      isVoiceActive = true;
-      btnVoice.classList.add('bg-red-600', 'text-white', 'border-red-400', 'scale-105');
-      chatInput.placeholder = '🎙️ 聆聽中... (說完放開按鈕即發送)';
-
-      try {
-        speechRecognizer.start();
-      } catch (err) {}
-    }
-
-    function stopVoiceRecording(shouldSend = true) {
-      if (!isVoiceActive) return;
-      isVoiceActive = false;
-      btnVoice.classList.remove('bg-red-600', 'text-white', 'border-red-400', 'scale-105');
-      chatInput.placeholder = '問點什麼吧（長按麥克風說話）...';
-
-      try {
-        if (speechRecognizer) speechRecognizer.stop();
-      } catch (err) {}
-
-      if (shouldSend) {
-        setTimeout(() => {
-          const finalMsg = chatInput.value.trim();
-          if (finalMsg && finalMsg.length >= 2) {
-            handleChatSend();
-          } else {
-            chatInput.value = '';
-            voiceTranscript = '';
-          }
-        }, 300);
-      } else {
-        chatInput.value = '';
-        voiceTranscript = '';
-      }
-    }
-
+    
     if (btnVoice) {
       btnVoice.addEventListener('mousedown', startVoiceRecording);
       btnVoice.addEventListener('mouseup', () => stopVoiceRecording(true));
