@@ -229,7 +229,7 @@ export async function getStoreComments(storeId) {
   }
 }
 
-// 4. 發表評論累計積分 (+20 PTS，含背景非同步中翻英)
+// 4. 發表評論累計積分 (+20 PTS，含背景非同步雙向中英互譯)
 export async function addStoreComment(storeId, commentPayload) {
   const currentUser = auth.currentUser;
   if (!currentUser) {
@@ -247,6 +247,10 @@ export async function addStoreComment(storeId, commentPayload) {
 
   const rating = Number(commentPayload.rating) || 5;
 
+  // 判斷語言：若包含中文字元則為中文，否則視為英文
+  const hasChinese = /[\u4e00-\u9fa5]/.test(cleanComment);
+  const detectedOriginalLang = hasChinese ? "zh-TW" : "en";
+
   // 1. 立即寫入 Firestore（體感秒回、零卡頓）
   const commentDocData = {
     storeId: String(storeId),
@@ -258,8 +262,9 @@ export async function addStoreComment(storeId, commentPayload) {
     rating: rating,
     comment: cleanComment,
     content: cleanComment,
-    comment_en: "", // 預設為空，稍後背景回填
-    originalLang: "zh-TW",
+    comment_zh: hasChinese ? cleanComment : "",
+    comment_en: !hasChinese ? cleanComment : "",
+    originalLang: detectedOriginalLang,
     createdAt: serverTimestamp()
   };
 
@@ -279,23 +284,32 @@ export async function addStoreComment(storeId, commentPayload) {
     broadcastAuthChange(currentUser, currentUserProfile);
   }
 
-  // 3. 背景非同步呼叫 Cloudflare Worker 進行英文翻譯，翻譯完成自動更新 Firestore
+  // 3. 背景非同步呼叫 Cloudflare Worker 進行雙向翻譯，翻譯完成自動更新 Firestore
   (async () => {
     try {
       const AI_WORKER_TRANSLATE_URL = "https://food-ai-assistant.vhuang904.workers.dev/translate-comment";
+      const sourceLang = hasChinese ? "chinese" : "english";
+      const targetLang = hasChinese ? "english" : "chinese";
+
       const res = await fetch(AI_WORKER_TRANSLATE_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ text: cleanComment })
+        body: JSON.stringify({ 
+          text: cleanComment,
+          source_lang: sourceLang,
+          target_lang: targetLang
+        })
       });
       const data = await res.json();
       if (data.translatedText && data.translatedText.trim()) {
-        await updateDoc(doc(db, "comments", docRef.id), {
-          comment_en: data.translatedText.trim()
-        });
+        const updatePayload = hasChinese 
+          ? { comment_en: data.translatedText.trim() } 
+          : { comment_zh: data.translatedText.trim() };
+
+        await updateDoc(doc(db, "comments", docRef.id), updatePayload);
       }
     } catch (e) {
-      console.warn("[AuthService] 背景翻譯回填略過:", e);
+      console.warn("[AuthService] 背景雙向翻譯回填略過:", e);
     }
   })();
 
@@ -306,6 +320,7 @@ export async function addStoreComment(storeId, commentPayload) {
     newLevel: currentUserProfile?.level
   };
 }
+
 // 5. 初始化認證監聽（支援魔法連結驗證、轉址回傳相容與全域狀態）
 export function initAuthService() {
   // A. 檢查 Email 魔法連結跳回
