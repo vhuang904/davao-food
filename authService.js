@@ -211,7 +211,7 @@ export function getCurrentProfile() {
   return currentUserProfile;
 }
 
-// 4. 發表評論累計積分 (+20 PTS)
+// 4. 發表評論累計積分 (+20 PTS，含背景非同步中翻英)
 export async function addStoreComment(storeId, commentPayload) {
   const currentUser = auth.currentUser;
   if (!currentUser) {
@@ -229,6 +229,7 @@ export async function addStoreComment(storeId, commentPayload) {
 
   const rating = Number(commentPayload.rating) || 5;
 
+  // 1. 立即寫入 Firestore（體感秒回、零卡頓）
   const commentDocData = {
     storeId: String(storeId),
     targetId: String(storeId),
@@ -239,11 +240,14 @@ export async function addStoreComment(storeId, commentPayload) {
     rating: rating,
     comment: cleanComment,
     content: cleanComment,
+    comment_en: "", // 預設為空，稍後背景回填
+    originalLang: "zh-TW",
     createdAt: serverTimestamp()
   };
 
-  await addDoc(collection(db, "comments"), commentDocData);
+  const docRef = await addDoc(collection(db, "comments"), commentDocData);
 
+  // 2. 累計會員積分與等級更新
   const userRef = doc(db, "users", currentUser.uid);
   await updateDoc(userRef, {
     points: increment(20),
@@ -257,6 +261,26 @@ export async function addStoreComment(storeId, commentPayload) {
     broadcastAuthChange(currentUser, currentUserProfile);
   }
 
+  // 3. 背景非同步呼叫 Cloudflare Worker 進行英文翻譯，翻譯完成自動更新 Firestore
+  (async () => {
+    try {
+      const AI_WORKER_TRANSLATE_URL = "https://food-ai-assistant.vhuang904.workers.dev/translate-comment";
+      const res = await fetch(AI_WORKER_TRANSLATE_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text: cleanComment })
+      });
+      const data = await res.json();
+      if (data.translatedText && data.translatedText.trim()) {
+        await updateDoc(doc(db, "comments", docRef.id), {
+          comment_en: data.translatedText.trim()
+        });
+      }
+    } catch (e) {
+      console.warn("[AuthService] 背景翻譯回填略過:", e);
+    }
+  })();
+
   return {
     success: true,
     addedPoints: 20,
@@ -264,31 +288,6 @@ export async function addStoreComment(storeId, commentPayload) {
     newLevel: currentUserProfile?.level
   };
 }
-
-// 4-1. 讀取店家雲端真實評論
-export async function getStoreComments(storeId) {
-  if (!storeId) return [];
-  try {
-    const q = query(
-      collection(db, "comments"),
-      where("storeId", "==", String(storeId))
-    );
-    const snap = await getDocs(q);
-    const comments = [];
-    snap.forEach((d) => {
-      comments.push({ id: d.id, ...d.data() });
-    });
-    return comments.sort((a, b) => {
-      const ta = a.createdAt?.toMillis ? a.createdAt.toMillis() : 0;
-      const tb = b.createdAt?.toMillis ? b.createdAt.toMillis() : 0;
-      return tb - ta;
-    });
-  } catch (err) {
-    console.warn("[AuthService] 讀取評論異常:", err);
-    return [];
-  }
-}
-
 // 5. 初始化認證監聽（支援魔法連結驗證、轉址回傳相容與全域狀態）
 export function initAuthService() {
   // A. 檢查 Email 魔法連結跳回
