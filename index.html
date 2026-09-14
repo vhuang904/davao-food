@@ -7,7 +7,7 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
-  <meta name="app-version" content="20260913-v43.7.3" />
+  <meta name="app-version" content="20260913-v43.7.4" />
   <meta name="theme-color" content="#020617" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -833,6 +833,7 @@
     html.light #chat-messages, html.amethyst #chat-messages, html.ocean #chat-messages, html.sakura #chat-messages { background-color: #FFFFFF !important; }
     html.light .chat-bubble-agent, html.amethyst .chat-bubble-agent, html.ocean .chat-bubble-agent, html.sakura .chat-bubble-agent { background-color: var(--theme-primary-light) !important; border-color: var(--theme-border) !important; color: var(--theme-text-title) !important; }
     html.light .ai-quick-btn, html.amethyst .ai-quick-btn, html.ocean .ai-quick-btn, html.sakura .ai-quick-btn { background-color: #FFFFFF !important; border-color: var(--theme-border) !important; color: var(--theme-primary) !important; }
+    html.light .ai-jump-btn, html.amethyst .ai-jump-btn, html.ocean .ai-jump-btn, html.sakura .ai-jump-btn { background-color: var(--theme-card-sub-bg) !important; border: 1.5px solid var(--theme-border) !important; color: var(--theme-primary) !important; }
     html.light #chat-input-bar, html.amethyst #chat-input-bar, html.ocean #chat-input-bar, html.sakura #chat-input-bar { background-color: #FFFFFF !important; border-top: 1px solid var(--theme-border) !important; }
     html.light #chat-input, html.amethyst #chat-input, html.ocean #chat-input, html.sakura #chat-input { background-color: var(--theme-primary-light) !important; border: 1.5px solid var(--theme-border) !important; color: var(--theme-text-title) !important; }
     html.light #btn-send-chat, html.amethyst #btn-send-chat, html.ocean #btn-send-chat, html.sakura #btn-send-chat { background: var(--theme-gradient) !important; color: var(--theme-badge-text) !important; }
@@ -3801,14 +3802,64 @@
           body: JSON.stringify({ message: msg, lang: currentLang === 'en' ? 'en' : 'zh', currentCity: currentCity })
         });
         const data = await res.json();
+        const replyText = data.reply || "已為您快速查詢！推薦造訪在地人氣嚴選私房餐廳與海島景點。";
+        
+        // --- 智慧掃描資料庫店家 ---
+        const allItems = [...allRestaurants, ...allAttractions, ...allMedical];
+        const matched = [];
+        const seenIds = new Set();
+
+        allItems.forEach(item => {
+          const sId = String(item.id || item.place_id || '').trim();
+          if (!sId || seenIds.has(sId)) return;
+
+          const nZh = (item.name_zh || item.name || '').trim();
+          const nEn = (item.name_en || '').trim();
+
+          let isMatch = false;
+          if (nZh && nZh.length >= 2 && replyText.includes(nZh)) isMatch = true;
+          if (nEn && nEn.length >= 3 && replyText.toLowerCase().includes(nEn.toLowerCase())) isMatch = true;
+
+          if (isMatch) {
+            seenIds.add(sId);
+            matched.push({
+              id: sId,
+              name: (currentLang === 'en' && nEn) ? nEn : (nZh || nEn),
+              type: item.type || (item.category ? 'attraction' : 'restaurant')
+            });
+          }
+        });
+
+        let jumpButtonsHtml = '';
+        if (matched.length > 0) {
+          jumpButtonsHtml = `
+            <div class="mt-2.5 pt-2 border-t border-amber-400/20 flex flex-col gap-1.5">
+              <span class="text-[10px] text-amber-300 font-bold">✨ 點擊直接在地圖查看：</span>
+              ${matched.map(m => `
+                <button type="button" onclick="window.handleAiJumpCard('${m.id}', '${m.type}')" class="ai-jump-btn w-full py-1.5 px-2.5 rounded-lg bg-slate-800 hover:bg-slate-750 border border-amber-400/50 text-amber-300 text-[11px] font-black flex items-center justify-between transition active:scale-95 text-left cursor-pointer shadow-sm">
+                  <span class="truncate">📍 ${m.name}</span>
+                  <span class="text-[9px] opacity-80 flex-shrink-0 ml-1">前往 ➔</span>
+                </button>
+              `).join('')}
+            </div>
+          `;
+        }
+
         const loadEl = document.getElementById(loadId);
-        if (loadEl) loadEl.innerText = data.reply || "已為您快速查詢！推薦造訪在地人氣嚴選私房餐廳與海島景點。";
+        if (loadEl) {
+          loadEl.innerHTML = `<div>${replyText}</div>${jumpButtonsHtml}`;
+        }
       } catch (err) {
         const loadEl = document.getElementById(loadId);
         if (loadEl) loadEl.innerText = "已為您快速查詢！推薦造訪在地人氣嚴選私房餐廳與海島景點。";
       }
       chatMessagesContainer.scrollTop = chatMessagesContainer.scrollHeight;
     }
+
+    window.handleAiJumpCard = function(storeId, itemType) {
+      closeAiChat();
+      window.jumpToCard(storeId, itemType);
+    };
 
     btnSendChat.addEventListener('click', handleChatSend);
     chatInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') handleChatSend(); });
@@ -4208,7 +4259,7 @@
       }
 
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js?v=20260913-v43.7.3').then((reg) => {
+        navigator.serviceWorker.register('./sw.js?v=20260913-v43.7.4').then((reg) => {
           if (reg.waiting) {
             showPwaUpdateModal(reg.waiting);
           }
