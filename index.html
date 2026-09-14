@@ -839,7 +839,51 @@
       background: var(--theme-gradient) !important;
       color: var(--theme-badge-text) !important;
     }
-        
+
+    /* ========================================================
+   全站純提示框 / Toast 內部「水平居中、上下 3:2 黃金沉底」規則
+   ======================================================== */
+
+/* 1. 僅鎖定通知提示主體，排除 AI、評論區與站內通知清單 */
+#toastNotification,
+.toast:not([id*="comment"]):not([class*="comment"]):not([id*="review"]):not([class*="review"]):not([id*="ai"]):not([class*="ai"]):not([id*="inbox"]):not([class*="inbox"]),
+.alert-box:not([id*="comment"]):not([class*="comment"]):not([id*="review"]):not([class*="review"]):not([id*="ai"]):not([class*="ai"]):not([id*="inbox"]):not([class*="inbox"]) {
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  align-items: center !important;       /* 左右水平絕對居中 */
+  text-align: center !important;        /* 文字水平置中 */
+  box-sizing: border-box !important;
+  /* 上3下2視覺比例：上方 30px、下方 20px、左右各 36px 避開叉叉 */
+  padding-top: 30px !important;
+  padding-bottom: 20px !important;
+  padding-left: 36px !important;
+  padding-right: 36px !important;
+}
+
+/* 2. 提示框內部的文字與圖示水平均勻置中 */
+#toastNotification #toastMessage,
+#toastNotification #toastIcon,
+#toastNotification .toast-content {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  text-align: center !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+/* 3. 右上角關閉叉叉獨立於右上角，不干擾內容排版 */
+#toastCloseBtn,
+.toast > .close,
+.toast > .close-btn {
+  position: absolute !important;
+  top: 10px !important;
+  right: 12px !important;
+  margin: 0 !important;
+  z-index: 50 !important;
+}
+    
   </style>
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col font-sans">
