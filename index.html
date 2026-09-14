@@ -7,7 +7,7 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
-  <meta name="app-version" content="20260913-v43.8.0" />
+  <meta name="app-version" content="20260913-v43.8.1" />
   <meta name="theme-color" content="#020617" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -3789,12 +3789,31 @@
       return null;
     }
 
+    // 輔助函式：動態偵測提問中的目標城市（找不到則沿用當前城市）
+    function detectQueryTargetCity(text) {
+      const t = text.toLowerCase();
+      const cityMap = [
+        { key: 'davao', matches: ['達沃', '达沃', 'davao'] },
+        { key: 'manila', matches: ['馬尼拉', '马尼拉', 'manila', 'bgc', 'makati', 'pasay'] },
+        { key: 'cebu', matches: ['宿霧', '宿务', 'cebu', 'mactan'] },
+        { key: 'boracay', matches: ['長灘島', '长滩岛', 'boracay'] },
+        { key: 'palawan', matches: ['巴拉望', 'palawan', '科隆', 'coron', '愛妮島', 'elnido'] },
+        { key: 'bohol', matches: ['薄荷島', '薄荷岛', 'bohol'] },
+        { key: 'siargao', matches: ['錫亞高', '锡亚高', 'siargao'] },
+        { key: 'samal', matches: ['薩馬爾', '萨马尔', 'samal'] }
+      ];
+      for (const c of cityMap) {
+        if (c.matches.some(m => t.includes(m))) return c.key;
+      }
+      return currentCity;
+    }
+
     async function handleChatSend() {
       if (!currentUser) return;
       const msg = chatInput.value.trim();
       if (!msg) return;
 
-      // 使用者提問氣泡（動態主題色）
+      // 使用者提問氣泡
       chatMessagesContainer.innerHTML += `
         <div class="chat-bubble-user text-white font-bold p-2.5 rounded-xl rounded-tr-sm self-end max-w-[85%] ml-auto text-xs leading-relaxed shadow-sm" style="background: var(--theme-gradient);">
           ${msg}
@@ -3804,7 +3823,6 @@
       chatMessagesContainer.scrollTop = chatMessagesContainer.scrollHeight;
 
       const loadId = 'load-' + Date.now();
-      // 容器改為 w-full flex-col，徹底消除橫向擠壓
       chatMessagesContainer.innerHTML += `
         <div id="${loadId}" class="w-full bg-slate-900 p-3 rounded-xl rounded-tl-sm border border-slate-800 text-slate-400 text-xs self-start flex flex-col gap-2 shadow-xs chat-bubble-agent">
           <div class="flex items-center gap-1.5">
@@ -3814,29 +3832,50 @@
       `;
       chatMessagesContainer.scrollTop = chatMessagesContainer.scrollHeight;
 
+      // 1. 動態鎖定目標城市
+      const targetCity = detectQueryTargetCity(msg);
+
+      // 2. 從本地資料庫撈出該城市清單，優先打包大V私房名冊
+      const cityItems = [...allRestaurants, ...allAttractions].filter(x => safeStr(x.city) === targetCity);
+      const curatedList = cityItems.filter(x => getItemTier(x) === 1);
+      const highRatedList = cityItems.filter(x => getItemTier(x) !== 1 && Number(x.google_rating || x.googleRating || 0) >= 4.5);
+
+      const candidateList = [...curatedList, ...highRatedList].slice(0, 15);
+      const restaurantsContext = candidateList.map(item => {
+        const isBigV = getItemTier(item) === 1;
+        const nameEn = item.name_en || item.name || '';
+        const nameZh = item.name_zh || '';
+        const cat = item.category || '精選美饌';
+        const bigvComment = item.bigv_comment_zh || item.big_v_comment || '';
+        return `• [${isBigV ? '大V嚴選' : '口碑名店'}] 店名: ${nameEn} (${nameZh}) | 類別: ${cat} ${bigvComment ? `| 特色: ${bigvComment}` : ''}`;
+      }).join('\n');
+
       try {
         const res = await fetch(AI_WORKER_URL, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ message: msg, lang: currentLang === 'en' ? 'en' : 'zh', currentCity: currentCity })
+          body: JSON.stringify({ 
+            message: msg, 
+            lang: currentLang === 'en' ? 'en' : 'zh', 
+            currentCity: targetCity,
+            restaurantsContext: restaurantsContext
+          })
         });
         const data = await res.json();
         let rawReply = data.reply || "已為您快速查詢！推薦造訪在地人氣嚴選私房餐廳與海島景點。";
         
-        // 1. 純淨比對字串（去除 Markdown 符號）
         const cleanReplyText = rawReply.replace(/[*#_`~]/g, ' ');
-
-        // 2. 格式化輸出：**粗體** 轉 <strong>，換行符號 \n 轉 <br>
         let formattedReply = rawReply
           .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
           .replace(/\n/g, '<br>');
 
-        // 3. 雙向智慧比對：以英文為主、中文為輔，嚴格限制最多 2 家
-        const allItems = [...allRestaurants, ...allAttractions, ...allMedical];
+        // 3. 雙向智慧比對：加入品牌模糊去重，確保推薦兩家不同品牌
+        const allPool = [...allRestaurants, ...allAttractions, ...allMedical];
         const matched = [];
         const seenIds = new Set();
+        const seenBrandTokens = [];
 
-        for (const item of allItems) {
+        for (const item of allPool) {
           if (matched.length >= 2) break;
 
           const sId = String(item.id || item.place_id || '').trim();
@@ -3845,6 +3884,12 @@
           const nEn = (item.name_en || '').trim();
           const nZh = (item.name_zh || item.name || '').trim();
           const cleanEnCore = nEn.replace(/\(.*?\)|（.*?）/g, '').trim().toLowerCase();
+          const brandToken = cleanEnCore.split(' ')[0]; // 擷取核心品牌字根
+
+          // 若與已命中的品牌高度重疊（例如 Manam vs Manam Comfort Filipino），跳過
+          if (brandToken && brandToken.length >= 3 && seenBrandTokens.includes(brandToken)) {
+            continue;
+          }
 
           let isMatch = false;
           if (cleanEnCore && cleanEnCore.length >= 3 && cleanReplyText.toLowerCase().includes(cleanEnCore)) {
@@ -3855,15 +3900,16 @@
 
           if (isMatch) {
             seenIds.add(sId);
+            if (brandToken && brandToken.length >= 3) seenBrandTokens.push(brandToken);
             matched.push({
               id: sId,
               name: (currentLang === 'en' && nEn) ? nEn : (nZh || nEn),
+              city: item.city || targetCity,
               type: item.type || (item.category ? 'attraction' : 'restaurant')
             });
           }
         }
 
-        // 4. 偵測話題子分類
         const categoryHook = typeof detectCategoryHook === 'function' ? detectCategoryHook(msg + ' ' + cleanReplyText) : null;
 
         let jumpButtonsHtml = '';
@@ -3875,7 +3921,7 @@
                   <i class="fa-solid fa-diamond-turn-right text-[9px]"></i> 推薦店家專屬卡片：
                 </span>
                 ${matched.map(m => `
-                  <button type="button" onclick="window.handleAiJumpCard('${m.id}', '${m.type}')" class="ai-jump-btn w-full py-2 px-3 rounded-lg text-[11px] font-black flex items-center justify-between transition active:scale-95 text-left cursor-pointer shadow-sm" style="background: var(--theme-card-sub-bg); border: 1.5px solid var(--theme-border); color: var(--theme-primary);">
+                  <button type="button" onclick="window.handleAiJumpCard('${m.id}', '${m.type}', '${m.city}')" class="ai-jump-btn w-full py-2 px-3 rounded-lg text-[11px] font-black flex items-center justify-between transition active:scale-95 text-left cursor-pointer shadow-sm" style="background: var(--theme-card-sub-bg); border: 1.5px solid var(--theme-border); color: var(--theme-primary);">
                     <span class="truncate">📍 ${m.name}</span>
                     <span class="text-[9px] opacity-80 flex-shrink-0 ml-1">查看卡片 ➔</span>
                   </button>
@@ -3883,7 +3929,7 @@
               ` : ''}
 
               ${categoryHook ? `
-                <button type="button" onclick="window.handleAiCategoryJump('${categoryHook.key}')" class="w-full mt-0.5 py-2 px-3 rounded-lg text-white text-[11px] font-black flex items-center justify-between transition active:scale-95 text-left cursor-pointer shadow-sm" style="background: var(--theme-gradient);">
+                <button type="button" onclick="window.handleAiCategoryJump('${categoryHook.key}', '${targetCity}')" class="w-full mt-0.5 py-2 px-3 rounded-lg text-white text-[11px] font-black flex items-center justify-between transition active:scale-95 text-left cursor-pointer shadow-sm" style="background: var(--theme-gradient);">
                   <span class="truncate">📂 瀏覽全部【${categoryHook.name}】完整名單</span>
                   <span class="text-[9px] opacity-90 flex-shrink-0 ml-1">前往專區 ➔</span>
                 </button>
@@ -3910,34 +3956,41 @@
 
     btnSendChat.addEventListener('click', handleChatSend);
 
-    // 安全關閉 AI 視窗輔助器（確保懸浮球回位、視窗隱藏）
+    // 安全關閉 AI 視窗輔助器（強制隱藏彈窗、懸浮球復位）
     function safeCloseAiWindow() {
-      if (typeof closeAiChat === 'function') {
-        closeAiChat();
-      } else {
-        const modal = document.getElementById('chat-modal');
-        if (modal) modal.classList.add('hidden');
-        if (typeof updateFabPos === 'function') updateFabPos(fabLeft, fabTop);
+      const modal = document.getElementById('chat-modal');
+      if (modal) {
+        modal.classList.add('hidden');
+        modal.style.display = 'none';
+      }
+      if (typeof updateFabPos === 'function') {
+        updateFabPos(fabLeft, fabTop);
       }
     }
 
-    // 1. AI 推薦卡片點擊：關閉 AI ➔ 切回地圖列表 ➔ 平滑滾動至該卡片並聚焦發光
-    window.handleAiJumpCard = function(storeId, itemType) {
+    // 1. AI 推薦卡片點擊：支援跨城市自動切換 ➔ 關閉 AI ➔ 切回列表 ➔ 平滑滾動聚焦
+    window.handleAiJumpCard = function(storeId, itemType, itemCity) {
       safeCloseAiWindow();
 
-      // 切換回地圖/列表主頁
-      currentMainTab = 'map';
-      sessionStorage.setItem('ph_nav_tab', 'map');
+      // 若店家不在當前城市，自動切換城市維度與城市標籤
+      if (itemCity && itemCity !== currentCity) {
+        currentCity = itemCity;
+        currentDimension = isIslandMode(currentCity) ? 'islands' : 'cities';
+        sessionStorage.setItem('ph_dim', currentDimension);
+        localStorage.setItem('ph_app_city', currentCity);
+        renderRegionPills();
+      }
+
+      currentMainTab = (itemType === 'attraction') ? 'attraction' : 'map';
+      sessionStorage.setItem('ph_nav_tab', currentMainTab);
       currentSubFilter = 'all';
       sessionStorage.setItem('ph_nav_sub', 'all');
 
       renderSubFilterBar();
       renderContent();
 
-      // 稍候 200ms 確保 DOM 渲染完成後執行精準平滑滾動
       setTimeout(() => {
         const sId = String(storeId).trim();
-        // 關鍵修復：加入 card-${sId}（這是卡片真實的 ID）
         const targetEl = document.getElementById(`card-${sId}`) || 
                          document.getElementById(`store-card-${sId}`) || 
                          document.getElementById(`item-${sId}`) || 
@@ -3952,12 +4005,20 @@
         } else if (typeof window.jumpToCard === 'function') {
           window.jumpToCard(sId, itemType || 'restaurant');
         }
-      }, 200);
+      }, 250);
     };
 
-    // 2. AI 話題子分類專區點擊：關閉 AI ➔ 切換分類 ➔ 滾動至頂部瀏覽
-    window.handleAiCategoryJump = function(subKey) {
+    // 2. AI 話題子分類專區點擊：支援跨城市切換 ➔ 關閉 AI ➔ 切換分類 ➔ 滾動至頂部
+    window.handleAiCategoryJump = function(subKey, targetCity) {
       safeCloseAiWindow();
+
+      if (targetCity && targetCity !== currentCity) {
+        currentCity = targetCity;
+        currentDimension = isIslandMode(currentCity) ? 'islands' : 'cities';
+        sessionStorage.setItem('ph_dim', currentDimension);
+        localStorage.setItem('ph_app_city', currentCity);
+        renderRegionPills();
+      }
 
       currentMainTab = 'map';
       sessionStorage.setItem('ph_nav_tab', 'map');
@@ -4366,7 +4427,7 @@
       }
 
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js?v=20260913-v43.8.0').then((reg) => {
+        navigator.serviceWorker.register('./sw.js?v=20260913-v43.8.1').then((reg) => {
           if (reg.waiting) {
             showPwaUpdateModal(reg.waiting);
           }
