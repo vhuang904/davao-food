@@ -7,7 +7,7 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
-  <meta name="app-version" content="20260914-v46.1" />
+  <meta name="app-version" content="20260914-v46.2" />
   <meta name="theme-color" content="#020617" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -1490,6 +1490,9 @@
         commentSub: '分享您的真實探店評語與心得',
         commentPlaceholder: '寫下您的真實體驗與點評...',
         btnSubmitComment: '發表 (+20分)',
+        commentPosting: '發表中...',
+        commentSuccessToast: '🎉 點評發表成功！已為您累計 +20 積分！',
+        commentReviewsSuffix: '點評',
         chatPlaceholder: '問點什麼吧（例：馬尼拉海鮮酒家、頂級和牛...）'
       },
       'en': {
@@ -1561,6 +1564,9 @@
         commentSub: 'Share your genuine dining review',
         commentPlaceholder: 'Share your experience...',
         btnSubmitComment: 'Post (+20 PTS)',
+        commentPosting: 'Posting...',
+        commentSuccessToast: '🎉 Review posted! +20 Points earned!',
+        commentReviewsSuffix: 'Reviews',
         chatPlaceholder: 'Ask anything (e.g. Manila seafood, best wagyu...)'
       }
     };
@@ -3307,11 +3313,17 @@
     };
 
     window.openUniversalCommentModal = function(storeId, encodedName) {
+      const dict = I18N_DICT[currentLang] || I18N_DICT['zh-TW'];
       if (!currentUser) {
+        const needLoginMsg = currentLang === 'en' 
+          ? '🔒 Please sign in to share reviews and earn 20 PTS!' 
+          : '🔒 請先登入會員，即可發表真實點評賺取 20 積分！';
+        const loginBtnText = currentLang === 'en' ? 'Sign In' : '立即登入';
+
         showToast(
-          '🔒 請先登入會員，即可發表真實點評賺取 20 積分！',
+          needLoginMsg,
           'fa-lock',
-          '立即登入',
+          loginBtnText,
           () => {
             closeAiChat();
             openAuthModal();
@@ -3324,9 +3336,17 @@
       activeCommentStoreId = String(storeId).trim();
       const sName = decodeURIComponent(encodedName || '');
       const titleEl = document.getElementById('comment-modal-title');
-      if (titleEl) titleEl.innerText = `${sName} 點評`;
+      const suffix = dict.commentReviewsSuffix || (currentLang === 'en' ? 'Reviews' : '點評');
+      if (titleEl) titleEl.innerText = `${sName} ${suffix}`;
 
-      if (commentInputText) commentInputText.value = '';
+      if (commentInputText) {
+        commentInputText.value = '';
+        commentInputText.placeholder = dict.commentPlaceholder || (currentLang === 'en' ? 'Share your experience...' : '寫下您的真實體驗與點評...');
+      }
+      if (btnSubmitComment) {
+        btnSubmitComment.innerText = dict.btnSubmitComment || (currentLang === 'en' ? 'Post (+20 PTS)' : '發表 (+20分)');
+      }
+
       commentModal.classList.remove('hidden');
       document.body.style.position = 'fixed';
       document.body.style.width = '100%';
@@ -3336,31 +3356,34 @@
     };
 
     async function handlePostComment() {
+      const dict = I18N_DICT[currentLang] || I18N_DICT['zh-TW'];
       if (!currentUser) {
-        showToast('請先登入會員！', 'fa-lock');
+        showToast(currentLang === 'en' ? 'Please sign in first!' : '請先登入會員！', 'fa-lock');
         return;
       }
       const text = (commentInputText?.value || '').trim();
       if (!text) {
-        showToast('請輸入評論內容！', 'fa-circle-exclamation');
+        showToast(currentLang === 'en' ? 'Please write your review!' : '請輸入評論內容！', 'fa-circle-exclamation');
         return;
       }
 
       btnSubmitComment.disabled = true;
-      btnSubmitComment.innerText = '發表中...';
+      btnSubmitComment.innerText = dict.commentPosting || (currentLang === 'en' ? 'Posting...' : '發表中...');
 
       try {
         const { addStoreComment } = await import('./authService.js');
         await addStoreComment(activeCommentStoreId, text);
         if (commentInputText) commentInputText.value = '';
-        showToast('🎉 點評發表成功！已為您累計 +20 積分！', 'fa-award');
+        
+        const successMsg = dict.commentSuccessToast || (currentLang === 'en' ? '🎉 Review posted! +20 Points earned!' : '🎉 點評發表成功！已為您累計 +20 積分！');
+        showToast(successMsg, 'fa-award');
         await loadStoreComments(activeCommentStoreId);
       } catch (err) {
         console.error("發表點評失敗:", err);
-        showToast(err.message || '發表失敗，請稍後再試', 'fa-triangle-exclamation');
+        showToast(err.message || (currentLang === 'en' ? 'Post failed, please try again' : '發表失敗，請稍後再試'), 'fa-triangle-exclamation');
       } finally {
         btnSubmitComment.disabled = false;
-        btnSubmitComment.innerText = '發表 (+20分)';
+        btnSubmitComment.innerText = dict.btnSubmitComment || (currentLang === 'en' ? 'Post (+20 PTS)' : '發表 (+20分)');
       }
     }
 
@@ -4596,7 +4619,7 @@
       }
 
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js?v=20260914-v46.1').then((reg) => {
+        navigator.serviceWorker.register('./sw.js?v=20260914-v46.2').then((reg) => {
           if (reg.waiting) {
             showPwaUpdateModal(reg.waiting);
           }
