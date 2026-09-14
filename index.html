@@ -7,7 +7,7 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
-  <meta name="app-version" content="20260914-v45.0.1" />
+  <meta name="app-version" content="20260914-v45.2" />
   <meta name="theme-color" content="#020617" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -127,7 +127,6 @@
       transition: opacity 0.25s ease, transform 0.25s ease;
     }
 
-    /* 雙 Tab 排版通用樣式 */
     .avatar-badge {
       position: absolute;
       top: -2px;
@@ -208,11 +207,6 @@
       padding-right: 4px;
     }
 
-    /* =======================================================
-       一、五大主題專屬獨立矩陣 (Theme Token Matrix)
-       ======================================================= */
-    
-    /* 1. 暗夜尊爵 (Dark) */
     html.dark {
       --theme-primary: #F59E0B;
       --theme-primary-hover: #D97706;
@@ -232,7 +226,6 @@
       --theme-glow: 0 0 25px -2px rgba(245, 158, 11, 0.5);
     }
 
-    /* 2. 暖陽金橘 (Light) */
     html.light {
       --theme-primary: #EA580C;
       --theme-primary-hover: #C2410C;
@@ -252,7 +245,6 @@
       --theme-glow: 0 0 25px -2px rgba(234, 88, 12, 0.35);
     }
 
-    /* 3. 暮光紫霞 (Amethyst) */
     html.amethyst {
       --theme-primary: #7B337F;
       --theme-primary-hover: #55285F;
@@ -272,7 +264,6 @@
       --theme-glow: 0 0 25px -2px rgba(110, 48, 115, 0.35);
     }
 
-    /* 4. 海島湛藍 (Ocean) */
     html.ocean {
       --theme-primary: #0284C7;
       --theme-primary-hover: #0369A1;
@@ -292,7 +283,6 @@
       --theme-glow: 0 0 25px -2px rgba(2, 132, 199, 0.35);
     }
 
-    /* 5. 櫻花粉嫩 (Sakura) */
     html.sakura {
       --theme-primary: #DB2777;
       --theme-primary-hover: #BE185D;
@@ -312,10 +302,6 @@
       --theme-glow: 0 0 25px -2px rgba(219, 39, 119, 0.35);
     }
 
-    /* =======================================================
-       二、三大固定功能按鈕（全域鎖定，任何主題不動搖）
-       ======================================================= */
-    /* 1. Grab 點餐：綠底白字 */
     .btn-card-grab {
       background: #00B14F !important;
       background-color: #00B14F !important;
@@ -325,7 +311,6 @@
     }
     .btn-card-grab * { color: #FFFFFF !important; font-weight: 900 !important; }
 
-    /* 2. 撥打電話：通話翠綠色 */
     .btn-card-phone {
       background-color: #FFFFFF !important;
       border: 2px solid #10B981 !important;
@@ -339,7 +324,6 @@
     }
     html.dark .btn-card-phone * { color: #34D399 !important; }
 
-    /* 3. 路線導航：導航天藍色 */
     .btn-card-nav {
       background-color: #FFFFFF !important;
       border: 2px solid #0EA5E9 !important;
@@ -353,9 +337,6 @@
     }
     html.dark .btn-card-nav * { color: #38BDF8 !important; }
 
-    /* =======================================================
-       三、暗夜尊爵專屬防護罩（黑金質感永久鎖定）
-       ======================================================= */
     .carousel-hint-pill {
       position: absolute;
       top: 3rem;
@@ -409,9 +390,6 @@
       font-weight: 800 !important;
     }
 
-    /* =======================================================
-       四、寫評論按鈕（有厚度、立體陰影、按鈕感十足）
-       ======================================================= */
     .btn-card-comment {
       background: var(--theme-gradient) !important;
       color: var(--theme-badge-text, #FFFFFF) !important;
@@ -423,22 +401,17 @@
       font-weight: 900 !important;
     }
 
-    /* =======================================================
-       五、淺色系四大主題通用反白架構 (Light / Amethyst / Ocean / Sakura)
-       ======================================================= */
     html.light body { background-color: #F7F3EB !important; color: #1F2937 !important; }
     html.amethyst body { background-color: #FAF6F9 !important; color: #2E1A33 !important; }
     html.ocean body { background-color: #F0F9FF !important; color: #0C4A6E !important; }
     html.sakura body { background-color: #FFF5F7 !important; color: #831843 !important; }
 
-    /* 頂部 Header 與導航列 */
     html.light header.glass-header, html.amethyst header.glass-header, html.ocean header.glass-header, html.sakura header.glass-header { 
       background: var(--theme-header-bg) !important; 
       border-bottom: 2px solid var(--theme-header-border) !important; 
     }
     html.light header *, html.amethyst header *, html.ocean header *, html.sakura header * { color: #FFFFFF; }
 
-    /* 中英文切換鈕反白 */
     html.light .lang-toggle-container, html.amethyst .lang-toggle-container, html.ocean .lang-toggle-container, html.sakura .lang-toggle-container { 
       background: rgba(255, 255, 255, 0.25) !important; 
       border: 1.5px solid rgba(255, 255, 255, 0.5) !important; 
@@ -451,7 +424,7 @@
     html.light .lang-toggle-btn.active, html.amethyst .lang-toggle-btn.active, html.ocean .lang-toggle-btn.active, html.sakura .lang-toggle-btn.active { 
       background: #FFFFFF !important; 
       color: var(--theme-primary) !important; 
-      font-weight: 900 !important;
+      font-weight: 900 !important; 
       box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15) !important;
     }
 
@@ -487,7 +460,6 @@
       border-top: 1px solid var(--theme-border) !important; 
     }
 
-    /* 頂部切換鈕：都會生活圈 / 渡假海島專區（各主題獨立顏色） */
     html.light #typeCityBtn.bg-gradient-to-r, html.light #typeIslandBtn.bg-gradient-to-r,
     html.amethyst #typeCityBtn.bg-gradient-to-r, html.amethyst #typeIslandBtn.bg-gradient-to-r,
     html.ocean #typeCityBtn.bg-gradient-to-r, html.ocean #typeIslandBtn.bg-gradient-to-r,
@@ -499,7 +471,6 @@
       box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2) !important;
     }
 
-    /* 四大分頁 Tab（美食饗宴、景點導覽...） */
     html.light .main-tab-pill, html.amethyst .main-tab-pill, html.ocean .main-tab-pill, html.sakura .main-tab-pill {
       color: rgba(255, 255, 255, 0.85) !important;
       font-weight: 800 !important;
@@ -519,18 +490,12 @@
       font-weight: 800 !important;
     }
 
-    /* =======================================================
-       六、地區膠囊與子分類列（四淺色系統一規格：未選中白字、選中白底彩字、清晰立體框）
-       ======================================================= */
-    
-    /* 1. 暖陽金橘專屬 (Light) */
     html.light .region-pill { 
       background-color: rgba(255, 255, 255, 0.2) !important; 
       border: 1.5px solid rgba(255, 255, 255, 0.45) !important; 
       color: #FFFFFF !important; 
       font-weight: 800 !important; 
       box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
-      opacity: 1 !important;
     }
     html.light .region-pill.bg-amber-400 { 
       background: #FFFFFF !important; 
@@ -555,14 +520,12 @@
       box-shadow: 0 2px 6px rgba(234, 88, 12, 0.3) !important;
     }
 
-    /* 2. 暮光紫霞專屬 (Amethyst) */
     html.amethyst .region-pill { 
       background-color: rgba(255, 255, 255, 0.2) !important; 
       border: 1.5px solid rgba(255, 255, 255, 0.45) !important; 
       color: #FFFFFF !important; 
       font-weight: 800 !important; 
       box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
-      opacity: 1 !important;
     }
     html.amethyst .region-pill.bg-amber-400 { 
       background: #FFFFFF !important; 
@@ -587,14 +550,12 @@
       box-shadow: 0 2px 6px rgba(107, 62, 117, 0.3) !important;
     }
 
-    /* 3. 海島湛藍專屬 (Ocean) */
     html.ocean .region-pill { 
       background-color: rgba(255, 255, 255, 0.15) !important; 
       border: 1.5px solid rgba(255, 255, 255, 0.4) !important; 
       color: #FFFFFF !important; 
       font-weight: 800 !important;
       box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
-      opacity: 1 !important;
     }
     html.ocean .region-pill.bg-amber-400 { 
       background: #FFFFFF !important; 
@@ -619,14 +580,12 @@
       box-shadow: 0 2px 6px rgba(2, 132, 199, 0.3) !important;
     }
 
-    /* 4. 櫻花粉嫩專屬 (Sakura) */
     html.sakura .region-pill { 
       background-color: rgba(255, 255, 255, 0.2) !important; 
       border: 1.5px solid rgba(255, 255, 255, 0.45) !important; 
       color: #FFFFFF !important; 
       font-weight: 800 !important;
       box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
-      opacity: 1 !important;
     }
     html.sakura .region-pill.bg-amber-400 { 
       background: #FFFFFF !important; 
@@ -651,10 +610,6 @@
       box-shadow: 0 2px 6px rgba(219, 39, 119, 0.3) !important;
     }
 
-    /* =======================================================
-       七、卡片、彈窗、會員中心反白引擎
-       ======================================================= */
-    /* 主清單卡片 */
     html.light article, html.amethyst article, html.ocean article, html.sakura article { 
       background-color: var(--theme-card-bg) !important; 
       border: 1px solid var(--theme-card-border) !important; 
@@ -662,7 +617,7 @@
     html.light article div.bg-slate-950, html.amethyst article div.bg-slate-950, html.ocean article div.bg-slate-950, html.sakura article div.bg-slate-950 { 
       background-color: var(--theme-card-bg) !important; 
     }
-    html.light article div.bg-slate-900, html.amethyst article div.bg-slate-900, html.ocean article div.bg-slate-900, html.sakura article div.bg-slate-900 { 
+    html.light article div.bg-slate-900, html.amethyst article div.bg-slate-900, html.ocean article div.bg-slate-900, html.sakura article div.bg-slate-950 { 
       background-color: var(--theme-card-sub-bg) !important; 
       border-top: 1px solid var(--theme-card-border) !important; 
     }
@@ -678,14 +633,12 @@
     html.light .card-rating-star i, html.amethyst .card-rating-star i, html.ocean .card-rating-star i, html.sakura .card-rating-star i { color: var(--theme-primary) !important; }
     html.light .card-review-prefix, html.amethyst .card-review-prefix, html.ocean .card-review-prefix, html.sakura .card-review-prefix { color: var(--theme-primary) !important; }
 
-    /* 淺色輪播提示膠囊 */
     html.light .carousel-hint-pill, html.amethyst .carousel-hint-pill, html.ocean .carousel-hint-pill, html.sakura .carousel-hint-pill {
       background-color: rgba(255, 255, 255, 0.95) !important;
       color: var(--theme-primary) !important;
       border: 1px solid var(--theme-border) !important;
       box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08) !important;
     }
-    /* 淺色愛心按鈕 */
     html.light button[onclick*="toggleFavorite"], html.amethyst button[onclick*="toggleFavorite"], html.ocean button[onclick*="toggleFavorite"], html.sakura button[onclick*="toggleFavorite"] {
       background-color: rgba(255, 255, 255, 0.9) !important;
       border: 1px solid var(--theme-border) !important;
@@ -695,7 +648,6 @@
       color: var(--theme-primary) !important;
     }
 
-    /* 官網/粉專按鈕 */
     html.light .btn-card-website, html.amethyst .btn-card-website, html.ocean .btn-card-website, html.sakura .btn-card-website { 
       background-color: #FFFFFF !important; 
       color: var(--theme-primary) !important; 
@@ -706,7 +658,6 @@
       font-weight: 800 !important; 
     }
 
-    /* 會員中心面板 */
     html.light #auth-modal .bg-slate-950, html.amethyst #auth-modal .bg-slate-950, html.ocean #auth-modal .bg-slate-950, html.sakura #auth-modal .bg-slate-950 { 
       background-color: var(--theme-card-bg) !important; 
       border-color: var(--theme-border) !important; 
@@ -734,7 +685,6 @@
     }
     html.light #level-progress-fill, html.amethyst #level-progress-fill, html.ocean #level-progress-fill, html.sakura #level-progress-fill { background: var(--theme-gradient) !important; }
 
-    /* 推播與任務按鈕 */
     html.light #push-slot-container, html.amethyst #push-slot-container, html.ocean #push-slot-container, html.sakura #push-slot-container { 
       background-color: var(--theme-card-sub-bg) !important; 
       border-color: var(--theme-border) !important; 
@@ -751,7 +701,6 @@
     }
     html.light #btn-open-tasks-subview *, html.amethyst #btn-open-tasks-subview *, html.ocean #btn-open-tasks-subview *, html.sakura #btn-open-tasks-subview * { color: var(--theme-primary) !important; }
 
-    /* 私房清單與站內信箱小卡 */
     html.light #user-favorites-box, html.amethyst #user-favorites-box, html.ocean #user-favorites-box, html.sakura #user-favorites-box { 
       background-color: var(--theme-card-bg) !important; 
       border-color: var(--theme-card-border) !important; 
@@ -786,7 +735,6 @@
       background-color: #FFFFFF !important; 
     }
 
-    /* 全域彈窗通用關閉叉叉 (✕) */
     html.light .btn-modal-close, html.light #close-comment-btn, html.light #close-recommend-btn,
     html.amethyst .btn-modal-close, html.amethyst #close-comment-btn, html.amethyst #close-recommend-btn,
     html.ocean .btn-modal-close, html.ocean #close-comment-btn, html.ocean #close-recommend-btn,
@@ -796,13 +744,11 @@
       color: var(--theme-primary) !important; 
     }
 
-    /* 登出按鈕 */
     html.light #btn-logout { background-color: #FEF2F2 !important; border: 1.5px solid #FCA5A5 !important; color: #DC2626 !important; font-weight: 900 !important; }
     html.amethyst #btn-logout { background-color: #FFF1F2 !important; border: 1.5px solid #FECDD3 !important; color: #E11D48 !important; font-weight: 900 !important; }
     html.ocean #btn-logout { background-color: #FEF2F2 !important; border: 1.5px solid #FCA5A5 !important; color: #DC2626 !important; font-weight: 900 !important; }
     html.sakura #btn-logout { background-color: #FFF1F2 !important; border: 1.5px solid #FECDD3 !important; color: #E11D48 !important; font-weight: 900 !important; }
 
-    /* 店家評論彈窗 */
     html.light #commentModalCard, html.light #commentModalHeader,
     html.amethyst #commentModalCard, html.amethyst #commentModalHeader,
     html.ocean #commentModalCard, html.ocean #commentModalHeader,
@@ -827,7 +773,6 @@
     }
     html.light #btn-submit-comment, html.amethyst #btn-submit-comment, html.ocean #btn-submit-comment, html.sakura #btn-submit-comment { background: var(--theme-gradient) !important; color: var(--theme-badge-text) !important; }
 
-    /* AI 旅遊管家彈窗 */
     html.light #chat-modal, html.amethyst #chat-modal, html.ocean #chat-modal, html.sakura #chat-modal { background-color: #FFFFFF !important; border: 1.5px solid var(--theme-border) !important; }
     html.light #chat-modal-header, html.amethyst #chat-modal-header, html.ocean #chat-modal-header, html.sakura #chat-modal-header { background: var(--theme-gradient) !important; }
     html.light #chat-messages, html.amethyst #chat-messages, html.ocean #chat-messages, html.sakura #chat-messages { background-color: #FFFFFF !important; }
@@ -838,7 +783,6 @@
     html.light #chat-input, html.amethyst #chat-input, html.ocean #chat-input, html.sakura #chat-input { background-color: var(--theme-primary-light) !important; border: 1.5px solid var(--theme-border) !important; color: var(--theme-text-title) !important; }
     html.light #btn-send-chat, html.amethyst #btn-send-chat, html.ocean #btn-send-chat, html.sakura #btn-send-chat { background: var(--theme-gradient) !important; color: var(--theme-badge-text) !important; }
 
-    /* 1. Toast 提示彈窗 */
     html.light #toastInnerBox, html.amethyst #toastInnerBox, html.ocean #toastInnerBox, html.sakura #toastInnerBox {
       background-color: #FFFFFF !important;
       border: 1.5px solid var(--theme-border) !important;
@@ -861,7 +805,6 @@
       box-shadow: var(--theme-glow) !important;
     }
 
-    /* 2. PWA 版本更新通知彈窗 */
     html.light #pwa-update-modal > div, html.amethyst #pwa-update-modal > div, html.ocean #pwa-update-modal > div, html.sakura #pwa-update-modal > div {
       background-color: #FFFFFF !important;
       border: 2px solid var(--theme-border) !important;
@@ -879,7 +822,6 @@
       color: var(--theme-badge-text) !important;
     }
 
-    /* 3. 訪客登入主彈窗 */
     html.light #auth-modal-login-view h3, html.amethyst #auth-modal-login-view h3, html.ocean #auth-modal-login-view h3, html.sakura #auth-modal-login-view h3 { color: var(--theme-text-title) !important; }
     html.light #auth-modal-login-view p, html.amethyst #auth-modal-login-view p, html.ocean #auth-modal-login-view p, html.sakura #auth-modal-login-view p { color: var(--theme-text-body) !important; }
     html.light #btn-google-login, html.amethyst #btn-google-login, html.ocean #btn-google-login, html.sakura #btn-google-login {
@@ -939,7 +881,6 @@
   <header class="sticky top-0 z-40 glass-header text-white transition-all">
     <div class="max-w-md mx-auto px-3.5 pt-2.5 pb-1.5 flex flex-col gap-2">
       
-      <!-- 第一列：Logo + 訪客計數 + 會員按鈕 -->
       <div class="flex items-center justify-between gap-1.5">
         <div class="flex items-center gap-2 min-w-0 flex-1 cursor-pointer" onclick="window.switchTabReset('map')">
           <div class="w-8 h-8 rounded-xl bg-gradient-to-tr from-amber-400 to-amber-600 flex items-center justify-center text-slate-950 shadow-md shadow-amber-500/30 flex-shrink-0">
@@ -971,7 +912,6 @@
         </div>
       </div>
 
-      <!-- 第二列：搜尋欄 + 雙態語系切換鈕 -->
       <div class="flex items-center gap-1.5">
         <div class="relative flex-1 flex items-center">
           <i class="fa-solid fa-magnifying-glass absolute left-3 text-slate-500 text-xs pointer-events-none"></i>
@@ -987,7 +927,6 @@
         </div>
       </div>
 
-      <!-- 第三列：都會生活圈 vs 渡假海島專區 -->
       <div class="bg-slate-950 p-1 rounded-2xl border border-slate-800 flex gap-1 shadow-inner">
         <button id="typeCityBtn" class="flex-1 py-1.5 text-xs font-bold rounded-xl transition text-center shadow-md flex items-center justify-center gap-1.5 bg-gradient-to-r from-amber-400 to-amber-500 text-slate-950 font-black">
           <i class="fa-solid fa-city"></i> <span data-i18n="tabMetro">都會生活圈</span>
@@ -997,11 +936,9 @@
         </button>
       </div>
 
-      <!-- 第四列：地區膠囊 -->
       <nav id="regionPillsNav" class="overflow-x-auto hide-scrollbar flex gap-1.5 pb-0.5 items-center cursor-grab scroll-hint-mask pr-4"></nav>
     </div>
 
-    <!-- 第五列：四大主分頁 Tab -->
     <div class="max-w-md mx-auto px-3.5 pt-1">
       <div class="grid grid-cols-4 gap-1 bg-slate-950 p-1 rounded-xl text-xs font-bold border border-slate-800/80">
         <button data-maintab="map" id="tab-btn-map" class="main-tab-pill py-1.5 rounded-lg text-center transition flex items-center justify-center gap-1 bg-gradient-to-r from-amber-400 to-amber-500 text-slate-950 shadow-sm font-black">
@@ -1023,7 +960,6 @@
       </div>
     </div>
 
-    <!-- 第六列：子分類標籤過濾列 -->
     <div class="bg-slate-950/90 border-t border-slate-800/80 mt-1">
       <div class="max-w-md mx-auto px-3.5 py-1.5">
         <div id="subFilterContainer" class="flex items-center gap-2 overflow-x-auto hide-scrollbar py-0.5 cursor-grab scroll-hint-mask pr-4"></div>
@@ -1031,7 +967,6 @@
     </div>
   </header>
 
-  <!-- 主內容容器 -->
   <main class="max-w-md mx-auto w-full px-3.5 flex-1 pt-3 pb-24">
     <div class="flex justify-between items-center mb-3 px-0.5 text-xs text-slate-400 font-medium">
       <span id="currentFilterSummary" class="flex items-center gap-1">
@@ -1061,8 +996,7 @@
       <div id="news-list" class="flex flex-col gap-4"></div>
     </div>
   </main>
-
-  <!-- 會員中心彈窗 -->
+<!-- 會員中心彈窗 -->
   <div id="auth-modal" class="fixed inset-0 z-[9999] glass-modal hidden flex items-center justify-center p-3.5">
     <div class="bg-slate-950 border border-amber-400/40 rounded-3xl w-full max-w-sm p-4 shadow-2xl relative text-center flex flex-col max-h-[90vh] overflow-hidden">
       
@@ -3042,99 +2976,102 @@
     const ADMIN_EMAILS = ['vhuang904@gmail.com'];
 
     async function loadStoreComments(storeId) {
-  if (!commentListContainer) return;
-  commentListContainer.innerHTML = '<div class="text-center py-6 text-slate-500 text-xs"><i class="fa-solid fa-spinner fa-spin mr-1.5 text-amber-400"></i>載入老饕點評中...</div>';
+      if (!commentListContainer) return;
+      commentListContainer.innerHTML = '<div class="text-center py-6 text-slate-500 text-xs"><i class="fa-solid fa-spinner fa-spin mr-1.5 text-amber-400"></i>載入老饕點評中...</div>';
 
-  try {
-    const { getStoreComments } = await import('./authService.js');
-    let comments = await getStoreComments(storeId);
+      try {
+        const { getStoreComments } = await import('./authService.js');
+        let comments = await getStoreComments(storeId);
 
-    if (!comments || comments.length === 0) {
-      commentListContainer.innerHTML = `
-        <div class="text-center py-8">
-          <i class="fa-regular fa-comment-dots text-slate-600 text-3xl mb-2 block"></i>
-          <p class="text-slate-400 text-xs font-bold">目前暫無公開評論，成為第一位老饕評論者吧！</p>
-          <p class="text-amber-400/80 text-[10px] mt-1">分享真實體驗現賺 +20 積分</p>
-        </div>
-      `;
-      return;
-    }
-
-    // 1. 舊的在上面、新的在下面（由舊到新排序）
-    comments.sort((a, b) => {
-      const getMs = (item) => {
-        if (!item.createdAt) return 0;
-        if (typeof item.createdAt === 'number') return item.createdAt;
-        if (item.createdAt.toMillis) return item.createdAt.toMillis();
-        return new Date(item.createdAt).getTime() || 0;
-      };
-      return getMs(a) - getMs(b);
-    });
-
-    const isAdmin = currentUser && ADMIN_EMAILS.includes((currentUser.email || '').toLowerCase().trim());
-
-    // 2. 精確時間格式化（月/日 時:分）
-    const formatCommentTime = (rawTime) => {
-      if (!rawTime) return '剛剛';
-      const ms = typeof rawTime === 'number' ? rawTime : (rawTime.toMillis ? rawTime.toMillis() : new Date(rawTime).getTime());
-      if (!ms) return '剛剛';
-
-      const d = new Date(ms);
-      const now = Date.now();
-      const diffMin = Math.floor((now - ms) / 60000);
-
-      if (diffMin < 1) return '剛剛';
-      if (diffMin < 60) return `${diffMin}分鐘前`;
-      
-      const month = String(d.getMonth() + 1).padStart(2, '0');
-      const date = String(d.getDate()).padStart(2, '0');
-      const hours = String(d.getHours()).padStart(2, '0');
-      const minutes = String(d.getMinutes()).padStart(2, '0');
-      return `${month}/${date} ${hours}:${minutes}`;
-    };
-
-    // 3. 渲染評論列表
-    commentListContainer.innerHTML = comments.map(c => {
-      const uName = c.userName || '吃貨好友';
-      const timeStr = formatCommentTime(c.createdAt);
-      const userPhoto = c.userPhoto ? `<img src="${c.userPhoto}" class="w-full h-full object-cover">` : `<i class="fa-regular fa-user text-[9px]"></i>`;
-      
-      if (!window._commentCache) window._commentCache = {};
-      window._commentCache[c.id] = c;
-
-      const deleteBtnHtml = isAdmin ? `
-        <button type="button" title="站長審核與處分" onclick="window.openAdminActionSheet('${c.id}', event)" class="text-rose-400 hover:text-rose-300 p-1 transition active:scale-90 cursor-pointer ml-1.5">
-          <i class="fa-regular fa-trash-can text-xs"></i>
-        </button>
-      ` : '';
-
-      return `
-        <div class="border rounded-xl p-3 space-y-1.5">
-          <div class="flex items-center justify-between text-[11px]">
-            <span class="font-bold flex items-center gap-1.5" style="color: var(--theme-primary);">
-              <span class="w-5 h-5 rounded-full flex items-center justify-center overflow-hidden inline-block text-center leading-5" style="background: var(--theme-primary-light);">${userPhoto}</span>
-              ${uName}
-            </span>
-            <div class="flex items-center gap-1">
-              <span class="text-[9px] text-slate-400 font-mono flex items-center gap-1">
-                <i class="fa-regular fa-clock text-[8px] opacity-70"></i> ${timeStr}
-              </span>
-              ${deleteBtnHtml}
+        if (!comments || comments.length === 0) {
+          commentListContainer.innerHTML = `
+            <div class="text-center py-8">
+              <i class="fa-regular fa-comment-dots text-slate-600 text-3xl mb-2 block"></i>
+              <p class="text-slate-400 text-xs font-bold">目前暫無公開評論，成為第一位老饕評論者吧！</p>
+              <p class="text-amber-400/80 text-[10px] mt-1">分享真實體驗現賺 +20 積分</p>
             </div>
-          </div>
-          <p class="leading-relaxed text-xs break-words pl-6.5">${c.comment || c.content || ''}</p>
-        </div>
-      `;
-    }).join('');
+          `;
+          return;
+        }
 
-    // 4. 重設回頂端（從第一則開始看）
-    commentListContainer.scrollTop = 0;
+        comments.sort((a, b) => {
+          const getMs = (item) => {
+            if (!item.createdAt) return 0;
+            if (typeof item.createdAt === 'number') return item.createdAt;
+            if (item.createdAt.toMillis) return item.createdAt.toMillis();
+            return new Date(item.createdAt).getTime() || 0;
+          };
+          return getMs(a) - getMs(b);
+        });
 
-  } catch (err) {
-    console.warn("[Comment] 載入失敗:", err);
-    commentListContainer.innerHTML = '<p class="text-center text-slate-500 py-6 text-xs">載入評論異常，請稍後再試</p>';
-  }
-}
+        const isAdmin = currentUser && ADMIN_EMAILS.includes((currentUser.email || '').toLowerCase().trim());
+
+        const formatCommentTime = (rawTime) => {
+          if (!rawTime) return '剛剛';
+          const ms = typeof rawTime === 'number' ? rawTime : (rawTime.toMillis ? rawTime.toMillis() : new Date(rawTime).getTime());
+          if (!ms) return '剛剛';
+
+          const d = new Date(ms);
+          const now = Date.now();
+          const diffMin = Math.floor((now - ms) / 60000);
+
+          if (diffMin < 1) return '剛剛';
+          if (diffMin < 60) return `${diffMin}分鐘前`;
+          
+          const month = String(d.getMonth() + 1).padStart(2, '0');
+          const date = String(d.getDate()).padStart(2, '0');
+          const hours = String(d.getHours()).padStart(2, '0');
+          const minutes = String(d.getMinutes()).padStart(2, '0');
+          return `${month}/${date} ${hours}:${minutes}`;
+        };
+
+        commentListContainer.innerHTML = comments.map(c => {
+          const uName = c.userName || '吃貨好友';
+          const timeStr = formatCommentTime(c.createdAt);
+          const userPhoto = c.userPhoto ? `<img src="${c.userPhoto}" class="w-full h-full object-cover">` : `<i class="fa-regular fa-user text-[9px]"></i>`;
+          
+          if (!window._commentCache) window._commentCache = {};
+          window._commentCache[c.id] = c;
+
+          const deleteBtnHtml = isAdmin ? `
+            <button type="button" title="站長審核與處分" onclick="window.openAdminActionSheet('${c.id}', event)" class="text-rose-400 hover:text-rose-300 p-1 transition active:scale-90 cursor-pointer ml-1.5">
+              <i class="fa-regular fa-trash-can text-xs"></i>
+            </button>
+          ` : '';
+
+          const displayContent = (currentLang === 'en' && c.comment_en) 
+            ? c.comment_en 
+            : (c.comment || c.content || '');
+
+          const isTranslated = (currentLang === 'en' && c.comment_en && c.originalLang === 'zh-TW');
+
+          return `
+            <div class="border rounded-xl p-3 space-y-1.5" style="border-color: var(--theme-border); background: var(--theme-card-sub-bg);">
+              <div class="flex items-center justify-between text-[11px]">
+                <span class="font-bold flex items-center gap-1.5" style="color: var(--theme-primary);">
+                  <span class="w-5 h-5 rounded-full flex items-center justify-center overflow-hidden inline-block text-center leading-5" style="background: var(--theme-primary-light);">${userPhoto}</span>
+                  ${uName}
+                </span>
+                <div class="flex items-center gap-1">
+                  <span class="text-[9px] text-slate-400 font-mono flex items-center gap-1">
+                    <i class="fa-regular fa-clock text-[8px] opacity-70"></i> ${timeStr}
+                  </span>
+                  ${deleteBtnHtml}
+                </div>
+              </div>
+              <p class="leading-relaxed text-xs break-words pl-6.5" style="color: var(--theme-text-body);">${displayContent}</p>
+              ${isTranslated ? `<div class="text-[9px] text-slate-500 pl-6.5 italic flex items-center gap-1"><i class="fa-solid fa-language"></i> Translated from Chinese by Gemini</div>` : ''}
+            </div>
+          `;
+        }).join('');
+
+        commentListContainer.scrollTop = 0;
+
+      } catch (err) {
+        console.warn("[Comment] 載入失敗:", err);
+        commentListContainer.innerHTML = '<p class="text-center text-slate-500 py-6 text-xs">載入評論異常，請稍後再試</p>';
+      }
+    }
 
     let currentTargetComment = null;
     let currentTargetUserHistory = { count: 0, points: 50 };
@@ -3721,10 +3658,10 @@
         chatMessagesContainer.innerHTML = `
           <div class="bg-slate-900 border border-amber-400/40 rounded-2xl p-3.5 space-y-2.5 text-slate-300 chat-bubble-agent shadow-md">
             <div class="flex items-center gap-2 font-black text-xs" style="color: var(--theme-primary);">
-              <i class="fa-solid fa-crown"></i> 會員尊榮專屬 AI 管家
+              <i class="fa-solid fa-crown"></i> 會員尊榮專屬大V管家
             </div>
             <p class="leading-relaxed text-[11px]">
-              您好！我是大V的旅遊窩專屬 AI 管家。登入會員即可免費向我諮詢全菲美饌推薦、私房海島行程規劃與在線即時訂位指南！
+              哈囉！歡迎來大V的旅遊窩。登入會員即可免費向大V諮詢全菲美饌推薦、私房海島行程規劃與在線即時訂位指南！
             </p>
             <button onclick="window.openAuthModalDirect()" class="w-full py-2 text-white font-black text-xs rounded-xl shadow-md transition active:scale-95 cursor-pointer" style="background: var(--theme-gradient);">
               立即登入解鎖管家服務 ➔
@@ -3745,15 +3682,15 @@
           chatMessagesContainer.innerHTML = `
             <div class="chat-ready-bubble bg-slate-900 border border-slate-800 rounded-2xl p-3.5 space-y-2 text-slate-200 chat-bubble-agent shadow-md">
               <div class="flex items-center gap-1.5 font-bold text-xs" style="color: var(--theme-primary);">
-                <i class="fa-solid fa-wand-magic-sparkles"></i> 大V管家在線
+                <i class="fa-solid fa-crown"></i> 站長大V在線招呼你
               </div>
               <p class="leading-relaxed text-[11px]">
-                嗨，${name}！我是大V的專屬智能助理。想在 <span class="font-bold" style="color: var(--theme-primary);">${localizedCity}</span> 找頂級和牛、生猛海鮮、絕美海景 Villa 還是浪漫酒吧？隨時問我！
+                嗨，${name}！我是大V。想在 <span class="font-bold" style="color: var(--theme-primary);">${localizedCity}</span> 找頂級和牛、生猛海鮮、絕美海景 Villa 還是好玩的私房景點？隨時問我！
               </p>
               <div class="flex flex-wrap gap-1.5 pt-1">
                 <button onclick="window.quickAskAI('推薦在地最頂級的和牛與燒肉', event)" class="ai-quick-btn bg-slate-800 hover:bg-slate-750 text-[10px] px-2.5 py-1 rounded-full active:scale-95 cursor-pointer">🥩 頂級和牛燒肉</button>
                 <button onclick="window.quickAskAI('有哪幾家必訪的生猛海鮮酒家？', event)" class="ai-quick-btn bg-slate-800 hover:bg-slate-750 text-[10px] px-2.5 py-1 rounded-full active:scale-95 cursor-pointer">🦀 必訪海鮮酒家</button>
-                <button onclick="window.quickAskAI('推薦高空夜景酒吧與約會場所', event)" class="ai-quick-btn bg-slate-800 hover:bg-slate-750 text-[10px] px-2.5 py-1 rounded-full active:scale-95 cursor-pointer">🍸 高空景觀酒吧</button>
+                <button onclick="window.quickAskAI('推薦好玩值得一去的代表景點', event)" class="ai-quick-btn bg-slate-800 hover:bg-slate-750 text-[10px] px-2.5 py-1 rounded-full active:scale-95 cursor-pointer">🏛️ 代表景點導覽</button>
               </div>
             </div>
           `;
@@ -3761,84 +3698,50 @@
       }
     }
 
-    // ==========================================
-    // v45.0 核心引擎：三層仲裁 + 語音長按 + 雙向解耦
-    // ==========================================
-
     // 1. 三層城市仲裁偵測
     function detectQueryTargetCity(text) {
       const t = text.toLowerCase();
-      // 宏觀全菲泛指關鍵詞判定
-      const macroWords = ['菲律賓', '全菲', 'philipine', 'philippines', '自由行怎麼玩', '哪裡好玩', '哪裡好吃'];
-      const isMacro = macroWords.some(w => t.includes(w)) && !['達沃', '馬尼拉', '宿霧', '長灘島', '巴拉望', '薄荷島', '錫亞高', '薩馬爾', 'davao', 'manila', 'cebu', 'boracay', 'palawan', 'bohol', 'siargao', 'samal'].some(c => t.includes(c));
-
-      if (isMacro) {
-        return { mode: 'macro' }; // 觸發管家都會/海島反問引導
-      }
-
       const cityMap = [
         { key: 'davao', matches: ['達沃', '达沃', 'davao'] },
         { key: 'manila', matches: ['馬尼拉', '马尼拉', 'manila', 'bgc', 'makati', 'pasay'] },
         { key: 'cebu', matches: ['宿霧', '宿务', 'cebu', 'mactan'] },
-        { key: 'boracay', matches: ['長灘島', '长滩岛', 'boracay'] },
-        { key: 'palawan', matches: ['巴拉望', 'palawan', '科隆', 'coron', '愛妮島', 'elnido'] },
-        { key: 'bohol', matches: ['薄荷島', '薄荷岛', 'bohol'] },
+        { key: 'boracay', matches: ['長灘島', '长滩岛', '長灘', '长滩', 'boracay'] },
+        { key: 'palawan', matches: ['巴拉望', '科隆', '愛妮島', '爱妮岛', 'palawan', 'coron', 'elnido'] },
+        { key: 'bohol', matches: ['薄荷島', '薄荷岛', '薄荷', 'bohol'] },
         { key: 'siargao', matches: ['錫亞高', '锡亚高', 'siargao'] },
         { key: 'samal', matches: ['薩馬爾', '萨马尔', 'samal'] }
       ];
-
       for (const c of cityMap) {
         if (c.matches.some(m => t.includes(m))) return { mode: 'specific', city: c.key };
       }
-
-      // 未指名宏觀亦無指名特定城市 ➔ 預設當前城市
+      if (t.includes('菲律賓') || t.includes('菲律宾') || t.includes('海島') || t.includes('海岛') || t.includes('哪裡好玩') || t.includes('哪里好玩') || t.includes('渡假') || t.includes('度假') || t.includes('自由行')) {
+        return { mode: 'macro' };
+      }
       return { mode: 'default', city: currentCity };
     }
 
     // 2. 主場景意圖識別（景點 vs 美食）
     function detectMainIntent(text) {
       const t = text.toLowerCase();
-      const attractionKeywords = ['景點', '好玩', '走走', '逛逛', '打卡', '拍照', '觀光', '歷史', '古蹟', '教堂', '賭場', '商場', '夜生活', '酒吧', 'club', '跳島', '沙灘', '浮潛'];
-      const isAttraction = attractionKeywords.some(k => t.includes(k));
-      return isAttraction ? 'attraction' : 'restaurant';
+      const attractionKeywords = ['景點', '景点', '好玩', '走走', '逛逛', '打卡', '拍照', '觀光', '观光', '歷史', '历史', '古蹟', '古迹', '教堂', '賭場', '赌场', '商場', '商场', '夜生活', '酒吧', 'club', '跳島', '跳岛', '沙灘', '沙滩', '浮潛', '浮潜'];
+      return attractionKeywords.some(k => t.includes(k)) ? 'attraction' : 'restaurant';
     }
 
-    // 3. 子分類情境勾取（含 Western 歐陸料理全品項強化）
+    // 3. 子分類情境勾取
     function detectCategoryHookDetailed(text, mainIntent) {
       const t = text.toLowerCase();
-
       if (mainIntent === 'restaurant') {
-        if (['西餐', '牛排', '義大利', '義式', '披薩', '燉飯', 'pasta', 'pizza', 'steak', 'french', 'spanish', 'bistro', '餐酒館', '漢堡', 'burger'].some(k => t.includes(k))) {
-          return { key: 'western', name: '🍷 西洋美饌' };
-        }
-        if (['日料', '日本料理', '壽司', '生魚片', '燒肉', '居酒屋', '拉麵', 'sushi', 'yakiniku', 'ramen'].some(k => t.includes(k))) {
-          return { key: 'japanese', name: 'JP 頂級日料' };
-        }
-        if (['中餐', '中式', '粵菜', '川菜', '港式', '點心', '火鍋', 'dim sum', 'hotpot'].some(k => t.includes(k))) {
-          return { key: 'chinese', name: '🥢 精緻中餐' };
-        }
-        if (['海鮮', '螃蟹', '龍蝦', '大沙公', 'seafood', 'crab', 'lobster'].some(k => t.includes(k))) {
-          return { key: 'seafood', name: '🦀 海鮮盛宴' };
-        }
-        if (['菲式', '菲律賓菜', '烤乳豬', '脆皮豬腳', 'lechon', 'sisig'].some(k => t.includes(k))) {
-          return { key: 'filipino', name: 'PH 菲式御膳' };
-        }
-        if (['早午餐', '咖啡', '下午茶', '甜點', 'brunch', 'cafe', 'coffee'].some(k => t.includes(k))) {
-          return { key: 'brunch', name: '☕ 奢華早午餐' };
-        }
+        if (['西餐', '牛排', '義大利', '義式', '披薩', '燉飯', 'pasta', 'pizza', 'steak', 'french', 'spanish', 'bistro', '餐酒館', '漢堡', 'burger'].some(k => t.includes(k))) return { key: 'western', name: '🍷 西洋美饌' };
+        if (['日料', '日本料理', '壽司', '寿司', '生魚片', '生鱼片', '燒肉', '烧肉', '居酒屋', '拉麵', '拉面', 'sushi', 'yakiniku', 'ramen'].some(k => t.includes(k))) return { key: 'japanese', name: 'JP 頂級日料' };
+        if (['中餐', '中式', '粵菜', '粤菜', '川菜', '港式', '點心', '点心', '火鍋', '火锅', 'dim sum', 'hotpot'].some(k => t.includes(k))) return { key: 'chinese', name: '🥢 精緻中餐' };
+        if (['海鮮', '海鲜', '螃蟹', '龍蝦', '龙虾', '大沙公', 'seafood', 'crab', 'lobster'].some(k => t.includes(k))) return { key: 'seafood', name: '🦀 海鮮盛宴' };
+        if (['菲式', '菲律賓菜', '菲律宾菜', '烤乳豬', '烤乳猪', '脆皮豬腳', 'lechon', 'sisig'].some(k => t.includes(k))) return { key: 'filipino', name: 'PH 菲式御膳' };
+        if (['早午餐', '咖啡', '下午茶', '甜點', '甜品', 'brunch', 'cafe', 'coffee'].some(k => t.includes(k))) return { key: 'brunch', name: '☕ 奢華早午餐' };
       } else {
-        if (['夜店', 'club', '酒吧', '夜生活', 'bar'].some(k => t.includes(k))) {
-          return { key: 'nightlife', name: '微醺夜生活' };
-        }
-        if (['賭場', 'casino', '博弈'].some(k => t.includes(k))) {
-          return { key: 'casino', name: '奢華賭場' };
-        }
-        if (['商場', 'mall', '購物', '買東西'].some(k => t.includes(k))) {
-          return { key: 'shopping', name: '精品商場' };
-        }
-        if (['歷史', '古蹟', '教堂', '王城'].some(k => t.includes(k))) {
-          return { key: 'history', name: '歷史風華' };
-        }
+        if (['夜店', 'club', '酒吧', '夜生活', 'bar'].some(k => t.includes(k))) return { key: 'nightlife', name: '微醺夜生活' };
+        if (['賭場', '赌场', 'casino', '博弈'].some(k => t.includes(k))) return { key: 'casino', name: '奢華賭場' };
+        if (['商場', '商场', 'mall', '購物', '购物', '買東西'].some(k => t.includes(k))) return { key: 'shopping', name: '精品商場' };
+        if (['歷史', '历史', '古蹟', '古迹', '教堂', '王城'].some(k => t.includes(k))) return { key: 'history', name: '歷史風華' };
       }
       return null;
     }
@@ -3849,7 +3752,6 @@
       const msg = (overrideMessage !== null ? overrideMessage : chatInput.value).trim();
       if (!msg) return;
 
-      // 立即清空輸入框與語音暫存，避免文字殘留
       chatInput.value = '';
       voiceTranscript = '';
 
@@ -3862,13 +3764,12 @@
 
       const arbitration = detectQueryTargetCity(msg);
 
-      // 情境二：宏觀泛指 ➔ 觸發管家兩層點選導引
       if (arbitration.mode === 'macro') {
         const guideId = 'guide-' + Date.now();
         chatMessagesContainer.innerHTML += `
           <div id="${guideId}" class="w-full bg-slate-900 p-3 rounded-xl rounded-tl-sm border border-slate-800 text-slate-300 text-xs self-start flex flex-col gap-2.5 shadow-xs chat-bubble-agent">
             <div class="leading-relaxed font-medium" style="color: var(--theme-text-title);">
-              收到！菲律賓從繁華現代都會到夢幻渡假海島都有絕佳體驗。請問您這次想先探索哪一種風情？
+              哈囉朋友！菲律賓從繁華現代都會到絕美渡假海島都非常精彩。你想先探索哪一種風情？
             </div>
             <div id="${guideId}-dimension-btns" class="flex items-center gap-2 pt-1">
               <button type="button" onclick="window.handleAiSelectDimension('${guideId}', 'cities', '${encodeURIComponent(msg)}')" class="flex-1 py-2 px-2.5 rounded-lg text-xs font-bold bg-slate-800 border border-slate-700 hover:border-amber-400 text-slate-200 text-center transition active:scale-95">
@@ -3885,7 +3786,6 @@
         return;
       }
 
-      // 情境一 & 三：鎖定具體城市
       const targetCity = arbitration.city;
       const mainIntent = detectMainIntent(msg);
 
@@ -3893,26 +3793,25 @@
       chatMessagesContainer.innerHTML += `
         <div id="${loadId}" class="w-full bg-slate-900 p-3 rounded-xl rounded-tl-sm border border-slate-800 text-slate-400 text-xs self-start flex flex-col gap-2 shadow-xs chat-bubble-agent">
           <div class="flex items-center gap-1.5">
-            <i class="fa-solid fa-spinner fa-spin" style="color: var(--theme-primary);"></i> 管家正在為您精選名單... ⚡
+            <i class="fa-solid fa-spinner fa-spin" style="color: var(--theme-primary);"></i> 大V正在為你精選口袋私房名單... ⚡
           </div>
         </div>
       `;
       chatMessagesContainer.scrollTop = chatMessagesContainer.scrollHeight;
 
-      // 打包候選名單（大V優先）
       const cityPool = (mainIntent === 'attraction') ? allAttractions : allRestaurants;
       const cityFiltered = cityPool.filter(x => safeStr(x.city) === targetCity);
       const curatedList = cityFiltered.filter(x => getItemTier(x) === 1);
       const highRatedList = cityFiltered.filter(x => getItemTier(x) !== 1 && Number(x.google_rating || x.googleRating || 0) >= 4.5);
 
       const candidateList = [...curatedList, ...highRatedList].slice(0, 15);
-      const restaurantsContext = candidateList.map(item => {
+      const itemsContext = candidateList.map(item => {
         const isBigV = getItemTier(item) === 1;
         const nameEn = item.name_en || item.name || '';
         const nameZh = item.name_zh || '';
         const cat = item.category || (mainIntent === 'attraction' ? '精選景點' : '精選美饌');
         const bigvComment = item.bigv_comment_zh || item.big_v_comment || '';
-        return `• [${isBigV ? '大V嚴選' : '口碑名單'}] 名稱: ${nameEn} (${nameZh}) | 類別: ${cat} ${bigvComment ? `| 特色: ${bigvComment}` : ''}`;
+        return `• [${isBigV ? '大V嚴選' : '口碑清單'}] 名稱: ${nameEn} (${nameZh}) | 類別: ${cat} ${bigvComment ? `| 特色: ${bigvComment}` : ''}`;
       }).join('\n');
 
       try {
@@ -3921,13 +3820,14 @@
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ 
             message: msg, 
-            lang: currentLang === 'en' ? 'en' : 'zh', 
+            lang: 'zh-TW', 
             currentCity: targetCity,
-            restaurantsContext: restaurantsContext
+            intent: mainIntent,
+            restaurantsContext: itemsContext 
           })
         });
         const data = await res.json();
-        let rawReply = data.reply || "已為您快速查詢！推薦造訪在地人氣私房好店與特色名所。";
+        let rawReply = data.reply || "哈囉！歡迎來菲律賓找大V玩，點擊下方卡片直接帶你出發！";
         
         const cleanReplyText = rawReply.replace(/[*#_`~]/g, ' ');
         let formattedReply = rawReply
@@ -3945,25 +3845,18 @@
 
         for (const item of typedPool) {
           if (matched.length >= 2) break;
-
           const sId = String(item.id || item.place_id || '').trim();
           if (!sId || seenIds.has(sId)) continue;
-
           const nEn = (item.name_en || '').trim();
           const nZh = (item.name_zh || item.name || '').trim();
           const cleanEnCore = nEn.replace(/\(.*?\)|（.*?）/g, '').trim().toLowerCase();
           const brandToken = cleanEnCore.split(' ')[0];
 
-          if (brandToken && brandToken.length >= 3 && seenBrandTokens.includes(brandToken)) {
-            continue;
-          }
+          if (brandToken && brandToken.length >= 3 && seenBrandTokens.includes(brandToken)) continue;
 
           let isMatch = false;
-          if (cleanEnCore && cleanEnCore.length >= 3 && cleanReplyText.toLowerCase().includes(cleanEnCore)) {
-            isMatch = true;
-          } else if (nZh && nZh.length >= 2 && cleanReplyText.includes(nZh)) {
-            isMatch = true;
-          }
+          if (cleanEnCore && cleanEnCore.length >= 3 && cleanReplyText.toLowerCase().includes(cleanEnCore)) isMatch = true;
+          else if (nZh && nZh.length >= 2 && cleanReplyText.includes(nZh)) isMatch = true;
 
           if (isMatch) {
             seenIds.add(sId);
@@ -3978,7 +3871,6 @@
           }
         }
 
-        // 核心優化：只依據「使用者發問 (msg)」來決定分類鉤子，絕不依據 AI 回覆猜測！
         const categoryHook = detectCategoryHookDetailed(msg, mainIntent);
 
         let jumpButtonsHtml = '';
@@ -3987,7 +3879,7 @@
             <div class="w-full mt-2 pt-2 border-t border-slate-700/30 flex flex-col gap-1.5">
               ${matched.length > 0 ? `
                 <span class="text-[10px] font-bold flex items-center gap-1" style="color: var(--theme-primary);">
-                  <i class="fa-solid fa-diamond-turn-right text-[9px]"></i> 推薦卡片定位：
+                  <i class="fa-solid fa-diamond-turn-right text-[9px]"></i> 大V推薦卡片定位：
                 </span>
                 ${matched.map(m => `
                   <button type="button" onclick="window.handleAiJumpCard('${m.id}', '${m.type}', '${m.city}', '${categoryHook ? categoryHook.key : 'all'}')" class="ai-jump-btn w-full py-2 px-3 rounded-lg text-[11px] font-black flex items-center justify-between transition active:scale-95 text-left cursor-pointer shadow-sm" style="background: var(--theme-card-sub-bg); border: 1.5px solid var(--theme-border); color: var(--theme-primary);">
@@ -4011,7 +3903,7 @@
         if (loadEl) {
           loadEl.innerHTML = `
             <div class="w-full leading-relaxed font-medium" style="color: var(--theme-text-title);">
-              ${arbitration.mode === 'default' ? `<span class="text-[10px] text-amber-400 font-bold block mb-1">📍 為您優先推薦【${getCityDisplayName(targetCity)}】精選：</span>` : ''}
+              ${arbitration.mode === 'default' ? `<span class="text-[10px] font-bold block mb-1" style="color: var(--theme-primary);">📍 大V為你優先精選【${getCityDisplayName(targetCity)}】：</span>` : ''}
               ${formattedReply}
             </div>
             ${jumpButtonsHtml}
@@ -4019,7 +3911,7 @@
         }
       } catch (err) {
         const loadEl = document.getElementById(loadId);
-        if (loadEl) loadEl.innerText = "已為您快速查詢！推薦造訪在地人氣私房好店與海島名勝。";
+        if (loadEl) loadEl.innerText = "哈囉朋友！菲律賓好店美景隨時在線上，點擊下方卡片大V直接帶你探索！";
       }
       chatMessagesContainer.scrollTop = chatMessagesContainer.scrollHeight;
     }
@@ -4059,7 +3951,7 @@
 
     btnSendChat.addEventListener('click', () => handleChatSend());
 
-    // 安全關閉 AI 視窗（純靠 class 控制，不留 inline style 造成鎖死）
+    // 安全關閉 AI 視窗
     function safeCloseAiWindow() {
       const modal = document.getElementById('chat-modal');
       if (modal) {
@@ -4135,9 +4027,7 @@
 
     chatInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') handleChatSend(); });
 
-    // ==========================================
-    // 長按語音輸入 (Push-to-Talk) 實作
-    // ==========================================
+    // 長按語音輸入 (Push-to-Talk)
     const btnVoice = document.getElementById('btn-voice-input');
     let speechRecognizer = null;
     let voiceTranscript = '';
@@ -4352,9 +4242,9 @@
     window.switchTabReset = function(targetTab) {
       currentMainTab = targetTab;
       sessionStorage.setItem('ph_nav_tab', currentMainTab);
-      currentSubFilter = 'all';
+      currentSubFilter = 'all'; 
       sessionStorage.setItem('ph_nav_sub', 'all');
-      renderSubFilterBar();
+      renderSubFilterBar(); 
       window.scrollTo({ top: 0, behavior: 'instant' });
       renderContent();
     };
@@ -4619,7 +4509,7 @@
       }
 
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js?v=20260914-v45.0.1').then((reg) => {
+        navigator.serviceWorker.register('./sw.js?v=20260914-v45.2').then((reg) => {
           if (reg.waiting) {
             showPwaUpdateModal(reg.waiting);
           }
