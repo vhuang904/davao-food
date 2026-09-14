@@ -2121,9 +2121,10 @@
         const navUrl = item.nav_link || ('https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(name + ' ' + (item.address || '')));
         const sId = String(item.id || item.place_id).trim();
 
+        const itemCity = item.city || currentCity;
         return `
           <div class="bg-slate-900/90 border border-slate-800 hover:border-amber-400/40 rounded-xl p-2 flex items-center justify-between gap-2 transition">
-            <div class="flex items-center gap-2.5 min-w-0 max-w-[65%] cursor-pointer" onclick="window.jumpToCard('${sId}', '${item.type || 'restaurant'}')">
+            <div class="flex items-center gap-2.5 min-w-0 max-w-[65%] cursor-pointer" onclick="window.jumpToCard('${sId}', '${item.type || 'restaurant'}', '${itemCity}')">
               <div class="w-11 h-11 rounded-lg overflow-hidden flex-shrink-0 bg-slate-950">
                 <img src="${img}" class="w-full h-full object-cover" />
               </div>
@@ -2191,9 +2192,19 @@
       preserveScrollPosition(() => renderContent());
     };
 
-    window.jumpToCard = function(storeId, itemType) {
+    window.jumpToCard = function(storeId, itemType, itemCity) {
       document.getElementById('auth-modal').classList.add('hidden');
       
+      // 1. 若該收藏項目屬於不同城市，自動無縫切換城市與生活圈維度
+      if (itemCity && itemCity !== currentCity) {
+        currentCity = itemCity.toLowerCase().trim();
+        currentDimension = isIslandMode(currentCity) ? 'islands' : 'cities';
+        sessionStorage.setItem('ph_dim', currentDimension);
+        localStorage.setItem('ph_app_city', currentCity);
+        renderRegionPills();
+      }
+
+      // 2. 切換至對應的主分頁
       let targetTab = 'map';
       if (itemType === 'attraction') targetTab = 'attraction';
       if (itemType === 'hospital' || itemType === 'clinic' || itemType === 'pharmacy' || itemType === 'medical') targetTab = 'medical';
@@ -2203,17 +2214,22 @@
       currentSubFilter = 'all';
       sessionStorage.setItem('ph_nav_sub', 'all');
 
+      // 3. 重新渲染導覽列與卡片內容
       renderSubFilterBar();
       renderContent();
 
+      // 4. 精確定位卡片並觸發高亮脈衝動畫
       setTimeout(() => {
-        const targetEl = document.getElementById(`card-${storeId}`);
+        const sId = String(storeId).trim();
+        const targetEl = document.getElementById(`card-${sId}`) || 
+                         document.querySelector(`[id*="${sId}"]`);
+
         if (targetEl) {
           targetEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
           targetEl.classList.add('highlight-card-pulse');
           setTimeout(() => targetEl.classList.remove('highlight-card-pulse'), 2500);
         }
-      }, 350);
+      }, 300);
     };
 
     function mergeWithPlaceIdDeduplication(bigVPicks, autoDiscovered, islandDiscovered) {
