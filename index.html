@@ -7,7 +7,7 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
-  <meta name="app-version" content="20260914-v45.5" />
+  <meta name="app-version" content="20260914-v46.0" />
   <meta name="theme-color" content="#020617" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -839,6 +839,51 @@
       background: var(--theme-gradient) !important;
       color: var(--theme-badge-text) !important;
     }
+    /* ========================================================
+   全站彈窗 / 提示框（Popup / Toast）上下左右絕對置中規則
+   ======================================================== */
+.toast,
+.popup,
+.popup-box,
+.modal-content,
+.alert-box,
+div[class*="toast"],
+div[class*="popup"] {
+  position: relative !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  align-items: center !important;
+  text-align: center !important;
+  box-sizing: border-box !important;
+  padding: 24px 32px !important;
+}
+
+.toast > *,
+.popup-box > *,
+.modal-content > *,
+.toast-body,
+.popup-content {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  text-align: center !important;
+  width: 100% !important;
+}
+
+/* 關閉叉叉按鈕脫離排版，不佔據空間、不干擾中心點 */
+.toast .close,
+.toast .close-btn,
+.popup .close,
+.popup-box .close,
+.popup-box .close-btn,
+button[class*="close"] {
+  position: absolute !important;
+  top: 12px !important;
+  right: 12px !important;
+  margin: 0 !important;
+  z-index: 10 !important;
+}
   </style>
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col font-sans">
@@ -4531,7 +4576,7 @@
       }
 
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js?v=20260914-v45.5').then((reg) => {
+        navigator.serviceWorker.register('./sw.js?v=20260914-v46.0').then((reg) => {
           if (reg.waiting) {
             showPwaUpdateModal(reg.waiting);
           }
