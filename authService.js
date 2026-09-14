@@ -214,7 +214,7 @@ export function getCurrentProfile() {
 export async function getStoreComments(storeId) {
   try {
     const q = query(
-      collection(db, "store_comments"),
+      collection(db, "comments"),
       where("storeId", "==", String(storeId).trim())
     );
     const snap = await getDocs(q);
