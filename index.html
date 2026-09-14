@@ -7,7 +7,7 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
-  <meta name="app-version" content="20260913-v43.7.5" />
+  <meta name="app-version" content="20260913-v43.7.6" />
   <meta name="theme-color" content="#020617" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -3783,7 +3783,7 @@
       const msg = chatInput.value.trim();
       if (!msg) return;
 
-      // 使用者提問氣泡：完全動態吃主題色
+      // 使用者提問氣泡（動態主題色）
       chatMessagesContainer.innerHTML += `
         <div class="chat-bubble-user text-white font-bold p-2.5 rounded-xl rounded-tr-sm self-end max-w-[85%] ml-auto text-xs leading-relaxed shadow-sm" style="background: var(--theme-gradient);">
           ${msg}
@@ -3793,9 +3793,12 @@
       chatMessagesContainer.scrollTop = chatMessagesContainer.scrollHeight;
 
       const loadId = 'load-' + Date.now();
+      // 容器改為 w-full flex-col，徹底消除橫向擠壓
       chatMessagesContainer.innerHTML += `
-        <div id="${loadId}" class="bg-slate-900 p-2.5 rounded-xl rounded-tl-sm border border-slate-800 text-slate-400 text-xs self-start max-w-[85%] flex items-center gap-1.5 shadow-xs chat-bubble-agent">
-          <i class="fa-solid fa-spinner fa-spin" style="color: var(--theme-primary);"></i> 管家正在為您查詢... ⚡
+        <div id="${loadId}" class="w-full bg-slate-900 p-3 rounded-xl rounded-tl-sm border border-slate-800 text-slate-400 text-xs self-start flex flex-col gap-2 shadow-xs chat-bubble-agent">
+          <div class="flex items-center gap-1.5">
+            <i class="fa-solid fa-spinner fa-spin" style="color: var(--theme-primary);"></i> 管家正在為您查詢... ⚡
+          </div>
         </div>
       `;
       chatMessagesContainer.scrollTop = chatMessagesContainer.scrollHeight;
@@ -3809,11 +3812,13 @@
         const data = await res.json();
         let rawReply = data.reply || "已為您快速查詢！推薦造訪在地人氣嚴選私房餐廳與海島景點。";
         
-        // 1. 純淨比對字串（清除 Markdown 標點，便於關鍵字精確比對）
+        // 1. 純淨比對字串（去除 Markdown 符號）
         const cleanReplyText = rawReply.replace(/[*#_`~]/g, ' ');
 
-        // 2. 轉換輸出 HTML：將 **粗體** 轉為 HTML <strong>
-        const formattedReply = rawReply.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+        // 2. 格式化輸出：**粗體** 轉 <strong>，換行符號 \n 轉 <br>
+        let formattedReply = rawReply
+          .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+          .replace(/\n/g, '<br>');
 
         // 3. 雙向智慧比對：以英文為主、中文為輔，嚴格限制最多 2 家
         const allItems = [...allRestaurants, ...allAttractions, ...allMedical];
@@ -3821,24 +3826,19 @@
         const seenIds = new Set();
 
         for (const item of allItems) {
-          if (matched.length >= 2) break; // 嚴格限制最多 2 家
+          if (matched.length >= 2) break;
 
           const sId = String(item.id || item.place_id || '').trim();
           if (!sId || seenIds.has(sId)) continue;
 
           const nEn = (item.name_en || '').trim();
           const nZh = (item.name_zh || item.name || '').trim();
-
-          // 清理英文核心關鍵字（去除括號與分店名稱）
           const cleanEnCore = nEn.replace(/\(.*?\)|（.*?）/g, '').trim().toLowerCase();
 
           let isMatch = false;
-          // 第一優先：英文名稱匹配（大於等於 3 字元）
           if (cleanEnCore && cleanEnCore.length >= 3 && cleanReplyText.toLowerCase().includes(cleanEnCore)) {
             isMatch = true;
-          } 
-          // 第二順位：中文名稱匹配（大於等於 2 字元）
-          else if (nZh && nZh.length >= 2 && cleanReplyText.includes(nZh)) {
+          } else if (nZh && nZh.length >= 2 && cleanReplyText.includes(nZh)) {
             isMatch = true;
           }
 
@@ -3852,19 +3852,19 @@
           }
         }
 
-        // 4. 偵測話題子分類，生成專屬導流按鈕
-        const categoryHook = detectCategoryHook(msg + ' ' + cleanReplyText);
+        // 4. 偵測話題子分類
+        const categoryHook = typeof detectCategoryHook === 'function' ? detectCategoryHook(msg + ' ' + cleanReplyText) : null;
 
         let jumpButtonsHtml = '';
         if (matched.length > 0 || categoryHook) {
           jumpButtonsHtml = `
-            <div class="mt-2.5 pt-2 border-t border-slate-700/30 flex flex-col gap-1.5">
+            <div class="w-full mt-2 pt-2 border-t border-slate-700/30 flex flex-col gap-1.5">
               ${matched.length > 0 ? `
                 <span class="text-[10px] font-bold flex items-center gap-1" style="color: var(--theme-primary);">
                   <i class="fa-solid fa-diamond-turn-right text-[9px]"></i> 推薦店家專屬卡片：
                 </span>
                 ${matched.map(m => `
-                  <button type="button" onclick="window.handleAiJumpCard('${m.id}', '${m.type}')" class="ai-jump-btn w-full py-1.5 px-2.5 rounded-lg text-[11px] font-black flex items-center justify-between transition active:scale-95 text-left cursor-pointer shadow-sm" style="background: var(--theme-card-sub-bg); border: 1.5px solid var(--theme-border); color: var(--theme-primary);">
+                  <button type="button" onclick="window.handleAiJumpCard('${m.id}', '${m.type}')" class="ai-jump-btn w-full py-2 px-3 rounded-lg text-[11px] font-black flex items-center justify-between transition active:scale-95 text-left cursor-pointer shadow-sm" style="background: var(--theme-card-sub-bg); border: 1.5px solid var(--theme-border); color: var(--theme-primary);">
                     <span class="truncate">📍 ${m.name}</span>
                     <span class="text-[9px] opacity-80 flex-shrink-0 ml-1">查看卡片 ➔</span>
                   </button>
@@ -3872,7 +3872,7 @@
               ` : ''}
 
               ${categoryHook ? `
-                <button type="button" onclick="window.handleAiCategoryJump('${categoryHook.key}')" class="w-full mt-1 py-1.5 px-2.5 rounded-lg text-white text-[11px] font-black flex items-center justify-between transition active:scale-95 text-left cursor-pointer shadow-sm" style="background: var(--theme-gradient);">
+                <button type="button" onclick="window.handleAiCategoryJump('${categoryHook.key}')" class="w-full mt-0.5 py-2 px-3 rounded-lg text-white text-[11px] font-black flex items-center justify-between transition active:scale-95 text-left cursor-pointer shadow-sm" style="background: var(--theme-gradient);">
                   <span class="truncate">📂 瀏覽全部【${categoryHook.name}】完整名單</span>
                   <span class="text-[9px] opacity-90 flex-shrink-0 ml-1">前往專區 ➔</span>
                 </button>
@@ -3883,7 +3883,12 @@
 
         const loadEl = document.getElementById(loadId);
         if (loadEl) {
-          loadEl.innerHTML = `<div class="leading-relaxed">${formattedReply}</div>${jumpButtonsHtml}`;
+          loadEl.innerHTML = `
+            <div class="w-full leading-relaxed text-slate-200">
+              ${formattedReply}
+            </div>
+            ${jumpButtonsHtml}
+          `;
         }
       } catch (err) {
         const loadEl = document.getElementById(loadId);
@@ -3891,24 +3896,6 @@
       }
       chatMessagesContainer.scrollTop = chatMessagesContainer.scrollHeight;
     }
-
-    // AI 卡片點擊跳轉處理
-    window.handleAiJumpCard = function(storeId, itemType) {
-      closeAiChat();
-      window.jumpToCard(storeId, itemType);
-    };
-
-    // AI 子分類專區點擊跳轉處理
-    window.handleAiCategoryJump = function(subKey) {
-      closeAiChat();
-      currentMainTab = 'map';
-      sessionStorage.setItem('ph_nav_tab', 'map');
-      currentSubFilter = subKey;
-      sessionStorage.setItem('ph_nav_sub', currentSubFilter);
-      renderSubFilterBar();
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-      renderContent();
-    };
 
     btnSendChat.addEventListener('click', handleChatSend);
     chatInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') handleChatSend(); });
@@ -4308,7 +4295,7 @@
       }
 
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js?v=20260913-v43.7.5').then((reg) => {
+        navigator.serviceWorker.register('./sw.js?v=20260913-v43.7.6').then((reg) => {
           if (reg.waiting) {
             showPwaUpdateModal(reg.waiting);
           }
