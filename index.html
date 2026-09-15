@@ -7,7 +7,7 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
-  <meta name="app-version" content="20260914-v46.4" />
+  <meta name="app-version" content="20260914-v46.5" />
   <meta name="theme-color" content="#020617" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -4218,22 +4218,29 @@
     if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
       const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
       speechRecognizer = new SpeechRecognition();
-      speechRecognizer.continuous = true;
-      speechRecognizer.interimResults = true;
-      speechRecognizer.lang = (currentLang === 'en') ? 'en-US' : 'zh-TW';
+    speechRecognizer.continuous = false; // 單句 Push-to-Talk 設為 false，辨識精準度最高
+    speechRecognizer.interimResults = true;
+    speechRecognizer.maxAlternatives = 1;
 
-      speechRecognizer.onresult = (event) => {
-        let interim = '';
-        for (let i = event.resultIndex; i < event.results.length; ++i) {
-          if (event.results[i].isFinal) {
-            voiceTranscript += event.results[i][0].transcript;
-          } else {
-            interim += event.results[i][0].transcript;
-          }
+    speechRecognizer.onresult = (event) => {
+      let finalTranscript = '';
+      let interimTranscript = '';
+
+      for (let i = event.resultIndex; i < event.results.length; ++i) {
+        if (event.results[i].isFinal) {
+          finalTranscript += event.results[i][0].transcript;
+        } else {
+          interimTranscript += event.results[i][0].transcript;
         }
-        chatInput.value = normalizeToTraditional(voiceTranscript + interim);
-      };
+      }
 
+      const combinedText = finalTranscript || interimTranscript;
+      if (combinedText) {
+        chatInput.value = (currentLang === 'en') 
+          ? combinedText 
+          : normalizeToTraditional(combinedText);
+      }
+    };
       speechRecognizer.onerror = (event) => {
         console.warn('語音辨識提示/異常:', event.error);
         stopVoiceRecording(false);
@@ -4250,18 +4257,19 @@
       chatInput.value = '';
       isVoiceActive = true;
       btnVoice.classList.add('bg-red-600', 'text-white', 'border-red-400', 'scale-105');
-      chatInput.placeholder = '🎙️ 聆聽中... (說完放開按鈕即發送)';
+      chatInput.placeholder = (currentLang === 'en') ? '🎙 Listening... (Release to send)' : '🎙 聆聽中... (說完放開按鈕即發送)';
 
       try {
+        speechRecognizer.lang = (currentLang === 'en') ? 'en-US' : 'zh-TW';
         speechRecognizer.start();
-      } catch (err) {}
+        } catch (err) {}
     }
 
     function stopVoiceRecording(shouldSend = true) {
       if (!isVoiceActive) return;
       isVoiceActive = false;
       btnVoice.classList.remove('bg-red-600', 'text-white', 'border-red-400', 'scale-105');
-      chatInput.placeholder = '問點什麼吧（長按麥克風說話）...';
+      chatInput.placeholder = (currentLang === 'en') ? 'Ask anything (Hold mic to talk) ...' : '問點什麼吧 (長按麥克風說話) ...';
 
       try {
         if (speechRecognizer) speechRecognizer.stop();
@@ -4269,7 +4277,8 @@
 
       if (shouldSend) {
         setTimeout(() => {
-          const finalMsg = normalizeToTraditional(chatInput.value.trim());
+          const rawVal = chatInput.value.trim();
+          const finalMsg = (currentLang === 'en') ? rawVal : normalizeToTraditional(rawVal);
           if (finalMsg && finalMsg.length >= 2) {
             handleChatSend(finalMsg);
           } else {
@@ -4691,7 +4700,7 @@
       }
 
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js?v=20260914-v46.4').then((reg) => {
+        navigator.serviceWorker.register('./sw.js?v=20260914-v46.5').then((reg) => {
           if (reg.waiting) {
             showPwaUpdateModal(reg.waiting);
           }
