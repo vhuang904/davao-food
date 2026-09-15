@@ -1369,7 +1369,7 @@
           <img src="ai-avatar.jpg" class="w-full h-full object-cover" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop';" />
         </div>
         <div>
-          <h3 class="text-xs font-bold leading-tight text-white">大V旅遊窩管家</h3>
+          <h3 class="text-xs font-bold leading-tight text-white" data-i18n="aiAssistantTitle">大V旅遊窩管家</h3>
           <span class="text-[9px] text-amber-300">Powered by Gemini</span>
         </div>
       </div>
@@ -1453,6 +1453,7 @@
         spotsCountUnit: '個景點',
         placesCountUnit: '個地點',
         reviewsLabel: '則評價',
+        swipeHint: '👈 左右滑動',
         categoriesMap: {
           '日式料理': '日式料理',
           '精緻中餐': '精緻中餐',
@@ -1543,6 +1544,7 @@
         spotsCountUnit: 'Attractions',
         placesCountUnit: 'Places',
         reviewsLabel: 'Reviews',
+        swipeHint: 'Swipe ↔',
         categoriesMap: {
           '日式料理': 'Japanese Cuisine',
           '精緻中餐': 'Chinese Cuisine',
@@ -3799,46 +3801,67 @@
     function renderChatUI() {
       if (!chatMessagesContainer) return;
       if (!currentUser) {
-        chatMessagesContainer.innerHTML = `
-          <div class="bg-slate-900 border border-amber-400/40 rounded-2xl p-3.5 space-y-2.5 text-slate-300 chat-bubble-agent shadow-md">
-            <div class="flex items-center gap-2 font-black text-xs" style="color: var(--theme-primary);">
-              <i class="fa-solid fa-crown"></i> 會員尊榮專屬大V管家
-            </div>
-            <p class="leading-relaxed text-[11px]">
-              哈囉！歡迎來大V的旅遊窩。登入會員即可免費向大V諮詢全菲美饌推薦、私房海島行程規劃與在線即時訂位指南！
-            </p>
-            <button onclick="window.openAuthModalDirect()" class="w-full py-2 text-white font-black text-xs rounded-xl shadow-md transition active:scale-95 cursor-pointer" style="background: var(--theme-gradient);">
-              立即登入解鎖管家服務 ➔
-            </button>
+      const isEn = currentLang === 'en';
+      const aiGuestTitle = isEn ? 'Exclusive VIP Concierge' : '會員尊榮專屬大V管家';
+      const aiGuestDesc = isEn 
+        ? 'Hello! Welcome to BigV Travel Hub. Sign in to enjoy complimentary concierge assistance for dining recommendations, private island trips, and reservations across the Philippines!' 
+        : '哈囉！歡迎來到大V的旅遊窩。登入會員即可免費向大V諮詢全菲美饌推薦、私房海島行程規劃與在線即時訂位指南！';
+      const aiGuestBtn = isEn ? 'Sign In to Unlock Concierge ➔' : '立即登入解鎖管家服務 ➔';
+
+      chatMessagesContainer.innerHTML = `
+        <div class="bg-slate-900 border border-amber-400/40 rounded-2xl p-3.5 space-y-2.5 text-slate-300 chat-bubble-agent shadow-md">
+          <div class="flex items-center gap-2 font-black text-xs" style="color: var(--theme-primary);">
+            <i class="fa-solid fa-crown"></i> ${aiGuestTitle}
           </div>
-        `;
+          <p class="leading-relaxed text-[11px]">
+            ${aiGuestDesc}
+          </p>
+          <button onclick="window.openAuthModalDirect()" class="w-full py-2 text-white font-black text-xs rounded-xl shadow-md transition active:scale-95 cursor-pointer" style="background: var(--theme-gradient);">
+            ${aiGuestBtn}
+          </button>
+        </div>
+      `;
         chatInput.disabled = true;
         btnSendChat.disabled = true;
       } else {
         chatInput.disabled = false;
         btnSendChat.disabled = false;
-        const name = currentUser.displayName || '吃貨好友';
+        const isEn = currentLang === 'en';
+      const defaultNick = isEn ? 'Foodie Bestie' : '吃貨好友';
+      const name = currentUser.displayName || defaultNick;
 
-        if (!chatMessagesContainer.querySelector('.chat-ready-bubble')) {
-          const currentCityObj = REGION_CONFIG.cities.concat(REGION_CONFIG.islands).find(r => r.id === currentCity);
-          const localizedCity = currentCityObj ? (currentLang === 'en' ? currentCityObj.name_en : currentCityObj.name) : '菲律賓';
+      if (!chatMessagesContainer.querySelector('.chat-ready-bubble')) {
+        const currentCityObj = REGION_CONFIG.cities.concat(REGION_CONFIG.islands).find(r => r.id === currentCity);
+        const localizedCity = currentCityObj ? (isEn ? currentCityObj.name_en : currentCityObj.name) : (isEn ? 'Philippines' : '菲律賓');
+        
+        const aiTitle = isEn ? 'BigV Concierge Online' : '站長大V在線招呼你';
+        const aiGreeting = isEn
+          ? `Hey, ${name}! BigV here. Looking for top Wagyu, fresh seafood, stunning sea-view villas, or hidden gems in <span class="font-bold" style="color: var(--theme-primary);">${localizedCity}</span>? Ask me anything!`
+          : `嗨，${name}！我是大V。想在 <span class="font-bold" style="color: var(--theme-primary);">${localizedCity}</span> 找頂級和牛、生猛海鮮、絕美海景 Villa 還是好玩的私房景點？隨時問我！`;
+          
+        const q1Text = isEn ? '🥩 Wagyu BBQ' : '🥩 和牛燒肉';
+        const q1Prompt = isEn ? 'Recommend the top Wagyu and BBQ spots' : '推薦在地最頂級的和牛與燒肉';
+        const q2Text = isEn ? '🦞 Fresh Seafood' : '🦞 必吃海鮮';
+        const q2Prompt = isEn ? 'Which seafood restaurants are absolute must-visits?' : '有哪些幾家必訪的生猛海鮮酒家？';
+        const q3Text = isEn ? '🏝️ Top Attractions' : '🏝️ 必去景點';
+        const q3Prompt = isEn ? 'Recommend iconic attractions worth visiting' : '推薦好玩值得一去的代表景點';
 
-          chatMessagesContainer.innerHTML = `
-            <div class="chat-ready-bubble bg-slate-900 border border-slate-800 rounded-2xl p-3.5 space-y-2 text-slate-200 chat-bubble-agent shadow-md">
-              <div class="flex items-center gap-1.5 font-bold text-xs" style="color: var(--theme-primary);">
-                <i class="fa-solid fa-crown"></i> 站長大V在線招呼你
-              </div>
-              <p class="leading-relaxed text-[11px]">
-                嗨，${name}！我是大V。想在 <span class="font-bold" style="color: var(--theme-primary);">${localizedCity}</span> 找頂級和牛、生猛海鮮、絕美海景 Villa 還是好玩的私房景點？隨時問我！
-              </p>
-              <div class="flex flex-wrap gap-1.5 pt-1">
-                <button onclick="window.quickAskAI('推薦在地最頂級的和牛與燒肉', event)" class="ai-quick-btn bg-slate-800 hover:bg-slate-750 text-[10px] px-2.5 py-1 rounded-full active:scale-95 cursor-pointer">🥩 頂級和牛燒肉</button>
-                <button onclick="window.quickAskAI('有哪幾家必訪的生猛海鮮酒家？', event)" class="ai-quick-btn bg-slate-800 hover:bg-slate-750 text-[10px] px-2.5 py-1 rounded-full active:scale-95 cursor-pointer">🦀 必訪海鮮酒家</button>
-                <button onclick="window.quickAskAI('推薦好玩值得一去的代表景點', event)" class="ai-quick-btn bg-slate-800 hover:bg-slate-750 text-[10px] px-2.5 py-1 rounded-full active:scale-95 cursor-pointer">🏛️ 代表景點導覽</button>
-              </div>
+        chatMessagesContainer.innerHTML = `
+          <div class="chat-ready-bubble bg-slate-900 border border-slate-800 rounded-2xl p-3.5 space-y-2 text-slate-200 chat-bubble-agent shadow-md">
+            <div class="flex items-center gap-1.5 font-bold text-xs" style="color: var(--theme-primary);">
+              <i class="fa-solid fa-crown"></i> ${aiTitle}
             </div>
-          `;
-        }
+            <p class="leading-relaxed text-[11px]">
+              ${aiGreeting}
+            </p>
+            <div class="flex flex-wrap gap-1.5 pt-1">
+              <button onclick="window.quickAskAI('${q1Prompt}', event)" class="ai-quick-btn bg-slate-800 hover:bg-slate-750 text-[10px] px-2.5 py-1 rounded-full active:scale-95 transition">${q1Text}</button>
+              <button onclick="window.quickAskAI('${q2Prompt}', event)" class="ai-quick-btn bg-slate-800 hover:bg-slate-750 text-[10px] px-2.5 py-1 rounded-full active:scale-95 transition">${q2Text}</button>
+              <button onclick="window.quickAskAI('${q3Prompt}', event)" class="ai-quick-btn bg-slate-800 hover:bg-slate-750 text-[10px] px-2.5 py-1 rounded-full active:scale-95 transition">${q3Text}</button>
+            </div>
+          </div>
+        `;
+      }
       }
     }
 
@@ -4310,7 +4333,7 @@
           </div>
           <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent pointer-events-none"></div>
           ${hasMultiple ? `
-            <span class="carousel-hint-pill">👈 左右滑動</span>
+            <span class="carousel-hint-pill">${(I18N_DICT[currentLang]?.swipeHint) || (currentLang === 'en' ? 'Swipe ↔' : '👈 左右滑動')}</span>
             <div id="dots-${uniqueId}" class="absolute bottom-2.5 right-2.5 flex items-center gap-1 z-10 bg-black/50 backdrop-blur-xs px-2 py-1 rounded-full border border-slate-700">
               ${images.map((_, i) => `<span class="dot-indicator inline-block w-1.5 h-1.5 rounded-full bg-white/40 transition-all ${i === 0 ? 'active' : ''}"></span>`).join('')}
             </div>
