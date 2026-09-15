@@ -24,11 +24,10 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     
   <style>
-    /* 停用大V AI 管家對話框與輸入區，回歸純卡片推薦模式 */
-#ai-assistant-modal,
-#ai-chat-drawer,
-#ai-assistant-btn,
-.chat-input-bar {
+    /* 只隱藏語音麥克風按鈕，保留打字對話管家 */
+#voice-input-btn,
+.voice-record-btn,
+#chat-mic-btn {
   display: none !important;
 }
     .grid > *, .flex > * { min-width: 0; }
@@ -3927,8 +3926,7 @@
 
     // 4. 對話送出核心（站內私房名單優先與必附卡片按鈕）
     async function handleChatSend(overrideMessage = null) {
-      return; // 停用 AI 對話請求
-      if (!currentUser) return;
+     if (!currentUser) return;
       // 1. 先抓取文字（涵蓋傳入值、輸入框、語音暫存），宣告為 let 允許清洗賦值
     let msg = (overrideMessage !== null ? overrideMessage : (chatInput.value || voiceTranscript || '')).trim();
     if (!msg) return;
