@@ -3867,9 +3867,14 @@
 
     // 1. 三層城市仲裁偵測
     function detectQueryTargetCity(text) {
-      const t = text.toLowerCase();
-      const cityMap = [
-        { key: 'davao', matches: ['達沃', '达沃', 'davao'] },
+  let t = (text || '').toLowerCase()
+    .replace(/(打|大|答|搭)[握卧沃我俄]/g, '達沃')
+    .replace(/(馬|媽)[拉泥利][尼拉南]/g, '馬尼拉')
+    .replace(/(宿|速|訴)[屋武誤務]/g, '宿霧')
+    .replace(/長[攤壇][島]?/g, '長灘島');
+
+  const cityMap = [
+    { key: 'davao', matches: ['達沃', '达沃', 'davao'] },
         { key: 'manila', matches: ['馬尼拉', '马尼拉', 'manila', 'bgc', 'makati', 'pasay'] },
         { key: 'cebu', matches: ['宿霧', '宿务', 'cebu', 'mactan'] },
         { key: 'boracay', matches: ['長灘島', '长滩岛', '長灘', '长滩', 'boracay'] },
@@ -3922,14 +3927,20 @@
       chatInput.value = '';
       voiceTranscript = '';
 
+    msg = (msg || '')
+  .replace(/(打|大|答|搭)[握卧沃我俄]/g, '達沃')
+  .replace(/(馬|媽)[拉泥利][尼拉南]/g, '馬尼拉')
+  .replace(/(宿|速|訴)[屋武誤務]/g, '宿霧')
+  .replace(/長[攤壇][島]?/g, '長灘島');
+      
       chatMessagesContainer.innerHTML += `
         <div class="chat-bubble-user text-white font-bold p-2.5 rounded-xl rounded-tr-sm self-end max-w-[85%] ml-auto text-xs leading-relaxed shadow-sm" style="background: var(--theme-gradient);">
           ${msg}
         </div>
       `;
       chatMessagesContainer.scrollTop = chatMessagesContainer.scrollHeight;
-
-      const arbitration = detectQueryTargetCity(msg);
+ 
+const arbitration = detectQueryTargetCity(msg);
 
       if (arbitration.mode === 'macro') {
         const guideId = 'guide-' + Date.now();
