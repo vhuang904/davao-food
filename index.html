@@ -7,7 +7,7 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
-  <meta name="app-version" content="20260914-v46.7" />
+  <meta name="app-version" content="20260914-v46.8" />
   <meta name="theme-color" content="#020617" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -1383,12 +1383,7 @@
     </div>
     <div id="chat-messages" class="flex-1 p-3.5 overflow-y-auto space-y-2.5 text-xs bg-slate-950 hide-scrollbar"></div>
     <div id="chat-input-bar" class="p-2.5 bg-slate-900 border-t border-slate-800 flex items-center gap-2 flex-shrink-0">
-        <input type="text" id="chat-input" data-i18n-placeholder="chatPlaceholder" placeholder="問點什麼吧（長按麥克風說話）..." class="flex-1 bg-white border-2 border-amber-400 rounded-xl px-3 py-2 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-amber-500" />
-        
-        <!-- 長按語音按鈕 (Push-to-Talk) -->
-        <button id="btn-voice-input" type="button" class="w-9 h-9 rounded-full bg-slate-800 border border-slate-600 text-slate-200 flex items-center justify-center text-xs transition active:scale-95 select-none touch-none flex-shrink-0 shadow-sm" title="按住說話，放開送出">
-          <i class="fa-solid fa-microphone"></i>
-        </button>
+        <input type="text" id="chat-input" data-i18n-placeholder="chatPlaceholder" placeholder="問點什麼吧（例：馬尼拉海鮮酒家、頂級和牛）..." class="flex-1 bg-white border-2 border-amber-400 rounded-xl px-3 py-2 text-xs text-slate-900 outline-none focus:ring-2 focus:ring-amber-500">
 
         <!-- 送出按鈕 -->
         <button id="btn-send-chat" type="button" class="w-9 h-9 rounded-full bg-amber-400 hover:bg-amber-300 text-slate-950 flex items-center justify-center text-xs font-black transition active:scale-95 flex-shrink-0 shadow-sm">
@@ -4724,7 +4719,7 @@ const arbitration = detectQueryTargetCity(msg);
       }
 
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js?v=20260914-v46.7').then((reg) => {
+        navigator.serviceWorker.register('./sw.js?v=20260914-v46.8').then((reg) => {
           if (reg.waiting) {
             showPwaUpdateModal(reg.waiting);
           }
