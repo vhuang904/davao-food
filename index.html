@@ -4024,37 +4024,32 @@ const arbitration = detectQueryTargetCity(msg);
       }));
 
       try {
-        const itemsContext = cityFiltered.slice(0, 10).map(item => {
-          const isBigV = getItemTier(item) === 1;
-          const nameEn = item.name_en || item.name || '';
-          const nameZh = item.name_zh || '';
-          const cat = item.category || '精選';
-          const bigvComment = item.bigv_comment_zh || item.big_v_comment || '';
-          return `• [${isBigV ? '大V嚴選' : '口碑清單'}] 名稱: ${nameEn} (${nameZh}) | 類別: ${cat} ${bigvComment ? `| 特色: ${bigvComment}` : ''}`;
-        }).join('\n');
+      // 100% 讀取本地 Database 欄位，秒出正體中文推薦特色
+      const p1 = topPicks[0] || null;
+      const p2 = topPicks[1] || null;
 
-        const res = await fetch(AI_WORKER_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ 
-            message: msg, 
-            lang: (currentLang === 'en') ? 'en' : 'zh-TW', 
-            currentCity: targetCity,
-            intent: mainIntent,
-            restaurantsContext: itemsContext 
-          })
-        });
+      const cityNameText = getCityDisplayName(targetCity);
+      let rawReply = "";
 
-        if (!res.ok) throw new Error("Worker Response Not OK");
-
-        const data = await res.json();
-        let rawReply = data.reply || "";
-        if (!rawReply || rawReply.length < 5) throw new Error("Empty Worker Reply");
-
-        rawReply = rawReply
-      .replace(/\(Since it's[\s\S]*?\)/gi, '')
-      .replace(/`+/g, '')
-      .trim();
+      if (currentLang === 'en') {
+        rawReply = `Hello! Welcome to ${cityNameText}! Here are Big V's top handpicked recommendations for you:\n\n`;
+        if (p1) rawReply += `1. **${p1.name_en || p1.name}**: ${p1.big_v_comment || p1.desc || 'Big V handpicked must-visit spot!'}\n`;
+        if (p2) rawReply += `2. **${p2.name_en || p2.name}**: ${p2.big_v_comment || p2.desc || 'Top local choice with exceptional reviews!'}\n`;
+        rawReply += `\nClick the cards below to explore directions and details!`;
+      } else {
+        rawReply = `哈囉！來到${cityNameText}找好吃的問我就對了！大V親自為你挑選了這幾家口袋名單：\n\n`;
+        if (p1) {
+          const name1 = p1.name_zh || p1.name || p1.name_en;
+          const feat1 = p1.bigv_comment_zh || p1.big_v_comment || p1.desc || '大V親自試過掛保證的私房美味！';
+          rawReply += `1. **${name1}**：${feat1}\n`;
+        }
+        if (p2) {
+          const name2 = p2.name_zh || p2.name || p2.name_en;
+          const feat2 = p2.bigv_comment_zh || p2.big_v_comment || p2.desc || '在地超高評價、絕不踩雷的招牌首選！';
+          rawReply += `2. **${name2}**：${feat2}\n`;
+        }
+        rawReply += `\n點擊下方卡片，大V帶你直接出發！`;
+      }
 
         const cleanReplyText = rawReply.replace(/[*#_`~]/g, ' ');
         let formattedReply = rawReply
