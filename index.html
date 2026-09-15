@@ -7,7 +7,7 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
-  <meta name="app-version" content="20260914-v46.5" />
+  <meta name="app-version" content="20260914-v46.6" />
   <meta name="theme-color" content="#020617" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -4024,7 +4024,7 @@
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ 
             message: msg, 
-            lang: 'zh-TW', 
+            lang: (currentLang === 'en') ? 'en' : 'zh-TW', 
             currentCity: targetCity,
             intent: mainIntent,
             restaurantsContext: itemsContext 
@@ -4036,6 +4036,11 @@
         const data = await res.json();
         let rawReply = data.reply || "";
         if (!rawReply || rawReply.length < 5) throw new Error("Empty Worker Reply");
+
+        rawReply = rawReply
+      .replace(/\(Since it's[\s\S]*?\)/gi, '')
+      .replace(/`+/g, '')
+      .trim();
 
         const cleanReplyText = rawReply.replace(/[*#_`~]/g, ' ');
         let formattedReply = rawReply
@@ -4700,7 +4705,7 @@
       }
 
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js?v=20260914-v46.5').then((reg) => {
+        navigator.serviceWorker.register('./sw.js?v=20260914-v46.6').then((reg) => {
           if (reg.waiting) {
             showPwaUpdateModal(reg.waiting);
           }
