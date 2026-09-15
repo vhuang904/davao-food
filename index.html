@@ -7,7 +7,7 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
-  <meta name="app-version" content="20260914-v46.2" />
+  <meta name="app-version" content="20260914-v46.3" />
   <meta name="theme-color" content="#020617" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -1452,6 +1452,22 @@
         toastSwitch: '已切換語言：',
         spotsCountUnit: '個景點',
         placesCountUnit: '個地點',
+        reviewsLabel: '則評價',
+        categoriesMap: {
+          '日式料理': '日式料理',
+          '精緻中餐': '精緻中餐',
+          '海鮮盛宴': '海鮮盛宴',
+          '異國料理': '異國料理',
+          '燒烤火鍋': '燒烤火鍋',
+          '咖啡甜點': '咖啡甜點',
+          '酒吧夜生活': '酒吧夜生活',
+          '休閒觀光': '休閒觀光',
+          '跳島潛水': '跳島潛水',
+          '文化歷史': '文化歷史',
+          '綜合醫院': '綜合醫院',
+          '牙科專科': '牙科專科',
+          '連鎖藥局': '連鎖藥局'
+        },
         medicalCountUnit: '所機構',
         newsCountUnit: '個特惠',
         city_manila: '馬尼拉',
@@ -1497,8 +1513,8 @@
         chatPlaceholder: '問點什麼吧（例：馬尼拉海鮮酒家、頂級和牛...）'
       },
       'en': {
-        appTitle: 'BigV Manila Lux',
-        appSubtitle: 'Philippine Premium Life & Island Guide',
+        appTitle: "BigV's Getawau Nest",
+        appSubtitle: 'Philippine Premium Travel Guide',
         btnLogin: 'Sign In',
         btnMember: 'Member',
         searchPlaceholder: 'Search Wagyu, Seafood, Nightlife, Villa, Medical...',
@@ -1508,17 +1524,17 @@
         navFood: 'Dining',
         navSpot: 'Attractions',
         navMedical: 'Medical',
-        navNews: 'Exclusive Deals',
+        navNews: 'Hot Promo',
         navNewsIsland: 'Island Deals',
         navFoodIsland: 'Food/Resort',
-        btnGrab: 'Grab Delivery',
+        btnGrab: 'Grab',
         btnWebsite: 'Website',
-        btnCall: 'Call Store',
+        btnCall: 'Call',
         btnNav: 'Directions',
         btnComment: 'Review +20',
         badgeCurated: 'Curated by BigV',
         badgeGoogleRec: 'Google Recommended',
-        mustTryBadge: 'Signature Dish',
+        mustTryBadge: 'Signature',
         addressEmpty: 'Address updating',
         phoneEmpty: 'No phone',
         noResult: 'No items available',
@@ -1526,6 +1542,22 @@
         toastSwitch: 'Language set to: ',
         spotsCountUnit: 'Attractions',
         placesCountUnit: 'Places',
+        reviewsLabel: 'Reviews',
+        categoriesMap: {
+          '日式料理': 'Japanese Cuisine',
+          '精緻中餐': 'Chinese Cuisine',
+          '海鮮盛宴': 'Seafood Feast',
+          '異國料理': 'Western & Global Cuisine',
+          '燒烤火鍋': 'BBQ & Hotpot',
+          '咖啡甜點': 'Cafe & Desserts',
+          '酒吧夜生活': 'Bars & Nightlife',
+          '休閒觀光': 'Sightseeing & Leisure',
+          '跳島潛水': 'Island Hopping & Diving',
+          '文化歷史': 'History & Heritage',
+          '綜合醫院': 'General Hospital',
+          '牙科專科': 'Dental Clinic',
+          '連鎖藥局': 'Pharmacy'
+        },
         medicalCountUnit: 'Facilities',
         newsCountUnit: 'Offers',
         city_manila: 'Manila',
@@ -1538,7 +1570,7 @@
         city_samal: 'Samal',
         labelAlerts: 'Alerts',
         btnTasksAndMeetup: 'Quests & Meetups ➔',
-        myFavorites: 'My Curated List',
+        myFavorites: 'My Spot',
         btnLogout: 'Log Out',
         authTitle: 'Join BigV VIP',
         authSubtitle: 'Unlock your private wishlist, earn points via reviews, and access AI concierge!',
@@ -1548,7 +1580,7 @@
         btnMagicEmail: 'Send Magic Link',
         btnBackCenter: 'Back',
         taskSubTitle: 'Quests & Meetups',
-        taskCommentTitle: '✍️ Post Store Review',
+        taskCommentTitle: '✍️ Post Review',
         taskCommentDesc: 'Ongoing Quest: Click "Review" under any card to share your dining experience & earn points.',
         taskRecTitle: '📮 Recommend a Spot',
         taskRecDesc: 'Recommend your favorite hidden gem. Earn 100 PTS upon approval!',
@@ -2579,11 +2611,11 @@
 
             <div class="p-3.5 space-y-2 bg-slate-950 text-xs card-info-box">
               <div class="flex items-center justify-between">
-                <span class="card-meta-tag font-semibold">${item.city || '菲律賓'} · ${item.category || '精選'}</span>
+                <span class="card-meta-tag font-semibold">${(dict['city_' + item.city?.toLowerCase()] || item.city || (currentLang === 'en' ? 'Philippines' : '菲律賓'))} · ${(dict.categoriesMap?.[item.category] || item.category || (currentLang === 'en' ? 'Featured' : '精選'))}</span>
                 <span class="card-rating-star font-bold flex items-center gap-1">
-                  <i class="fa-solid fa-star text-[10px]"></i> ${rating}
-                  <span class="text-slate-500 text-[10px] font-normal">(${reviewCount}則評價)</span>
-                </span>
+                <i class="fa-solid fa-star text-[10px]"></i> ${rating}
+                <span class="text-slate-500 text-[10px] font-normal">(${reviewCount} ${dict.reviewsLabel || '則評價'})</span>
+            </span>
               </div>
               <p class="text-slate-300 leading-relaxed line-clamp-2"><span class="card-review-prefix font-bold">${reviewPrefix}</span>${reviewText}</p>
             </div>
@@ -2738,12 +2770,12 @@
             <div class="p-3.5 space-y-2 bg-slate-950 text-xs card-info-box">
               <div class="flex items-center justify-between">
                 <span class="card-pill-tag px-2 py-0.5 rounded font-bold text-[10px]">
-                  ${item.category || '觀光地標'}
-                </span>
-                <span class="card-rating-star font-bold flex items-center gap-1">
-                  <i class="fa-solid fa-star text-[10px]"></i> ${rating}
-                  <span class="text-slate-500 text-[10px] font-normal">(${reviewCount}則評價)</span>
-                </span>
+                  ${(dict.categoriesMap?.[item.category] || item.category || (currentLang === 'en' ? 'Landmark' : '觀光地標'))}
+</span>
+<span class="card-rating-star font-bold flex items-center gap-1">
+  <i class="fa-solid fa-star text-[10px]"></i> ${rating}
+  <span class="text-slate-500 text-[10px] font-normal">(${reviewCount} ${dict.reviewsLabel || '則評價'})</span>
+</span>
               </div>
               <p class="text-slate-300 leading-relaxed line-clamp-2">${guideText}</p>
             </div>
@@ -2869,7 +2901,7 @@
                 </span>
                 <span class="card-rating-star font-bold flex items-center gap-1">
                   <i class="fa-solid fa-star text-[10px]"></i> ${rating}
-                  <span class="text-slate-500 text-[10px] font-normal">(${reviewCount}則評價)</span>
+                  <span class="text-slate-500 text-[10px] font-normal">(${reviewCount} ${dict.reviewsLabel || '則評價'})</span>
                 </span>
               </div>
               <p class="text-slate-400 text-[11px] leading-relaxed flex items-start gap-1">
@@ -4636,7 +4668,7 @@
       }
 
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js?v=20260914-v46.2').then((reg) => {
+        navigator.serviceWorker.register('./sw.js?v=20260914-v46.3').then((reg) => {
           if (reg.waiting) {
             showPwaUpdateModal(reg.waiting);
           }
