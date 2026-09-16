@@ -7,7 +7,7 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
-  <meta name="app-version" content="20260916-v50.0" />
+  <meta name="app-version" content="20260916-v50.1" />
   <meta name="theme-color" content="#020617" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -1432,26 +1432,27 @@
   </div>
 
   <!-- 輸入欄與風格適配按鈕列 -->
-  <div class="flex items-center gap-2">
-    <!-- 相機按鈕：自動讀取目前主題的背景與主色調 -->
-    <button type="button" id="btn-trigger-photo" 
-      class="flex-shrink-0 w-9 h-9 rounded-xl flex items-center justify-center transition-all duration-200 active:scale-95 border"
-      style="background: var(--theme-card-sub-bg, #1e293b); border-color: var(--theme-border, #334155); color: var(--theme-primary, #f59e0b);"
-      title="Add Photos (Max 5)">
-      <i class="fa-solid fa-camera text-sm"></i>
-    </button>
+    <div class="flex items-center gap-2">
+      <!-- 相機按鈕：自動讀取目前主題的背景與主色調 -->
+      <button type="button" id="btn-trigger-photo"
+              class="flex-shrink-0 w-9 h-9 rounded-xl flex items-center justify-center transition-all duration-200 active:scale-95 border"
+              style="background: var(--theme-bg, #ffffff); border-color: var(--theme-border, #fbcfe8); color: var(--theme-primary, #f43f5e);"
+              title="Add Photos (Max 5)">
+        <i class="fa-solid fa-camera text-sm"></i>
+      </button>
 
-    <!-- 輸入框：自動適應主題背景與邊框 -->
-    <input id="comment-input" type="text" maxlength="150" placeholder="寫下您的真實體驗與點評..." 
-      class="flex-1 rounded-xl px-3 py-2 text-xs focus:outline-none transition-colors border"
-      style="background: var(--theme-card-sub-bg, #1e293b); border-color: var(--theme-border, #334155); color: var(--theme-text-title, #fff);" />
+      <!-- 輸入框：自動適應主題背景與邊框 -->
+      <input id="comment-input" type="text" maxlength="150" placeholder="寫下您的真實體驗與點評..."
+             class="flex-1 rounded-xl px-3 py-2 text-xs focus:outline-none transition-colors border"
+             style="background: var(--theme-bg, #ffffff); border-color: var(--theme-border, #fbcfe8); color: var(--theme-text-title, #1e293b);" />
 
-    <!-- 發表按鈕：讀取主題主色 -->
-    <button id="btn-submit-comment" type="button" 
-      class="flex-shrink-0 font-black text-xs px-3.5 py-2 rounded-xl shadow-md active:scale-95 transition-all"
-      style="background: var(--theme-primary, #f59e0b); color: var(--theme-btn-text, #000);">
-      發表 (+20分)
-    </button>
+      <!-- 發表按鈕：讀取主題主色 -->
+      <button id="btn-submit-comment" type="button"
+              class="flex-shrink-0 font-black text-xs px-3.5 py-2 rounded-xl shadow-md active:scale-95 transition-all"
+              style="background: var(--theme-primary, #f43f5e); color: #ffffff;">
+        發表 (+20分)
+      </button>
+    </div>
   </div>
 </div>
     </div>
@@ -5444,7 +5445,7 @@ const arbitration = detectQueryTargetCity(msg);
       }
 
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js?v=20260916-v50.0').then((reg) => {
+        navigator.serviceWorker.register('./sw.js?v=20260916-v50.1').then((reg) => {
           if (reg.waiting) {
             showPwaUpdateModal(reg.waiting);
           }
