@@ -1410,18 +1410,18 @@
   <!-- 照片來源選擇彈窗選單 (Action Sheet) -->
   <div id="photo-source-sheet" class="hidden absolute inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-end justify-center p-3">
     <div class="w-full rounded-2xl p-2.5 flex flex-col gap-2 shadow-2xl border" 
-         style="background: var(--theme-card-bg, #020617); border-color: var(--theme-border, #334155);">
-      <button type="button" id="btn-choice-camera" class="w-full py-2.5 px-3 rounded-xl flex items-center justify-center gap-2 font-bold text-xs active:scale-98 transition"
-              style="background: var(--theme-card-sub-bg, #0f172a); color: var(--theme-primary, #f59e0b);">
+         style="background: var(--theme-bg, #ffffff); border-color: var(--theme-border, #fbcfe8);">
+      <button type="button" id="btn-choice-camera" class="w-full py-2.5 px-3 rounded-xl flex items-center justify-center gap-2 font-bold text-xs active:scale-98 transition border"
+              style="background: var(--theme-bg, #ffffff); border-color: var(--theme-border, #fbcfe8); color: var(--theme-primary, #e11d48);">
         <i class="fa-solid fa-camera text-sm"></i>
         <span id="label-choice-camera">📷 立即拍照 (Take Photo)</span>
       </button>
-      <button type="button" id="btn-choice-album" class="w-full py-2.5 px-3 rounded-xl flex items-center justify-center gap-2 font-bold text-xs active:scale-98 transition"
-              style="background: var(--theme-card-sub-bg, #0f172a); color: var(--theme-text-title, #ffffff);">
+      <button type="button" id="btn-choice-album" class="w-full py-2.5 px-3 rounded-xl flex items-center justify-center gap-2 font-bold text-xs active:scale-98 transition border"
+              style="background: var(--theme-bg, #ffffff); border-color: var(--theme-border, #fbcfe8); color: var(--theme-text-title, #1e293b);">
         <i class="fa-regular fa-images text-sm"></i>
         <span id="label-choice-album">🖼️ 從相簿選取 (Choose from Album)</span>
       </button>
-      <button type="button" id="btn-choice-cancel" class="w-full py-2 rounded-xl text-center text-xs font-bold text-slate-400 hover:text-slate-200 mt-0.5">
+      <button type="button" id="btn-choice-cancel" class="w-full py-2 rounded-xl text-center text-xs font-bold text-slate-400 hover:text-slate-600 mt-0.5">
         取消 (Cancel)
       </button>
     </div>
