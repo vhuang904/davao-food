@@ -2304,40 +2304,7 @@
 
       return finalItems;
     }
-
-    function translateCategoryText(rawCat, lang) {
-      if (!rawCat) return lang === 'en' ? 'Featured' : '精選';
-      if (lang !== 'en') return rawCat;
-
-      const c = String(rawCat).trim();
-      const dict = I18N_DICT['en']?.categoriesMap || {};
-
-      // 1. 完全比對
-      if (dict[c]) return dict[c];
-
-      // 2. 去除符號與 Emoji 後比對
-      const pure = c.replace(/[^\u4e00-\u9fa5a-zA-Z0-9]/g, '').trim();
-      if (dict[pure]) return dict[pure];
-
-      // 3. 關鍵字模糊命中（防禦所有變形）
-      if (c.includes('夜生活') || c.includes('酒吧') || c.includes('nightlife') || c.includes('bar')) return 'Nightlife';
-      if (c.includes('跳島') || c.includes('hopping')) return 'Island Hopping';
-      if (c.includes('沙灘') || c.includes('beach')) return 'Beaches';
-      if (c.includes('商場') || c.includes('購物') || c.includes('mall')) return 'Upscale Malls';
-      if (c.includes('日料') || c.includes('日式') || c.includes('japanese')) return 'Japanese Cuisine';
-      if (c.includes('中餐') || c.includes('中式') || c.includes('chinese')) return 'Chinese Cuisine';
-      if (c.includes('海鮮') || c.includes('seafood')) return 'Seafood Feast';
-      if (c.includes('火鍋') || c.includes('燒烤') || c.includes('bbq') || c.includes('hotpot')) return 'BBQ & Hotpot';
-      if (c.includes('西餐') || c.includes('牛排') || c.includes('western') || c.includes('steak')) return 'Western Cuisine';
-      if (c.includes('咖啡') || c.includes('甜點') || c.includes('cafe')) return 'Cafe & Desserts';
-      if (c.includes('景點') || c.includes('觀光') || c.includes('attraction')) return 'Top Sights';
-      if (c.includes('賭場') || c.includes('casino')) return 'Casino / Hotels';
-      if (c.includes('villa') || c.includes('民宿') || c.includes('飯店') || c.includes('hotel')) return 'Hotels & Villas';
-      if (c.includes('生態') || c.includes('秘境') || c.includes('nature')) return 'Eco Tours';
-
-      return c;
-    }
-
+ 
     function translateCategoryText(rawCat, lang) {
       if (!rawCat) return lang === 'en' ? 'Featured' : '精選';
       if (lang !== 'en') return rawCat;
