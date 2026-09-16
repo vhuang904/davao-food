@@ -890,6 +890,68 @@
   margin: 0 !important;
   z-index: 50 !important;
 }
+
+    /* 微信卡片堆疊與橫向展開樣式 */
+    .wechat-deck-container {
+      min-height: 120px;
+    }
+    .wechat-deck-container.is-stacked .wechat-deck-track {
+      position: relative;
+      width: 140px;
+      height: 140px;
+    }
+    .wechat-deck-container.is-stacked .deck-item {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 130px;
+      height: 130px;
+    }
+    /* 卡片撲克牌錯開堆疊層次 */
+    .wechat-deck-container.is-stacked .deck-item[data-index="0"] { z-index: 4; transform: translate(0, 0); }
+    .wechat-deck-container.is-stacked .deck-item[data-index="1"] { z-index: 3; transform: translate(12px, -6px) scale(0.96); opacity: 0.88; }
+    .wechat-deck-container.is-stacked .deck-item[data-index="2"] { z-index: 2; transform: translate(24px, -12px) scale(0.92); opacity: 0.72; }
+    .wechat-deck-container.is-stacked .deck-item[data-index="3"] { z-index: 1; transform: translate(36px, -18px) scale(0.88); opacity: 0.55; }
+
+    /* 微信風格展開膠囊標籤 */
+    .deck-toggle-pill {
+      position: absolute;
+      bottom: 6px;
+      left: 6px;
+      z-index: 10;
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(4px);
+      border: 1px solid rgba(251, 191, 36, 0.4);
+      color: #fef08a;
+      font-size: 11px;
+      font-weight: bold;
+      padding: 3px 8px;
+      border-radius: 9999px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+    }
+
+    /* 展開模式：橫向流暢滑動軌道 */
+    .wechat-deck-container.is-expanded .wechat-deck-track {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      padding-bottom: 28px;
+      -webkit-overflow-scrolling: touch;
+    }
+    .wechat-deck-container.is-expanded .deck-item {
+      width: 140px;
+      height: 140px;
+      scroll-snap-align: start;
+      transform: none !important;
+      opacity: 1 !important;
+    }
+    .wechat-deck-container.is-expanded .deck-toggle-pill {
+      bottom: 2px;
+    }
     
   </style>
 </head>
@@ -1301,12 +1363,29 @@
         <p class="text-center text-slate-500 py-6">載入留言中...</p>
       </div>
 
-      <div class="flex-shrink-0 p-3 border-t border-slate-800 bg-slate-950 flex items-center gap-2 z-30">
-        <input id="comment-input" type="text" maxlength="150" placeholder="寫下您的真實體驗與點評..." class="flex-1 bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-amber-400 placeholder-slate-500">
-        <button id="btn-submit-comment" type="button" class="flex-shrink-0 bg-gradient-to-r from-amber-400 to-amber-500 text-slate-950 font-black text-xs px-3.5 py-2.5 rounded-xl active:scale-95 transition shadow">
-          發表 (+20分)
-        </button>
-      </div>
+      <div class="flex-shrink-0 p-3 border-t border-slate-800 bg-slate-950 flex flex-col gap-2 z-30">
+  <!-- 待上傳縮圖水平預覽列（未選圖時自動隱藏） -->
+  <div id="comment-photo-previews" class="flex gap-2 overflow-x-auto py-1 empty:hidden"></div>
+
+  <!-- 隱藏的原生檔案選取器（最多 4 張圖） -->
+  <input type="file" id="comment-photo-input" accept="image/*" multiple class="hidden" />
+
+  <!-- 輸入欄與按鈕列 -->
+  <div class="flex items-center gap-2">
+    <!-- 相機/相簿選取觸發鈕 -->
+    <button type="button" id="btn-trigger-photo" class="flex-shrink-0 w-9 h-9 rounded-xl bg-slate-900 border border-slate-700 flex items-center justify-center text-amber-400 hover:text-amber-300 hover:border-amber-400/50 transition-colors" title="新增照片 (最多4張)">
+      <i class="fa-solid fa-camera text-sm"></i>
+    </button>
+
+    <!-- 輸入框 -->
+    <input id="comment-input" type="text" maxlength="150" placeholder="寫下您的真實體驗與點評..." class="flex-1 bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-amber-400 transition-colors" />
+
+    <!-- 發表按鈕 -->
+    <button id="btn-submit-comment" type="button" class="flex-shrink-0 bg-gradient-to-r from-amber-400 to-amber-500 text-slate-950 font-black text-xs px-3.5 py-2 rounded-xl shadow-md active:scale-95 transition-all">
+      發表 (+20分)
+    </button>
+  </div>
+</div>
     </div>
   </div>
 
@@ -3121,6 +3200,74 @@
 
     const ADMIN_EMAILS = ['vhuang904@gmail.com'];
 
+    // 渲染微信風格照片堆疊 / 橫向滑動
+    function renderCommentPhotosHtml(photos) {
+      if (!Array.isArray(photos) || photos.length === 0) return '';
+      
+      const count = photos.length;
+      const deckId = 'deck-' + Math.random().toString(36).substring(2, 9);
+
+      // 單張照片直接大圖圓角呈現
+      if (count === 1) {
+        return `
+          <div class="mt-2.5 rounded-xl overflow-hidden max-w-[220px] max-h-[160px] border border-slate-800 bg-slate-900 shadow-sm cursor-pointer" onclick="window.open('${photos[0]}', '_blank')">
+            <img src="${photos[0]}" loading="lazy" class="w-full h-full object-cover" />
+          </div>
+        `;
+      }
+
+      // 多張照片（2~4張）：微信式卡片堆疊
+      const imagesHtml = photos.map((url, i) => `
+        <div class="deck-item transition-all duration-300 shrink-0 cursor-pointer overflow-hidden rounded-xl border border-slate-700/80 bg-slate-900 shadow-md"
+             data-index="${i}"
+             onclick="handlePhotoDeckClick('${deckId}', ${i}, '${url}')">
+          <img src="${url}" loading="lazy" class="w-full h-full object-cover" />
+        </div>
+      `).join('');
+
+      return `
+        <div id="${deckId}" class="wechat-deck-container mt-2.5 relative is-stacked select-none" data-total="${count}">
+          <div class="wechat-deck-track">
+            ${imagesHtml}
+          </div>
+          <button type="button" class="deck-toggle-pill" onclick="toggleDeckExpand('${deckId}', event)">
+            <i class="fa-solid fa-layer-group text-[10px]"></i>
+            <span>展開 ${count}</span>
+          </button>
+        </div>
+      `;
+    }
+
+    // 展開 / 收合微信卡片堆疊
+    window.toggleDeckExpand = function(deckId, e) {
+      if (e) e.stopPropagation();
+      const container = document.getElementById(deckId);
+      if (!container) return;
+      const isStacked = container.classList.contains('is-stacked');
+      if (isStacked) {
+        container.classList.remove('is-stacked');
+        container.classList.add('is-expanded');
+        const pill = container.querySelector('.deck-toggle-pill span');
+        if (pill) pill.innerText = currentLang === 'en' ? 'Collapse' : '收合';
+      } else {
+        container.classList.remove('is-expanded');
+        container.classList.add('is-stacked');
+        const total = container.getAttribute('data-total') || '';
+        const pill = container.querySelector('.deck-toggle-pill span');
+        if (pill) pill.innerText = `${currentLang === 'en' ? 'Expand' : '展開'} ${total}`;
+      }
+    };
+
+    // 點擊照片：堆疊時展開，展開時開大圖
+    window.handlePhotoDeckClick = function(deckId, index, url) {
+      const container = document.getElementById(deckId);
+      if (container && container.classList.contains('is-stacked')) {
+        window.toggleDeckExpand(deckId);
+      } else {
+        window.open(url, '_blank');
+      }
+    };
+    
     async function loadStoreComments(storeId) {
       if (!commentListContainer) return;
       commentListContainer.innerHTML = '<div class="text-center py-6 text-slate-500 text-xs"><i class="fa-solid fa-spinner fa-spin mr-1.5 text-amber-400"></i>載入老饕點評中...</div>';
@@ -3231,6 +3378,7 @@
                 </div>
               </div>
               <p class="leading-relaxed text-xs break-words pl-6.5" style="color: var(--theme-text-body);">${displayContent}</p>
+              ${renderCommentPhotosHtml(c.photos)}
               ${isTranslated ? `<div class="text-[9px] text-slate-500 pl-6.5 italic flex items-center gap-1"><i class="fa-solid fa-language"></i> ${translateNote}</div>` : ''}
             </div>
           `;
@@ -3472,6 +3620,94 @@
       });
       return filtered;
     }
+
+    // 待上傳的壓縮照片暫存陣列 (Blob 格式，最多 4 張)
+    let pendingUploadBlobs = [];
+
+    // 純前端 Canvas 壓縮核心：最長邊限制 1000px，轉為輕量 WebP (約 150KB)
+    function compressImageFile(file, maxWidth = 1000, quality = 0.75) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          const img = new Image();
+          img.onload = () => {
+            let width = img.width;
+            let height = img.height;
+            if (width > height) {
+              if (width > maxWidth) {
+                height = Math.round((height * maxWidth) / width);
+                width = maxWidth;
+              }
+            } else {
+              if (height > maxWidth) {
+                width = Math.round((width * maxWidth) / height);
+                height = maxWidth;
+              }
+            }
+            const canvas = document.createElement('canvas');
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, width, height);
+
+            canvas.toBlob((blob) => {
+              if (blob) resolve(blob);
+              else reject(new Error('Canvas 壓縮轉換失敗'));
+            }, 'image/webp', quality);
+          };
+          img.onerror = (e) => reject(e);
+          img.src = event.target.result;
+        };
+        reader.onerror = (e) => reject(e);
+        reader.readAsDataURL(file);
+      });
+    }
+
+    // 處理選取圖片變更
+    async function handlePhotoSelection(files) {
+      const remainingSlots = 4 - pendingUploadBlobs.length;
+      if (remainingSlots <= 0) {
+        showToast(currentLang === 'en' ? 'Maximum 4 photos allowed' : '最多只能上傳 4 張照片', 'fa-triangle-exclamation');
+        return;
+      }
+
+      const filesToProcess = Array.from(files).slice(0, remainingSlots);
+      for (const file of filesToProcess) {
+        if (!file.type.startsWith('image/')) continue;
+        try {
+          const compressedBlob = await compressImageFile(file);
+          pendingUploadBlobs.push(compressedBlob);
+        } catch (err) {
+          console.warn('[Photo] 壓縮略過:', err);
+        }
+      }
+      renderPhotoPreviews();
+    }
+
+    // 渲染預覽縮圖
+    function renderPhotoPreviews() {
+      const previewContainer = document.getElementById('comment-photo-previews');
+      if (!previewContainer) return;
+
+      previewContainer.innerHTML = '';
+      pendingUploadBlobs.forEach((blob, idx) => {
+        const previewUrl = URL.createObjectURL(blob);
+        const item = document.createElement('div');
+        item.className = 'relative w-14 h-14 shrink-0 rounded-xl overflow-hidden border border-slate-700 bg-slate-900 shadow-sm';
+        item.innerHTML = `
+          <img src="${previewUrl}" class="w-full h-full object-cover" />
+          <button type="button" class="absolute top-1 right-1 bg-black/70 hover:bg-red-600 text-white rounded-full w-4 h-4 flex items-center justify-center text-[10px] transition-colors" data-idx="${idx}">
+            ×
+          </button>
+        `;
+        item.querySelector('button').addEventListener('click', (e) => {
+          e.stopPropagation();
+          pendingUploadBlobs.splice(idx, 1);
+          renderPhotoPreviews();
+        });
+        previewContainer.appendChild(item);
+      });
+    }
     
     async function handlePostComment() {
       const dict = I18N_DICT[currentLang] || I18N_DICT['zh-TW'];
@@ -3479,22 +3715,40 @@
         showToast(currentLang === 'en' ? 'Please sign in first!' : '請先登入會員！', 'fa-lock');
         return;
       }
+
       const text = (commentInputText?.value || '').trim();
-      if (!text) {
-        showToast(currentLang === 'en' ? 'Please write your review!' : '請輸入評論內容！', 'fa-circle-exclamation');
+      // 沒有文字且沒有選取照片時阻擋
+      if (!text && pendingUploadBlobs.length === 0) {
+        showToast(currentLang === 'en' ? 'Please write your review or upload a photo!' : '請輸入評論內容或上傳照片！', 'fa-circle-exclamation');
         return;
       }
-  
+
       const sanitizedText = maskProfanityText(text);
-      
+
       btnSubmitComment.disabled = true;
       btnSubmitComment.innerText = dict.commentPosting || (currentLang === 'en' ? 'Posting...' : '發表中...');
 
       try {
-        const { addStoreComment } = await import('./authService.js');
-        await addStoreComment(activeCommentStoreId, sanitizedText);
+        const { addStoreComment, uploadCommentPhoto } = await import('./authService.js');
+
+        // 1. 如果有選擇照片，依序上傳至 Firebase Storage 取得網址
+        const uploadedPhotoUrls = [];
+        if (pendingUploadBlobs.length > 0) {
+          for (let i = 0; i < pendingUploadBlobs.length; i++) {
+            btnSubmitComment.innerText = `${currentLang === 'en' ? 'Uploading' : '上傳照片中'} (${i + 1}/${pendingUploadBlobs.length})...`;
+            const photoUrl = await uploadCommentPhoto(activeCommentStoreId, pendingUploadBlobs[i]);
+            uploadedPhotoUrls.push(photoUrl);
+          }
+        }
+
+        // 2. 寫入評論資料庫（帶入照片陣列）
+        await addStoreComment(activeCommentStoreId, sanitizedText, uploadedPhotoUrls);
+
+        // 3. 送出成功後清空輸入框與待傳照片
         if (commentInputText) commentInputText.value = '';
-        
+        pendingUploadBlobs = [];
+        renderPhotoPreviews();
+
         const successMsg = dict.commentSuccessToast || (currentLang === 'en' ? '🎉 Review posted! +20 Points earned!' : '🎉 點評發表成功！已為您累計 +20 積分！');
         showToast(successMsg, 'fa-award');
         await loadStoreComments(activeCommentStoreId);
@@ -3508,6 +3762,24 @@
     }
 
     btnSubmitComment.addEventListener('click', handlePostComment);
+
+    // 綁定相機觸發與選取照片監聽
+    const btnTriggerPhoto = document.getElementById('btn-trigger-photo');
+    const commentPhotoInput = document.getElementById('comment-photo-input');
+
+    if (btnTriggerPhoto && commentPhotoInput) {
+      btnTriggerPhoto.addEventListener('click', () => {
+        commentPhotoInput.click();
+      });
+
+      commentPhotoInput.addEventListener('change', async (e) => {
+        if (e.target.files && e.target.files.length > 0) {
+          await handlePhotoSelection(e.target.files);
+          // 重置 input 以便重複選取相同檔名
+          commentPhotoInput.value = '';
+        }
+      });
+    }
 
     const authModal = document.getElementById('auth-modal');
     const authStateBtn = document.getElementById('auth-state-btn');
