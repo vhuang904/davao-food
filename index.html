@@ -3490,11 +3490,25 @@ window.handlePokerCardClick = function(deckId, idx, url) {
           if (!window._commentCache) window._commentCache = {};
           window._commentCache[c.id] = c;
 
-          const deleteBtnHtml = isAdmin ? `
-            <button type="button" title="站長審核與處分" onclick="window.openAdminActionSheet('${c.id}', event)" class="text-rose-400 hover:text-rose-300 p-1 transition active:scale-90 cursor-pointer ml-1.5">
-              <i class="fa-regular fa-trash-can text-xs"></i>
-            </button>
-          ` : '';
+          // 判斷是否為站長或該則留言的原作者本人
+          const isAuthor = currentUser && (c.userId === currentUser.uid || c.uid === currentUser.uid);
+          let deleteBtnHtml = '';
+
+          if (isAdmin) {
+            // 站長點擊：開啟社群處置行動面板
+            deleteBtnHtml = `
+              <button type="button" title="站長審核與處分" onclick="window.openAdminActionSheet('${c.id}', event)" class="text-rose-400 hover:text-rose-300 p-1 transition active:scale-90 cursor-pointer ml-1.5">
+                <i class="fa-regular fa-trash-can text-xs"></i>
+              </button>
+            `;
+          } else if (isAuthor) {
+            // 會員本人點擊：直接觸發自我刪除流程（強制扣回 20 積分）
+            deleteBtnHtml = `
+              <button type="button" title="刪除我的點評" onclick="window.userDeleteOwnComment('${c.id}', event)" class="text-slate-400 hover:text-rose-400 p-1 transition active:scale-90 cursor-pointer ml-1.5">
+                <i class="fa-regular fa-trash-can text-xs"></i>
+              </button>
+            `;
+          }
 
           let displayContent = c.comment || c.content || '';
           let isTranslated = false;
@@ -3553,6 +3567,81 @@ window.handlePokerCardClick = function(deckId, idx, url) {
     let currentTargetUserHistory = { count: 0, points: 50 };
     const TIER_BAN_DAYS = [3, 7, 30, 3650]; 
 
+    // 會員主動刪除自己的留言（連動清除照片，並強制扣回 20 積分）
+    window.userDeleteOwnComment = async function(commentId, event) {
+      if (event) {
+        event.preventDefault();
+        event.stopPropagation();
+      }
+
+      if (!currentUser) return;
+
+      const commentData = (window._commentCache && window._commentCache[commentId]) || {};
+      const photosToDelete = Array.isArray(commentData.photos) ? commentData.photos : [];
+
+      // 強制提醒（不可選擇，確定刪除即扣分）
+      const confirmDelete = confirm(
+        "⚠️ 確定要刪除這則點評嗎？\n\n注意：此操作無法復原，上傳的照片將一併清除，且系統將強制扣回該次發文獲得的 20 積分。"
+      );
+      if (!confirmDelete) return;
+
+      try {
+        showToast('正在刪除點評並更新積分...', 'fa-spinner fa-spin');
+
+        // 1. 若該留言有照片，同步從 Firebase Storage 徹底清空
+        if (photosToDelete.length > 0) {
+          try {
+            const { getStorage, ref, deleteObject } = await import('https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js');
+            const storage = getStorage();
+
+            await Promise.allSettled(
+              photosToDelete.map(async (url) => {
+                try {
+                  if (typeof url !== 'string' || !url.includes('firebasestorage.googleapis.com')) return;
+                  const matches = url.match(/\/o\/(.+?)\?/);
+                  const storagePath = matches ? decodeURIComponent(matches[1]) : null;
+                  const photoRef = storagePath ? ref(storage, storagePath) : ref(storage, url);
+                  await deleteObject(photoRef);
+                } catch (e) {
+                  console.warn('[Storage] 自我刪除照片失敗:', url, e);
+                }
+              })
+            );
+          } catch (storageErr) {
+            console.warn('[Storage] 照片刪除流程略過:', storageErr);
+          }
+        }
+
+        // 2. 刪除資料庫留言紀錄
+        const { deleteStoreComment } = await import('./authService.js');
+        await deleteStoreComment(commentId);
+
+        // 3. 強制扣回 20 積分並更新本地與 Firestore 用戶資料
+        const userRef = doc(db, "users", currentUser.uid);
+        await updateDoc(userRef, {
+          points: increment(-20),
+          updatedAt: new Date().toISOString()
+        }).catch(e => console.warn("[Auth] 扣回積分異常:", e));
+
+        if (currentUserProfile) {
+          currentUserProfile.points = Math.max(0, (currentUserProfile.points || 50) - 20);
+        }
+
+        // 4. 更新畫面 UI 與計分
+        updateHeaderAuthBtn();
+        if (typeof updateUserModalView === 'function') updateUserModalView();
+
+        showToast('🗑️ 點評已刪除，並已扣回 20 積分', 'fa-coins');
+
+        // 5. 重新整理留言列表
+        await loadStoreComments(activeCommentStoreId);
+
+      } catch (err) {
+        console.error("[UserDelete] 刪除失敗:", err);
+        showToast('刪除失敗，請確認網路連線或稍後再試', 'fa-triangle-exclamation');
+      }
+    };
+    
     window.openAdminActionSheet = async function(commentId, event) {
       if (event) {
         event.preventDefault();
