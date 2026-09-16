@@ -7,7 +7,7 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
-  <meta name="app-version" content="20260916-v50.1" />
+  <meta name="app-version" content="20260916-v50.2" />
   <meta name="theme-color" content="#020617" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -1092,7 +1092,7 @@
     </div>
 
     <div class="max-w-md mx-auto px-3.5 pt-1">
-      <div class="grid grid-cols-4 gap-1 bg-slate-950 p-1 rounded-xl text-xs font-bold border border-slate-800/80">
+      <div class="grid grid-cols-4 gap-1 p-1 rounded-xl text-xs font-bold border" style="background: var(--theme-card-bg, #ffffff); border-color: var(--theme-border, #fbcfe8);">
         <button data-maintab="map" id="tab-btn-map" class="main-tab-pill py-1.5 rounded-lg text-center transition flex items-center justify-center gap-1 bg-gradient-to-r from-amber-400 to-amber-500 text-slate-950 shadow-sm font-black">
           <i class="fa-solid fa-utensils text-[10px]"></i>
           <span id="tab-label-map" data-i18n="navFood">美食饗宴</span>
@@ -1239,7 +1239,7 @@
 
         <!-- 中間捷徑列：推播開關 + 任務入口 -->
         <div class="grid grid-cols-2 gap-2 text-xs">
-          <div id="push-slot-container" class="bg-slate-900/80 border border-slate-800 rounded-xl px-2.5 py-2 flex items-center justify-between">
+          <div id="push-slot-container" class="rounded-xl px-2.5 py-2 flex items-center justify-between border" style="background: var(--theme-card-sub-bg, #fdf2f8); border-color: var(--theme-border, #fbcfe8);">
             <span class="text-[10px] font-bold flex items-center gap-1.5 leading-none">
               <i class="fa-regular fa-bell text-[10px]"></i>
               <span id="label-push-toggle" data-i18n="labelAlerts">推播</span>
@@ -1249,7 +1249,7 @@
             </button>
           </div>
 
-          <button id="btn-open-tasks-subview" type="button" class="bg-slate-900/80 hover:bg-slate-800 border border-amber-400/30 text-amber-300 rounded-xl px-2 py-2 flex items-center justify-center gap-1 text-[10px] font-bold transition active:scale-95 shadow-sm leading-none">
+          <button id="btn-open-tasks-subview" type="button" class="rounded-xl px-2 py-2 flex items-center justify-center gap-1.5 border transition" style="background: var(--theme-card-sub-bg, #fdf2f8); border-color: var(--theme-border, #fbcfe8); color: var(--theme-text-title, #1e293b);">
             <i class="fa-solid fa-trophy text-[10px]"></i>
             <span id="label-tasks-btn" data-i18n="btnTasksAndMeetup" class="truncate">特殊任務 & 揪團 ➔</span>
           </button>
@@ -2837,7 +2837,7 @@
               <p class="text-slate-300 leading-relaxed line-clamp-2"><span class="card-review-prefix font-bold">${reviewPrefix}</span>${reviewText}</p>
             </div>
 
-            <div class="p-2.5 bg-slate-900 border-t border-slate-800 space-y-2 text-xs">
+            <div class="p-2.5 border-t space-y-2 text-xs" style="background: var(--theme-card-sub-bg, #fdf2f8); border-color: var(--theme-border, #fbcfe8);">
               <div class="grid grid-cols-2 gap-2">
                 <button type="button" onclick="window.openUniversalCommentModal('${sId}', '${encodeURIComponent(name)}')" class="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl btn-card-comment font-black transition active:scale-95 shadow-sm">
                   <i class="fa-solid fa-pen-to-square text-xs"></i> <span>${dict.btnComment}</span>
@@ -5445,7 +5445,7 @@ const arbitration = detectQueryTargetCity(msg);
       }
 
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js?v=20260916-v50.1').then((reg) => {
+        navigator.serviceWorker.register('./sw.js?v=20260916-v50.2').then((reg) => {
           if (reg.waiting) {
             showPwaUpdateModal(reg.waiting);
           }
