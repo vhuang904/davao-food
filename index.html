@@ -3448,6 +3448,31 @@
       loadStoreComments(activeCommentStoreId);
     };
 
+    // 中、英、菲三語敏感不雅詞庫
+    const PROFANITY_WORDS = [
+      // 英文
+      'fuck', 'fucking', 'fucked', 'shit', 'bitch', 'asshole', 'cunt', 'dick', 'pussy', 'bastard', 'scam', 'scammer',
+      // 菲律賓塔加洛語 (Tagalog)
+      'putangina', 'tangina', 'puta', 'gago', 'tarantado', 'bobo', 'ulol', 'leche', 'puke', 'titi', 'kupal',
+      // 中文 (常見謾罵與不雅詞)
+      '幹你娘', '幹', '靠北', '三小', '操你媽', '草泥馬', '傻逼', '煞筆', '媽的', '王八蛋', '白痴', '智障', '詐騙', '垃圾店家'
+    ];
+
+    // 自動遮蔽函式：保留首尾，中間替換為星號（中文兩字以上遮中間，一字變*）
+    function maskProfanityText(text) {
+      if (!text) return '';
+      let filtered = text;
+      PROFANITY_WORDS.forEach(word => {
+        const regex = new RegExp(word, 'gi');
+        filtered = filtered.replace(regex, (match) => {
+          if (match.length === 1) return '*';
+          if (match.length === 2) return match[0] + '*';
+          return match[0] + '*'.repeat(match.length - 2) + match[match.length - 1];
+        });
+      });
+      return filtered;
+    }
+    
     async function handlePostComment() {
       const dict = I18N_DICT[currentLang] || I18N_DICT['zh-TW'];
       if (!currentUser) {
@@ -3459,13 +3484,15 @@
         showToast(currentLang === 'en' ? 'Please write your review!' : '請輸入評論內容！', 'fa-circle-exclamation');
         return;
       }
-
+  
+      const sanitizedText = maskProfanityText(text);
+      
       btnSubmitComment.disabled = true;
       btnSubmitComment.innerText = dict.commentPosting || (currentLang === 'en' ? 'Posting...' : '發表中...');
 
       try {
         const { addStoreComment } = await import('./authService.js');
-        await addStoreComment(activeCommentStoreId, text);
+        await addStoreComment(activeCommentStoreId, sanitizedText);
         if (commentInputText) commentInputText.value = '';
         
         const successMsg = dict.commentSuccessToast || (currentLang === 'en' ? '🎉 Review posted! +20 Points earned!' : '🎉 點評發表成功！已為您累計 +20 積分！');
