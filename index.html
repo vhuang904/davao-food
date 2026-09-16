@@ -1202,7 +1202,7 @@
               </button>
               <div id="theme-dropdown-menu" class="hidden absolute right-0 mt-1 w-36 bg-white border border-amber-400/60 rounded-xl shadow-2xl py-1 z-50 text-xs">
                 <button data-set-theme="dark" class="w-full text-left px-3 py-1.5 text-slate-900 hover:bg-slate-100 flex items-center gap-2 text-[11px] font-bold">
-                  <span class="w-2.5 h-2.5 rounded-full bg-slate-950 border border-amber-400"></span> 暗夜尊爵
+                  <span class="w-2.5 h-2.5 rounded-full border border-amber-400 flex-shrink-0" style="background-color: #020617 !important; background: #020617 !important;"></span> 暗夜尊爵
                 </button>
                 <button data-set-theme="light" class="w-full text-left px-3 py-1.5 text-[#EA580C] hover:bg-orange-50 flex items-center gap-2 text-[11px] font-bold">
                   <span class="w-2.5 h-2.5 rounded-full bg-orange-500 border border-white"></span> 暖陽金橘
@@ -1450,6 +1450,29 @@
     </button>
   </div>
 </div>
+    </div>
+  </div>
+
+  <!-- 會員刪除點評專屬確認彈窗 (Custom Confirm Modal) -->
+  <div id="user-delete-confirm-modal" class="hidden fixed inset-0 z-[10000] bg-black/70 backdrop-blur-xs flex items-center justify-center p-4">
+    <div class="w-full max-w-sm rounded-3xl p-5 shadow-2xl border flex flex-col items-center text-center animate-fade-in"
+         style="background: var(--theme-card-bg, #ffffff); border-color: var(--theme-border, #fbcfe8);">
+      <div class="w-12 h-12 rounded-2xl flex items-center justify-center mb-3 bg-rose-500/10 text-rose-500 text-2xl">
+        <i class="fa-solid fa-triangle-exclamation"></i>
+      </div>
+      <h4 class="text-base font-black mb-2" style="color: var(--theme-text-title, #0f172a);">確定要刪除這則點評？</h4>
+      <p class="text-xs leading-relaxed text-slate-400 mb-5 px-1">
+        此操作無法復原，上傳的照片將一併從雲端清除，且系統將強制扣回該次發文獲得的 <span class="font-bold text-rose-500">20 積分</span>。
+      </p>
+      <div class="w-full flex gap-3">
+        <button type="button" id="btn-cancel-user-delete" class="flex-1 py-2.5 rounded-xl font-bold text-xs border transition active:scale-95"
+                style="border-color: var(--theme-border, #e2e8f0); color: var(--theme-text-sub, #64748b); background: var(--theme-card-sub-bg, #f8fafc);">
+          取消
+        </button>
+        <button type="button" id="btn-confirm-user-delete" class="flex-1 py-2.5 rounded-xl font-bold text-xs text-white bg-rose-500 hover:bg-rose-600 shadow-md shadow-rose-500/20 transition active:scale-95">
+          確認扣分刪除
+        </button>
+      </div>
     </div>
   </div>
 
@@ -3567,79 +3590,88 @@ window.handlePokerCardClick = function(deckId, idx, url) {
     let currentTargetUserHistory = { count: 0, points: 50 };
     const TIER_BAN_DAYS = [3, 7, 30, 3650]; 
 
-    // 會員主動刪除自己的留言（連動清除照片，並強制扣回 20 積分）
-    window.userDeleteOwnComment = async function(commentId, event) {
+    // 會員主動刪除自己的留言（連動自訂質感彈窗、清除照片，並強制扣回 20 積分）
+    window.userDeleteOwnComment = function(commentId, event) {
       if (event) {
         event.preventDefault();
         event.stopPropagation();
       }
-
       if (!currentUser) return;
 
-      const commentData = (window._commentCache && window._commentCache[commentId]) || {};
-      const photosToDelete = Array.isArray(commentData.photos) ? commentData.photos : [];
+      const modal = document.getElementById('user-delete-confirm-modal');
+      const btnCancel = document.getElementById('btn-cancel-user-delete');
+      const btnConfirm = document.getElementById('btn-confirm-user-delete');
 
-      // 強制提醒（不可選擇，確定刪除即扣分）
-      const confirmDelete = confirm(
-        "⚠️ 確定要刪除這則點評嗎？\n\n注意：此操作無法復原，上傳的照片將一併清除，且系統將強制扣回該次發文獲得的 20 積分。"
-      );
-      if (!confirmDelete) return;
+      if (!modal) return;
+      modal.classList.remove('hidden');
 
-      try {
+      // 取消按鈕
+      btnCancel.onclick = () => {
+        modal.classList.add('hidden');
+      };
+
+      // 確認扣分刪除按鈕
+      btnConfirm.onclick = async () => {
+        modal.classList.add('hidden');
         showToast('正在刪除點評並更新積分...', 'fa-spinner fa-spin');
 
-        // 1. 若該留言有照片，同步從 Firebase Storage 徹底清空
-        if (photosToDelete.length > 0) {
-          try {
-            const { getStorage, ref, deleteObject } = await import('https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js');
-            const storage = getStorage();
+        const commentData = (window._commentCache && window._commentCache[commentId]) || {};
+        const photosToDelete = Array.isArray(commentData.photos) ? commentData.photos : [];
 
-            await Promise.allSettled(
-              photosToDelete.map(async (url) => {
-                try {
-                  if (typeof url !== 'string' || !url.includes('firebasestorage.googleapis.com')) return;
-                  const matches = url.match(/\/o\/(.+?)\?/);
-                  const storagePath = matches ? decodeURIComponent(matches[1]) : null;
-                  const photoRef = storagePath ? ref(storage, storagePath) : ref(storage, url);
-                  await deleteObject(photoRef);
-                } catch (e) {
-                  console.warn('[Storage] 自我刪除照片失敗:', url, e);
-                }
-              })
-            );
-          } catch (storageErr) {
-            console.warn('[Storage] 照片刪除流程略過:', storageErr);
+        try {
+          // 1. 若該留言有照片，同步從 Firebase Storage 清空
+          if (photosToDelete.length > 0) {
+            try {
+              const { getStorage, ref, deleteObject } = await import('https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js');
+              const storage = getStorage();
+
+              await Promise.allSettled(
+                photosToDelete.map(async (url) => {
+                  try {
+                    if (typeof url !== 'string' || !url.includes('firebasestorage.googleapis.com')) return;
+                    const matches = url.match(/\/o\/(.+?)\?/);
+                    const storagePath = matches ? decodeURIComponent(matches[1]) : null;
+                    const photoRef = storagePath ? ref(storage, storagePath) : ref(storage, url);
+                    await deleteObject(photoRef);
+                  } catch (e) {
+                    console.warn('[Storage] 自我刪除照片失敗:', url, e);
+                  }
+                })
+              );
+            } catch (storageErr) {
+              console.warn('[Storage] 照片刪除流程略過:', storageErr);
+            }
           }
+
+          // 2. 刪除資料庫留言紀錄
+          const { deleteStoreComment } = await import('./authService.js');
+          await deleteStoreComment(commentId);
+
+          // 3. 強制扣回 20 積分並更新本地與 Firestore
+          const userRef = doc(db, "users", currentUser.uid);
+          await updateDoc(userRef, {
+            points: increment(-20),
+            updatedAt: new Date().toISOString()
+          }).catch(e => console.warn("[Auth] 扣回積分異常:", e));
+
+          if (currentUserProfile) {
+            currentUserProfile.points = Math.max(0, (currentUserProfile.points || 50) - 20);
+          }
+
+          // 4. 更新畫面 UI 與計分
+          updateHeaderAuthBtn();
+          if (typeof updateUserModalView === 'function') updateUserModalView();
+
+          showToast('🗑️ 點評已刪除，並已扣回 20 積分', 'fa-coins');
+
+          // 5. 重新整理留言列表
+          await loadStoreComments(activeCommentStoreId);
+
+        } catch (err) {
+          console.error("[UserDelete] 刪除失敗:", err);
+          showToast('刪除失敗，請確認網路連線或稍後再試', 'fa-triangle-exclamation');
         }
-
-        // 2. 刪除資料庫留言紀錄
-        const { deleteStoreComment } = await import('./authService.js');
-        await deleteStoreComment(commentId);
-
-        // 3. 強制扣回 20 積分並更新本地與 Firestore 用戶資料
-        const userRef = doc(db, "users", currentUser.uid);
-        await updateDoc(userRef, {
-          points: increment(-20),
-          updatedAt: new Date().toISOString()
-        }).catch(e => console.warn("[Auth] 扣回積分異常:", e));
-
-        if (currentUserProfile) {
-          currentUserProfile.points = Math.max(0, (currentUserProfile.points || 50) - 20);
-        }
-
-        // 4. 更新畫面 UI 與計分
-        updateHeaderAuthBtn();
-        if (typeof updateUserModalView === 'function') updateUserModalView();
-
-        showToast('🗑️ 點評已刪除，並已扣回 20 積分', 'fa-coins');
-
-        // 5. 重新整理留言列表
-        await loadStoreComments(activeCommentStoreId);
-
-      } catch (err) {
-        console.error("[UserDelete] 刪除失敗:", err);
-        showToast('刪除失敗，請確認網路連線或稍後再試', 'fa-triangle-exclamation');
-      }
+      };
     };
     
     window.openAdminActionSheet = async function(commentId, event) {
