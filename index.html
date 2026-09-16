@@ -1534,7 +1534,7 @@
         btnCall: 'Call',
         btnNav: 'Directions',
         btnComment: 'Review +20',
-        badgeCurated: 'Curated by BigV',
+        badgeCurated: 'Top Picks by BigV',
         badgeGoogleRec: 'Google Recommended',
         mustTryBadge: 'Signature',
         addressEmpty: 'Address updating',
@@ -1550,7 +1550,7 @@
           '日式料理': 'Japanese Cuisine',
           '精緻中餐': 'Chinese Cuisine',
           '海鮮盛宴': 'Seafood Feast',
-          '異國料理': 'Western & Global Cuisine',
+          '異國料理': 'Western Cuisine',
           '燒烤火鍋': 'BBQ & Hotpot',
           '咖啡甜點': 'Cafe & Desserts',
           '酒吧夜生活': 'Bars & Nightlife',
@@ -1559,7 +1559,15 @@
           '文化歷史': 'History & Heritage',
           '綜合醫院': 'General Hospital',
           '牙科專科': 'Dental Clinic',
-          '連鎖藥局': 'Pharmacy'
+          '連鎖藥局': 'Pharmacy',
+          '私人跳島': 'Island Hopping',
+          '精品商場': 'Shopping Malls',
+          '絕美沙灘': 'Beaches',
+          '生態秘境': 'Eco Tours',
+          '賭場娛樂': 'Casino / Hotels',
+          '熱門觀光': 'Top Sights',
+          '海景Villa': 'Sea-view Villas',
+          '星級飯店': '5 Star Hotels'
         },
         medicalCountUnit: 'Facilities',
         newsCountUnit: 'Offers',
@@ -1572,17 +1580,17 @@
         city_siargao: 'Siargao',
         city_samal: 'Samal',
         labelAlerts: 'Alerts',
-        btnTasksAndMeetup: 'Quests & Meetups ➔',
+        btnTasksAndMeetup: 'Quests & Events ➔',
         myFavorites: 'My Spot',
         btnLogout: 'Log Out',
         authTitle: 'Join BigV VIP',
-        authSubtitle: 'Unlock your private wishlist, earn points via reviews, and access AI concierge!',
+        authSubtitle: 'Unlock your private wishlist, earn points via reviews, and access Concierge!',
         btnGoogleLogin: 'Sign in with Google',
         orMagic: 'Or use Email Magic Link',
         emailPlaceholder: 'Enter your email address',
         btnMagicEmail: 'Send Magic Link',
         btnBackCenter: 'Back',
-        taskSubTitle: 'Quests & Meetups',
+        taskSubTitle: 'Quests & Events',
         taskCommentTitle: '✍️ Post Review',
         taskCommentDesc: 'Ongoing Quest: Click "Review" under any card to share your dining experience & earn points.',
         taskRecTitle: '📮 Recommend a Spot',
@@ -2614,7 +2622,7 @@
 
             <div class="p-3.5 space-y-2 bg-slate-950 text-xs card-info-box">
               <div class="flex items-center justify-between">
-                <span class="card-meta-tag font-semibold">${(dict['city_' + item.city?.toLowerCase()] || item.city || (currentLang === 'en' ? 'Philippines' : '菲律賓'))} · ${(dict.categoriesMap?.[item.category] || item.category || (currentLang === 'en' ? 'Featured' : '精選'))}</span>
+                <span class="card-meta-tag font-semibold">${(dict['city_' + item.city?.toLowerCase()] || item.city || (currentLang === 'en' ? 'Philippines' : '菲律賓'))} · ${(dict.categoriesMap?.[(item.category || '').trim()] || item.category || (currentLang === 'en' ? 'Featured' : '精選'))}/span>
                 <span class="card-rating-star font-bold flex items-center gap-1">
                 <i class="fa-solid fa-star text-[10px]"></i> ${rating}
                 <span class="text-slate-500 text-[10px] font-normal">(${reviewCount} ${dict.reviewsLabel || '則評價'})</span>
@@ -2773,7 +2781,7 @@
             <div class="p-3.5 space-y-2 bg-slate-950 text-xs card-info-box">
               <div class="flex items-center justify-between">
                 <span class="card-pill-tag px-2 py-0.5 rounded font-bold text-[10px]">
-                  ${(dict.categoriesMap?.[item.category] || item.category || (currentLang === 'en' ? 'Landmark' : '觀光地標'))}
+                  ${(dict.categoriesMap?.[(item.category || '').trim()] || item.category || (currentLang === 'en' ? 'Landmark' : '觀光地標'))}
 </span>
 <span class="card-rating-star font-bold flex items-center gap-1">
   <i class="fa-solid fa-star text-[10px]"></i> ${rating}
