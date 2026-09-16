@@ -1386,20 +1386,20 @@
 
   <!-- 全景點/全餐廳 純淨會員留言互動彈窗 -->
   <div id="comment-modal" class="fixed inset-0 z-[9999] hidden flex flex-col justify-end sm:justify-center items-center p-0 sm:p-4 overflow-hidden bg-black/70 backdrop-blur-xs">
-    <div id="commentModalCard" class="bg-slate-950 border border-amber-400/40 rounded-t-3xl sm:rounded-2xl w-full max-w-md flex flex-col relative text-slate-100 overflow-hidden shadow-2xl transition-all duration-75">
-      <div id="commentModalHeader" class="flex-shrink-0 flex items-center justify-between border-b border-slate-800 px-4 py-3 bg-slate-950 z-30">
+    <div id="commentModalCard" class="rounded-t-3xl sm:rounded-2xl w-full max-w-md flex flex-col relative overflow-hidden shadow-2xl border" style="background: var(--theme-card-bg, #ffffff); border-color: var(--theme-border, #fbcfe8); color: var(--theme-text-title, #1e293b);">
+      <div id="commentModalHeader" class="flex-shrink-0 flex items-center justify-between border-b px-4 py-3 z-30" style="background: var(--theme-card-bg, #ffffff); border-color: var(--theme-border, #fbcfe8);">
         <div class="min-w-0 flex-1 pr-2">
-          <h3 id="comment-modal-title" class="font-bold text-sm text-white truncate">店家真實點評討論</h3>
+          <h3 id="comment-modal-title" class="font-bold text-sm truncate" style="color: var(--theme-text-title, #1e293b);">店家真實點評討論</h3>
           <p data-i18n="commentSub" class="text-[10px] text-amber-400/80 mt-0.5">分享您的真實探店評語與心得</p>
         </div>
-        <button id="close-comment-btn" type="button" class="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-sm cursor-pointer transition">✕</button>
+        <button id="close-comment-btn" type="button" class="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-sm cursor-pointer transition" style="color: var(--theme-text-sub, #64748b);">✕</button>
       </div>
 
       <div id="comment-list-container" class="flex-1 overflow-y-auto hide-scrollbar p-3 space-y-2.5 text-xs overscroll-contain">
         <p class="text-center text-slate-500 py-6">載入留言中...</p>
       </div>
 
-      <div class="flex-shrink-0 p-3 border-t flex flex-col gap-2 z-30" style="border-color: var(--theme-border, #334155); background: var(--theme-bg, #090d16);">
+      <div class="flex-shrink-0 p-3 border-t flex flex-col gap-2 z-30" style="border-color: var(--theme-border, #fbcfe8); background: var(--theme-card-bg, #ffffff);">
   <!-- 待上傳縮圖預覽列（最多 5 張，未選時自動隱藏） -->
   <div id="comment-photo-previews" class="flex gap-2 overflow-x-auto py-1 empty:hidden"></div>
 
