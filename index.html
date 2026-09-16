@@ -5414,43 +5414,59 @@ const arbitration = detectQueryTargetCity(msg);
       });
 
       function showPwaUpdateModal(worker) {
-        const modal = document.getElementById('pwa-update-modal');
-        const btnApply = document.getElementById('btn-apply-pwa-update');
-        const btnClose = document.getElementById('btn-close-pwa-modal');
-        if (!modal || !btnApply) return;
+  // 1. 防重複彈窗保險：如果本地已確認套用過此版本，直接阻斷不顯示
+  if (typeof APP_VERSION !== 'undefined' && localStorage.getItem('applied_pwa_version') === APP_VERSION) {
+    return;
+  }
 
-        modal.classList.remove('hidden');
-        requestAnimationFrame(() => {
-          modal.classList.remove('scale-90', 'opacity-0');
-          modal.classList.add('scale-100', 'opacity-100');
-        });
+  const modal = document.getElementById('pwa-update-modal');
+  const btnApply = document.getElementById('btn-apply-pwa-update');
+  const btnClose = document.getElementById('btn-close-pwa-modal');
+  if (!modal || !btnApply) return;
 
-        btnApply.onclick = (e) => {
-          e.stopPropagation();
-          if (isUpdating) return;
-          isUpdating = true;
-          btnApply.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> 正在更新套用中...';
-          btnApply.style.pointerEvents = 'none';
+  modal.classList.remove('hidden');
+  requestAnimationFrame(() => {
+    modal.classList.remove('scale-90', 'opacity-0');
+    modal.classList.add('scale-100', 'opacity-100');
+  });
 
-          modal.classList.add('hidden');
+  btnApply.onclick = (e) => {
+    e.stopPropagation();
+    if (isUpdating) return;
+    isUpdating = true;
 
-          navigator.serviceWorker.addEventListener('controllerchange', () => {
-            window.location.reload();
-          }, { once: true });
+    // 2. 關鍵：點擊當下立刻同步寫入最新版號，封死二次彈窗可能
+    if (typeof APP_VERSION !== 'undefined') {
+      localStorage.setItem('applied_pwa_version', APP_VERSION);
+    }
 
-          try {
-            if (worker && worker.postMessage) {
-              worker.postMessage({ type: 'SKIP_WAITING' });
-            }
-          } catch (err) {
-            window.location.reload();
-          }
+    btnApply.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> 正在更新套用中...';
+    btnApply.style.pointerEvents = 'none';
+    modal.classList.add('hidden');
 
-          setTimeout(() => {
-            window.location.reload();
-          }, 1500);
-        };
+    // 3. 防抖重整旗標：確保不管觸發幾次，整頁只刷新單純的一次
+    let hasReloaded = false;
+    const triggerCleanReload = () => {
+      if (hasReloaded) return;
+      hasReloaded = true;
+      window.location.reload();
+    };
 
+    navigator.serviceWorker.addEventListener('controllerchange', triggerCleanReload, { once: true });
+
+    try {
+      if (worker && worker.postMessage) {
+        worker.postMessage({ type: 'SKIP_WAITING' });
+      } else {
+        triggerCleanReload();
+      }
+    } catch (err) {
+      triggerCleanReload();
+    }
+
+    // 備援刷新機制：若 controllerchange 未能及時響應，800ms 後平穩重整
+    setTimeout(triggerCleanReload, 800);
+  };
         if (btnClose) {
           btnClose.onclick = (e) => {
             e.stopPropagation();
