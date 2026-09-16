@@ -1460,8 +1460,10 @@
       <div class="w-12 h-12 rounded-2xl flex items-center justify-center mb-3 bg-rose-500/10 text-rose-500 text-2xl">
         <i class="fa-solid fa-triangle-exclamation"></i>
       </div>
-      <h4 class="text-base font-black mb-2" style="color: var(--theme-text-title, #0f172a);">確定要刪除這則點評？</h4>
-      <p class="text-xs leading-relaxed text-slate-400 mb-5 px-1">
+      <h4 id="user-delete-modal-title" class="text-base font-black mb-2" style="color: var(--theme-text-title, #0f172a);">
+        確定要刪除這則點評？
+      </h4>
+      <p id="user-delete-modal-desc" class="text-xs leading-relaxed text-slate-400 mb-5 px-1">
         此操作無法復原，上傳的照片將一併從雲端清除，且系統將強制扣回該次發文獲得的 <span class="font-bold text-rose-500">20 積分</span>。
       </p>
       <div class="w-full flex gap-3">
@@ -3590,7 +3592,7 @@ window.handlePokerCardClick = function(deckId, idx, url) {
     let currentTargetUserHistory = { count: 0, points: 50 };
     const TIER_BAN_DAYS = [3, 7, 30, 3650]; 
 
-    // 會員主動刪除自己的留言（連動自訂質感彈窗、清除照片，並強制扣回 20 積分）
+    // 會員主動刪除自己的留言（支援雙語切換、清除照片，並強制扣回 20 積分）
     window.userDeleteOwnComment = function(commentId, event) {
       if (event) {
         event.preventDefault();
@@ -3601,25 +3603,49 @@ window.handlePokerCardClick = function(deckId, idx, url) {
       const modal = document.getElementById('user-delete-confirm-modal');
       const btnCancel = document.getElementById('btn-cancel-user-delete');
       const btnConfirm = document.getElementById('btn-confirm-user-delete');
+      const titleEl = document.getElementById('user-delete-modal-title');
+      const descEl = document.getElementById('user-delete-modal-desc');
 
       if (!modal) return;
+
+      // 依當前語系 (currentLang) 即時動態切換文案
+      const isEn = (typeof currentLang !== 'undefined' && currentLang === 'en');
+
+      if (titleEl) {
+        titleEl.innerText = isEn ? "Delete this review?" : "確定要刪除這則點評？";
+      }
+      if (descEl) {
+        descEl.innerHTML = isEn
+          ? 'This action cannot be undone. Uploaded photos will be removed from cloud storage, and <span class="font-bold text-rose-500">20 points</span> will be deducted.'
+          : '此操作無法復原，上傳的照片將一併從雲端清除，且系統將強制扣回該次發文獲得的 <span class="font-bold text-rose-500">20 積分</span>。';
+      }
+      if (btnCancel) {
+        btnCancel.innerText = isEn ? "Cancel" : "取消";
+      }
+      if (btnConfirm) {
+        btnConfirm.innerText = isEn ? "Confirm & Deduct" : "確認扣分刪除";
+      }
+
       modal.classList.remove('hidden');
 
-      // 取消按鈕
+      // 綁定取消按鈕
       btnCancel.onclick = () => {
         modal.classList.add('hidden');
       };
 
-      // 確認扣分刪除按鈕
+      // 綁定確認刪除按鈕
       btnConfirm.onclick = async () => {
         modal.classList.add('hidden');
-        showToast('正在刪除點評並更新積分...', 'fa-spinner fa-spin');
+        showToast(
+          isEn ? 'Deleting review and updating points...' : '正在刪除點評並更新積分...',
+          'fa-spinner fa-spin'
+        );
 
         const commentData = (window._commentCache && window._commentCache[commentId]) || {};
         const photosToDelete = Array.isArray(commentData.photos) ? commentData.photos : [];
 
         try {
-          // 1. 若該留言有照片，同步從 Firebase Storage 清空
+          // 1. 若該留言有照片，同步從 Firebase Storage 清除
           if (photosToDelete.length > 0) {
             try {
               const { getStorage, ref, deleteObject } = await import('https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js');
@@ -3647,7 +3673,7 @@ window.handlePokerCardClick = function(deckId, idx, url) {
           const { deleteStoreComment } = await import('./authService.js');
           await deleteStoreComment(commentId);
 
-          // 3. 強制扣回 20 積分並更新本地與 Firestore
+          // 3. 強制扣回 20 積分並更新 Firestore
           const userRef = doc(db, "users", currentUser.uid);
           await updateDoc(userRef, {
             points: increment(-20),
@@ -3662,14 +3688,20 @@ window.handlePokerCardClick = function(deckId, idx, url) {
           updateHeaderAuthBtn();
           if (typeof updateUserModalView === 'function') updateUserModalView();
 
-          showToast('🗑️ 點評已刪除，並已扣回 20 積分', 'fa-coins');
+          showToast(
+            isEn ? '🗑️ Review deleted and 20 points deducted' : '🗑️ 點評已刪除，並已扣回 20 積分',
+            'fa-coins'
+          );
 
           // 5. 重新整理留言列表
           await loadStoreComments(activeCommentStoreId);
 
         } catch (err) {
           console.error("[UserDelete] 刪除失敗:", err);
-          showToast('刪除失敗，請確認網路連線或稍後再試', 'fa-triangle-exclamation');
+          showToast(
+            isEn ? 'Deletion failed, please check connection.' : '刪除失敗，請確認網路連線或稍後再試',
+            'fa-triangle-exclamation'
+          );
         }
       };
     };
