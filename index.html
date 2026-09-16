@@ -2622,8 +2622,7 @@
 
             <div class="p-3.5 space-y-2 bg-slate-950 text-xs card-info-box">
               <div class="flex items-center justify-between">
-                <span class="card-meta-tag font-semibold">${(dict['city_' + item.city?.toLowerCase()] || item.city || (currentLang === 'en' ? 'Philippines' : '菲律賓'))} · ${(dict.categoriesMap?.[(item.category || '').trim()] || item.category || (currentLang === 'en' ? 'Featured' : '精選'))}/span>
-                <span class="card-rating-star font-bold flex items-center gap-1">
+<span class="card-meta-tag font-semibold">${(dict['city_' + item.city?.toLowerCase()] || item.city || (currentLang === 'en' ? 'Philippines' : '菲律賓'))} · ${(dict.categoriesMap?.[(item.category || '').trim()] || item.category || (currentLang === 'en' ? 'Featured' : '精選'))}</span>                <span class="card-rating-star font-bold flex items-center gap-1">
                 <i class="fa-solid fa-star text-[10px]"></i> ${rating}
                 <span class="text-slate-500 text-[10px] font-normal">(${reviewCount} ${dict.reviewsLabel || '則評價'})</span>
             </span>
@@ -2782,7 +2781,7 @@
               <div class="flex items-center justify-between">
                 <span class="card-pill-tag px-2 py-0.5 rounded font-bold text-[10px]">
                   ${(dict.categoriesMap?.[(item.category || '').trim()] || item.category || (currentLang === 'en' ? 'Landmark' : '觀光地標'))}
-</span>
+                </span>
 <span class="card-rating-star font-bold flex items-center gap-1">
   <i class="fa-solid fa-star text-[10px]"></i> ${rating}
   <span class="text-slate-500 text-[10px] font-normal">(${reviewCount} ${dict.reviewsLabel || '則評價'})</span>
