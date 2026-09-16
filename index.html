@@ -993,6 +993,23 @@
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col font-sans">
 
+  <!-- 內嵌瀏覽器安全跳轉提示橫幅 (In-App Browser Warning Banner) -->
+  <div id="inapp-browser-banner" class="hidden fixed top-0 inset-x-0 z-[10001] p-3 shadow-xl flex items-center justify-between text-xs transition-all duration-300 border-b"
+       style="background: #0f172a; color: #f8fafc; border-color: #334155;">
+    <div class="flex items-center gap-2.5 flex-1 pr-2">
+      <span class="w-7 h-7 rounded-lg bg-amber-400/20 text-amber-400 flex items-center justify-center flex-shrink-0 text-sm">
+        <i class="fa-solid fa-arrow-up-right-from-square"></i>
+      </span>
+      <div class="leading-snug">
+        <p id="inapp-banner-title" class="font-bold text-amber-300">建議使用系統瀏覽器開啟</p>
+        <p id="inapp-banner-desc" class="text-[11px] text-slate-300 mt-0.5">點擊右上角「...」或分享圖示，選擇在預設瀏覽器中開啟以順暢登入與使用完整功能。</p>
+      </div>
+    </div>
+    <button type="button" onclick="document.getElementById('inapp-browser-banner').classList.add('hidden')" class="w-6 h-6 rounded-full flex items-center justify-center text-slate-400 hover:text-white flex-shrink-0">
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+  </div>
+  
   <!-- 獨立 PWA 醒目版本更新通知 -->
   <div id="pwa-update-modal" class="hidden fixed inset-x-0 top-[28%] z-[99999] flex justify-center px-4 pointer-events-none transition-all duration-300 transform scale-90 opacity-0">
     <div class="pointer-events-auto bg-slate-950/95 border-2 border-amber-400 rounded-2xl p-4 shadow-[0_10px_35px_rgba(245,158,11,0.45)] backdrop-blur-md w-full max-w-sm flex flex-col gap-3 relative text-white animate-bounce-short">
@@ -5472,6 +5489,47 @@ const arbitration = detectQueryTargetCity(msg);
           });
         }
       });
+    }
+
+    // 自動偵測通訊軟體內嵌瀏覽器 (LINE/FB/微信等) 並給予雙系統專屬引導
+    function initInAppBrowserDetector() {
+      const ua = navigator.userAgent || navigator.vendor || window.opera;
+      
+      // 檢測是否為常見 App 內嵌 WebView
+      const isInApp = /Line|FBAN|FBAV|Instagram|MicroMessenger|musical_ly|Snapchat/i.test(ua);
+      if (!isInApp) return;
+
+      const banner = document.getElementById('inapp-browser-banner');
+      const titleEl = document.getElementById('inapp-banner-title');
+      const descEl = document.getElementById('inapp-banner-desc');
+      if (!banner || !titleEl || !descEl) return;
+
+      const isIOS = /iPhone|iPad|iPod/i.test(ua);
+      const isEn = (typeof currentLang !== 'undefined' && currentLang === 'en');
+
+      if (isIOS) {
+        // iPhone / iPad 專屬引導文案
+        titleEl.innerText = isEn ? "Please open in Safari" : "請使用 Safari 瀏覽器開啟";
+        descEl.innerText = isEn 
+          ? "Tap '…' or the share icon at the top/bottom right, then choose 'Open in Safari' to sign in."
+          : "請點擊右上角或右下角「⋯ / 分享」圖示，選擇「在 Safari 中開啟」，即可順暢進行 Google 登入與安裝。";
+      } else {
+        // Android 專屬引導文案
+        titleEl.innerText = isEn ? "Please open in Chrome" : "請使用 Chrome / 預設瀏覽器開啟";
+        descEl.innerText = isEn 
+          ? "Tap '⋮' in the top right corner, then choose 'Open in browser' or 'Open in Chrome'."
+          : "請點擊右上角三個點「︙」，選擇「在瀏覽器中開啟」或「在 Chrome 中開啟」以確保帳號安全登入。";
+      }
+
+      // 顯示橫幅
+      banner.classList.remove('hidden');
+    }
+
+    // 畫面載入完成後自動執行檢測
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initInAppBrowserDetector);
+    } else {
+      initInAppBrowserDetector();
     }
   </script>
 </body>
