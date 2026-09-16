@@ -3820,19 +3820,6 @@ async function handlePhotoSelection(files) {
   renderPhotoPreviews();
 }
 
-      const filesToProcess = Array.from(files).slice(0, remainingSlots);
-      for (const file of filesToProcess) {
-        if (!file.type.startsWith('image/')) continue;
-        try {
-          const compressedBlob = await compressImageFile(file);
-          pendingUploadBlobs.push(compressedBlob);
-        } catch (err) {
-          console.warn('[Photo] 壓縮略過:', err);
-        }
-      }
-      renderPhotoPreviews();
-    }
-
     // 渲染預覽縮圖
     function renderPhotoPreviews() {
       const previewContainer = document.getElementById('comment-photo-previews');
