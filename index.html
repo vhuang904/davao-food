@@ -7,7 +7,7 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
-  <meta name="app-version" content="20260914-v46.9" />
+  <meta name="app-version" content="20260916-v50.0" />
   <meta name="theme-color" content="#020617" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -891,66 +891,102 @@
   z-index: 50 !important;
 }
 
-    /* 微信卡片堆疊與橫向展開樣式 */
-    .wechat-deck-container {
-      min-height: 120px;
-    }
-    .wechat-deck-container.is-stacked .wechat-deck-track {
+    /* 撲克牌規格（2.5:3.5）與扇形連動輪轉容器 */
+    .poker-deck-stage {
       position: relative;
-      width: 140px;
-      height: 140px;
+      width: 180px;
+      height: 175px;
+      margin-top: 10px;
+      margin-bottom: 6px;
+      perspective: 800px;
+      user-select: none;
+      touch-action: pan-y;
     }
-    .wechat-deck-container.is-stacked .deck-item {
+
+    /* 撲克牌軌道 */
+    .poker-deck-track {
+      position: relative;
+      width: 115px;
+      height: 160px;
+      margin: 0 auto;
+    }
+
+    /* 單張撲克牌實體卡片 (寬高比 2.5 : 3.5) */
+    .poker-card-item {
       position: absolute;
       top: 0;
       left: 0;
-      width: 130px;
-      height: 130px;
+      width: 115px;
+      height: 160px;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1.5px solid var(--theme-border, rgba(255, 255, 255, 0.2));
+      background: var(--theme-card-sub-bg, #1e293b);
+      box-shadow: -2px 4px 12px rgba(0, 0, 0, 0.45);
+      transform-origin: 50% 115%;
+      transition: transform 0.28s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.28s ease, box-shadow 0.28s ease;
+      cursor: pointer;
     }
-    /* 卡片撲克牌錯開堆疊層次 */
-    .wechat-deck-container.is-stacked .deck-item[data-index="0"] { z-index: 4; transform: translate(0, 0); }
-    .wechat-deck-container.is-stacked .deck-item[data-index="1"] { z-index: 3; transform: translate(12px, -6px) scale(0.96); opacity: 0.88; }
-    .wechat-deck-container.is-stacked .deck-item[data-index="2"] { z-index: 2; transform: translate(24px, -12px) scale(0.92); opacity: 0.72; }
-    .wechat-deck-container.is-stacked .deck-item[data-index="3"] { z-index: 1; transform: translate(36px, -18px) scale(0.88); opacity: 0.55; }
+    .poker-card-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      pointer-events: none;
+      display: block;
+    }
 
-    /* 微信風格展開膠囊標籤 */
+    /* 常駐英文 View All 膠囊按鈕 */
     .deck-toggle-pill {
       position: absolute;
-      bottom: 6px;
-      left: 6px;
-      z-index: 10;
+      bottom: 4px;
+      right: 0;
+      z-index: 30;
       background: rgba(15, 23, 42, 0.85);
-      backdrop-filter: blur(4px);
-      border: 1px solid rgba(251, 191, 36, 0.4);
-      color: #fef08a;
+      backdrop-filter: blur(6px);
+      border: 1px solid var(--theme-border, rgba(255, 255, 255, 0.25));
+      color: var(--theme-primary, #fbbf24);
       font-size: 11px;
-      font-weight: bold;
-      padding: 3px 8px;
+      font-weight: 700;
+      padding: 3px 9px;
       border-radius: 9999px;
-      display: flex;
+      display: inline-flex;
       align-items: center;
       gap: 4px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .deck-toggle-pill:active {
+      transform: scale(0.95);
     }
 
-    /* 展開模式：橫向流暢滑動軌道 */
-    .wechat-deck-container.is-expanded .wechat-deck-track {
+    /* 展開模式（平鋪橫向滑動軌道） */
+    .poker-deck-stage.is-expanded {
+      width: 100%;
+      height: auto;
+      min-height: 170px;
+    }
+    .poker-deck-stage.is-expanded .poker-deck-track {
+      width: 100%;
+      height: 165px;
       display: flex;
-      gap: 10px;
+      gap: 12px;
       overflow-x: auto;
       scroll-snap-type: x mandatory;
-      padding-bottom: 28px;
+      padding: 4px 2px 10px 2px;
       -webkit-overflow-scrolling: touch;
     }
-    .wechat-deck-container.is-expanded .deck-item {
-      width: 140px;
-      height: 140px;
-      scroll-snap-align: start;
+    .poker-deck-stage.is-expanded .poker-card-item {
+      position: relative !important;
+      flex-shrink: 0;
+      width: 115px;
+      height: 160px;
       transform: none !important;
       opacity: 1 !important;
+      scroll-snap-align: start;
     }
-    .wechat-deck-container.is-expanded .deck-toggle-pill {
-      bottom: 2px;
+    .poker-deck-stage.is-expanded .deck-toggle-pill {
+      bottom: -4px;
     }
     
   </style>
@@ -1363,25 +1399,32 @@
         <p class="text-center text-slate-500 py-6">載入留言中...</p>
       </div>
 
-      <div class="flex-shrink-0 p-3 border-t border-slate-800 bg-slate-950 flex flex-col gap-2 z-30">
-  <!-- 待上傳縮圖水平預覽列（未選圖時自動隱藏） -->
+      <div class="flex-shrink-0 p-3 border-t flex flex-col gap-2 z-30" style="border-color: var(--theme-border, #334155); background: var(--theme-bg, #090d16);">
+  <!-- 待上傳縮圖預覽列（最多 5 張，未選時自動隱藏） -->
   <div id="comment-photo-previews" class="flex gap-2 overflow-x-auto py-1 empty:hidden"></div>
 
-  <!-- 隱藏的原生檔案選取器（最多 4 張圖） -->
+  <!-- 隱藏的檔案選取器（最多 5 張） -->
   <input type="file" id="comment-photo-input" accept="image/*" multiple class="hidden" />
 
-  <!-- 輸入欄與按鈕列 -->
+  <!-- 輸入欄與風格適配按鈕列 -->
   <div class="flex items-center gap-2">
-    <!-- 相機/相簿選取觸發鈕 -->
-    <button type="button" id="btn-trigger-photo" class="flex-shrink-0 w-9 h-9 rounded-xl bg-slate-900 border border-slate-700 flex items-center justify-center text-amber-400 hover:text-amber-300 hover:border-amber-400/50 transition-colors" title="新增照片 (最多4張)">
+    <!-- 相機按鈕：自動讀取目前主題的背景與主色調 -->
+    <button type="button" id="btn-trigger-photo" 
+      class="flex-shrink-0 w-9 h-9 rounded-xl flex items-center justify-center transition-all duration-200 active:scale-95 border"
+      style="background: var(--theme-card-sub-bg, #1e293b); border-color: var(--theme-border, #334155); color: var(--theme-primary, #f59e0b);"
+      title="Add Photos (Max 5)">
       <i class="fa-solid fa-camera text-sm"></i>
     </button>
 
-    <!-- 輸入框 -->
-    <input id="comment-input" type="text" maxlength="150" placeholder="寫下您的真實體驗與點評..." class="flex-1 bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-amber-400 transition-colors" />
+    <!-- 輸入框：自動適應主題背景與邊框 -->
+    <input id="comment-input" type="text" maxlength="150" placeholder="寫下您的真實體驗與點評..." 
+      class="flex-1 rounded-xl px-3 py-2 text-xs focus:outline-none transition-colors border"
+      style="background: var(--theme-card-sub-bg, #1e293b); border-color: var(--theme-border, #334155); color: var(--theme-text-title, #fff);" />
 
-    <!-- 發表按鈕 -->
-    <button id="btn-submit-comment" type="button" class="flex-shrink-0 bg-gradient-to-r from-amber-400 to-amber-500 text-slate-950 font-black text-xs px-3.5 py-2 rounded-xl shadow-md active:scale-95 transition-all">
+    <!-- 發表按鈕：讀取主題主色 -->
+    <button id="btn-submit-comment" type="button" 
+      class="flex-shrink-0 font-black text-xs px-3.5 py-2 rounded-xl shadow-md active:scale-95 transition-all"
+      style="background: var(--theme-primary, #f59e0b); color: var(--theme-btn-text, #000);">
       發表 (+20分)
     </button>
   </div>
@@ -3200,73 +3243,166 @@
 
     const ADMIN_EMAILS = ['vhuang904@gmail.com'];
 
-    // 渲染微信風格照片堆疊 / 橫向滑動
-    function renderCommentPhotosHtml(photos) {
-      if (!Array.isArray(photos) || photos.length === 0) return '';
-      
-      const count = photos.length;
-      const deckId = 'deck-' + Math.random().toString(36).substring(2, 9);
+    // 撲克牌扇形分佈設定（對應 2~5 張牌時的連動旋轉角度與位移）
+const POKER_FAN_PRESETS = {
+  2: [{ rot: -7, x: -10 }, { rot: 7, x: 10 }],
+  3: [{ rot: -14, x: -18 }, { rot: 0, x: 0 }, { rot: 14, x: 18 }],
+  4: [{ rot: -18, x: -24 }, { rot: -6, x: -8 }, { rot: 6, x: 8 }, { rot: 18, x: 24 }],
+  5: [{ rot: -22, x: -30 }, { rot: -11, x: -15 }, { rot: 0, x: 0 }, { rot: 11, x: 15 }, { rot: 22, x: 30 }]
+};
 
-      // 單張照片直接大圖圓角呈現
-      if (count === 1) {
-        return `
-          <div class="mt-2.5 rounded-xl overflow-hidden max-w-[220px] max-h-[160px] border border-slate-800 bg-slate-900 shadow-sm cursor-pointer" onclick="window.open('${photos[0]}', '_blank')">
-            <img src="${photos[0]}" loading="lazy" class="w-full h-full object-cover" />
-          </div>
-        `;
+// 儲存每個留言牌組的輪轉狀態
+window.deckStates = window.deckStates || {};
+
+// 渲染撲克牌扇形 / 展開滑軌
+function renderCommentPhotosHtml(photos) {
+  if (!Array.isArray(photos) || photos.length === 0) return '';
+  
+  const count = Math.min(photos.length, 5);
+  const deckId = 'poker-' + Math.random().toString(36).substring(2, 9);
+  window.deckStates[deckId] = { activeIndex: 0, count: count, photos: photos };
+
+  // 單張照片：以 2.5:3.5 撲克牌標準比例呈現
+  if (count === 1) {
+    return `
+      <div class="mt-2.5 rounded-xl overflow-hidden cursor-pointer shadow-md border"
+           style="width: 115px; height: 160px; border-color: var(--theme-border, rgba(255,255,255,0.2));"
+           onclick="window.open('${photos[0]}', '_blank')">
+        <img src="${photos[0]}" loading="lazy" class="w-full h-full object-cover" />
+      </div>
+    `;
+  }
+
+  // 多張照片：撲克牌卡片清單
+  const cardsHtml = photos.slice(0, 5).map((url, i) => `
+    <div class="poker-card-item" data-idx="${i}" onclick="handlePokerCardClick('${deckId}', ${i}, '${url}')">
+      <img src="${url}" loading="lazy" />
+    </div>
+  `).join('');
+
+  // 初始化手勢綁定與初次扇形排版
+  setTimeout(() => {
+    applyPokerDeckTransform(deckId);
+    bindPokerSwipeEvents(deckId);
+  }, 50);
+
+  return `
+    <div id="${deckId}" class="poker-deck-stage" data-total="${count}">
+      <div class="poker-deck-track">
+        ${cardsHtml}
+      </div>
+      <button type="button" class="deck-toggle-pill" onclick="togglePokerDeckExpand('${deckId}', event)">
+        <i class="fa-solid fa-layer-group text-[10px]"></i>
+        <span>View All</span>
+      </button>
+    </div>
+  `;
+}
+
+// 套用方案 B：扇形連動旋轉角度
+function applyPokerDeckTransform(deckId) {
+  const stage = document.getElementById(deckId);
+  if (!stage || stage.classList.contains('is-expanded')) return;
+
+  const state = window.deckStates[deckId];
+  if (!state) return;
+
+  const { count, activeIndex } = state;
+  const cards = stage.querySelectorAll('.poker-card-item');
+  const basePreset = POKER_FAN_PRESETS[count] || [];
+
+  cards.forEach((card, idx) => {
+    const relativeOffset = (idx - activeIndex + count) % count;
+    const preset = basePreset[relativeOffset] || { rot: 0, x: 0 };
+    
+    // 焦點牌 z-index 最高，越往後越低
+    const zIndex = 10 - relativeOffset;
+    const opacity = relativeOffset > 3 ? 0.35 : 1;
+
+    card.style.zIndex = zIndex;
+    card.style.transform = `translateX(${preset.x}px) rotate(${preset.rot}deg)`;
+    card.style.opacity = opacity;
+  });
+}
+
+// 方案 B：手勢連動滑動切換
+function bindPokerSwipeEvents(deckId) {
+  const stage = document.getElementById(deckId);
+  if (!stage) return;
+
+  let startX = 0;
+  let startY = 0;
+  let isSwiping = false;
+
+  stage.addEventListener('touchstart', (e) => {
+    if (stage.classList.contains('is-expanded')) return;
+    startX = e.touches[0].clientX;
+    startY = e.touches[0].clientY;
+    isSwiping = true;
+  }, { passive: true });
+
+  stage.addEventListener('touchend', (e) => {
+    if (!isSwiping || stage.classList.contains('is-expanded')) return;
+    isSwiping = false;
+
+    const deltaX = e.changedTouches[0].clientX - startX;
+    const deltaY = e.changedTouches[0].clientY - startY;
+
+    // 水平滑動幅度大於垂直且超過 25px 時執行翻牌輪轉
+    if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 25) {
+      const state = window.deckStates[deckId];
+      if (!state) return;
+
+      if (deltaX < 0) {
+        // 往左滑：下一張牌轉到最前
+        state.activeIndex = (state.activeIndex + 1) % state.count;
+      } else {
+        // 往右滑：上一張牌回正
+        state.activeIndex = (state.activeIndex - 1 + state.count) % state.count;
       }
-
-      // 多張照片（2~4張）：微信式卡片堆疊
-      const imagesHtml = photos.map((url, i) => `
-        <div class="deck-item transition-all duration-300 shrink-0 cursor-pointer overflow-hidden rounded-xl border border-slate-700/80 bg-slate-900 shadow-md"
-             data-index="${i}"
-             onclick="handlePhotoDeckClick('${deckId}', ${i}, '${url}')">
-          <img src="${url}" loading="lazy" class="w-full h-full object-cover" />
-        </div>
-      `).join('');
-
-      return `
-        <div id="${deckId}" class="wechat-deck-container mt-2.5 relative is-stacked select-none" data-total="${count}">
-          <div class="wechat-deck-track">
-            ${imagesHtml}
-          </div>
-          <button type="button" class="deck-toggle-pill" onclick="toggleDeckExpand('${deckId}', event)">
-            <i class="fa-solid fa-layer-group text-[10px]"></i>
-            <span>展開 ${count}</span>
-          </button>
-        </div>
-      `;
+      applyPokerDeckTransform(deckId);
     }
+  }, { passive: true });
+}
 
-    // 展開 / 收合微信卡片堆疊
-    window.toggleDeckExpand = function(deckId, e) {
-      if (e) e.stopPropagation();
-      const container = document.getElementById(deckId);
-      if (!container) return;
-      const isStacked = container.classList.contains('is-stacked');
-      if (isStacked) {
-        container.classList.remove('is-stacked');
-        container.classList.add('is-expanded');
-        const pill = container.querySelector('.deck-toggle-pill span');
-        if (pill) pill.innerText = currentLang === 'en' ? 'Collapse' : '收合';
-      } else {
-        container.classList.remove('is-expanded');
-        container.classList.add('is-stacked');
-        const total = container.getAttribute('data-total') || '';
-        const pill = container.querySelector('.deck-toggle-pill span');
-        if (pill) pill.innerText = `${currentLang === 'en' ? 'Expand' : '展開'} ${total}`;
-      }
-    };
+// 切換 View All / Collapse 展開狀態
+window.togglePokerDeckExpand = function(deckId, e) {
+  if (e) e.stopPropagation();
+  const stage = document.getElementById(deckId);
+  if (!stage) return;
 
-    // 點擊照片：堆疊時展開，展開時開大圖
-    window.handlePhotoDeckClick = function(deckId, index, url) {
-      const container = document.getElementById(deckId);
-      if (container && container.classList.contains('is-stacked')) {
-        window.toggleDeckExpand(deckId);
-      } else {
+  const isExpanded = stage.classList.contains('is-expanded');
+  const pillSpan = stage.querySelector('.deck-toggle-pill span');
+
+  if (isExpanded) {
+    stage.classList.remove('is-expanded');
+    if (pillSpan) pillSpan.innerText = 'View All';
+    applyPokerDeckTransform(deckId);
+  } else {
+    stage.classList.add('is-expanded');
+    if (pillSpan) pillSpan.innerText = 'Collapse';
+  }
+};
+
+// 點擊卡片互動：展開態直接開大圖；扇形態若點旁邊的牌則輪轉上來，點第一張開大圖
+window.handlePokerCardClick = function(deckId, idx, url) {
+  const stage = document.getElementById(deckId);
+  if (!stage) return;
+
+  if (stage.classList.contains('is-expanded')) {
+    window.open(url, '_blank');
+  } else {
+    const state = window.deckStates[deckId];
+    if (state) {
+      if (state.activeIndex === idx) {
         window.open(url, '_blank');
+      } else {
+        state.activeIndex = idx;
+        applyPokerDeckTransform(deckId);
       }
-    };
+    }
+  }
+};
     
     async function loadStoreComments(storeId) {
       if (!commentListContainer) return;
@@ -3664,12 +3800,25 @@
     }
 
     // 處理選取圖片變更
-    async function handlePhotoSelection(files) {
-      const remainingSlots = 4 - pendingUploadBlobs.length;
-      if (remainingSlots <= 0) {
-        showToast(currentLang === 'en' ? 'Maximum 4 photos allowed' : '最多只能上傳 4 張照片', 'fa-triangle-exclamation');
-        return;
-      }
+async function handlePhotoSelection(files) {
+  const remainingSlots = 5 - pendingUploadBlobs.length;
+  if (remainingSlots <= 0) {
+    showToast(currentLang === 'en' ? 'Maximum 5 photos allowed' : '最多只能上傳 5 張照片', 'fa-triangle-exclamation');
+    return;
+  }
+
+  const filesToProcess = Array.from(files).slice(0, remainingSlots);
+  for (const file of filesToProcess) {
+    if (!file.type.startsWith('image/')) continue;
+    try {
+      const compressedBlob = await compressImageFile(file);
+      pendingUploadBlobs.push(compressedBlob);
+    } catch (err) {
+      console.warn('[Photo] 壓縮略過:', err);
+    }
+  }
+  renderPhotoPreviews();
+}
 
       const filesToProcess = Array.from(files).slice(0, remainingSlots);
       for (const file of filesToProcess) {
@@ -5054,7 +5203,7 @@ const arbitration = detectQueryTargetCity(msg);
       }
 
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js?v=20260914-v46.9').then((reg) => {
+        navigator.serviceWorker.register('./sw.js?v=20260916-v50.0').then((reg) => {
           if (reg.waiting) {
             showPwaUpdateModal(reg.waiting);
           }
