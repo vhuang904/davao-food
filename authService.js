@@ -38,7 +38,7 @@ import {
 
 const firebaseConfig = {
   apiKey: "AIzaSyCm2dCa2Y8d6Z-Dc_Uz9yvvgai6fav-1Vg",
-  authDomain: "bigv-foodmap.firebaseapp.com",
+  authDomain: "auth.tour2gether.ph",
   projectId: "bigv-foodmap",
   storageBucket: "bigv-foodmap.firebasestorage.app",
   messagingSenderId: "701000455421",
