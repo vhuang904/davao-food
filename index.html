@@ -1403,8 +1403,29 @@
   <!-- 待上傳縮圖預覽列（最多 5 張，未選時自動隱藏） -->
   <div id="comment-photo-previews" class="flex gap-2 overflow-x-auto py-1 empty:hidden"></div>
 
-  <!-- 隱藏的檔案選取器（最多 5 張） -->
-  <input type="file" id="comment-photo-input" accept="image/*" multiple class="hidden" />
+  <!-- 隱藏的檔案選取器：1. 相機直開 2. 相簿多選 -->
+  <input type="file" id="comment-photo-camera" accept="image/*" capture="environment" class="hidden" />
+  <input type="file" id="comment-photo-album" accept="image/*" multiple class="hidden" />
+
+  <!-- 照片來源選擇彈窗選單 (Action Sheet) -->
+  <div id="photo-source-sheet" class="hidden absolute inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-end justify-center p-3">
+    <div class="w-full rounded-2xl p-2.5 flex flex-col gap-2 shadow-2xl border" 
+         style="background: var(--theme-card-bg, #020617); border-color: var(--theme-border, #334155);">
+      <button type="button" id="btn-choice-camera" class="w-full py-2.5 px-3 rounded-xl flex items-center justify-center gap-2 font-bold text-xs active:scale-98 transition"
+              style="background: var(--theme-card-sub-bg, #0f172a); color: var(--theme-primary, #f59e0b);">
+        <i class="fa-solid fa-camera text-sm"></i>
+        <span id="label-choice-camera">📷 立即拍照 (Take Photo)</span>
+      </button>
+      <button type="button" id="btn-choice-album" class="w-full py-2.5 px-3 rounded-xl flex items-center justify-center gap-2 font-bold text-xs active:scale-98 transition"
+              style="background: var(--theme-card-sub-bg, #0f172a); color: var(--theme-text-title, #ffffff);">
+        <i class="fa-regular fa-images text-sm"></i>
+        <span id="label-choice-album">🖼️ 從相簿選取 (Choose from Album)</span>
+      </button>
+      <button type="button" id="btn-choice-cancel" class="w-full py-2 rounded-xl text-center text-xs font-bold text-slate-400 hover:text-slate-200 mt-0.5">
+        取消 (Cancel)
+      </button>
+    </div>
+  </div>
 
   <!-- 輸入欄與風格適配按鈕列 -->
   <div class="flex items-center gap-2">
@@ -3929,20 +3950,66 @@ async function handlePhotoSelection(files) {
 
     btnSubmitComment.addEventListener('click', handlePostComment);
 
-    // 綁定相機觸發與選取照片監聽
+    // 綁定拍照與相簿選取互動邏輯
     const btnTriggerPhoto = document.getElementById('btn-trigger-photo');
-    const commentPhotoInput = document.getElementById('comment-photo-input');
+    const photoSourceSheet = document.getElementById('photo-source-sheet');
+    const photoInputCamera = document.getElementById('comment-photo-camera');
+    const photoInputAlbum = document.getElementById('comment-photo-album');
+    const btnChoiceCamera = document.getElementById('btn-choice-camera');
+    const btnChoiceAlbum = document.getElementById('btn-choice-album');
+    const btnChoiceCancel = document.getElementById('btn-choice-cancel');
 
-    if (btnTriggerPhoto && commentPhotoInput) {
-      btnTriggerPhoto.addEventListener('click', () => {
-        commentPhotoInput.click();
+    if (btnTriggerPhoto && photoSourceSheet) {
+      // 點擊相機圖示打開選單
+      btnTriggerPhoto.addEventListener('click', (e) => {
+        e.stopPropagation();
+        photoSourceSheet.classList.remove('hidden');
       });
 
-      commentPhotoInput.addEventListener('change', async (e) => {
+      // 點擊「立即拍照」
+      if (btnChoiceCamera && photoInputCamera) {
+        btnChoiceCamera.addEventListener('click', (e) => {
+          e.stopPropagation();
+          photoSourceSheet.classList.add('hidden');
+          photoInputCamera.click();
+        });
+      }
+
+      // 點擊「從相簿選取」
+      if (btnChoiceAlbum && photoInputAlbum) {
+        btnChoiceAlbum.addEventListener('click', (e) => {
+          e.stopPropagation();
+          photoSourceSheet.classList.add('hidden');
+          photoInputAlbum.click();
+        });
+      }
+
+      // 點擊「取消」或背景關閉
+      if (btnChoiceCancel) {
+        btnChoiceCancel.addEventListener('click', (e) => {
+          e.stopPropagation();
+          photoSourceSheet.classList.add('hidden');
+        });
+      }
+      photoSourceSheet.addEventListener('click', (e) => {
+        if (e.target === photoSourceSheet) {
+          photoSourceSheet.classList.add('hidden');
+        }
+      });
+
+      // 監聽相機拍攝變更
+      photoInputCamera.addEventListener('change', async (e) => {
         if (e.target.files && e.target.files.length > 0) {
           await handlePhotoSelection(e.target.files);
-          // 重置 input 以便重複選取相同檔名
-          commentPhotoInput.value = '';
+          photoInputCamera.value = '';
+        }
+      });
+
+      // 監聽相簿選取變更
+      photoInputAlbum.addEventListener('change', async (e) => {
+        if (e.target.files && e.target.files.length > 0) {
+          await handlePhotoSelection(e.target.files);
+          photoInputAlbum.value = '';
         }
       });
     }
