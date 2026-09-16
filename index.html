@@ -3549,7 +3549,8 @@ window.handlePokerCardClick = function(deckId, idx, url) {
         userName: rawData.userName || rawData.displayName || '吃貨好友',
         userPhoto: rawData.userPhoto || rawData.photoURL || '',
         userEmail: rawData.userEmail || rawData.email || '',
-        content: rawData.comment || rawData.content || ''
+        content: rawData.comment || rawData.content || '',
+        photos: Array.isArray(rawData.photos) ? rawData.photos : []
       };
 
       try {
@@ -3612,34 +3613,42 @@ window.handlePokerCardClick = function(deckId, idx, url) {
       const commentId = currentTargetComment.id;
       const targetUid = currentTargetComment.userId || currentTargetComment.uid || currentUser.uid;
       const content = currentTargetComment.content || '';
-    const photosToDelete = currentTargetComment.photos || [];
+      const photosToDelete = currentTargetComment.photos || [];
 
-    try {
-      showToast('正在執行管理處分...', 'fa-spinner fa-spin');
+      try {
+        showToast('正在執行管理處分...', 'fa-spinner fa-spin');
 
-      // 1. 若該留言有照片，同步從 Firebase Storage 徹底刪除
-      if (Array.isArray(photosToDelete) && photosToDelete.length > 0) {
-        try {
-          const { getStorage, ref, deleteObject } = await import('https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js');
-          const storage = getStorage();
-          await Promise.allSettled(
-            photosToDelete.map(url => {
-              // 只刪除屬於 Firebase Storage 上的檔案
-              if (typeof url === 'string' && url.includes('firebasestorage.googleapis.com')) {
-                const photoRef = ref(storage, url);
-                return deleteObject(photoRef);
-              }
-              return Promise.resolve();
-            })
-          );
-        } catch (storageErr) {
-          console.warn('[Storage] 照片刪除過程略過或失敗:', storageErr);
+        // 1. 若該留言有照片，同步從 Firebase Storage 徹底刪除
+        if (Array.isArray(photosToDelete) && photosToDelete.length > 0) {
+          try {
+            const { getStorage, ref, deleteObject } = await import('https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js');
+            const storage = getStorage();
+
+            await Promise.allSettled(
+              photosToDelete.map(async (url) => {
+                try {
+                  if (typeof url !== 'string' || !url.includes('firebasestorage.googleapis.com')) return;
+                  
+                  // 從 URL 中提取正確的 Storage 檔案路徑 (/o/{path}?...)
+                  const matches = url.match(/\/o\/(.+?)\?/);
+                  const storagePath = matches ? decodeURIComponent(matches[1]) : null;
+                  
+                  const photoRef = storagePath ? ref(storage, storagePath) : ref(storage, url);
+                  await deleteObject(photoRef);
+                  console.log('[Storage] 已成功清除檔案:', storagePath || url);
+                } catch (e) {
+                  console.warn('[Storage] 單張檔案清除失敗:', url, e);
+                }
+              })
+            );
+          } catch (storageErr) {
+            console.warn('[Storage] 照片刪除流程失敗:', storageErr);
+          }
         }
-      }
 
-      // 2. 刪除資料庫中的留言紀錄
-      const { deleteStoreComment } = await import('./authService.js');
-      await deleteStoreComment(commentId);
+        // 2. 刪除資料庫中的留言紀錄
+        const { deleteStoreComment } = await import('./authService.js');
+        await deleteStoreComment(commentId);
         if (actionType === 'delete_only') {
           showToast('🗑️ 已刪除該留言（不處置）', 'fa-trash-can');
         } else if (targetUid) {
