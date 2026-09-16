@@ -2337,6 +2337,41 @@
 
       return c;
     }
+
+    function translateCategoryText(rawCat, lang) {
+      if (!rawCat) return lang === 'en' ? 'Featured' : '精選';
+      if (lang !== 'en') return rawCat;
+
+      const c = String(rawCat).trim();
+      const dict = I18N_DICT['en']?.categoriesMap || {};
+
+      // 1. 完全比對
+      if (dict[c]) return dict[c];
+
+      // 2. 去除符號與 Emoji 後比對
+      const pure = c.replace(/[^\u4e00-\u9fa5a-zA-Z0-9]/g, '').trim();
+      if (dict[pure]) return dict[pure];
+
+      // 3. 都會生活圈 & 海島專區 關鍵字全覆蓋
+      if (c.includes('日料') || c.includes('日式') || c.includes('japanese')) return 'Japanese Cuisine';
+      if (c.includes('中餐') || c.includes('中式') || c.includes('粵菜') || c.includes('川菜') || c.includes('chinese')) return 'Chinese Cuisine';
+      if (c.includes('海鮮') || c.includes('seafood') || c.includes('dampa')) return 'Seafood Feast';
+      if (c.includes('西餐') || c.includes('西洋') || c.includes('牛排') || c.includes('義式') || c.includes('western') || c.includes('steak')) return 'Western Cuisine';
+      if (c.includes('菲式') || c.includes('菲律賓') || c.includes('filipino')) return 'Filipino Cuisine';
+      if (c.includes('火鍋') || c.includes('燒肉') || c.includes('燒烤') || c.includes('bbq') || c.includes('hotpot')) return 'BBQ & Hotpot';
+      if (c.includes('早午餐') || c.includes('咖啡') || c.includes('甜點') || c.includes('brunch') || c.includes('cafe')) return 'Cafe & Brunch';
+      if (c.includes('夜生活') || c.includes('酒吧') || c.includes('夜店') || c.includes('nightlife') || c.includes('bar')) return 'Nightlife';
+
+      if (c.includes('商場') || c.includes('購物') || c.includes('百貨') || c.includes('mall') || c.includes('shopping')) return 'Upscale Malls';
+      if (c.includes('賭場') || c.includes('casino') || c.includes('博弈')) return 'Casino / Hotels';
+      if (c.includes('歷史') || c.includes('古蹟') || c.includes('文化') || c.includes('觀光') || c.includes('景點') || c.includes('attraction')) return 'Top Sights';
+      if (c.includes('沙灘') || c.includes('海灘') || c.includes('beach')) return 'Beaches';
+      if (c.includes('跳島') || c.includes('潛水') || c.includes('浮潛') || c.includes('hopping') || c.includes('diving')) return 'Island Hopping';
+      if (c.includes('生態') || c.includes('秘境') || c.includes('瀑布') || c.includes('nature')) return 'Eco Tours';
+      if (c.includes('villa') || c.includes('飯店') || c.includes('酒店') || c.includes('hotel') || c.includes('resort')) return 'Hotels & Villas';
+
+      return c;
+    }
     
     async function fetchData() {
       const loadingEl = document.getElementById('loading');
