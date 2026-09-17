@@ -1033,7 +1033,7 @@
 
   <!-- 全域 Toast 提示 -->
   <div id="toastNotification" class="hidden fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[99999] transition-all duration-300 pointer-events-none opacity-0 scale-95 w-[90vw] max-w-md px-2">
-    <div id="toastInnerBox" class="relative bg-slate-950/95 text-white text-xs font-bold pt-9 pb-4 pl-2 pr-12 rounded-2xl shadow-2xl flex flex-col items-center justify-center text-center gap-2 border border-slate-700/60 min-w-[260px] max-w-[90vw]">
+    <div id="toastInnerBox" class="relative bg-slate-950/95 text-white text-xs font-bold pt-9 pb-4 px-6 rounded-2xl shadow-2xl flex flex-col items-center justify-center text-center gap-2 border border-slate-700/60 min-w-[260px] max-w-[90vw]">
       <button id="toastCloseBtn" type="button" class="absolute top-2.5 right-2.5 w-7 h-7 rounded-full bg-slate-800/90 hover:bg-slate-700 active:bg-slate-600 text-slate-300 hover:text-white flex items-center justify-center transition-all">
         <i class="fa-solid fa-xmark text-sm"></i>
       </button>
@@ -1290,6 +1290,16 @@
 
           <!-- Tab 1: 私房清單列表 -->
           <div id="tab-content-favorites" class="profile-tab-content flex-1 flex flex-col min-h-0">
+            <!-- 方案 A：私房收藏清單分享 — 開關與複製連結列 -->
+            <div id="fav-share-bar" class="flex items-center justify-between gap-2 px-2 py-1.5 mb-1.5 rounded-xl border border-slate-800 bg-slate-900/60 flex-shrink-0">
+              <label class="flex items-center gap-1.5 cursor-pointer select-none">
+                <input type="checkbox" id="fav-share-toggle" onchange="window.toggleFavoritesSharing(this.checked)" class="w-3.5 h-3.5 accent-amber-400" />
+                <span class="text-[10px] font-bold text-slate-300">分享我的私房清單</span>
+              </label>
+              <button type="button" id="fav-share-copy-btn" onclick="window.copyFavoritesShareLink()" class="hidden text-[10px] font-bold text-amber-400 flex items-center gap-1 flex-shrink-0">
+                <i class="fa-solid fa-link"></i>複製連結
+              </button>
+            </div>
             <div id="favorites-list-container" class="flex-1 overflow-y-auto hide-scrollbar space-y-1.5 max-h-[190px] pr-0.5"></div>
           </div>
 
@@ -1584,7 +1594,7 @@
   <script type="module">
     import { initializeApp, getApps, getApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getMessaging, getToken } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-messaging.js";
-    import { getFirestore, collection, getDocs, doc, getDoc, setDoc, updateDoc, increment, query, where, orderBy, addDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { getFirestore, collection, getDocs, doc, getDoc, setDoc, updateDoc, increment, query, where, orderBy, addDoc, limit } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
     import { loadMasterDatabase } from './googleSheetService.js';
     import { 
       initAuthService, 
@@ -1841,6 +1851,8 @@
     const deepTab = urlParams.get('tab');
     const deepCity = urlParams.get('city');
     const deepSub = urlParams.get('sub');
+    // 方案 A：私房收藏清單分享 — 分享短碼參數 (?share=xxxx)
+    const deepShareId = (urlParams.get('share') || '').trim();
 
     let currentDimension = sessionStorage.getItem('ph_dim') || 'cities';
     let currentCity = localStorage.getItem('ph_app_city') || 'manila';
@@ -1874,6 +1886,12 @@
     let currentUserProfile = { points: 50, level: 'LV.1 探店初心者' };
     let userFavoritesSet = new Set(JSON.parse(localStorage.getItem('bigv_favorites') || '[]'));
     let activeCommentStoreId = '';
+
+    // 方案 A：私房收藏清單分享 — 檢視模式狀態
+    let isShareViewMode = false;
+    let sharedFavoritesData = { ownerUid: '', ids: [] };
+    // 方案 A：私房收藏清單分享 — 目前登入使用者自己的分享狀態
+    let myShareState = { isPublic: false, shareId: '' };
 
     function preserveScrollPosition(actionFn) {
       const scrollY = window.scrollY || document.documentElement.scrollTop;
@@ -2197,7 +2215,7 @@
 
       if (actionText && actionCallback) {
         toastActionContainer.innerHTML = `
-          <button id="toastActionBtn" type="button" class="w-full py-2 px-4 rounded-xl font-black text-xs shadow-md transition active:scale-95 cursor-pointer pointer-events-auto">
+          <button id="toastActionBtn" type="button" class="w-full block py-2.5 px-6 rounded-xl font-black text-xs shadow-md transition active:scale-95 cursor-pointer pointer-events-auto bg-amber-500 hover:bg-orange-600 text-white">
             ${actionText} ➔
           </button>
         `;
@@ -2250,6 +2268,10 @@
         syncUserFavoritesFromCloud(user.uid);
         loadUserInboxMessages();
         window.checkUserUnreadNotifications();
+      } else {
+        // 方案 A：私房收藏清單分享 — 登出時重置分享狀態顯示（不影響雲端資料）
+        myShareState = { isPublic: false, shareId: '' };
+        updateFavShareBarUI();
       }
 
       updateHeaderAuthBtn();
@@ -2319,10 +2341,231 @@
           snap.data().favorites.forEach(id => userFavoritesSet.add(id));
           localStorage.setItem('bigv_favorites', JSON.stringify(Array.from(userFavoritesSet)));
         }
+        // 方案 A：私房收藏清單分享 — 同步讀取自己的分享狀態
+        if (snap.exists()) {
+          myShareState.isPublic = !!snap.data().isPublic;
+          myShareState.shareId = snap.data().shareId || '';
+        }
       } catch (e) {}
       renderFavoritesList();
+      updateFavShareBarUI();
       preserveScrollPosition(() => renderContent());
     }
+
+    // ------------------------------------------------------------
+    // 方案 A：私房收藏清單分享 — 開關 UI 同步 / 開啟 / 複製連結
+    // ------------------------------------------------------------
+    function updateFavShareBarUI() {
+      const toggle = document.getElementById('fav-share-toggle');
+      const copyBtn = document.getElementById('fav-share-copy-btn');
+      if (toggle) toggle.checked = myShareState.isPublic;
+      if (copyBtn) copyBtn.classList.toggle('hidden', !myShareState.isPublic);
+    }
+
+    window.toggleFavoritesSharing = async function(enabled) {
+      if (!currentUser) {
+        const toggle = document.getElementById('fav-share-toggle');
+        if (toggle) toggle.checked = false;
+        showToast(
+          '🔒 請先登入會員，解鎖專屬私房收藏服務！',
+          'fa-lock',
+          '立即登入',
+          () => { closeAiChat(); openAuthModal(); }
+        );
+        return;
+      }
+
+      try {
+        if (enabled) {
+          // 初次開啟：若尚無 shareId 才產生新的（避免每次開關都換連結）
+          if (!myShareState.shareId) {
+            myShareState.shareId = Math.random().toString(36).substring(2, 10);
+          }
+          myShareState.isPublic = true;
+          await setDoc(doc(db, "user_favorites", currentUser.uid), {
+            isPublic: true,
+            shareId: myShareState.shareId
+          }, { merge: true });
+          updateFavShareBarUI();
+          window.copyFavoritesShareLink();
+        } else {
+          myShareState.isPublic = false;
+          await setDoc(doc(db, "user_favorites", currentUser.uid), {
+            isPublic: false
+          }, { merge: true });
+          updateFavShareBarUI();
+          showToast('🔒 已關閉分享，舊連結將無法再查看', 'fa-lock');
+        }
+      } catch (err) {
+        console.error("[FavShare] 更新分享狀態失敗:", err);
+        showToast('更新分享狀態失敗，請稍後再試', 'fa-triangle-exclamation');
+      }
+    };
+
+    window.copyFavoritesShareLink = function() {
+      if (!myShareState.shareId) return;
+      const url = new URL(window.location.href);
+      url.search = '';
+      url.searchParams.set('share', myShareState.shareId);
+      const shareUrl = url.toString();
+
+      if (navigator.share) {
+        navigator.share({ title: '大V的旅遊窩 · 我的私房清單', url: shareUrl }).catch(() => {});
+      } else if (navigator.clipboard) {
+        navigator.clipboard.writeText(shareUrl).then(() => showToast('分享連結已複製！', 'fa-link'));
+      }
+    };
+
+    // ------------------------------------------------------------
+    // 方案 A：私房收藏清單分享 — 分享檢視模式 (未登入亦可預覽)
+    // ------------------------------------------------------------
+    async function loadSharedFavoritesView(shareId) {
+      if (!shareId) return;
+      isShareViewMode = true;
+      renderSharedFavoritesView('loading');
+      try {
+        const q = query(
+          collection(db, "user_favorites"),
+          where("shareId", "==", shareId),
+          where("isPublic", "==", true),
+          limit(1)
+        );
+        const snap = await getDocs(q);
+        if (snap.empty) {
+          renderSharedFavoritesView('notfound');
+          return;
+        }
+        const ownerDoc = snap.docs[0];
+        const data = ownerDoc.data();
+        sharedFavoritesData = {
+          ownerUid: ownerDoc.id,
+          ids: Array.isArray(data.favorites) ? data.favorites : []
+        };
+        renderSharedFavoritesView('ready');
+      } catch (err) {
+        console.error("[ShareView] 讀取分享清單失敗:", err);
+        renderSharedFavoritesView('notfound');
+      }
+    }
+
+    function renderSharedFavoritesView(state) {
+      let overlay = document.getElementById('share-view-overlay');
+      if (!overlay) {
+        overlay = document.createElement('div');
+        overlay.id = 'share-view-overlay';
+        overlay.className = 'fixed inset-0 z-[9999] bg-slate-950 overflow-y-auto';
+        document.body.appendChild(overlay);
+      }
+
+      const closeBtnHtml = `
+        <button type="button" onclick="window.exitShareView()" class="absolute top-3 right-3 z-10 w-9 h-9 rounded-full bg-slate-900/80 border border-slate-700 flex items-center justify-center text-slate-300">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      `;
+
+      if (state === 'loading') {
+        overlay.innerHTML = `
+          <div class="relative min-h-screen flex items-center justify-center">
+            ${closeBtnHtml}
+            <div class="text-center text-slate-400 text-xs">
+              <i class="fa-solid fa-spinner fa-spin text-xl mb-2 block"></i>
+              清單載入中...
+            </div>
+          </div>
+        `;
+        return;
+      }
+
+      if (state === 'notfound') {
+        overlay.innerHTML = `
+          <div class="relative min-h-screen flex items-center justify-center px-6">
+            ${closeBtnHtml}
+            <div class="text-center text-slate-400 max-w-xs">
+              <i class="fa-regular fa-face-frown text-3xl mb-3 block text-slate-600"></i>
+              <p class="text-sm font-bold text-slate-200">這份私房清單找不到了</p>
+              <p class="text-[11px] text-slate-500 mt-1.5 leading-relaxed">連結可能已失效，或分享者已將清單設為不公開。</p>
+              <button type="button" onclick="window.exitShareView()" class="mt-4 w-full py-2.5 rounded-xl bg-gradient-to-r from-amber-400 to-amber-500 text-slate-950 text-xs font-black shadow-md active:scale-95 transition">
+                探索更多精彩地點 ➔
+              </button>
+            </div>
+          </div>
+        `;
+        return;
+      }
+
+      const ctaBannerHtml = `
+        <div class="mx-3 mt-3 mb-1 p-3 rounded-2xl border border-amber-400/30 bg-gradient-to-r from-amber-400/10 to-transparent flex items-center justify-between gap-2">
+          <div class="text-[11px] text-amber-300 font-bold leading-snug">登入解鎖收藏、留言、點數獎勵！</div>
+          <button type="button" onclick="closeAiChat(); openAuthModal();" class="flex-shrink-0 px-3 py-1.5 rounded-xl bg-amber-400 text-slate-950 text-[11px] font-black">立即登入</button>
+        </div>
+      `;
+
+      const allItems = [...allRestaurants, ...allAttractions, ...allMedical];
+      const matchedItems = sharedFavoritesData.ids
+        .map(id => allItems.find(x => String(x.id || x.place_id).trim().toLowerCase() === String(id).trim().toLowerCase()))
+        .filter(Boolean);
+
+      const listHtml = matchedItems.length === 0
+        ? `<div class="text-center py-10 text-slate-500 text-xs">這份私房清單目前是空的</div>`
+        : matchedItems.map(item => {
+            const name = item.name_zh || item.name_en || item.name || item.id;
+            const img = (item.images && item.images[0]) || 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=200';
+            const cleanPhone = getCleanPhone(item.phone);
+            const navUrl = item.nav_link || ('https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(name + ' ' + (item.address || '')));
+            const sId = String(item.id || item.place_id).trim();
+            const isFav = userFavoritesSet.has(sId);
+
+            return `
+              <div class="bg-slate-900/90 border border-slate-800 rounded-xl p-2 flex items-center justify-between gap-2 transition">
+                <div class="flex items-center gap-2.5 min-w-0 max-w-[60%]">
+                  <div class="w-11 h-11 rounded-lg overflow-hidden flex-shrink-0 bg-slate-950">
+                    <img src="${img}" class="w-full h-full object-cover" />
+                  </div>
+                  <div class="min-w-0 flex-1">
+                    <h6 class="font-bold text-xs text-white truncate leading-tight">${name}</h6>
+                    <div class="flex items-center gap-1.5 text-[9px] text-slate-400 mt-0.5">
+                      <span class="truncate">${item.city || '菲律賓'} · ${item.category || '精選'}</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="flex items-center gap-1.5 flex-shrink-0">
+                  <a href="${cleanPhone ? `tel:${cleanPhone}` : '#'}" title="撥打電話" class="btn-fav-action w-7 h-7 rounded-lg flex items-center justify-center text-xs transition ${!cleanPhone ? 'opacity-30 pointer-events-none' : ''} text-emerald-500">
+                    <i class="fa-solid fa-phone"></i>
+                  </a>
+                  <a href="${navUrl}" target="_blank" rel="noopener noreferrer" title="路線導航" class="btn-fav-action w-7 h-7 rounded-lg flex items-center justify-center text-xs transition text-sky-500">
+                    <i class="fa-solid fa-location-arrow"></i>
+                  </a>
+                  <button type="button" title="收藏" onclick="window.toggleFavorite('${sId}', event)" class="btn-fav-action w-7 h-7 rounded-lg flex items-center justify-center text-xs transition ${isFav ? 'text-rose-500' : 'text-slate-500'}">
+                    <i class="fa-${isFav ? 'solid' : 'regular'} fa-heart"></i>
+                  </button>
+                </div>
+              </div>
+            `;
+          }).join('');
+
+      overlay.innerHTML = `
+        <div class="relative min-h-screen pb-8">
+          ${closeBtnHtml}
+          <div class="pt-6 px-4 pb-2 text-center">
+            <i class="fa-solid fa-heart-circle-check text-amber-400 text-2xl mb-1 block"></i>
+            <h5 class="text-sm font-black text-white">好友的私房收藏清單</h5>
+            <p class="text-[10px] text-slate-500 mt-0.5">共 ${matchedItems.length} 個私房口袋名單</p>
+          </div>
+          ${ctaBannerHtml}
+          <div class="mt-2 px-3 space-y-1.5">${listHtml}</div>
+        </div>
+      `;
+    }
+
+    window.exitShareView = function() {
+      isShareViewMode = false;
+      const overlay = document.getElementById('share-view-overlay');
+      if (overlay) overlay.remove();
+      const url = new URL(window.location.href);
+      url.searchParams.delete('share');
+      window.history.replaceState({}, '', url.toString());
+      window.scrollTo({ top: 0, behavior: 'instant' });
+    };
 
     function renderFavoritesList() {
       const container = document.getElementById('favorites-list-container');
@@ -5398,7 +5641,10 @@ const arbitration = detectQueryTargetCity(msg);
     
     initVisitorCounter();
     enableHorizontalScroll();
-    fetchData();
+    fetchData().then(() => {
+      // 方案 A：私房收藏清單分享 — 資料就緒後才載入分享檢視（需比對店家詳情）
+      if (deepShareId) loadSharedFavoritesView(deepShareId);
+    });
     loadUserInboxMessages();
     initAuthService();
 
