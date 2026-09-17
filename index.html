@@ -1460,7 +1460,7 @@
 
       <!-- 輸入框：自動適應主題背景與邊框 -->
       <input id="comment-input" type="text" maxlength="150" placeholder="寫下您的真實體驗與點評..."
-             class="flex-1 rounded-xl px-3 py-2 text-xs focus:outline-none transition-colors border"
+             class="flex-1 bg-white dark:bg-[#121212] border border-slate-300 dark:border-slate-750 text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 rounded-xl px-4 py-2 text-sm focus:outline-none focus:border-amber-500"
              style="background: var(--theme-bg, #ffffff); border-color: var(--theme-border, #fbcfe8); color: var(--theme-text-title, #1e293b);" />
 
       <!-- 發表按鈕：讀取主題主色 -->
@@ -2840,7 +2840,7 @@
               </button>
 
               <a href="${websiteUrl}" target="_blank" rel="noopener noreferrer" title="前往官網或導航" class="absolute bottom-2.5 left-3.5 right-12 text-white text-sm font-bold truncate drop-shadow-md z-20 hover:text-amber-300 transition flex items-center gap-1">
-                <span class="truncate">${name}</span>
+                <span class="truncate max-w-[80%] inline-block align-middle" title="${name}">${name}</span>
                 <i class="fa-solid fa-arrow-up-right-from-square text-[9px] opacity-70"></i>
               </a>
             </div>
@@ -2996,7 +2996,7 @@
               </button>
 
               <a href="${websiteUrl}" target="_blank" rel="noopener noreferrer" title="前往官網或導航" class="absolute bottom-2.5 left-3.5 right-12 text-white text-sm font-bold truncate drop-shadow-md z-20 hover:text-amber-300 transition flex items-center gap-1">
-                <span class="truncate">${name}</span>
+                <span class="truncate max-w-[80%] inline-block align-middle" title="${name}">${name}</span>
                 <i class="fa-solid fa-arrow-up-right-from-square text-[9px] opacity-70"></i>
               </a>
             </div>
@@ -3123,7 +3123,7 @@
               </button>
 
               <a href="${websiteUrl}" target="_blank" rel="noopener noreferrer" title="前往機構或導航" class="absolute bottom-2.5 left-3.5 right-12 text-white text-sm font-bold truncate drop-shadow-md z-20 hover:text-amber-300 transition flex items-center gap-1">
-                <span class="truncate">${name}</span>
+                <span class="truncate max-w-[80%] inline-block align-middle" title="${name}">${name}</span>
                 <i class="fa-solid fa-arrow-up-right-from-square text-[9px] opacity-70"></i>
               </a>
             </div>
