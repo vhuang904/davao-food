@@ -1841,8 +1841,9 @@
     const deepTab = urlParams.get('tab');
     const deepCity = urlParams.get('city');
     const deepSub = urlParams.get('sub');
-    // 單店旗艦大卡片分享 — 分享參數 (?store=xxxx)
+    // 單店旗艦大卡片分享 — 分享參數 (?store=xxxx&ref=<推薦人uid>)
     const deepStoreId = (urlParams.get('store') || '').trim();
+    const deepRefUid = (urlParams.get('ref') || '').trim();
 
     let currentDimension = sessionStorage.getItem('ph_dim') || 'cities';
     let currentCity = localStorage.getItem('ph_app_city') || 'manila';
@@ -2346,17 +2347,22 @@
       const sId = String(storeId).trim();
       const allItems = [...allRestaurants, ...allAttractions, ...allMedical];
       const item = allItems.find(x => String(x.id || x.place_id).trim().toLowerCase() === sId.toLowerCase());
-      const name = item ? (item.name_zh || item.name_en || item.name || sId) : sId;
+      const storeName = item ? (item.name_zh || item.name_en || item.name || sId) : sId;
 
       const url = new URL(window.location.href);
       url.search = '';
       url.searchParams.set('store', sId);
+      // 帶入推薦人 UID，供訪客端顯示「好友推薦」文案
+      const refUid = (typeof currentUser !== 'undefined' && currentUser?.uid) ? currentUser.uid : '';
+      if (refUid) url.searchParams.set('ref', refUid);
       const shareUrl = url.toString();
 
+      const shareText = `這是我私房推薦的【${storeName}】，真的超好吃！下次我們一起去吃～`;
+
       if (navigator.share) {
-        navigator.share({ title: `大V的旅遊窩 · ${name}`, url: shareUrl }).catch(() => {});
+        navigator.share({ title: storeName, text: shareText, url: shareUrl }).catch(() => {});
       } else if (navigator.clipboard) {
-        navigator.clipboard.writeText(shareUrl).then(() => showToast('已複製店家分享連結', 'fa-link'));
+        navigator.clipboard.writeText(`${shareText} ${shareUrl}`).then(() => showToast('已複製推薦訊息與連結', 'fa-link'));
       }
     };
 
@@ -2425,16 +2431,32 @@
         return;
       }
 
-      // 依登入狀態動態分流頂部 Banner 文案與按鈕
-      const topBannerHtml = currentUser ? `
-        <div class="mx-3 mt-3 mb-1 p-3 rounded-2xl border border-amber-400/30 bg-gradient-to-r from-amber-400/10 to-transparent flex items-center justify-between gap-2">
-          <div class="text-[11px] text-amber-300 font-bold leading-snug">歡迎回來！點擊卡片愛心可直接收錄</div>
-          <button type="button" onclick="window.exitStoreShareView()" class="flex-shrink-0 px-3 py-1.5 rounded-xl bg-amber-400 text-slate-950 text-[11px] font-black">回我的首頁</button>
-        </div>
+      // 依登入狀態 & 是否帶有推薦人 (ref) 動態分流頂部 Banner 文案與按鈕
+      // 右側「立即登入 / 回我的首頁」與「✕」關閉鈕並排，gap-3 避免重疊
+      const bannerCtaHtml = currentUser ? `
+        <button type="button" onclick="window.exitStoreShareView()" class="flex-shrink-0 px-3 py-1.5 rounded-xl bg-amber-400 text-slate-950 text-[11px] font-black">回我的首頁</button>
       ` : `
-        <div class="mx-3 mt-3 mb-1 p-3 rounded-2xl border border-amber-400/30 bg-gradient-to-r from-amber-400/10 to-transparent flex items-center justify-between gap-2">
-          <div class="text-[11px] text-amber-300 font-bold leading-snug">登入解鎖收藏、留言、點數獎勵！</div>
-          <button type="button" onclick="window.openAuthModal()" class="flex-shrink-0 px-3 py-1.5 rounded-xl bg-amber-400 text-slate-950 text-[11px] font-black">立即登入</button>
+        <button type="button" onclick="window.openAuthModal()" class="flex-shrink-0 px-3 py-1.5 rounded-xl bg-amber-400 text-slate-950 text-[11px] font-black">立即登入</button>
+      `;
+
+      let bannerText;
+      if (currentUser) {
+        bannerText = '歡迎回來！點擊卡片愛心可直接收錄';
+      } else if (deepRefUid) {
+        bannerText = '好友私房推薦好店！登入解鎖收藏、留言、點數獎勵！';
+      } else {
+        bannerText = '登入解鎖收藏、留言、點數獎勵！';
+      }
+
+      const topBannerHtml = `
+        <div class="mx-3 mt-3 mb-1 p-3 rounded-2xl border border-amber-400/30 bg-gradient-to-r from-amber-400/10 to-transparent flex items-center justify-between gap-3">
+          <div class="text-[11px] text-amber-300 font-bold leading-snug flex-1 min-w-0">${bannerText}</div>
+          <div class="flex items-center gap-3 flex-shrink-0">
+            ${bannerCtaHtml}
+            <button type="button" onclick="window.exitStoreShareView()" class="w-9 h-9 rounded-full bg-slate-900/80 border border-slate-700 flex items-center justify-center text-slate-300 flex-shrink-0">
+              <i class="fa-solid fa-xmark"></i>
+            </button>
+          </div>
         </div>
       `;
 
@@ -2442,9 +2464,8 @@
 
       overlay.innerHTML = `
         <div class="relative min-h-screen pb-8">
-          ${closeBtnHtml}
           ${topBannerHtml}
-          <div class="mt-2 px-3">${cardHtml}</div>
+          <div class="mt-5 px-3">${cardHtml}</div>
           <div class="px-3 mt-3">
             <button type="button" onclick="window.exitStoreShareView()" class="w-full py-2.5 rounded-xl bg-gradient-to-r from-amber-400 to-amber-500 text-slate-950 text-xs font-black shadow-md active:scale-95 transition">
               探索更多菲律賓精選好店 ➔
