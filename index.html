@@ -1038,9 +1038,9 @@
         <i class="fa-solid fa-xmark text-sm"></i>
       </button>
 
-      <div class="inline-flex items-center justify-center gap-5 mx-auto text-center">
+      <div class="flex w-full items-center justify-center gap-5 text-center pr-8">
         <i id="toastIcon" class="fa-solid fa-check text-base flex-shrink-0"></i>
-        <span id="toastMessage" class="leading-relaxed text-xs sm:text-sm font-bold">已完成操作</span>
+        <span id="toastMessage" class="leading-relaxed text-xs sm:text-sm font-bold max-w-[80%]">已完成操作</span>
       </div>
       <div id="toastActionContainer" class="w-full flex justify-center px-2"></div>
     </div>
@@ -1290,16 +1290,6 @@
 
           <!-- Tab 1: 私房清單列表 -->
           <div id="tab-content-favorites" class="profile-tab-content flex-1 flex flex-col min-h-0">
-            <!-- 方案 A：私房收藏清單分享 — 開關與複製連結列 -->
-            <div id="fav-share-bar" class="flex items-center justify-between gap-2 px-2 py-1.5 mb-1.5 rounded-xl border border-slate-800 bg-slate-900/60 flex-shrink-0">
-              <label class="flex items-center gap-1.5 cursor-pointer select-none">
-                <input type="checkbox" id="fav-share-toggle" onchange="window.toggleFavoritesSharing(this.checked)" class="w-3.5 h-3.5 accent-amber-400" />
-                <span class="text-[10px] font-bold text-slate-300">分享我的私房清單</span>
-              </label>
-              <button type="button" id="fav-share-copy-btn" onclick="window.copyFavoritesShareLink()" class="hidden text-[10px] font-bold text-amber-400 flex items-center gap-1 flex-shrink-0">
-                <i class="fa-solid fa-link"></i>複製連結
-              </button>
-            </div>
             <div id="favorites-list-container" class="flex-1 overflow-y-auto hide-scrollbar space-y-1.5 max-h-[190px] pr-0.5"></div>
           </div>
 
@@ -1594,7 +1584,7 @@
   <script type="module">
     import { initializeApp, getApps, getApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getMessaging, getToken } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-messaging.js";
-    import { getFirestore, collection, getDocs, doc, getDoc, setDoc, updateDoc, increment, query, where, orderBy, addDoc, limit } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { getFirestore, collection, getDocs, doc, getDoc, setDoc, updateDoc, increment, query, where, orderBy, addDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
     import { loadMasterDatabase } from './googleSheetService.js';
     import { 
       initAuthService, 
@@ -1851,8 +1841,8 @@
     const deepTab = urlParams.get('tab');
     const deepCity = urlParams.get('city');
     const deepSub = urlParams.get('sub');
-    // 方案 A：私房收藏清單分享 — 分享短碼參數 (?share=xxxx)
-    const deepShareId = (urlParams.get('share') || '').trim();
+    // 單店旗艦大卡片分享 — 分享參數 (?store=xxxx)
+    const deepStoreId = (urlParams.get('store') || '').trim();
 
     let currentDimension = sessionStorage.getItem('ph_dim') || 'cities';
     let currentCity = localStorage.getItem('ph_app_city') || 'manila';
@@ -1887,11 +1877,9 @@
     let userFavoritesSet = new Set(JSON.parse(localStorage.getItem('bigv_favorites') || '[]'));
     let activeCommentStoreId = '';
 
-    // 方案 A：私房收藏清單分享 — 檢視模式狀態
-    let isShareViewMode = false;
-    let sharedFavoritesData = { ownerUid: '', ids: [] };
-    // 方案 A：私房收藏清單分享 — 目前登入使用者自己的分享狀態
-    let myShareState = { isPublic: false, shareId: '' };
+    // 單店旗艦大卡片分享 — 訪客檢視模式狀態
+    let isStoreViewMode = false;
+    let sharedStoreItem = null;
 
     function preserveScrollPosition(actionFn) {
       const scrollY = window.scrollY || document.documentElement.scrollTop;
@@ -2268,10 +2256,11 @@
         syncUserFavoritesFromCloud(user.uid);
         loadUserInboxMessages();
         window.checkUserUnreadNotifications();
-      } else {
-        // 方案 A：私房收藏清單分享 — 登出時重置分享狀態顯示（不影響雲端資料）
-        myShareState = { isPublic: false, shareId: '' };
-        updateFavShareBarUI();
+      }
+
+      // 單店旗艦大卡片分享 — 登入狀態變化時，若正在訪客分享預覽中，刷新頂部 Banner 文案
+      if (isStoreViewMode && sharedStoreItem) {
+        renderSharedStoreView('ready', sharedStoreItem);
       }
 
       updateHeaderAuthBtn();
@@ -2341,124 +2330,67 @@
           snap.data().favorites.forEach(id => userFavoritesSet.add(id));
           localStorage.setItem('bigv_favorites', JSON.stringify(Array.from(userFavoritesSet)));
         }
-        // 方案 A：私房收藏清單分享 — 同步讀取自己的分享狀態
-        if (snap.exists()) {
-          myShareState.isPublic = !!snap.data().isPublic;
-          myShareState.shareId = snap.data().shareId || '';
-        }
       } catch (e) {}
       renderFavoritesList();
-      updateFavShareBarUI();
       preserveScrollPosition(() => renderContent());
     }
 
     // ------------------------------------------------------------
-    // 方案 A：私房收藏清單分享 — 開關 UI 同步 / 開啟 / 複製連結
+    // 單店旗艦大卡片分享 — 產生 ?store=<id> 連結並喚起系統分享/複製
     // ------------------------------------------------------------
-    function updateFavShareBarUI() {
-      const toggle = document.getElementById('fav-share-toggle');
-      const copyBtn = document.getElementById('fav-share-copy-btn');
-      if (toggle) toggle.checked = myShareState.isPublic;
-      if (copyBtn) copyBtn.classList.toggle('hidden', !myShareState.isPublic);
-    }
-
-    window.toggleFavoritesSharing = async function(enabled) {
-      if (!currentUser) {
-        const toggle = document.getElementById('fav-share-toggle');
-        if (toggle) toggle.checked = false;
-        showToast(
-          '🔒 請先登入會員，解鎖專屬私房收藏服務！',
-          'fa-lock',
-          '立即登入',
-          () => { closeAiChat(); openAuthModal(); }
-        );
-        return;
+    window.shareStoreCard = function(storeId, event) {
+      if (event) {
+        event.preventDefault();
+        event.stopPropagation();
       }
+      const sId = String(storeId).trim();
+      const allItems = [...allRestaurants, ...allAttractions, ...allMedical];
+      const item = allItems.find(x => String(x.id || x.place_id).trim().toLowerCase() === sId.toLowerCase());
+      const name = item ? (item.name_zh || item.name_en || item.name || sId) : sId;
 
-      try {
-        if (enabled) {
-          // 初次開啟：若尚無 shareId 才產生新的（避免每次開關都換連結）
-          if (!myShareState.shareId) {
-            myShareState.shareId = Math.random().toString(36).substring(2, 10);
-          }
-          myShareState.isPublic = true;
-          await setDoc(doc(db, "user_favorites", currentUser.uid), {
-            isPublic: true,
-            shareId: myShareState.shareId
-          }, { merge: true });
-          updateFavShareBarUI();
-          window.copyFavoritesShareLink();
-        } else {
-          myShareState.isPublic = false;
-          await setDoc(doc(db, "user_favorites", currentUser.uid), {
-            isPublic: false
-          }, { merge: true });
-          updateFavShareBarUI();
-          showToast('🔒 已關閉分享，舊連結將無法再查看', 'fa-lock');
-        }
-      } catch (err) {
-        console.error("[FavShare] 更新分享狀態失敗:", err);
-        showToast('更新分享狀態失敗，請稍後再試', 'fa-triangle-exclamation');
-      }
-    };
-
-    window.copyFavoritesShareLink = function() {
-      if (!myShareState.shareId) return;
       const url = new URL(window.location.href);
       url.search = '';
-      url.searchParams.set('share', myShareState.shareId);
+      url.searchParams.set('store', sId);
       const shareUrl = url.toString();
 
       if (navigator.share) {
-        navigator.share({ title: '大V的旅遊窩 · 我的私房清單', url: shareUrl }).catch(() => {});
+        navigator.share({ title: `大V的旅遊窩 · ${name}`, url: shareUrl }).catch(() => {});
       } else if (navigator.clipboard) {
-        navigator.clipboard.writeText(shareUrl).then(() => showToast('分享連結已複製！', 'fa-link'));
+        navigator.clipboard.writeText(shareUrl).then(() => showToast('已複製店家分享連結', 'fa-link'));
       }
     };
 
     // ------------------------------------------------------------
-    // 方案 A：私房收藏清單分享 — 分享檢視模式 (未登入亦可預覽)
+    // 單店旗艦大卡片分享 — 訪客/會員開啟 ?store=<id> 的預覽模式
     // ------------------------------------------------------------
-    async function loadSharedFavoritesView(shareId) {
-      if (!shareId) return;
-      isShareViewMode = true;
-      renderSharedFavoritesView('loading');
-      try {
-        const q = query(
-          collection(db, "user_favorites"),
-          where("shareId", "==", shareId),
-          where("isPublic", "==", true),
-          limit(1)
-        );
-        const snap = await getDocs(q);
-        if (snap.empty) {
-          renderSharedFavoritesView('notfound');
-          return;
-        }
-        const ownerDoc = snap.docs[0];
-        const data = ownerDoc.data();
-        sharedFavoritesData = {
-          ownerUid: ownerDoc.id,
-          ids: Array.isArray(data.favorites) ? data.favorites : []
-        };
-        renderSharedFavoritesView('ready');
-      } catch (err) {
-        console.error("[ShareView] 讀取分享清單失敗:", err);
-        renderSharedFavoritesView('notfound');
+    function loadSharedStoreView(storeId) {
+      const sId = String(storeId).trim();
+      isStoreViewMode = true;
+      renderSharedStoreView('loading');
+
+      const allItems = [...allRestaurants, ...allAttractions, ...allMedical];
+      const item = allItems.find(x => String(x.id || x.place_id).trim().toLowerCase() === sId.toLowerCase());
+
+      if (!item) {
+        sharedStoreItem = null;
+        renderSharedStoreView('notfound');
+        return;
       }
+      sharedStoreItem = item;
+      renderSharedStoreView('ready', item);
     }
 
-    function renderSharedFavoritesView(state) {
-      let overlay = document.getElementById('share-view-overlay');
+    function renderSharedStoreView(state, item) {
+      let overlay = document.getElementById('store-view-overlay');
       if (!overlay) {
         overlay = document.createElement('div');
-        overlay.id = 'share-view-overlay';
+        overlay.id = 'store-view-overlay';
         overlay.className = 'fixed inset-0 z-[9999] bg-slate-950 overflow-y-auto';
         document.body.appendChild(overlay);
       }
 
       const closeBtnHtml = `
-        <button type="button" onclick="window.exitShareView()" class="absolute top-3 right-3 z-10 w-9 h-9 rounded-full bg-slate-900/80 border border-slate-700 flex items-center justify-center text-slate-300">
+        <button type="button" onclick="window.exitStoreShareView()" class="absolute top-3 right-3 z-10 w-9 h-9 rounded-full bg-slate-900/80 border border-slate-700 flex items-center justify-center text-slate-300">
           <i class="fa-solid fa-xmark"></i>
         </button>
       `;
@@ -2469,7 +2401,7 @@
             ${closeBtnHtml}
             <div class="text-center text-slate-400 text-xs">
               <i class="fa-solid fa-spinner fa-spin text-xl mb-2 block"></i>
-              清單載入中...
+              店家資料載入中...
             </div>
           </div>
         `;
@@ -2482,9 +2414,9 @@
             ${closeBtnHtml}
             <div class="text-center text-slate-400 max-w-xs">
               <i class="fa-regular fa-face-frown text-3xl mb-3 block text-slate-600"></i>
-              <p class="text-sm font-bold text-slate-200">這份私房清單找不到了</p>
-              <p class="text-[11px] text-slate-500 mt-1.5 leading-relaxed">連結可能已失效，或分享者已將清單設為不公開。</p>
-              <button type="button" onclick="window.exitShareView()" class="mt-4 w-full py-2.5 rounded-xl bg-gradient-to-r from-amber-400 to-amber-500 text-slate-950 text-xs font-black shadow-md active:scale-95 transition">
+              <p class="text-sm font-bold text-slate-200">找不到這間店家</p>
+              <p class="text-[11px] text-slate-500 mt-1.5 leading-relaxed">連結可能已失效，或該店家已下架。</p>
+              <button type="button" onclick="window.exitStoreShareView()" class="mt-4 w-full py-2.5 rounded-xl bg-gradient-to-r from-amber-400 to-amber-500 text-slate-950 text-xs font-black shadow-md active:scale-95 transition">
                 探索更多精彩地點 ➔
               </button>
             </div>
@@ -2493,76 +2425,42 @@
         return;
       }
 
-      const ctaBannerHtml = `
+      // 依登入狀態動態分流頂部 Banner 文案與按鈕
+      const topBannerHtml = currentUser ? `
+        <div class="mx-3 mt-3 mb-1 p-3 rounded-2xl border border-amber-400/30 bg-gradient-to-r from-amber-400/10 to-transparent flex items-center justify-between gap-2">
+          <div class="text-[11px] text-amber-300 font-bold leading-snug">歡迎回來！點擊卡片愛心可直接收錄</div>
+          <button type="button" onclick="window.exitStoreShareView()" class="flex-shrink-0 px-3 py-1.5 rounded-xl bg-amber-400 text-slate-950 text-[11px] font-black">回我的首頁</button>
+        </div>
+      ` : `
         <div class="mx-3 mt-3 mb-1 p-3 rounded-2xl border border-amber-400/30 bg-gradient-to-r from-amber-400/10 to-transparent flex items-center justify-between gap-2">
           <div class="text-[11px] text-amber-300 font-bold leading-snug">登入解鎖收藏、留言、點數獎勵！</div>
-          <button type="button" onclick="closeAiChat(); openAuthModal();" class="flex-shrink-0 px-3 py-1.5 rounded-xl bg-amber-400 text-slate-950 text-[11px] font-black">立即登入</button>
+          <button type="button" onclick="window.openAuthModal()" class="flex-shrink-0 px-3 py-1.5 rounded-xl bg-amber-400 text-slate-950 text-[11px] font-black">立即登入</button>
         </div>
       `;
 
-      const allItems = [...allRestaurants, ...allAttractions, ...allMedical];
-      const matchedItems = sharedFavoritesData.ids
-        .map(id => allItems.find(x => String(x.id || x.place_id).trim().toLowerCase() === String(id).trim().toLowerCase()))
-        .filter(Boolean);
-
-      const listHtml = matchedItems.length === 0
-        ? `<div class="text-center py-10 text-slate-500 text-xs">這份私房清單目前是空的</div>`
-        : matchedItems.map(item => {
-            const name = item.name_zh || item.name_en || item.name || item.id;
-            const img = (item.images && item.images[0]) || 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=200';
-            const cleanPhone = getCleanPhone(item.phone);
-            const navUrl = item.nav_link || ('https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(name + ' ' + (item.address || '')));
-            const sId = String(item.id || item.place_id).trim();
-            const isFav = userFavoritesSet.has(sId);
-
-            return `
-              <div class="bg-slate-900/90 border border-slate-800 rounded-xl p-2 flex items-center justify-between gap-2 transition">
-                <div class="flex items-center gap-2.5 min-w-0 max-w-[60%]">
-                  <div class="w-11 h-11 rounded-lg overflow-hidden flex-shrink-0 bg-slate-950">
-                    <img src="${img}" class="w-full h-full object-cover" />
-                  </div>
-                  <div class="min-w-0 flex-1">
-                    <h6 class="font-bold text-xs text-white truncate leading-tight">${name}</h6>
-                    <div class="flex items-center gap-1.5 text-[9px] text-slate-400 mt-0.5">
-                      <span class="truncate">${item.city || '菲律賓'} · ${item.category || '精選'}</span>
-                    </div>
-                  </div>
-                </div>
-                <div class="flex items-center gap-1.5 flex-shrink-0">
-                  <a href="${cleanPhone ? `tel:${cleanPhone}` : '#'}" title="撥打電話" class="btn-fav-action w-7 h-7 rounded-lg flex items-center justify-center text-xs transition ${!cleanPhone ? 'opacity-30 pointer-events-none' : ''} text-emerald-500">
-                    <i class="fa-solid fa-phone"></i>
-                  </a>
-                  <a href="${navUrl}" target="_blank" rel="noopener noreferrer" title="路線導航" class="btn-fav-action w-7 h-7 rounded-lg flex items-center justify-center text-xs transition text-sky-500">
-                    <i class="fa-solid fa-location-arrow"></i>
-                  </a>
-                  <button type="button" title="收藏" onclick="window.toggleFavorite('${sId}', event)" class="btn-fav-action w-7 h-7 rounded-lg flex items-center justify-center text-xs transition ${isFav ? 'text-rose-500' : 'text-slate-500'}">
-                    <i class="fa-${isFav ? 'solid' : 'regular'} fa-heart"></i>
-                  </button>
-                </div>
-              </div>
-            `;
-          }).join('');
+      const cardHtml = buildRestaurantCardHtml(item, 'share');
 
       overlay.innerHTML = `
         <div class="relative min-h-screen pb-8">
           ${closeBtnHtml}
-          <div class="pt-6 px-4 pb-2 text-center">
-            <i class="fa-solid fa-heart-circle-check text-amber-400 text-2xl mb-1 block"></i>
-            <h5 class="text-sm font-black text-white">好友的私房收藏清單</h5>
-            <p class="text-[10px] text-slate-500 mt-0.5">共 ${matchedItems.length} 個私房口袋名單</p>
+          ${topBannerHtml}
+          <div class="mt-2 px-3">${cardHtml}</div>
+          <div class="px-3 mt-3">
+            <button type="button" onclick="window.exitStoreShareView()" class="w-full py-2.5 rounded-xl bg-gradient-to-r from-amber-400 to-amber-500 text-slate-950 text-xs font-black shadow-md active:scale-95 transition">
+              探索更多菲律賓精選好店 ➔
+            </button>
           </div>
-          ${ctaBannerHtml}
-          <div class="mt-2 px-3 space-y-1.5">${listHtml}</div>
         </div>
       `;
     }
 
-    window.exitShareView = function() {
-      isShareViewMode = false;
-      const overlay = document.getElementById('share-view-overlay');
+    window.exitStoreShareView = function() {
+      isStoreViewMode = false;
+      sharedStoreItem = null;
+      const overlay = document.getElementById('store-view-overlay');
       if (overlay) overlay.remove();
       const url = new URL(window.location.href);
-      url.searchParams.delete('share');
+      url.searchParams.delete('store');
       window.history.replaceState({}, '', url.toString());
       window.scrollTo({ top: 0, behavior: 'instant' });
     };
@@ -2619,6 +2517,9 @@
               <a href="${navUrl}" target="_blank" rel="noopener noreferrer" title="路線導航" class="btn-fav-action w-7 h-7 rounded-lg flex items-center justify-center text-xs transition text-sky-500">
                 <i class="fa-solid fa-location-arrow"></i>
               </a>
+              <button type="button" title="分享店家" onclick="window.shareStoreCard('${sId}', event)" class="btn-fav-action w-7 h-7 rounded-lg flex items-center justify-center text-xs transition text-amber-400">
+                <i class="fa-solid fa-share-nodes"></i>
+              </button>
               <button type="button" title="取消收藏" onclick="window.toggleFavorite('${sId}', event)" class="btn-fav-action w-7 h-7 rounded-lg flex items-center justify-center text-xs transition text-rose-500">
                 <i class="fa-solid fa-heart"></i>
               </button>
@@ -2950,6 +2851,125 @@
       bindCarouselControls();
     }
 
+    // 單店旗艦大卡片渲染邏輯（供首頁列表與訪客單店分享預覽共用）
+    function buildRestaurantCardHtml(item, idx) {
+      const dict = I18N_DICT[currentLang];
+      const name = (currentLang === 'en' && item.name_en) ? item.name_en : (item.name_zh || item.name_en || item.name || item.id);
+      const sId = String(item.id || item.place_id).trim();
+      const isFav = userFavoritesSet.has(sId);
+      const cleanPhone = getCleanPhone(item.phone);
+      const navUrl = item.nav_link || ('https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(name + ' ' + (item.address || '')));
+      const websiteUrl = (item.website && item.website.trim().startsWith('http')) ? item.website.trim() : navUrl;
+
+      const rating = Number(item.google_rating || item.googleRating || 4.8).toFixed(1);
+      const reviewCount = item.review_count || item.googleReviewCount || item.reviews || 100;
+      const tier = getItemTier(item);
+
+      let reviewText = '';
+      if (currentLang === 'en') {
+        reviewText = (item.bigv_comment_en || item.big_v_comment_en || '').trim()
+                  || (item.description_en || '').trim()
+                  || (tier === 1 ? 'Handpicked luxury dining destination curated by BigV.' : 'Top Google-rated dining experience.');
+      } else {
+        reviewText = (item.bigv_comment_zh || item.big_v_comment_zh || item.big_v_comment || '').trim()
+                  || (item.description || '').trim()
+                  || (tier === 1 ? '大V親訪私房嚴選，頂奢美饌極致饗宴。' : 'Google 饕客高分熱門推薦，在地高口碑精選。');
+      }
+
+      const reviewPrefix = (tier === 1) ? (currentLang === 'en' ? '👑 BigV Note: ' : '👑 站長私房點評：') : (currentLang === 'en' ? '🌟 Google Review: ' : '🌟 饕客口碑點評：');
+
+      const isIsland = isIslandMode(item.city || currentCity);
+      const grabLink = getGrabLink(item, item.name_en || name, item.city);
+
+      const rightTopActionBtn = !isIsland ? `
+        <a href="${grabLink}" target="_blank" rel="noopener noreferrer" class="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl btn-card-grab font-bold transition active:scale-95 shadow-sm">
+          <i class="fa-solid fa-bag-shopping text-xs"></i>
+          <span class="text-[11px]">${dict.btnGrab}</span>
+        </a>
+      ` : `
+        <a href="${websiteUrl}" target="_blank" rel="noopener noreferrer" class="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl btn-card-website font-bold transition active:scale-95 shadow-sm">
+          <i class="fa-solid fa-globe text-xs"></i>
+          <span class="text-[11px]">${dict.btnWebsite}</span>
+        </a>
+      `;
+
+      let badgeHtml = '';
+      if (tier === 1) {
+        badgeHtml = `
+          <div class="absolute top-3 left-3 z-30 flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-950/90 border border-amber-400/80 text-amber-300 text-[10px] font-black shadow-lg">
+            <i class="fa-solid fa-crown text-amber-400 text-[10px]"></i> ${dict.badgeCurated}
+          </div>
+        `;
+      } else if (tier === 2) {
+        badgeHtml = `
+          <div class="absolute top-3 left-3 z-30 flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-gradient-to-r from-sky-500 to-blue-600 border border-sky-300 text-white text-[10px] font-black shadow-md">
+            <i class="fa-solid fa-gem text-[10px]"></i>
+            <span>${dict.badgeGoogleRec}</span>
+          </div>
+        `;
+      }
+
+      const innerCardHtml = `
+        <article id="card-${sId}" class="rounded-2xl overflow-hidden ${tier === 2 ? 'partner-card-frame' : 'border border-slate-800'} bg-slate-950 shadow-md flex flex-col transition relative">
+          <div class="relative w-full overflow-hidden">
+            ${buildCarouselHtml(parseImages(item), `res-${idx}`, name)}
+            ${badgeHtml}
+
+            <button type="button" onclick="window.toggleFavorite('${sId}', event)" class="absolute top-3 right-3 z-30 w-8 h-8 rounded-full bg-black/60 backdrop-blur-md flex items-center justify-center text-sm transition active:scale-90 border border-white/20 cursor-pointer">
+              <i class="${isFav ? 'fa-solid text-rose-500' : 'fa-regular text-white'} fa-heart"></i>
+            </button>
+
+            <a href="${websiteUrl}" target="_blank" rel="noopener noreferrer" title="前往官網或導航" class="absolute bottom-2.5 left-3.5 right-12 text-white text-sm font-bold truncate drop-shadow-md z-20 hover:text-amber-300 transition flex items-center gap-1">
+              <span class="truncate max-w-[80%] inline-block align-middle" title="${name}">${name}</span>
+              <i class="fa-solid fa-arrow-up-right-from-square text-[9px] opacity-70"></i>
+            </a>
+          </div>
+
+          <div class="p-3.5 space-y-2 bg-slate-950 text-xs card-info-box">
+            <div class="flex items-center justify-between">
+<span class="card-meta-tag font-semibold">${(dict['city_' + item.city?.toLowerCase()] || item.city || (currentLang === 'en' ? 'Philippines' : '菲律賓'))} · ${translateCategoryText(item.category, currentLang)}</span>                <i class="fa-solid fa-star text-[10px]"></i> ${rating}
+              <span class="text-slate-500 text-[10px] font-normal">(${reviewCount} ${dict.reviewsLabel || '則評價'})</span>
+          </span>
+            </div>
+            <p class="text-slate-300 leading-relaxed line-clamp-2"><span class="card-review-prefix font-bold">${reviewPrefix}</span>${reviewText}</p>
+          </div>
+
+          <div class="p-2.5 border-t space-y-2 text-xs" style="background: var(--theme-card-sub-bg, #fdf2f8); border-color: var(--theme-border, #fbcfe8);">
+            <div class="grid grid-cols-2 gap-2">
+              <button type="button" onclick="window.openUniversalCommentModal('${sId}', '${encodeURIComponent(name)}')" class="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl btn-card-comment font-black transition active:scale-95 shadow-sm">
+                <i class="fa-solid fa-pen-to-square text-xs"></i> <span>${dict.btnComment}</span>
+              </button>
+              ${rightTopActionBtn}
+            </div>
+
+            <div class="grid grid-cols-2 gap-2">
+              <a href="${cleanPhone ? `tel:${cleanPhone}` : '#'}" class="flex items-center justify-center gap-1.5 py-2 rounded-xl btn-card-phone font-bold transition active:scale-95 ${!cleanPhone ? 'opacity-40 pointer-events-none' : ''}">
+                <i class="fa-solid fa-phone text-xs"></i>
+                <span class="text-[11px]">${cleanPhone ? dict.btnCall : dict.phoneEmpty}</span>
+              </a>
+              <a href="${navUrl}" target="_blank" rel="noopener noreferrer" class="flex items-center justify-center gap-1.5 py-2 rounded-xl btn-card-nav font-bold transition active:scale-95">
+                <i class="fa-solid fa-diamond-turn-right text-xs"></i>
+                <span class="text-[11px]">${dict.btnNav}</span>
+              </a>
+            </div>
+          </div>
+        </article>
+      `;
+
+      if (tier === 1) {
+        return `
+          <div class="beam-card-container">
+            <div class="beam-spinner"></div>
+            <div class="beam-inner-content">
+              ${innerCardHtml}
+            </div>
+          </div>
+        `;
+      }
+
+      return innerCardHtml;
+    }
+
     function renderRestaurants() {
       const listEl = document.getElementById('restaurant-list');
       const dict = I18N_DICT[currentLang];
@@ -3014,122 +3034,7 @@
         return;
       }
 
-      listEl.innerHTML = filtered.map((item, idx) => {
-        const name = (currentLang === 'en' && item.name_en) ? item.name_en : (item.name_zh || item.name_en || item.name || item.id);
-        const sId = String(item.id || item.place_id).trim();
-        const isFav = userFavoritesSet.has(sId);
-        const cleanPhone = getCleanPhone(item.phone);
-        const navUrl = item.nav_link || ('https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(name + ' ' + (item.address || '')));
-        const websiteUrl = (item.website && item.website.trim().startsWith('http')) ? item.website.trim() : navUrl;
-
-        const rating = Number(item.google_rating || item.googleRating || 4.8).toFixed(1);
-        const reviewCount = item.review_count || item.googleReviewCount || item.reviews || 100;
-        const tier = getItemTier(item);
-
-        let reviewText = '';
-        if (currentLang === 'en') {
-          reviewText = (item.bigv_comment_en || item.big_v_comment_en || '').trim()
-                    || (item.description_en || '').trim()
-                    || (tier === 1 ? 'Handpicked luxury dining destination curated by BigV.' : 'Top Google-rated dining experience.');
-        } else {
-          reviewText = (item.bigv_comment_zh || item.big_v_comment_zh || item.big_v_comment || '').trim()
-                    || (item.description || '').trim()
-                    || (tier === 1 ? '大V親訪私房嚴選，頂奢美饌極致饗宴。' : 'Google 饕客高分熱門推薦，在地高口碑精選。');
-        }
-
-        const reviewPrefix = (tier === 1) ? (currentLang === 'en' ? '👑 BigV Note: ' : '👑 站長私房點評：') : (currentLang === 'en' ? '🌟 Google Review: ' : '🌟 饕客口碑點評：');
-
-        const isIsland = isIslandMode(item.city || currentCity);
-        const grabLink = getGrabLink(item, item.name_en || name, item.city);
-        
-        const rightTopActionBtn = !isIsland ? `
-          <a href="${grabLink}" target="_blank" rel="noopener noreferrer" class="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl btn-card-grab font-bold transition active:scale-95 shadow-sm">
-            <i class="fa-solid fa-bag-shopping text-xs"></i>
-            <span class="text-[11px]">${dict.btnGrab}</span>
-          </a>
-        ` : `
-          <a href="${websiteUrl}" target="_blank" rel="noopener noreferrer" class="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl btn-card-website font-bold transition active:scale-95 shadow-sm">
-            <i class="fa-solid fa-globe text-xs"></i>
-            <span class="text-[11px]">${dict.btnWebsite}</span>
-          </a>
-        `;
-
-        let badgeHtml = '';
-        if (tier === 1) {
-          badgeHtml = `
-            <div class="absolute top-3 left-3 z-30 flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-950/90 border border-amber-400/80 text-amber-300 text-[10px] font-black shadow-lg">
-              <i class="fa-solid fa-crown text-amber-400 text-[10px]"></i> ${dict.badgeCurated}
-            </div>
-          `;
-        } else if (tier === 2) {
-          badgeHtml = `
-            <div class="absolute top-3 left-3 z-30 flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-gradient-to-r from-sky-500 to-blue-600 border border-sky-300 text-white text-[10px] font-black shadow-md">
-              <i class="fa-solid fa-gem text-[10px]"></i>
-              <span>${dict.badgeGoogleRec}</span>
-            </div>
-          `;
-        }
-
-        const innerCardHtml = `
-          <article id="card-${sId}" class="rounded-2xl overflow-hidden ${tier === 2 ? 'partner-card-frame' : 'border border-slate-800'} bg-slate-950 shadow-md flex flex-col transition relative">
-            <div class="relative w-full overflow-hidden">
-              ${buildCarouselHtml(parseImages(item), `res-${idx}`, name)}
-              ${badgeHtml}
-
-              <button type="button" onclick="window.toggleFavorite('${sId}', event)" class="absolute top-3 right-3 z-30 w-8 h-8 rounded-full bg-black/60 backdrop-blur-md flex items-center justify-center text-sm transition active:scale-90 border border-white/20 cursor-pointer">
-                <i class="${isFav ? 'fa-solid text-rose-500' : 'fa-regular text-white'} fa-heart"></i>
-              </button>
-
-              <a href="${websiteUrl}" target="_blank" rel="noopener noreferrer" title="前往官網或導航" class="absolute bottom-2.5 left-3.5 right-12 text-white text-sm font-bold truncate drop-shadow-md z-20 hover:text-amber-300 transition flex items-center gap-1">
-                <span class="truncate max-w-[80%] inline-block align-middle" title="${name}">${name}</span>
-                <i class="fa-solid fa-arrow-up-right-from-square text-[9px] opacity-70"></i>
-              </a>
-            </div>
-
-            <div class="p-3.5 space-y-2 bg-slate-950 text-xs card-info-box">
-              <div class="flex items-center justify-between">
-<span class="card-meta-tag font-semibold">${(dict['city_' + item.city?.toLowerCase()] || item.city || (currentLang === 'en' ? 'Philippines' : '菲律賓'))} · ${translateCategoryText(item.category, currentLang)}</span>                <i class="fa-solid fa-star text-[10px]"></i> ${rating}
-                <span class="text-slate-500 text-[10px] font-normal">(${reviewCount} ${dict.reviewsLabel || '則評價'})</span>
-            </span>
-              </div>
-              <p class="text-slate-300 leading-relaxed line-clamp-2"><span class="card-review-prefix font-bold">${reviewPrefix}</span>${reviewText}</p>
-            </div>
-
-            <div class="p-2.5 border-t space-y-2 text-xs" style="background: var(--theme-card-sub-bg, #fdf2f8); border-color: var(--theme-border, #fbcfe8);">
-              <div class="grid grid-cols-2 gap-2">
-                <button type="button" onclick="window.openUniversalCommentModal('${sId}', '${encodeURIComponent(name)}')" class="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl btn-card-comment font-black transition active:scale-95 shadow-sm">
-                  <i class="fa-solid fa-pen-to-square text-xs"></i> <span>${dict.btnComment}</span>
-                </button>
-                ${rightTopActionBtn}
-              </div>
-
-              <div class="grid grid-cols-2 gap-2">
-                <a href="${cleanPhone ? `tel:${cleanPhone}` : '#'}" class="flex items-center justify-center gap-1.5 py-2 rounded-xl btn-card-phone font-bold transition active:scale-95 ${!cleanPhone ? 'opacity-40 pointer-events-none' : ''}">
-                  <i class="fa-solid fa-phone text-xs"></i>
-                  <span class="text-[11px]">${cleanPhone ? dict.btnCall : dict.phoneEmpty}</span>
-                </a>
-                <a href="${navUrl}" target="_blank" rel="noopener noreferrer" class="flex items-center justify-center gap-1.5 py-2 rounded-xl btn-card-nav font-bold transition active:scale-95">
-                  <i class="fa-solid fa-diamond-turn-right text-xs"></i>
-                  <span class="text-[11px]">${dict.btnNav}</span>
-                </a>
-              </div>
-            </div>
-          </article>
-        `;
-
-        if (tier === 1) {
-          return `
-            <div class="beam-card-container">
-              <div class="beam-spinner"></div>
-              <div class="beam-inner-content">
-                ${innerCardHtml}
-              </div>
-            </div>
-          `;
-        }
-
-        return innerCardHtml;
-      }).join('');
+      listEl.innerHTML = filtered.map((item, idx) => buildRestaurantCardHtml(item, idx)).join('');
     }
 
     function renderAttractions() {
@@ -4447,6 +4352,8 @@ async function handlePhotoSelection(files) {
     }
 
     window.openAuthModalDirect = openAuthModal;
+    // 曝露 window.openAuthModal，供動態產生的 HTML（如分享預覽頁 Banner）以 onclick 屬性字串呼叫
+    window.openAuthModal = openAuthModal;
     if (authStateBtn) {
       authStateBtn.onclick = (e) => {
         e.preventDefault();
@@ -5642,8 +5549,8 @@ const arbitration = detectQueryTargetCity(msg);
     initVisitorCounter();
     enableHorizontalScroll();
     fetchData().then(() => {
-      // 方案 A：私房收藏清單分享 — 資料就緒後才載入分享檢視（需比對店家詳情）
-      if (deepShareId) loadSharedFavoritesView(deepShareId);
+      // 單店旗艦大卡片分享 — 資料就緒後才載入分享預覽（需比對店家詳情）
+      if (deepStoreId) loadSharedStoreView(deepStoreId);
     });
     loadUserInboxMessages();
     initAuthService();
