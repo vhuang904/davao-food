@@ -478,8 +478,8 @@
       box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2) !important;
     }
 
-    html.light .main-tab-pill, html.amethyst .main-tab-pill, html.ocean .main-tab-pill, html.sakura .main-tab-pill {
-      color: rgba(255, 255, 255, 0.85) !important;
+    html.light .main-tab-pill:not(.bg-gradient-to-r), html.amethyst .main-tab-pill:not(.bg-gradient-to-r), html.ocean .main-tab-pill:not(.bg-gradient-to-r), html.sakura .main-tab-pill:not(.bg-gradient-to-r) {
+      color: var(--theme-text-body, #64748B) !important;
       font-weight: 800 !important;
     }
     html.light .main-tab-pill.bg-gradient-to-r, html.amethyst .main-tab-pill.bg-gradient-to-r, html.ocean .main-tab-pill.bg-gradient-to-r, html.sakura .main-tab-pill.bg-gradient-to-r {
