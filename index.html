@@ -5179,10 +5179,8 @@ const arbitration = detectQueryTargetCity(msg);
     // 安全關閉 AI 視窗
     function safeCloseAiWindow() {
       const modal = document.getElementById('chat-modal');
-      if (modal) {
-        modal.classList.add('hidden');
-        modal.style.display = '';
-      }
+      modal?.classList.add('hidden');
+      if (modal) modal.style.display = '';
       if (typeof updateFabPos === 'function') {
         updateFabPos(fabLeft, fabTop);
       }
@@ -5190,6 +5188,8 @@ const arbitration = detectQueryTargetCity(msg);
 
     // AI 卡片點擊跳轉
     window.handleAiJumpCard = function(storeId, itemType, itemCity, preferredSubKey) {
+      console.log('[AI Jump] Triggered:', { storeId, itemType, itemCity, preferredSubKey });
+      try {
       safeCloseAiWindow();
 
       if (itemCity && itemCity !== currentCity) {
@@ -5226,10 +5226,16 @@ const arbitration = detectQueryTargetCity(msg);
           window.jumpToCard(sId, itemType || 'restaurant');
         }
       }, 250);
+      } catch (err) {
+        console.error('[AI Jump Error]:', err);
+        alert('跳轉失敗: ' + (err.message || err));
+      }
     };
 
     // AI 專區跳轉
     window.handleAiCategoryJump = function(subKey, targetCity, mainIntent) {
+      console.log('[AI Jump] Triggered:', { subKey, targetCity, mainIntent });
+      try {
       safeCloseAiWindow();
 
       if (targetCity && targetCity !== currentCity) {
@@ -5248,6 +5254,10 @@ const arbitration = detectQueryTargetCity(msg);
       if (typeof renderSubFilterBar === 'function') renderSubFilterBar();
       window.scrollTo({ top: 0, behavior: 'smooth' });
       if (typeof renderContent === 'function') renderContent();
+      } catch (err) {
+        console.error('[AI Jump Error]:', err);
+        alert('跳轉失敗: ' + (err.message || err));
+      }
     };
 
     chatInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') handleChatSend(); });
