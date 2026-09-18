@@ -4984,11 +4984,21 @@ const arbitration = detectQueryTargetCity(msg);
       // 1. 若有命中特定菜系/標籤，先嘗試抓取精準名單
       if (categoryHook && categoryHook.key) {
         const hookKey = safeStr(categoryHook.key).toLowerCase();
-        const hookName = safeStr(categoryHook.name).toLowerCase();
+        // 參照第 3077 行分類 Tab 實際運作之關鍵字字典
+        const categoryMatchDict = {
+          japanese: ['日料', '日式', '壽司', '燒肉', '居酒屋', '拉麵', 'japanese'],
+          western: ['西餐', '牛排', '義大利', '美式', '漢堡', '披薩', 'western', 'pasta', 'steak'],
+          chinese: ['中餐', '中式', '粵菜', '川菜', '港式', '點心', '火鍋', 'chinese'],
+          korean: ['韓式', '韓國', '烤肉', 'korean'],
+          cafe: ['咖啡', '下午茶', '甜品', '麵包', 'cafe', 'coffee', 'bakery'],
+          bar: ['酒吧', '居酒屋', '夜生活', '調酒', 'bar', 'pub', 'bistro']
+        };
+        const targetKeywords = categoryMatchDict[hookKey] || [hookKey];
+
         const matchedItems = cityFiltered.filter(x => {
           const cat = getItemCat(x).toLowerCase();
           const name = safeStr(x.name || x.title).toLowerCase();
-          return cat.includes(hookKey) || cat.includes(hookName) || name.includes(hookName);
+          return targetKeywords.some(kw => cat.includes(kw) || name.includes(kw));
         });
 
         if (matchedItems.length > 0) {
