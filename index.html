@@ -4973,9 +4973,50 @@ const arbitration = detectQueryTargetCity(msg);
       }
 
       cityFiltered.sort(universalSort);
-      const topPicks = cityFiltered.slice(0, 2);
 
+      // 先行宣告 categoryHook，避免 ReferenceError (TDZ)
       const categoryHook = detectCategoryHookDetailed(msg, mainIntent);
+
+      let topPicks = [];
+      // 輔助函式：多欄位相容取得商家分類字串（避免單一欄位命名落空）
+      const getItemCat = item => safeStr(item.category || item.subCategory || item.cuisine || item.type || '');
+
+      // 1. 若有命中特定菜系/標籤，先嘗試抓取精準名單
+      if (categoryHook && categoryHook.key) {
+        const hookKey = safeStr(categoryHook.key).toLowerCase();
+        const hookName = safeStr(categoryHook.name).toLowerCase();
+        const matchedItems = cityFiltered.filter(x => {
+          const cat = getItemCat(x).toLowerCase();
+          const name = safeStr(x.name || x.title).toLowerCase();
+          return cat.includes(hookKey) || cat.includes(hookName) || name.includes(hookName);
+        });
+
+        if (matchedItems.length > 0) {
+          // 第一家必定是該菜系的精準 Top Pick
+          topPicks.push(matchedItems[0]);
+
+          // 第二家：若同菜系還有其他好店則加入；若沒有，從其他不同類別挑選最高分者
+          if (matchedItems.length > 1) {
+            topPicks.push(matchedItems[1]);
+          } else {
+            const firstCat = getItemCat(matchedItems[0]);
+            const diffCatItem = cityFiltered.find(x => safeStr(x.id || x.name) !== safeStr(matchedItems[0].id || matchedItems[0].name) && getItemCat(x) !== firstCat);
+            if (diffCatItem) topPicks.push(diffCatItem);
+          }
+        }
+      }
+
+      // 2. 若無特定標籤或上述未滿 2 家（廣義推薦或備援），執行強制跨類別挑選
+      if (topPicks.length === 0 && cityFiltered.length > 0) {
+        topPicks.push(cityFiltered[0]);
+      }
+      if (topPicks.length === 1 && cityFiltered.length > 1) {
+        const firstCat = getItemCat(topPicks[0]);
+        const firstId = safeStr(topPicks[0].id || topPicks[0].name);
+        // 強制挑選非同類別的下一家最高分商家
+        const secondPick = cityFiltered.find(x => safeStr(x.id || x.name) !== firstId && getItemCat(x) !== firstCat);
+        topPicks.push(secondPick || cityFiltered.find(x => safeStr(x.id || x.name) !== firstId));
+      }
 
       const generateButtonsHtml = (matchedList) => {
         if (!matchedList || matchedList.length === 0) return '';
