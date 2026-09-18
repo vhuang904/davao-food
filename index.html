@@ -5037,20 +5037,22 @@ const arbitration = detectQueryTargetCity(msg);
 
       const generateButtonsHtml = (matchedList) => {
         if (!matchedList || matchedList.length === 0) return '';
+        // 單引號跳脫防禦：避免店名/ID 含英文單引號（如 Tony's）導致 onclick 屬性語法斷裂造成點擊無反應
+        const escQ = s => String(s).replace(/'/g, "\\'");
         return `
           <div class="w-full mt-2.5 pt-2 border-t border-slate-700/40 flex flex-col gap-1.5">
             <span class="text-[10px] font-bold flex items-center gap-1" style="color: var(--theme-primary);">
               <i class="fa-solid fa-diamond-turn-right text-[9px]"></i> 點擊直達私房名單卡片：
             </span>
             ${matchedList.map(m => `
-              <button type="button" onclick="window.handleAiJumpCard('${m.id}', '${m.type}', '${m.city}', '${categoryHook ? categoryHook.key : 'all'}')" class="ai-jump-btn w-full py-2 px-3 rounded-lg text-[11px] font-black flex items-center justify-between transition active:scale-95 text-left cursor-pointer shadow-sm" style="background: var(--theme-card-sub-bg); border: 1.5px solid var(--theme-border); color: var(--theme-primary);">
+              <button type="button" onclick="window.handleAiJumpCard('${escQ(m.id)}', '${escQ(m.type)}', '${escQ(m.city)}', '${categoryHook ? escQ(categoryHook.key) : 'all'}')" class="ai-jump-btn w-full py-2 px-3 rounded-lg text-[11px] font-black flex items-center justify-between transition active:scale-95 text-left cursor-pointer shadow-sm" style="background: var(--theme-card-sub-bg); border: 1.5px solid var(--theme-border); color: var(--theme-primary);">
                 <span class="truncate">📍 ${m.name}</span>
                 <span class="text-[9px] opacity-80 flex-shrink-0 ml-1">查看卡片 ➔</span>
               </button>
             `).join('')}
 
             ${categoryHook ? `
-              <button type="button" onclick="window.handleAiCategoryJump('${categoryHook.key}', '${targetCity}', '${mainIntent}')" class="w-full mt-0.5 py-2 px-3 rounded-lg text-white text-[11px] font-black flex items-center justify-between transition active:scale-95 text-left cursor-pointer shadow-sm" style="background: var(--theme-gradient);">
+              <button type="button" onclick="window.handleAiCategoryJump('${escQ(categoryHook.key)}', '${escQ(targetCity)}', '${escQ(mainIntent)}')" class="w-full mt-0.5 py-2 px-3 rounded-lg text-white text-[11px] font-black flex items-center justify-between transition active:scale-95 text-left cursor-pointer shadow-sm" style="background: var(--theme-gradient);">
                 <span class="truncate">📂 瀏覽【${categoryHook.name}】專區</span>
                 <span class="text-[9px] opacity-90 flex-shrink-0 ml-1">前往專區 ➔</span>
               </button>
@@ -5059,12 +5061,13 @@ const arbitration = detectQueryTargetCity(msg);
         `;
       };
 
-      const fallbackMatched = topPicks.map(item => ({
+      const fallbackMatched = topPicks.filter(Boolean).map(item => ({
         id: String(item.id || item.place_id).trim(),
         name: (currentLang === 'en' && item.name_en) ? item.name_en : (item.name_zh || item.name_en || item.name),
         city: item.city || targetCity,
         type: mainIntent
       }));
+
 
       try {
       // 100% 讀取本地 Database 欄位，秒出正體中文推薦特色
