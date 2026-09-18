@@ -4464,6 +4464,13 @@ async function handlePhotoSelection(files) {
       btnGoogle.onclick = async (e) => {
         e.preventDefault();
         e.stopPropagation();
+        // 內嵌瀏覽器防禦攔截：Google 政策封鎖 WebView 內 OAuth 登入，先阻擋並引導用戶改用系統瀏覽器
+        const uaCheck = navigator.userAgent || navigator.vendor || window.opera;
+        const isInAppEnv = /Line|FBAN|FBAV|Instagram|MicroMessenger|musical_ly|Snapchat|WhatsApp|Twitter|; ?wv\)/i.test(uaCheck);
+        if (isInAppEnv) {
+          showToast('Google 登入不支援在 App 內嵌瀏覽器中操作。請點擊右上角「⋯」選擇「在 Safari / Chrome 中開啟」後再進行登入。', 'fa-triangle-exclamation');
+          return;
+        }
         try {
           btnGoogle.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> <span>登入中...</span>';
           await loginWithGoogle();
@@ -5803,7 +5810,7 @@ const arbitration = detectQueryTargetCity(msg);
       const ua = navigator.userAgent || navigator.vendor || window.opera;
       
       // 檢測是否為常見 App 內嵌 WebView
-      const isInApp = /Line|FBAN|FBAV|Instagram|MicroMessenger|musical_ly|Snapchat/i.test(ua);
+      const isInApp = /Line|FBAN|FBAV|Instagram|MicroMessenger|musical_ly|Snapchat|WhatsApp|Twitter|; ?wv\)/i.test(ua);
       if (!isInApp) return;
 
       const banner = document.getElementById('inapp-browser-banner');
