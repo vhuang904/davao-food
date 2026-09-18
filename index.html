@@ -4911,6 +4911,26 @@ async function handlePhotoSelection(files) {
       return null;
     }
 
+    // AI 快捷選項按鈕 — 直接調用 handleChatSend 送出預設提問
+    window.quickAskAI = function(promptText, evt) {
+      if (evt && evt.preventDefault) evt.preventDefault();
+      if (!promptText) return;
+
+      if (typeof handleChatSend === 'function') {
+        handleChatSend(promptText);
+      } else if (typeof window.handleChatSend === 'function') {
+        window.handleChatSend(promptText);
+      } else {
+        console.warn('[AI QuickAsk] handleChatSend not found, falling back to input DOM');
+        const inputEl = document.getElementById('chat-input') || document.querySelector('#chat-modal input[type="text"]');
+        if (inputEl) {
+          inputEl.value = promptText;
+          const sendBtn = document.getElementById('chat-send-btn') || document.querySelector('#chat-modal button[type="submit"]');
+          if (sendBtn) sendBtn.click();
+        }
+      }
+    };
+
     // 4. 對話送出核心（站內私房名單優先與必附卡片按鈕）
     async function handleChatSend(overrideMessage = null) {
      if (!currentUser) return;
